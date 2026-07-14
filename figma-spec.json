@@ -1,0 +1,4150 @@
+{
+  "frame": {
+    "name": "Main_Default_Desktop_1920~1080",
+    "w": 1920,
+    "h": 4889
+  },
+  "topLevel": [
+    {
+      "name": "screencapture-korhrd-co-kr-2026-04-15-17_32_47 1",
+      "type": "RECTANGLE",
+      "w": 1920,
+      "h": 3702,
+      "x": -5722,
+      "y": 120,
+      "fill": null,
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null
+    },
+    {
+      "name": "wrapper_section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 4783,
+      "x": -5722,
+      "y": 206,
+      "fill": null,
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "wrapper_info",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 72,
+          "x": -5722,
+          "y": 206,
+          "fill": "#00376e",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "count_total",
+              "type": "FRAME",
+              "w": 216,
+              "h": 32,
+              "x": -5362,
+              "y": 226,
+              "fill": null,
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "divider",
+              "type": "VECTOR",
+              "w": 0,
+              "h": 32,
+              "x": -4999,
+              "y": 226,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "count_exam",
+              "type": "FRAME",
+              "w": 221,
+              "h": 32,
+              "x": -4853,
+              "y": 226,
+              "fill": null,
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "divider",
+              "type": "VECTOR",
+              "w": 0,
+              "h": 32,
+              "x": -4485,
+              "y": 226,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "count_issuer",
+              "type": "FRAME",
+              "w": 177,
+              "h": 32,
+              "x": -4339,
+              "y": 226,
+              "fill": null,
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 440,
+          "x": -5722,
+          "y": 278,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "banner_hero",
+              "type": "FRAME",
+              "w": 791,
+              "h": 320,
+              "x": -5362,
+              "y": 338,
+              "fill": null,
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "section_login",
+              "type": "FRAME",
+              "w": 383,
+              "h": 320,
+              "x": -4547,
+              "y": 338,
+              "fill": "#ffffff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 260,
+          "x": -5722,
+          "y": 718,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "list_current_status",
+              "type": "FRAME",
+              "w": 588,
+              "h": 200,
+              "x": -5362,
+              "y": 748,
+              "fill": "#e5edff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "card_cs",
+              "type": "FRAME",
+              "w": 282,
+              "h": 200,
+              "x": -4750,
+              "y": 748,
+              "fill": "#00376e",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "card_cs",
+              "type": "FRAME",
+              "w": 282,
+              "h": 200,
+              "x": -4444,
+              "y": 748,
+              "fill": "#ffe02f",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 238,
+          "x": -5722,
+          "y": 978,
+          "fill": "#ffffff",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "Frame 57",
+              "type": "FRAME",
+              "w": 1200,
+              "h": 148,
+              "x": -5362,
+              "y": 1008,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 498,
+          "x": -5722,
+          "y": 1216,
+          "fill": "#fafafa",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 180,
+              "h": 68,
+              "x": -5362,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "wrapper_card",
+              "type": "FRAME",
+              "w": 996,
+              "h": 298,
+              "x": -5158,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 498,
+          "x": -5722,
+          "y": 1714,
+          "fill": "#ffffff",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 180,
+              "h": 68,
+              "x": -5362,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "wrapper_card",
+              "type": "FRAME",
+              "w": 996,
+              "h": 298,
+              "x": -5158,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 340,
+          "x": -5722,
+          "y": 2212,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "banner image-pc",
+              "type": "FRAME",
+              "w": 1200,
+              "h": 240,
+              "x": -5362,
+              "y": 2212,
+              "fill": null,
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 582,
+          "x": -5722,
+          "y": 2552,
+          "fill": "#fafafa",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 337,
+              "h": 96,
+              "x": -5362,
+              "y": 2652,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "wrapper_card",
+              "type": "FRAME",
+              "w": 1200,
+              "h": 262,
+              "x": -5362,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 586,
+          "x": -5722,
+          "y": 3134,
+          "fill": "#ffffff",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 200,
+              "h": 34,
+              "x": -5362,
+              "y": 3234,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "wrapper_card",
+              "type": "FRAME",
+              "w": 1200,
+              "h": 250,
+              "x": -5362,
+              "y": 3292,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "Button/solid",
+              "type": "INSTANCE",
+              "w": 1200,
+              "h": 54,
+              "x": -5362,
+              "y": 3566,
+              "fill": "#00376e",
+              "radius": 6,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1918,
+          "h": 398,
+          "x": -5722,
+          "y": 3720,
+          "fill": "#00376e",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 180,
+              "h": 136,
+              "x": -5362,
+              "y": 3820,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "wrapper_card_review",
+              "type": "FRAME",
+              "w": 994,
+              "h": 198,
+              "x": -5157,
+              "y": 3820,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 469,
+          "x": -5722,
+          "y": 4118,
+          "fill": "#fafafa",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "Frame 73",
+              "type": "FRAME",
+              "w": 588,
+              "h": 269,
+              "x": -5362,
+              "y": 4218,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "Frame 74",
+              "type": "FRAME",
+              "w": 588,
+              "h": 269,
+              "x": -4750,
+              "y": 4218,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "section",
+          "type": "FRAME",
+          "w": 1920,
+          "h": 88,
+          "x": -5722,
+          "y": 4587,
+          "fill": "#ffffff",
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "법무부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 102,
+              "h": 40,
+              "x": -5722,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "식품의약품안전처-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 181,
+              "h": 40,
+              "x": -5532,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "과학기술정보통신부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 199,
+              "h": 40,
+              "x": -5263,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "보건복지부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 130,
+              "h": 40,
+              "x": -4976,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "여성가족부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 130,
+              "h": 40,
+              "x": -4758,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "교육부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 100,
+              "h": 40,
+              "x": -4540,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "산림청-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 100,
+              "h": 40,
+              "x": -4352,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "환경부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 101,
+              "h": 40,
+              "x": -4164,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "농림축산식품부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 164,
+              "h": 40,
+              "x": -3975,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "산업통상부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 152,
+              "h": 40,
+              "x": -3723,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "문화체육관광부-black@3x 1",
+              "type": "RECTANGLE",
+              "w": 193,
+              "h": 40,
+              "x": -3483,
+              "y": 4611,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "RECTANGLE",
+          "w": 1920,
+          "h": 314,
+          "x": -5722,
+          "y": 4675,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        }
+      ]
+    },
+    {
+      "name": "gnb",
+      "type": "INSTANCE",
+      "w": 1920,
+      "h": 86,
+      "x": -5722,
+      "y": 120,
+      "fill": "#ffffff",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "contents_wrapper",
+          "type": "FRAME",
+          "w": 1260,
+          "h": 46,
+          "x": -5392,
+          "y": 140,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "wrapper_right",
+              "type": "FRAME",
+              "w": 800,
+              "h": 46,
+              "x": -5392,
+              "y": 140,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "Frame 82",
+              "type": "FRAME",
+              "w": 326,
+              "h": 40,
+              "x": -4458,
+              "y": 143,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "button_top",
+      "type": "FRAME",
+      "w": 50,
+      "h": 50,
+      "x": -3871,
+      "y": 1082,
+      "fill": "#ffffff",
+      "radius": 8,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "tabler:arrow-up",
+          "type": "FRAME",
+          "w": 20,
+          "h": 20,
+          "x": -3856,
+          "y": 1090,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "Vector",
+              "type": "VECTOR",
+              "w": 10,
+              "h": 12,
+              "x": -3851,
+              "y": 1094,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        },
+        {
+          "name": "TOP",
+          "type": "TEXT",
+          "w": 50,
+          "h": 14,
+          "x": -3871,
+          "y": 1110,
+          "fill": "#656565",
+          "radius": null,
+          "fontSize": 14,
+          "fontWeight": 600,
+          "characters": "TOP"
+        }
+      ]
+    },
+    {
+      "name": "floating_banner",
+      "type": "FRAME",
+      "w": 130,
+      "h": 224,
+      "x": -3932,
+      "y": 320,
+      "fill": "#e5edff",
+      "radius": 10,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "Frame 77",
+          "type": "FRAME",
+          "w": 90,
+          "h": 184,
+          "x": -3912,
+          "y": 340,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "image",
+              "type": "RECTANGLE",
+              "w": 60,
+              "h": 60,
+              "x": -3897,
+              "y": 340,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "2026년 최신강의 업데이트 중!",
+              "type": "TEXT",
+              "w": 89,
+              "h": 87,
+              "x": -3911,
+              "y": 408,
+              "fill": "#1d1d1d",
+              "radius": null,
+              "fontSize": 18,
+              "fontWeight": 700,
+              "characters": "2026년\n최신강의\n업데이트 중!"
+            },
+            {
+              "name": "bar_update_effect",
+              "type": "FRAME",
+              "w": 90,
+              "h": 21,
+              "x": -3912,
+              "y": 503,
+              "fill": "#ffffff",
+              "radius": 999,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "wrapperSections": [
+    {
+      "index": 1,
+      "name": "wrapper_info",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 72,
+      "x": -5722,
+      "y": 206,
+      "fill": "#00376e",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "count_total",
+          "type": "FRAME",
+          "w": 216,
+          "h": 32,
+          "x": -5362,
+          "y": 226,
+          "fill": null,
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "symbol/ticket",
+              "type": "INSTANCE",
+              "w": 32,
+              "h": 32,
+              "x": -5362,
+              "y": 226,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "Vector",
+                  "type": "VECTOR",
+                  "w": 27,
+                  "h": 21,
+                  "x": -5359,
+                  "y": 231,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "수강료 무료 전액 지원",
+              "type": "TEXT",
+              "w": 170,
+              "h": 20,
+              "x": -5316,
+              "y": 232,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 20,
+              "fontWeight": 600,
+              "characters": "수강료 무료 전액 지원"
+            }
+          ]
+        },
+        {
+          "name": "divider",
+          "type": "VECTOR",
+          "w": 0,
+          "h": 32,
+          "x": -4999,
+          "y": 226,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "count_exam",
+          "type": "FRAME",
+          "w": 221,
+          "h": 32,
+          "x": -4853,
+          "y": 226,
+          "fill": null,
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "symbol/globe",
+              "type": "INSTANCE",
+              "w": 32,
+              "h": 32,
+              "x": -4853,
+              "y": 226,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "Vector",
+                  "type": "VECTOR",
+                  "w": 26,
+                  "h": 26,
+                  "x": -4850,
+                  "y": 229,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "PC + 모바일 동시수강",
+              "type": "TEXT",
+              "w": 175,
+              "h": 20,
+              "x": -4807,
+              "y": 232,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 20,
+              "fontWeight": 600,
+              "characters": "PC + 모바일 동시수강"
+            }
+          ]
+        },
+        {
+          "name": "divider",
+          "type": "VECTOR",
+          "w": 0,
+          "h": 32,
+          "x": -4485,
+          "y": 226,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "count_issuer",
+          "type": "FRAME",
+          "w": 177,
+          "h": 32,
+          "x": -4339,
+          "y": 226,
+          "fill": null,
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "symbol/certificate",
+              "type": "INSTANCE",
+              "w": 32,
+              "h": 32,
+              "x": -4339,
+              "y": 226,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "Vector",
+                  "type": "VECTOR",
+                  "w": 27,
+                  "h": 27,
+                  "x": -4336,
+                  "y": 229,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "정식 등록 자격증",
+              "type": "TEXT",
+              "w": 131,
+              "h": 20,
+              "x": -4293,
+              "y": 232,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 20,
+              "fontWeight": 600,
+              "characters": "정식 등록 자격증"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 440,
+      "x": -5722,
+      "y": 278,
+      "fill": null,
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "banner_hero",
+          "type": "FRAME",
+          "w": 791,
+          "h": 320,
+          "x": -5362,
+          "y": 338,
+          "fill": null,
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "indicator",
+              "type": "FRAME",
+              "w": 88,
+              "h": 8,
+              "x": -5010,
+              "y": 626,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "dot_focus",
+                  "type": "RECTANGLE",
+                  "w": 18,
+                  "h": 8,
+                  "x": -5010,
+                  "y": 626,
+                  "fill": "#00376e",
+                  "radius": 5,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "dot_default",
+                  "type": "RECTANGLE",
+                  "w": 8,
+                  "h": 8,
+                  "x": -4986,
+                  "y": 626,
+                  "fill": "#e4e4e4",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "dot_default",
+                  "type": "RECTANGLE",
+                  "w": 8,
+                  "h": 8,
+                  "x": -4972,
+                  "y": 626,
+                  "fill": "#e4e4e4",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "dot_default",
+                  "type": "RECTANGLE",
+                  "w": 8,
+                  "h": 8,
+                  "x": -4958,
+                  "y": 626,
+                  "fill": "#e4e4e4",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "dot_default",
+                  "type": "RECTANGLE",
+                  "w": 8,
+                  "h": 8,
+                  "x": -4944,
+                  "y": 626,
+                  "fill": "#e4e4e4",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "dot_default",
+                  "type": "RECTANGLE",
+                  "w": 8,
+                  "h": 8,
+                  "x": -4930,
+                  "y": 626,
+                  "fill": "#e4e4e4",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "section_login",
+          "type": "FRAME",
+          "w": 383,
+          "h": 320,
+          "x": -4547,
+          "y": 338,
+          "fill": "#ffffff",
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "Frame 75",
+              "type": "FRAME",
+              "w": 327,
+              "h": 124,
+              "x": -4519,
+              "y": 366,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "logo",
+                  "type": "RECTANGLE",
+                  "w": 216,
+                  "h": 50,
+                  "x": -4519,
+                  "y": 366,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "대한민국 NO.1 자격증 훈련기관에 오신것을 환영합니다!",
+                  "type": "TEXT",
+                  "w": 316,
+                  "h": 68,
+                  "x": -4519,
+                  "y": 422,
+                  "fill": "#1d1d1d",
+                  "radius": null,
+                  "fontSize": 24,
+                  "fontWeight": 500,
+                  "characters": "대한민국 NO.1 자격증 훈련기관에\n오신것을 환영합니다!"
+                }
+              ]
+            },
+            {
+              "name": "wrapper_button",
+              "type": "FRAME",
+              "w": 327,
+              "h": 50,
+              "x": -4519,
+              "y": 580,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "Button/solid",
+                  "type": "INSTANCE",
+                  "w": 158,
+                  "h": 50,
+                  "x": -4519,
+                  "y": 580,
+                  "fill": "#00376e",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "Button/solid",
+                  "type": "INSTANCE",
+                  "w": 158,
+                  "h": 50,
+                  "x": -4349,
+                  "y": 580,
+                  "fill": "#e5edff",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 260,
+      "x": -5722,
+      "y": 718,
+      "fill": null,
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "list_current_status",
+          "type": "FRAME",
+          "w": 588,
+          "h": 200,
+          "x": -5362,
+          "y": 748,
+          "fill": "#e5edff",
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "수강생들의 한 걸음 더 성장한 순간",
+              "type": "TEXT",
+              "w": 160,
+              "h": 56,
+              "x": -5338,
+              "y": 772,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": 20,
+              "fontWeight": 700,
+              "characters": "수강생들의 한 걸음\n더 성장한 순간"
+            },
+            {
+              "name": "Frame 66",
+              "type": "FRAME",
+              "w": 362,
+              "h": 322,
+              "x": -5160,
+              "y": 772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 772,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 814,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 856,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 898,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 940,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 982,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 1024,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "current_status",
+                  "type": "FRAME",
+                  "w": 362,
+                  "h": 28,
+                  "x": -5160,
+                  "y": 1066,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "card_cs",
+          "type": "FRAME",
+          "w": 282,
+          "h": 200,
+          "x": -4750,
+          "y": 748,
+          "fill": "#00376e",
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 234,
+              "h": 43,
+              "x": -4726,
+              "y": 772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "궁금한점이 있으신가요?",
+                  "type": "TEXT",
+                  "w": 132,
+                  "h": 17,
+                  "x": -4726,
+                  "y": 772,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": 14,
+                  "fontWeight": 500,
+                  "characters": "궁금한점이 있으신가요?"
+                },
+                {
+                  "name": "전화 상담 문의",
+                  "type": "TEXT",
+                  "w": 160,
+                  "h": 20,
+                  "x": -4726,
+                  "y": 795,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": 20,
+                  "fontWeight": 700,
+                  "characters": "전화 상담 문의"
+                }
+              ]
+            },
+            {
+              "name": "02-2135-9249",
+              "type": "TEXT",
+              "w": 225,
+              "h": 32,
+              "x": -4726,
+              "y": 836,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 32,
+              "fontWeight": 700,
+              "characters": "02-2135-9249"
+            },
+            {
+              "name": "운영시간 평일 10:00 ~ 18:00 점심시간 12:00~13:00 금/토/일/공휴일 휴무",
+              "type": "TEXT",
+              "w": 234,
+              "h": 36,
+              "x": -4726,
+              "y": 888,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 13,
+              "fontWeight": 500,
+              "characters": "운영시간 평일 10:00 ~ 18:00\n점심시간 12:00~13:00 금/토/일/공휴일 휴무"
+            }
+          ]
+        },
+        {
+          "name": "card_cs",
+          "type": "FRAME",
+          "w": 282,
+          "h": 200,
+          "x": -4444,
+          "y": 748,
+          "fill": "#ffe02f",
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 234,
+              "h": 43,
+              "x": -4420,
+              "y": 772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "통화가 어려우신가요?",
+                  "type": "TEXT",
+                  "w": 120,
+                  "h": 17,
+                  "x": -4420,
+                  "y": 772,
+                  "fill": "#3d3d3d",
+                  "radius": null,
+                  "fontSize": 14,
+                  "fontWeight": 500,
+                  "characters": "통화가 어려우신가요?"
+                },
+                {
+                  "name": "실시간 카카오톡 상담",
+                  "type": "TEXT",
+                  "w": 165,
+                  "h": 20,
+                  "x": -4420,
+                  "y": 795,
+                  "fill": "#010101",
+                  "radius": null,
+                  "fontSize": 20,
+                  "fontWeight": 700,
+                  "characters": "실시간 카카오톡 상담"
+                }
+              ]
+            },
+            {
+              "name": "Frame 69",
+              "type": "FRAME",
+              "w": 234,
+              "h": 75,
+              "x": -4420,
+              "y": 849,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "freepik__background__12929 1",
+                  "type": "RECTANGLE",
+                  "w": 75,
+                  "h": 75,
+                  "x": -4261,
+                  "y": 849,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 238,
+      "x": -5722,
+      "y": 978,
+      "fill": "#ffffff",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "Frame 57",
+          "type": "FRAME",
+          "w": 1200,
+          "h": 148,
+          "x": -5362,
+          "y": 1008,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "국가지정등록 자격 취득과정",
+              "type": "TEXT",
+              "w": 1200,
+              "h": 34,
+              "x": -5362,
+              "y": 1008,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": 24,
+              "fontWeight": 700,
+              "characters": "국가지정등록 자격 취득과정"
+            },
+            {
+              "name": "wrapper_card_course",
+              "type": "FRAME",
+              "w": 1200,
+              "h": 100,
+              "x": -5362,
+              "y": 1056,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -5362,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -5260,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -5158,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -5056,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4954,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4852,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4750,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4648,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4546,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4444,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4342,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "card_course",
+                  "type": "FRAME",
+                  "w": 78,
+                  "h": 100,
+                  "x": -4240,
+                  "y": 1056,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 498,
+      "x": -5722,
+      "y": 1216,
+      "fill": "#fafafa",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "title",
+          "type": "FRAME",
+          "w": 180,
+          "h": 68,
+          "x": -5362,
+          "y": 1316,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "HOT 인기 자격증",
+              "type": "TEXT",
+              "w": 180,
+              "h": 68,
+              "x": -5362,
+              "y": 1316,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": 24,
+              "fontWeight": 700,
+              "characters": "HOT\n인기 자격증"
+            }
+          ]
+        },
+        {
+          "name": "wrapper_card",
+          "type": "FRAME",
+          "w": 996,
+          "h": 298,
+          "x": -5158,
+          "y": 1316,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -5158,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -5158,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -5158,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -4852,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4852,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -4852,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -4546,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4546,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -4546,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -4240,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4240,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -4240,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -3934,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3934,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -3934,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -3628,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3628,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -3628,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -3322,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3322,
+                  "y": 1316,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -3322,
+                  "y": 1520,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "dim",
+              "type": "RECTANGLE",
+              "w": 59,
+              "h": 298,
+              "x": -4221,
+              "y": 1316,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 498,
+      "x": -5722,
+      "y": 1714,
+      "fill": "#ffffff",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "title",
+          "type": "FRAME",
+          "w": 180,
+          "h": 68,
+          "x": -5362,
+          "y": 1814,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "NEW 창업 자격증",
+              "type": "TEXT",
+              "w": 180,
+              "h": 68,
+              "x": -5362,
+              "y": 1814,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": 24,
+              "fontWeight": 700,
+              "characters": "NEW\n창업 자격증"
+            }
+          ]
+        },
+        {
+          "name": "wrapper_card",
+          "type": "FRAME",
+          "w": 996,
+          "h": 298,
+          "x": -5158,
+          "y": 1814,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -5158,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -5158,
+                  "y": 1814,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -5158,
+                  "y": 2018,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -4852,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4852,
+                  "y": 1814,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -4852,
+                  "y": 2018,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -4546,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4546,
+                  "y": 1814,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -4546,
+                  "y": 2018,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -4240,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4240,
+                  "y": 1814,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -4240,
+                  "y": 2018,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -3934,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3934,
+                  "y": 1814,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -3934,
+                  "y": 2018,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 298,
+              "x": -3628,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3628,
+                  "y": 1814,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 94,
+                  "x": -3628,
+                  "y": 2018,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "dim",
+              "type": "RECTANGLE",
+              "w": 59,
+              "h": 298,
+              "x": -4221,
+              "y": 1814,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 340,
+      "x": -5722,
+      "y": 2212,
+      "fill": null,
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "banner image-pc",
+          "type": "FRAME",
+          "w": 1200,
+          "h": 240,
+          "x": -5362,
+          "y": 2212,
+          "fill": null,
+          "radius": 10,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "text",
+              "type": "FRAME",
+              "w": 383,
+              "h": 116,
+              "x": -5262,
+              "y": 2274,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "100세 시대, 제 2의 직업능력이 필요합니다.",
+                  "type": "TEXT",
+                  "w": 383,
+                  "h": 90,
+                  "x": -5262,
+                  "y": 2274,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": 32,
+                  "fontWeight": 700,
+                  "characters": "100세 시대,\n제 2의 직업능력이 필요합니다."
+                },
+                {
+                  "name": "한평생 직업훈련센터는 미래를 응원합니다.",
+                  "type": "TEXT",
+                  "w": 265,
+                  "h": 16,
+                  "x": -5262,
+                  "y": 2374,
+                  "fill": "#3d3d3d",
+                  "radius": null,
+                  "fontSize": 16,
+                  "fontWeight": 500,
+                  "characters": "한평생 직업훈련센터는 미래를 응원합니다."
+                }
+              ]
+            },
+            {
+              "name": "Group 9",
+              "type": "GROUP",
+              "w": 281,
+              "h": 270,
+              "x": -4543,
+              "y": 2197,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "shadow",
+                  "type": "VECTOR",
+                  "w": 137,
+                  "h": 40,
+                  "x": -4468,
+                  "y": 2389,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "shadow",
+                  "type": "VECTOR",
+                  "w": 73,
+                  "h": 29,
+                  "x": -4347,
+                  "y": 2400,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "shadow",
+                  "type": "VECTOR",
+                  "w": 153,
+                  "h": 41,
+                  "x": -4543,
+                  "y": 2385,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "image",
+                  "type": "RECTANGLE",
+                  "w": 278,
+                  "h": 270,
+                  "x": -4540,
+                  "y": 2197,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 582,
+      "x": -5722,
+      "y": 2552,
+      "fill": "#fafafa",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "title",
+          "type": "FRAME",
+          "w": 337,
+          "h": 96,
+          "x": -5362,
+          "y": 2652,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "연령별 추천 자격증 패키지",
+              "type": "TEXT",
+              "w": 245,
+              "h": 34,
+              "x": -5362,
+              "y": 2652,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": 24,
+              "fontWeight": 700,
+              "characters": "연령별 추천 자격증 패키지"
+            },
+            {
+              "name": "Frame 58",
+              "type": "FRAME",
+              "w": 337,
+              "h": 50,
+              "x": -5362,
+              "y": 2698,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "Button/outline",
+                  "type": "INSTANCE",
+                  "w": 103,
+                  "h": 50,
+                  "x": -5362,
+                  "y": 2698,
+                  "fill": "#ffffff",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "Button/outline",
+                  "type": "INSTANCE",
+                  "w": 104,
+                  "h": 50,
+                  "x": -5247,
+                  "y": 2698,
+                  "fill": "#ffffff",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "Button/outline",
+                  "type": "INSTANCE",
+                  "w": 106,
+                  "h": 50,
+                  "x": -5131,
+                  "y": 2698,
+                  "fill": "#ffffff",
+                  "radius": 6,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "wrapper_card",
+          "type": "FRAME",
+          "w": 1200,
+          "h": 262,
+          "x": -5362,
+          "y": 2772,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -5362,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -5362,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -5362,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -5056,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -5056,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -5056,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -4750,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4750,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -4750,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -4444,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4444,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -4444,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -4138,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4138,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -4138,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -3832,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3832,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -3832,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 262,
+              "x": -3526,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -3526,
+                  "y": 2772,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 58,
+                  "x": -3526,
+                  "y": 2976,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "dim",
+              "type": "RECTANGLE",
+              "w": 59,
+              "h": 262,
+              "x": -4221,
+              "y": 2772,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 586,
+      "x": -5722,
+      "y": 3134,
+      "fill": "#ffffff",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "title",
+          "type": "FRAME",
+          "w": 200,
+          "h": 34,
+          "x": -5362,
+          "y": 3234,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "국가자격증은 여기서!",
+              "type": "TEXT",
+              "w": 200,
+              "h": 34,
+              "x": -5362,
+              "y": 3234,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": 24,
+              "fontWeight": 700,
+              "characters": "국가자격증은 여기서!"
+            }
+          ]
+        },
+        {
+          "name": "wrapper_card",
+          "type": "FRAME",
+          "w": 1200,
+          "h": 250,
+          "x": -5362,
+          "y": 3292,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 250,
+              "x": -5362,
+              "y": 3292,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -5362,
+                  "y": 3292,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 46,
+                  "x": -5362,
+                  "y": 3496,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 250,
+              "x": -5056,
+              "y": 3292,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -5056,
+                  "y": 3292,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 46,
+                  "x": -5056,
+                  "y": 3496,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 250,
+              "x": -4750,
+              "y": 3292,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4750,
+                  "y": 3292,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 46,
+                  "x": -4750,
+                  "y": 3496,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card",
+              "type": "FRAME",
+              "w": 282,
+              "h": 250,
+              "x": -4444,
+              "y": 3292,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "image",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 188,
+                  "x": -4444,
+                  "y": 3292,
+                  "fill": null,
+                  "radius": 8,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "contents",
+                  "type": "FRAME",
+                  "w": 282,
+                  "h": 46,
+                  "x": -4444,
+                  "y": 3496,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Button/solid",
+          "type": "INSTANCE",
+          "w": 1200,
+          "h": 54,
+          "x": -5362,
+          "y": 3566,
+          "fill": "#00376e",
+          "radius": 6,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "icon_left",
+              "type": "FRAME",
+              "w": 16,
+              "h": 16,
+              "x": -5340,
+              "y": 3584,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "Null",
+                  "type": "INSTANCE",
+                  "w": 16,
+                  "h": 16,
+                  "x": -5340,
+                  "y": 3584,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "텍스트",
+              "type": "TEXT",
+              "w": 145,
+              "h": 22,
+              "x": -4847,
+              "y": 3582,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 18,
+              "fontWeight": 700,
+              "characters": "국가자격증 알아보기"
+            },
+            {
+              "name": "Interaction/solid",
+              "type": "INSTANCE",
+              "w": 1200,
+              "h": 54,
+              "x": -5362,
+              "y": 3566,
+              "fill": "#010101",
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "icon_right",
+              "type": "FRAME",
+              "w": 16,
+              "h": 16,
+              "x": -4692,
+              "y": 3585,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "arrow/right_tail",
+                  "type": "INSTANCE",
+                  "w": 16,
+                  "h": 16,
+                  "x": -4692,
+                  "y": 3585,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1918,
+      "h": 398,
+      "x": -5722,
+      "y": 3720,
+      "fill": "#00376e",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "title",
+          "type": "FRAME",
+          "w": 180,
+          "h": 136,
+          "x": -5362,
+          "y": 3820,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "image",
+              "type": "RECTANGLE",
+              "w": 124,
+              "h": 32,
+              "x": -5362,
+              "y": 3820,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            },
+            {
+              "name": "수강생분들의 생생한 합격 후기",
+              "type": "TEXT",
+              "w": 180,
+              "h": 68,
+              "x": -5362,
+              "y": 3862,
+              "fill": "#ffffff",
+              "radius": null,
+              "fontSize": 24,
+              "fontWeight": 700,
+              "characters": "수강생분들의\n생생한 합격 후기"
+            },
+            {
+              "name": "subtitle_course",
+              "type": "FRAME",
+              "w": 180,
+              "h": 16,
+              "x": -5362,
+              "y": 3940,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "더보기",
+                  "type": "TEXT",
+                  "w": 42,
+                  "h": 16,
+                  "x": -5362,
+                  "y": 3940,
+                  "fill": "#ffffff",
+                  "radius": null,
+                  "fontSize": 16,
+                  "fontWeight": 500,
+                  "characters": "더보기"
+                },
+                {
+                  "name": "arrow/right",
+                  "type": "INSTANCE",
+                  "w": 14,
+                  "h": 14,
+                  "x": -5318,
+                  "y": 3941,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "wrapper_card_review",
+          "type": "FRAME",
+          "w": 994,
+          "h": 198,
+          "x": -5157,
+          "y": 3820,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "card_review",
+              "type": "FRAME",
+              "w": 281,
+              "h": 198,
+              "x": -5157,
+              "y": 3820,
+              "fill": "#ffffff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "title",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 80,
+                  "x": -5141,
+                  "y": 3836,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "text_review",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 34,
+                  "x": -5141,
+                  "y": 3926,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "wrapper_tag",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 32,
+                  "x": -5141,
+                  "y": 3970,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card_review",
+              "type": "FRAME",
+              "w": 281,
+              "h": 198,
+              "x": -4852,
+              "y": 3820,
+              "fill": "#ffffff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "title",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 80,
+                  "x": -4836,
+                  "y": 3836,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "text_review",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 34,
+                  "x": -4836,
+                  "y": 3926,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "wrapper_tag",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 32,
+                  "x": -4836,
+                  "y": 3970,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card_review",
+              "type": "FRAME",
+              "w": 281,
+              "h": 198,
+              "x": -4547,
+              "y": 3820,
+              "fill": "#ffffff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "title",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 80,
+                  "x": -4531,
+                  "y": 3836,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "text_review",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 34,
+                  "x": -4531,
+                  "y": 3926,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "wrapper_tag",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 32,
+                  "x": -4531,
+                  "y": 3970,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "card_review",
+              "type": "FRAME",
+              "w": 281,
+              "h": 198,
+              "x": -4242,
+              "y": 3820,
+              "fill": "#ffffff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "title",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 80,
+                  "x": -4226,
+                  "y": 3836,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "text_review",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 34,
+                  "x": -4226,
+                  "y": 3926,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "wrapper_tag",
+                  "type": "FRAME",
+                  "w": 249,
+                  "h": 32,
+                  "x": -4226,
+                  "y": 3970,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "dim",
+              "type": "RECTANGLE",
+              "w": 59,
+              "h": 198,
+              "x": -4222,
+              "y": 3820,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 469,
+      "x": -5722,
+      "y": 4118,
+      "fill": "#fafafa",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "Frame 73",
+          "type": "FRAME",
+          "w": 588,
+          "h": 269,
+          "x": -5362,
+          "y": 4218,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 588,
+              "h": 34,
+              "x": -5362,
+              "y": 4218,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "공지사항",
+                  "type": "TEXT",
+                  "w": 83,
+                  "h": 34,
+                  "x": -5362,
+                  "y": 4218,
+                  "fill": "#010101",
+                  "radius": null,
+                  "fontSize": 24,
+                  "fontWeight": 700,
+                  "characters": "공지사항"
+                },
+                {
+                  "name": "subtitle_course",
+                  "type": "FRAME",
+                  "w": 58,
+                  "h": 16,
+                  "x": -4832,
+                  "y": 4227,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "Frame 60",
+              "type": "FRAME",
+              "w": 588,
+              "h": 219,
+              "x": -5362,
+              "y": 4268,
+              "fill": "#ffffff",
+              "radius": 10,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "notice",
+                  "type": "FRAME",
+                  "w": 548,
+                  "h": 22,
+                  "x": -5342,
+                  "y": 4288,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "notice",
+                  "type": "FRAME",
+                  "w": 548,
+                  "h": 22,
+                  "x": -5342,
+                  "y": 4327,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "notice",
+                  "type": "FRAME",
+                  "w": 548,
+                  "h": 22,
+                  "x": -5342,
+                  "y": 4367,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "notice",
+                  "type": "FRAME",
+                  "w": 548,
+                  "h": 22,
+                  "x": -5342,
+                  "y": 4406,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "notice",
+                  "type": "FRAME",
+                  "w": 548,
+                  "h": 22,
+                  "x": -5342,
+                  "y": 4445,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Frame 74",
+          "type": "FRAME",
+          "w": 588,
+          "h": 269,
+          "x": -4750,
+          "y": 4218,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null,
+          "children": [
+            {
+              "name": "title",
+              "type": "FRAME",
+              "w": 588,
+              "h": 34,
+              "x": -4750,
+              "y": 4218,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "자주 묻는 질문",
+                  "type": "TEXT",
+                  "w": 136,
+                  "h": 34,
+                  "x": -4750,
+                  "y": 4218,
+                  "fill": "#010101",
+                  "radius": null,
+                  "fontSize": 24,
+                  "fontWeight": 700,
+                  "characters": "자주 묻는 질문"
+                },
+                {
+                  "name": "subtitle_course",
+                  "type": "FRAME",
+                  "w": 58,
+                  "h": 16,
+                  "x": -4220,
+                  "y": 4227,
+                  "fill": null,
+                  "radius": null,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            },
+            {
+              "name": "list_faq",
+              "type": "FRAME",
+              "w": 588,
+              "h": 219,
+              "x": -4750,
+              "y": 4268,
+              "fill": null,
+              "radius": null,
+              "fontSize": null,
+              "fontWeight": null,
+              "children": [
+                {
+                  "name": "faq",
+                  "type": "FRAME",
+                  "w": 588,
+                  "h": 65,
+                  "x": -4750,
+                  "y": 4268,
+                  "fill": "#ffffff",
+                  "radius": 10,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "faq",
+                  "type": "FRAME",
+                  "w": 588,
+                  "h": 65,
+                  "x": -4750,
+                  "y": 4345,
+                  "fill": "#ffffff",
+                  "radius": 10,
+                  "fontSize": null,
+                  "fontWeight": null
+                },
+                {
+                  "name": "faq",
+                  "type": "FRAME",
+                  "w": 588,
+                  "h": 65,
+                  "x": -4750,
+                  "y": 4422,
+                  "fill": "#ffffff",
+                  "radius": 10,
+                  "fontSize": null,
+                  "fontWeight": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "name": "section",
+      "type": "FRAME",
+      "w": 1920,
+      "h": 88,
+      "x": -5722,
+      "y": 4587,
+      "fill": "#ffffff",
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "children": [
+        {
+          "name": "법무부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 102,
+          "h": 40,
+          "x": -5722,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "식품의약품안전처-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 181,
+          "h": 40,
+          "x": -5532,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "과학기술정보통신부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 199,
+          "h": 40,
+          "x": -5263,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "보건복지부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 130,
+          "h": 40,
+          "x": -4976,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "여성가족부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 130,
+          "h": 40,
+          "x": -4758,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "교육부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 100,
+          "h": 40,
+          "x": -4540,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "산림청-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 100,
+          "h": 40,
+          "x": -4352,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "환경부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 101,
+          "h": 40,
+          "x": -4164,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "농림축산식품부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 164,
+          "h": 40,
+          "x": -3975,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "산업통상부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 152,
+          "h": 40,
+          "x": -3723,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        },
+        {
+          "name": "문화체육관광부-black@3x 1",
+          "type": "RECTANGLE",
+          "w": 193,
+          "h": 40,
+          "x": -3483,
+          "y": 4611,
+          "fill": null,
+          "radius": null,
+          "fontSize": null,
+          "fontWeight": null
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "name": "footer",
+      "type": "RECTANGLE",
+      "w": 1920,
+      "h": 314,
+      "x": -5722,
+      "y": 4675,
+      "fill": null,
+      "radius": null,
+      "fontSize": null,
+      "fontWeight": null
+    }
+  ],
+  "gnb": {
+    "name": "gnb",
+    "type": "INSTANCE",
+    "w": 1920,
+    "h": 86,
+    "x": -5722,
+    "y": 120,
+    "fill": "#ffffff",
+    "radius": null,
+    "fontSize": null,
+    "fontWeight": null,
+    "children": [
+      {
+        "name": "contents_wrapper",
+        "type": "FRAME",
+        "w": 1260,
+        "h": 46,
+        "x": -5392,
+        "y": 140,
+        "fill": null,
+        "radius": null,
+        "fontSize": null,
+        "fontWeight": null,
+        "children": [
+          {
+            "name": "wrapper_right",
+            "type": "FRAME",
+            "w": 800,
+            "h": 46,
+            "x": -5392,
+            "y": 140,
+            "fill": null,
+            "radius": null,
+            "fontSize": null,
+            "fontWeight": null,
+            "children": [
+              {
+                "name": "logo",
+                "type": "RECTANGLE",
+                "w": 200,
+                "h": 46,
+                "x": -5392,
+                "y": 140,
+                "fill": null,
+                "radius": null,
+                "fontSize": null,
+                "fontWeight": null
+              },
+              {
+                "name": "menu_wrapper",
+                "type": "FRAME",
+                "w": 514,
+                "h": 22,
+                "x": -5106,
+                "y": 152,
+                "fill": null,
+                "radius": null,
+                "fontSize": null,
+                "fontWeight": null,
+                "children": [
+                  {
+                    "name": "menu",
+                    "type": "FRAME",
+                    "w": 63,
+                    "h": 22,
+                    "x": -5106,
+                    "y": 152,
+                    "fill": null,
+                    "radius": null,
+                    "fontSize": null,
+                    "fontWeight": null
+                  },
+                  {
+                    "name": "menu",
+                    "type": "FRAME",
+                    "w": 83,
+                    "h": 22,
+                    "x": -5011,
+                    "y": 152,
+                    "fill": null,
+                    "radius": null,
+                    "fontSize": null,
+                    "fontWeight": null
+                  },
+                  {
+                    "name": "menu",
+                    "type": "FRAME",
+                    "w": 114,
+                    "h": 22,
+                    "x": -4896,
+                    "y": 152,
+                    "fill": null,
+                    "radius": null,
+                    "fontSize": null,
+                    "fontWeight": null
+                  },
+                  {
+                    "name": "menu",
+                    "type": "FRAME",
+                    "w": 63,
+                    "h": 22,
+                    "x": -4750,
+                    "y": 152,
+                    "fill": null,
+                    "radius": null,
+                    "fontSize": null,
+                    "fontWeight": null
+                  },
+                  {
+                    "name": "menu",
+                    "type": "FRAME",
+                    "w": 63,
+                    "h": 22,
+                    "x": -4655,
+                    "y": 152,
+                    "fill": null,
+                    "radius": null,
+                    "fontSize": null,
+                    "fontWeight": null
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Frame 82",
+            "type": "FRAME",
+            "w": 326,
+            "h": 40,
+            "x": -4458,
+            "y": 143,
+            "fill": null,
+            "radius": null,
+            "fontSize": null,
+            "fontWeight": null,
+            "children": [
+              {
+                "name": "menu",
+                "type": "FRAME",
+                "w": 37,
+                "h": 17,
+                "x": -4458,
+                "y": 155,
+                "fill": null,
+                "radius": null,
+                "fontSize": null,
+                "fontWeight": null,
+                "children": [
+                  {
+                    "name": "로그인",
+                    "type": "TEXT",
+                    "w": 37,
+                    "h": 17,
+                    "x": -4458,
+                    "y": 155,
+                    "fill": "#656565",
+                    "radius": null,
+                    "fontSize": 14,
+                    "fontWeight": 600,
+                    "characters": "로그인"
+                  }
+                ]
+              },
+              {
+                "name": "divider",
+                "type": "VECTOR",
+                "w": 0,
+                "h": 16,
+                "x": -4401,
+                "y": 155,
+                "fill": null,
+                "radius": null,
+                "fontSize": null,
+                "fontWeight": null
+              },
+              {
+                "name": "menu",
+                "type": "FRAME",
+                "w": 49,
+                "h": 17,
+                "x": -4381,
+                "y": 155,
+                "fill": null,
+                "radius": null,
+                "fontSize": null,
+                "fontWeight": null,
+                "children": [
+                  {
+                    "name": "회원가입",
+                    "type": "TEXT",
+                    "w": 49,
+                    "h": 17,
+                    "x": -4381,
+                    "y": 155,
+                    "fill": "#656565",
+                    "radius": null,
+                    "fontSize": 14,
+                    "fontWeight": 600,
+                    "characters": "회원가입"
+                  }
+                ]
+              },
+              {
+                "name": "search_bar",
+                "type": "FRAME",
+                "w": 180,
+                "h": 40,
+                "x": -4312,
+                "y": 143,
+                "fill": "#ffffff",
+                "radius": 4,
+                "fontSize": null,
+                "fontWeight": null,
+                "children": [
+                  {
+                    "name": "자격증 검색",
+                    "type": "TEXT",
+                    "w": 64,
+                    "h": 14,
+                    "x": -4296,
+                    "y": 156,
+                    "fill": "#919191",
+                    "radius": null,
+                    "fontSize": 14,
+                    "fontWeight": 500,
+                    "characters": "자격증 검색"
+                  },
+                  {
+                    "name": "tool/search",
+                    "type": "INSTANCE",
+                    "w": 16,
+                    "h": 16,
+                    "x": -4164,
+                    "y": 155,
+                    "fill": null,
+                    "radius": null,
+                    "fontSize": null,
+                    "fontWeight": null
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

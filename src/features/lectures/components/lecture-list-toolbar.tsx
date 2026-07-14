@@ -1,0 +1,114 @@
+"use client";
+
+import { Plus, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+
+import { AdminButton } from "@/components/admin/ui/admin-button";
+import { AdminInput } from "@/components/admin/ui/admin-input";
+import { LECTURE_PUBLISH_FILTER_LABELS } from "@/features/lectures/constants";
+import { buildLectureListQueryString } from "@/features/lectures/lib/lecture-list-query";
+import type {
+  LectureFilterOptions,
+  LectureListQuery,
+} from "@/features/lectures/types/lecture.types";
+import { cn } from "@/lib/utils";
+
+const selectClassName =
+  "h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30";
+
+type LectureListToolbarProps = {
+  query: LectureListQuery;
+  filterOptions: LectureFilterOptions;
+  onRegisterClick?: () => void;
+  className?: string;
+};
+
+export function LectureListToolbar({
+  query,
+  filterOptions,
+  onRegisterClick,
+  className,
+}: LectureListToolbarProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const search = String(formData.get("search") ?? "").trim();
+    const courseId = String(formData.get("courseId") ?? "").trim();
+    const publish = String(
+      formData.get("publish") ?? "",
+    ) as LectureListQuery["publish"];
+
+    startTransition(() => {
+      router.push(
+        `/admin/lectures${buildLectureListQueryString(
+          { page: 1, search, courseId, publish },
+          query,
+        )}`,
+      );
+    });
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between",
+        className,
+      )}
+    >
+      <form
+        className="flex flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center"
+        onSubmit={handleSearchSubmit}
+      >
+        <select
+          name="courseId"
+          defaultValue={query.courseId}
+          className={selectClassName}
+          disabled={isPending}
+        >
+          <option value="">전체 과정</option>
+          {filterOptions.courses.map((course) => (
+            <option key={course.id} value={course.id}>
+              {course.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          name="publish"
+          defaultValue={query.publish}
+          className={selectClassName}
+          disabled={isPending}
+        >
+          <option value="">전체 상태</option>
+          {Object.entries(LECTURE_PUBLISH_FILTER_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+
+        <AdminInput
+          name="search"
+          variant="outline"
+          defaultValue={query.search}
+          placeholder="강의명, 설명으로 검색"
+          className="sm:max-w-xs"
+        />
+
+        <AdminButton type="submit" disabled={isPending}>
+          <Search className="size-4" />
+          검색
+        </AdminButton>
+      </form>
+
+      <AdminButton type="button" onClick={onRegisterClick}>
+        <Plus className="size-4" />
+        강의등록
+      </AdminButton>
+    </div>
+  );
+}

@@ -1,0 +1,197 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-07-14T09:01:24.960Z",
+  "activeFeatures": [
+    "signup",
+    "auth",
+    "home",
+    "enrollment"
+  ],
+  "primaryFeature": "signup",
+  "features": {
+    "signup": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-13T09:27:31.505Z",
+        "lastUpdated": "2026-07-14T09:00:59.312Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/signup/page.tsx"
+    },
+    "auth": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-13T09:31:41.446Z",
+        "lastUpdated": "2026-07-14T09:01:12.601Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/auth/student-login-form.tsx"
+    },
+    "home": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-13T09:31:48.504Z",
+        "lastUpdated": "2026-07-14T09:01:06.849Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/home/Hero.tsx"
+    },
+    "enrollment": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-14T08:53:01.386Z",
+        "lastUpdated": "2026-07-14T09:01:24.960Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/enrollment/enrollment-page.tsx"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-07-07T05:18:58.673Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-07-14T09:01:24.960Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-07-13T09:27:31.505Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:27:37.817Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:27:42.633Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:27:58.382Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:28:06.794Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:28:11.646Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:28:18.534Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:31:41.446Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:31:48.504Z",
+      "feature": "home",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:31:59.119Z",
+      "feature": "home",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-13T09:32:12.213Z",
+      "feature": "home",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T08:52:45.318Z",
+      "feature": "home",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T08:52:51.849Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T08:53:01.386Z",
+      "feature": "enrollment",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T09:00:46.900Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T09:00:55.010Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T09:00:59.312Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T09:01:06.849Z",
+      "feature": "home",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T09:01:12.601Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-14T09:01:24.960Z",
+      "feature": "enrollment",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
+}
