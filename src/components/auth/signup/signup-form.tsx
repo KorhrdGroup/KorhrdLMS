@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import {
@@ -15,6 +16,11 @@ import {
   SIGNUP_JOIN_PATHS,
   SIGNUP_PHONE_PREFIXES,
 } from "@/components/auth/signup/signup-form-data";
+import {
+  checkLoginIdDuplicateAction,
+  createMemberAction,
+} from "@/features/members/actions/member-registration.actions";
+import type { MemberRegistrationInput } from "@/features/members/types/member-registration.types";
 import { cn } from "@/lib/utils";
 
 export function SignupForm() {
@@ -39,6 +45,11 @@ export function SignupForm() {
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [loginIdVerified, setLoginIdVerified] = useState(false);
+  const [loginIdAvailable, setLoginIdAvailable] = useState<boolean | null>(null);
+  const [isCheckingLoginId, setIsCheckingLoginId] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!toastMessage) return;
@@ -47,18 +58,106 @@ export function SignupForm() {
     return () => window.clearTimeout(timer);
   }, [toastMessage]);
 
-  function handleCheckDuplicate() {
+  async function handleCheckDuplicate() {
     if (!loginId.trim()) {
       setLoginIdMessage("아이디를 입력해주세요.");
+      setLoginIdAvailable(false);
+      setLoginIdVerified(false);
       return;
     }
 
-    setLoginIdMessage("사용 가능한 아이디입니다.");
+    setIsCheckingLoginId(true);
+    try {
+      const result = await checkLoginIdDuplicateAction(loginId);
+      setLoginIdMessage(result.message);
+      setLoginIdAvailable(result.available);
+      setLoginIdVerified(result.available);
+    } catch {
+      setLoginIdMessage("중복확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      setLoginIdAvailable(false);
+      setLoginIdVerified(false);
+    } finally {
+      setIsCheckingLoginId(false);
+    }
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function buildBirthDate() {
+    if (!birthYear || !birthMonth || !birthDay) return "";
+    return `${birthYear}-${birthMonth}-${birthDay}`;
+  }
+
+  function buildEmail() {
+    const local = emailLocal.trim();
+    const domain = (emailDomain === "custom" ? emailCustomDomain : emailDomain).trim();
+    if (!local || !domain) return "";
+    return `${local}@${domain}`;
+  }
+
+  function buildPhone() {
+    const middle = phoneMiddle.trim();
+    const last = phoneLast.trim();
+    if (!middle || !last) return "";
+    return `${phonePrefix}-${middle}-${last}`;
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setToastMessage("회원가입 신청이 접수되었습니다.");
+    if (isSubmitting) return;
+
+    if (!loginIdVerified) {
+      setToastMessage("아이디 중복확인을 완료해주세요.");
+      return;
+    }
+
+    if (!termsAgreed || !privacyAgreed) {
+      setToastMessage("필수 약관에 동의해주세요.");
+      return;
+    }
+
+    const input: MemberRegistrationInput = {
+      name,
+      residentRegistrationNumber: "",
+      birthDate: buildBirthDate(),
+      calendarType,
+      loginId,
+      password,
+      passwordConfirm,
+      email: buildEmail(),
+      tel: "",
+      phone: buildPhone(),
+      postalCode: "",
+      address: "",
+      addressDetail: "",
+      graduatedSchool: "",
+      schoolName: "",
+      majorName: "",
+      desiredDegree: "",
+      desiredMajorName: "",
+      joinPath: joinPathOther.trim() || joinPath,
+      occupation: "",
+      degreePurpose: "",
+      referrerLoginId: partnerCode,
+    };
+
+    setIsSubmitting(true);
+    try {
+      const result = await createMemberAction(input, loginIdVerified);
+      if (!result.success) {
+        setToastMessage(result.message);
+        if (result.field === "loginId") {
+          setLoginIdVerified(false);
+          setLoginIdAvailable(false);
+        }
+        return;
+      }
+
+      setToastMessage("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+      window.setTimeout(() => router.push("/login"), 1200);
+    } catch {
+      setToastMessage("회원가입 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -169,6 +268,8 @@ export function SignupForm() {
                 onChange={(event) => {
                   setLoginId(event.target.value);
                   setLoginIdMessage(null);
+                  setLoginIdVerified(false);
+                  setLoginIdAvailable(null);
                 }}
                 placeholder="아이디"
                 className={signupInputClassName}
@@ -176,20 +277,28 @@ export function SignupForm() {
               <button
                 type="button"
                 onClick={handleCheckDuplicate}
-                className="h-11 shrink-0 rounded bg-[#555] px-5 text-sm font-semibold text-white transition hover:bg-[#444] sm:h-12"
+                disabled={isCheckingLoginId}
+                className="h-11 shrink-0 rounded bg-[#555] px-5 text-sm font-semibold text-white transition hover:bg-[#444] disabled:cursor-not-allowed disabled:opacity-60 sm:h-12"
               >
-                중복확인
+                {isCheckingLoginId ? "확인 중..." : "중복확인"}
               </button>
             </div>
             {loginIdMessage ? (
-              <p className="mt-1.5 text-xs text-[#00376e]">{loginIdMessage}</p>
+              <p
+                className={cn(
+                  "mt-1.5 text-xs",
+                  loginIdAvailable === false ? "text-[#d64545]" : "text-[#00376e]",
+                )}
+              >
+                {loginIdMessage}
+              </p>
             ) : null}
           </SignupFormField>
 
           <SignupFormField
             label="비밀번호"
             htmlFor="password"
-            helpText="* 영문, 숫자 4~20자리"
+            helpText="* 영문, 숫자, 특수기호 등 4~20자 (형식 제한 없음)"
           >
             <input
               id="password"
@@ -360,9 +469,10 @@ export function SignupForm() {
 
           <button
             type="submit"
-            className="flex h-12 w-full items-center justify-center rounded-md bg-[#00376e] text-base font-semibold text-white transition hover:bg-[#2c74e4]"
+            disabled={isSubmitting}
+            className="flex h-12 w-full items-center justify-center rounded-md bg-[#00376e] text-base font-semibold text-white transition hover:bg-[#2c74e4] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            가입하기
+            {isSubmitting ? "가입 처리 중..." : "가입하기"}
           </button>
         </form>
       </div>

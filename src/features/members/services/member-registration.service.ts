@@ -53,10 +53,12 @@ export function validateMemberRegistrationInput(
     };
   }
 
-  if (input.password.length < 8) {
+  // 학점은행제 연계 가입을 위해 단순 비밀번호(예: 1234)도 허용합니다.
+  // 형식 제한 없이 길이(4~20자)만 검사합니다.
+  if (input.password.length < 4 || input.password.length > 20) {
     return {
       success: false,
-      message: "비밀번호는 8자 이상 입력해주세요.",
+      message: "비밀번호는 4~20자로 입력해주세요.",
       field: "password",
     };
   }

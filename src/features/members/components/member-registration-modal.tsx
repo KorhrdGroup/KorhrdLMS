@@ -293,7 +293,7 @@ export function MemberRegistrationModal({
               variant="outline"
               value={form.password}
               onChange={(event) => updateField("password", event.target.value)}
-              placeholder="8자 이상"
+              placeholder="4~20자"
             />
           </MemberFormField>
 

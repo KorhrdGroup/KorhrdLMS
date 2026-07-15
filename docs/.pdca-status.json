@@ -1,11 +1,13 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-07-14T09:01:24.960Z",
+  "lastUpdated": "2026-07-15T09:52:04.672Z",
   "activeFeatures": [
     "signup",
     "auth",
     "home",
-    "enrollment"
+    "enrollment",
+    "lectures",
+    "members"
   ],
   "primaryFeature": "signup",
   "features": {
@@ -18,9 +20,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-13T09:27:31.505Z",
-        "lastUpdated": "2026-07-14T09:00:59.312Z"
+        "lastUpdated": "2026-07-15T09:51:48.052Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/signup/page.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/auth/signup/signup-form.tsx"
     },
     "auth": {
       "phase": "do",
@@ -60,6 +62,32 @@
         "lastUpdated": "2026-07-14T09:01:24.960Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/enrollment/enrollment-page.tsx"
+    },
+    "lectures": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-15T09:40:33.382Z",
+        "lastUpdated": "2026-07-15T09:42:00.091Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/lectures/components/lecture-video-upload-modal.tsx"
+    },
+    "members": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-15T09:51:40.774Z",
+        "lastUpdated": "2026-07-15T09:52:04.672Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/members/components/member-registration-modal.tsx"
     }
   },
   "pipeline": {
@@ -70,7 +98,7 @@
   "session": {
     "startedAt": "2026-07-07T05:18:58.673Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-07-14T09:01:24.960Z"
+    "lastActivity": "2026-07-15T09:52:04.672Z"
   },
   "history": [
     {
@@ -190,6 +218,102 @@
     {
       "timestamp": "2026-07-14T09:01:24.960Z",
       "feature": "enrollment",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:40:33.382Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:40:44.124Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:40:54.275Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:41:07.807Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:41:14.470Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:42:00.091Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:43:08.353Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:43:17.475Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:43:35.029Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:43:42.841Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:43:51.695Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:44:01.785Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:44:13.028Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:51:40.774Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:51:48.052Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-15T09:52:04.672Z",
+      "feature": "members",
       "phase": "do",
       "action": "updated"
     }
