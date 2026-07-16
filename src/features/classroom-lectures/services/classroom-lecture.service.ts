@@ -220,6 +220,11 @@ export async function getClassroomLectureDetail(
   const prev = sessions.find((session) => session.order === order - 1);
   const next = sessions.find((session) => session.order === order + 1);
 
+  const statusMap = await getSessionStatusMap(
+    access.enrollmentId,
+    sessions.map((session) => session.id),
+  );
+
   return {
     courseId: access.course.id,
     courseCode: access.course.code,
@@ -233,6 +238,10 @@ export async function getClassroomLectureDetail(
     },
     prevOrder: prev ? prev.order : null,
     nextOrder: next ? next.order : null,
+    sessions: sessions.map((session) => ({
+      ...session,
+      status: session.id === target.id ? status : statusMap.get(session.id) ?? "not_started",
+    })),
   };
 }
 

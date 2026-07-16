@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 
+import { logoutAdminAction } from "@/features/admin-auth/actions/admin-auth.actions";
+
 export type AdminUser = {
   name: string;
   email: string;
@@ -55,8 +57,8 @@ export function AdminLayoutProvider({
   }, []);
 
   const logout = useCallback(() => {
-    // Auth 연동 전 placeholder
-    window.location.href = "/admin/login";
+    // Supabase Auth 세션 종료 후 서버 액션이 /admin/login으로 redirect합니다.
+    void logoutAdminAction();
   }, []);
 
   const value = useMemo(

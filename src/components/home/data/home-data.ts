@@ -36,7 +36,12 @@ export type HeroSlide = {
   ministry: string;
 };
 
-export type QuickMenuItem = { id: string; label: string; icon: LucideIcon; href: string };
+export type QuickMenuItem = {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  href: string;
+};
 
 export type CategoryItem = { id: string; label: string; icon: LucideIcon };
 
@@ -50,9 +55,18 @@ export type CourseCardItem = {
 
 export type NoticeItem = { id: string; title: string; date: string };
 
-export type FaqItem = { id: string; question: string; links?: { label: string; href: string }[] };
+export type FaqItem = {
+  id: string;
+  question: string;
+  links?: { label: string; href: string }[];
+};
 
-export type QuickLinkItem = { id: string; label: string; icon: LucideIcon; href: string };
+export type QuickLinkItem = {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  href: string;
+};
 
 export type PartnerLogo = { id: string; label: string };
 
@@ -61,7 +75,6 @@ export type FooterLink = { label: string; href: string; emphasis?: boolean };
 export type FamilySite = { label: string; href: string };
 
 export const HOME_NAV_ITEMS: HomeNavItem[] = [
-  { label: "교육원소개", href: "#" },
   { label: "수강신청", href: "/enrollment" },
   { label: "자격증발급신청", href: "/certificate/apply" },
   { label: "공지사항", href: "/notice" },
@@ -230,7 +243,11 @@ export const NOTICE_ITEMS: NoticeItem[] = [
 ];
 
 export const CENTER_NEWS_ITEMS: NoticeItem[] = [
-  { id: "1", title: "2026년 교육원 우수수강생 시상식 안내", date: "2024.11.12" },
+  {
+    id: "1",
+    title: "2026년 교육원 우수수강생 시상식 안내",
+    date: "2024.11.12",
+  },
   { id: "2", title: "설 연휴 고객센터 운영시간 안내", date: "2024.11.08" },
   { id: "3", title: "겨울학기 특별할인 이벤트 진행중", date: "2024.11.05" },
   { id: "4", title: "모바일 학습 앱 업데이트 안내", date: "2024.10.28" },

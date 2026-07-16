@@ -14,7 +14,7 @@ export function ClassroomCourseShell({
   slug,
   pageTitle,
   breadcrumbLabel,
-  activeMenuId = "exam",
+  activeMenuId = "lecture",
   children,
 }: {
   courseTitle: string;

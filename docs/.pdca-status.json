@@ -1,13 +1,21 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-07-15T09:52:04.672Z",
+  "lastUpdated": "2026-07-16T03:24:42.579Z",
   "activeFeatures": [
     "signup",
     "auth",
     "home",
     "enrollment",
     "lectures",
-    "members"
+    "members",
+    "admin-auth",
+    "hanpyeong-lms-main",
+    "(app)",
+    "admin",
+    "layout",
+    "classroom-lectures",
+    "[slug]",
+    "classroom"
   ],
   "primaryFeature": "signup",
   "features": {
@@ -88,6 +96,110 @@
         "lastUpdated": "2026-07-15T09:52:04.672Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/members/components/member-registration-modal.tsx"
+    },
+    "admin-auth": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T01:54:17.936Z",
+        "lastUpdated": "2026-07-16T02:25:31.519Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/admin-auth/actions/admin-auth.actions.ts"
+    },
+    "hanpyeong-lms-main": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T01:54:31.435Z",
+        "lastUpdated": "2026-07-16T01:54:31.435Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/proxy.ts"
+    },
+    "(app)": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T01:54:50.420Z",
+        "lastUpdated": "2026-07-16T01:54:50.420Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/admin/(app)/layout.tsx"
+    },
+    "admin": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T01:55:02.035Z",
+        "lastUpdated": "2026-07-16T01:55:18.308Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/login-form.tsx"
+    },
+    "layout": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T01:55:25.857Z",
+        "lastUpdated": "2026-07-16T01:55:33.739Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/layout/admin-layout-provider.tsx"
+    },
+    "classroom-lectures": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T02:33:00.967Z",
+        "lastUpdated": "2026-07-16T02:33:12.318Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/classroom-lectures/services/classroom-lecture.service.ts"
+    },
+    "[slug]": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T02:33:24.570Z",
+        "lastUpdated": "2026-07-16T02:33:24.570Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/classroom/[slug]/page.tsx"
+    },
+    "classroom": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T02:33:44.698Z",
+        "lastUpdated": "2026-07-16T03:24:42.579Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/classroom/ClassroomCourseShell.tsx"
     }
   },
   "pipeline": {
@@ -98,7 +210,7 @@
   "session": {
     "startedAt": "2026-07-07T05:18:58.673Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-07-15T09:52:04.672Z"
+    "lastActivity": "2026-07-16T03:24:42.579Z"
   },
   "history": [
     {
@@ -314,6 +426,132 @@
     {
       "timestamp": "2026-07-15T09:52:04.672Z",
       "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:54:17.936Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:54:31.435Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:54:50.420Z",
+      "feature": "(app)",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:55:02.035Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:55:11.109Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:55:18.308Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:55:25.857Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T01:55:33.739Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:10:45.890Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:25:31.519Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:33:00.967Z",
+      "feature": "classroom-lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:33:12.318Z",
+      "feature": "classroom-lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:33:24.570Z",
+      "feature": "[slug]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:33:44.698Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:33:53.651Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:34:05.956Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:34:13.904Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:34:25.685Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T02:34:58.820Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T03:24:31.219Z",
+      "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T03:24:42.579Z",
+      "feature": "classroom",
       "phase": "do",
       "action": "updated"
     }

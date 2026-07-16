@@ -37,4 +37,6 @@ export type ClassroomLectureDetail = {
   session: ClassroomLectureSession;
   prevOrder: number | null;
   nextOrder: number | null;
+  /** 플레이어 화면의 차시 목록 패널용 전체 차시(상태 포함). */
+  sessions: ClassroomLectureSession[];
 };

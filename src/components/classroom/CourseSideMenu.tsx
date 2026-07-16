@@ -7,22 +7,24 @@ import { figma, figmaClass } from "@/components/home/home-design";
 import { QuickContactPanel } from "@/components/shared/QuickContactPanel";
 import { cn } from "@/lib/utils";
 
-export type CourseMenuId = "exam" | "grades" | "materials" | "notices";
+export type CourseMenuId = "lecture" | "exam" | "grades" | "materials" | "notices";
 
 /**
- * Course-specific left menu shown on 강의 목록/출석, 시험, 성적보기,
+ * Course-specific left menu shown on 강의(동영상 학습), 시험, 성적보기,
  * 학습자료실, 공지사항 and other course sub pages.
  */
 export function CourseSideMenu({
   courseTitle,
   slug,
-  activeId = "exam",
+  activeId = "lecture",
 }: {
   courseTitle: string;
   slug: string;
   activeId?: CourseMenuId;
 }) {
   const items: { id: CourseMenuId; label: string; href?: string }[] = [
+    // /classroom/[slug]는 이어서 볼 차시(첫 미완료 차시)의 플레이어로 redirect됩니다.
+    { id: "lecture", label: "강의보기", href: `/classroom/${slug}` },
     { id: "exam", label: `${courseTitle} 시험`, href: `/classroom/${slug}/exam` },
     { id: "grades", label: "성적보기", href: `/classroom/${slug}/grades` },
     { id: "materials", label: "학습자료실", href: `/classroom/${slug}/materials` },

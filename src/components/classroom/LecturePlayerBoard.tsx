@@ -132,7 +132,6 @@ export function LecturePlayerBoard({
 
       <div className={cn("overflow-hidden border", figmaClass.roundedCard, figmaClass.borderDefault)}>
         {hasVideo ? (
-          // eslint-disable-next-line jsx-a11y/media-has-caption
           <video
             key={session.id}
             src={session.videoUrl ?? undefined}
@@ -256,12 +255,12 @@ export function LecturePlayerBoard({
         </div>
 
         <Link
-          href={`/classroom/${slug}`}
+          href="/classroom"
           className="flex h-10 items-center justify-center gap-1.5 rounded-lg px-4 text-[13px] font-bold text-white transition-all duration-200 hover:brightness-110"
           style={{ backgroundColor: figma.colors.primary }}
         >
           <ListVideo className="size-4" />
-          강의목록으로 돌아가기
+          내 강의실
         </Link>
       </div>
     </div>

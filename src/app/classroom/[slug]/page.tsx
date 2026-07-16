@@ -32,5 +32,14 @@ export default async function Page({ params }: PageProps) {
     course = null;
   }
 
+  // 차시 목록 페이지를 거치지 않고 바로 플레이어로 이동합니다.
+  // 이어서 볼 차시(첫 미완료 차시, 전부 완료면 1차시)로 보내며,
+  // 차시가 아직 없는 과정만 기존 안내 화면을 그대로 보여줍니다.
+  if (course && course.sessions.length > 0) {
+    const target =
+      course.sessions.find((session) => session.status !== "completed") ?? course.sessions[0];
+    redirect(`/classroom/${slug}/lecture/${target.order}`);
+  }
+
   return <ClassroomCoursePage slug={slug} course={course} />;
 }
