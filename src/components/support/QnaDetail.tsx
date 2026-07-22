@@ -1,24 +1,16 @@
-"use client";
-
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import { figma, figmaClass } from "@/components/home/home-design";
-import { getTicketById, getTicketStatusLabel, type SupportTicket } from "@/lib/support/ticket-store";
+import type { SupportQnaItem } from "@/features/support-qna/services/support-qna.service";
 import { cn } from "@/lib/utils";
 
-export function QnaDetail({ id }: { id: string }) {
-  const [ticket, setTicket] = useState<SupportTicket | null | undefined>(undefined);
+function getStatusLabel(status: SupportQnaItem["status"]) {
+  return status === "answered" ? "답변완료" : "대기중";
+}
 
-  useEffect(() => {
-    setTicket(getTicketById(id) ?? null);
-  }, [id]);
-
-  if (ticket === undefined) {
-    return <div className="min-w-0 flex-1" />;
-  }
-
+/** 상세 데이터는 서버(board_posts)에서 조회해 prop으로 전달받습니다. */
+export function QnaDetail({ ticket }: { ticket: SupportQnaItem | null }) {
   if (ticket === null) {
     return (
       <div className="min-w-0 flex-1">
@@ -58,12 +50,12 @@ export function QnaDetail({ id }: { id: string }) {
                 answered ? "bg-[#e5edff] text-[#00376e]" : "bg-[#f0f0f0] text-[#656565]",
               )}
             >
-              {getTicketStatusLabel(ticket.status)}
+              {getStatusLabel(ticket.status)}
             </span>
             <h3 className={cn("text-[19px] font-bold sm:text-[21px]", figmaClass.textPrimary)}>{ticket.title}</h3>
           </div>
           <p className={cn("mt-2 text-[13px]", figmaClass.textPlaceholder)}>
-            작성자 {ticket.userName} · 등록일 {ticket.createdAt}
+            작성자 {ticket.authorName} · 등록일 {ticket.createdAt}
           </p>
         </div>
 

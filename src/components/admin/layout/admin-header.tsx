@@ -26,7 +26,7 @@ export function AdminHeader() {
   const activeNav = resolveActiveAdminNav(pathname);
 
   return (
-    <header className="no-print flex h-14 shrink-0 items-center gap-3 border-b border-[#E5E7EB] bg-white px-4 sm:px-6">
+    <header className="no-print flex h-14 shrink-0 items-center gap-3 border-b border-[#ececec] bg-white px-4 sm:px-6">
       <AdminButton
         variant="ghost"
         size="icon"
@@ -37,7 +37,8 @@ export function AdminHeader() {
         <Menu className="size-5" />
       </AdminButton>
 
-      <h1 className="min-w-0 truncate text-[15px] font-bold tracking-[-0.01em] text-[#111827]">
+      <span className="size-1.5 shrink-0 rounded-full bg-[#3182f6]" aria-hidden />
+      <h1 className="min-w-0 truncate text-[15px] font-bold tracking-[-0.01em] text-[#1a1a1a]">
         {activeNav?.group.label ?? "대시보드"}
       </h1>
 
@@ -58,11 +59,11 @@ export function AdminHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger
             className={cn(
-              "inline-flex h-9 items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-2.5 text-[13px] font-medium text-[#111827] transition-colors",
-              "hover:bg-[#F0F0F0] focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30 focus-visible:outline-none",
+              "inline-flex h-9 items-center gap-2 rounded-lg border border-[#dddddd] bg-white px-2.5 text-[13px] font-medium text-[#1a1a1a] transition-colors",
+              "hover:bg-[#f0f0f0] focus-visible:ring-2 focus-visible:ring-[#3182f6]/30 focus-visible:outline-none",
             )}
           >
-            <span className="flex size-6 items-center justify-center rounded-full bg-[#EFF6FF] text-xs font-bold text-[#3B82F6]">
+            <span className="flex size-6 items-center justify-center rounded-full bg-[#3182f6] text-xs font-bold text-white">
               {adminUser.name.slice(0, 1)}
             </span>
             <span className="hidden sm:inline">프로필</span>

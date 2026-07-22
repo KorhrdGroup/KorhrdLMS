@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { ADMIN_SESSION_MARKER_COOKIE } from "@/features/admin-auth/constants";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 
 /**
@@ -39,14 +40,19 @@ export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isLoginPage = pathname === "/admin/login";
 
-  if (!user && !isLoginPage) {
+  // 24시간 세션 마커. Supabase 세션은 자동 갱신되므로, 이 마커가 만료되면(24시간 경과)
+  // 유효한 세션이라도 재로그인을 요구합니다.
+  const hasSessionMarker = Boolean(request.cookies.get(ADMIN_SESSION_MARKER_COOKIE)?.value);
+  const isAuthed = Boolean(user) && hasSessionMarker;
+
+  if (!isAuthed && !isLoginPage) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/admin/login";
     loginUrl.search = "";
     return NextResponse.redirect(loginUrl);
   }
 
-  if (user && isLoginPage) {
+  if (isAuthed && isLoginPage) {
     const adminUrl = request.nextUrl.clone();
     adminUrl.pathname = "/admin";
     adminUrl.search = "";

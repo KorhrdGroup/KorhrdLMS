@@ -3,6 +3,10 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import {
+  ADMIN_SESSION_MARKER_COOKIE,
+  ADMIN_SESSION_MAX_AGE_SECONDS,
+} from "@/features/admin-auth/constants";
 import { createClient } from "@/lib/supabase/server";
 
 /** 로그아웃 시 접속기록의 logged_out_at을 채우기 위한 현재 접속기록 id 쿠키 */
@@ -122,11 +126,24 @@ export async function loginAdminAction(input: { email: string; password: string 
     (data.user?.user_metadata?.name as string | undefined) ?? "관리자";
   await recordAdminAccess(email, displayName);
 
+  // 24시간 세션 만료 마커. 이 쿠키가 만료되면 proxy가 재로그인을 요구합니다.
+  const cookieStore = await cookies();
+  cookieStore.set(ADMIN_SESSION_MARKER_COOKIE, "1", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
+  });
+
   redirect("/admin");
 }
 
 export async function logoutAdminAction() {
   await closeAdminAccessLog();
+
+  const cookieStore = await cookies();
+  cookieStore.delete(ADMIN_SESSION_MARKER_COOKIE);
 
   const supabase = await createClient();
   await supabase.auth.signOut();

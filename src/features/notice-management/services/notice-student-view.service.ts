@@ -19,10 +19,12 @@ export type SiteNoticeListItem = {
   title: string;
   date: string;
   body: string;
+  /** 첨부파일(있을 때만). 학생 화면에서 다운로드 링크로 노출합니다. */
+  attachment: { fileName: string; fileSizeLabel: string; fileUrl: string } | null;
 };
 
 export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]> {
-  const notices = listPublishedNotices();
+  const notices = await listPublishedNotices();
 
   const sorted = [...notices].sort((a, b) => {
     if (a.isPinned !== b.isPinned) {
@@ -38,6 +40,14 @@ export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]
     title: notice.title,
     date: notice.createdAt.slice(0, 10),
     body: notice.content,
+    attachment:
+      notice.attachment && notice.attachment.fileUrl
+        ? {
+            fileName: notice.attachment.fileName,
+            fileSizeLabel: notice.attachment.fileSizeLabel,
+            fileUrl: notice.attachment.fileUrl,
+          }
+        : null,
   }));
 }
 
@@ -55,7 +65,7 @@ export type ClassroomNoticeItem = {
  * 공통으로 노출하고 싶을 때 사용할 수 있는 함수입니다.
  */
 export async function getPublishedNoticesForClassroom(): Promise<ClassroomNoticeItem[]> {
-  const notices = listPublishedNotices();
+  const notices = await listPublishedNotices();
 
   const sorted = [...notices].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 import { QnaDetailPage } from "@/components/support/qna-detail-page";
-import { requireMockLogin } from "@/lib/mock-auth";
+import { getMySupportQnaDetail } from "@/features/support-qna/services/support-qna.service";
+import { requireStudentLogin } from "@/lib/mock-auth-server";
 
 export const metadata: Metadata = {
   title: "1:1 상담 상세",
@@ -14,7 +15,14 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-  requireMockLogin(`/support/qna/${id}`);
+  const member = await requireStudentLogin(`/support/qna/${id}`);
 
-  return <QnaDetailPage id={id} />;
+  let ticket: Awaited<ReturnType<typeof getMySupportQnaDetail>> = null;
+  try {
+    ticket = await getMySupportQnaDetail(member.id, id);
+  } catch {
+    ticket = null;
+  }
+
+  return <QnaDetailPage ticket={ticket} />;
 }

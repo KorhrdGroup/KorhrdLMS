@@ -22,6 +22,8 @@ export type NoticeListItem = {
   title: string;
   date: string;
   body: string;
+  /** 첨부파일(있을 때만). 관리자 공지사항에서 업로드한 파일입니다. */
+  attachment?: { fileName: string; fileSizeLabel: string; fileUrl: string } | null;
 };
 
 export const NOTICE_LIST_ITEMS: NoticeListItem[] = [

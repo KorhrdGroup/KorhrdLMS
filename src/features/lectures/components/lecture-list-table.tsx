@@ -1,18 +1,10 @@
 "use client";
 
-import { ListOrdered, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { LectureStatusBadge } from "@/features/lectures/components/lecture-status-badge";
+import { M } from "@/features/courses/lib/course-design";
 import type { LectureListItem } from "@/features/lectures/types/lecture.types";
 import type { PaginatedResult } from "@/lib/shared/list-query";
 
@@ -22,82 +14,111 @@ type LectureListTableProps = {
   onDeleteClick?: (lecture: LectureListItem) => void;
 };
 
-export function LectureListTable({
-  result,
-  onEditClick,
-  onDeleteClick,
-}: LectureListTableProps) {
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+export function LectureListTable({ result, onEditClick, onDeleteClick }: LectureListTableProps) {
   const router = useRouter();
 
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 220, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 강의가 없습니다. 강의등록 버튼으로 새 강의를 추가하세요.
       </div>
     );
   }
 
   return (
-    <AdminTable>
-      <AdminTableHeader>
-        <AdminTableRow className="hover:bg-transparent">
-          <AdminTableHead>강의명</AdminTableHead>
-          <AdminTableHead>연결 과정</AdminTableHead>
-          <AdminTableHead className="w-24 text-center">총 차시 수</AdminTableHead>
-          <AdminTableHead className="w-24 text-center">상태</AdminTableHead>
-          <AdminTableHead className="w-32 text-center">차시관리</AdminTableHead>
-          <AdminTableHead className="w-44 text-right">관리</AdminTableHead>
-        </AdminTableRow>
-      </AdminTableHeader>
-      <AdminTableBody>
-        {result.data.map((lecture) => (
-          <AdminTableRow key={lecture.id}>
-            <AdminTableCell className="font-medium">{lecture.title}</AdminTableCell>
-            <AdminTableCell className="text-[#6B7280]">
-              {lecture.courseName}
-            </AdminTableCell>
-            <AdminTableCell className="text-center text-[#6B7280]">
-              {lecture.sessionCount}
-            </AdminTableCell>
-            <AdminTableCell className="text-center">
-              <LectureStatusBadge isPublished={lecture.isPublished} />
-            </AdminTableCell>
-            <AdminTableCell className="text-center">
-              <AdminButton
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/admin/lectures/${lecture.id}/curriculum`)}
-              >
-                <ListOrdered className="size-4" />
-                차시관리
-              </AdminButton>
-            </AdminTableCell>
-            <AdminTableCell>
-              <div className="flex justify-end gap-2">
-                <AdminButton
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 860 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={th}>강의명</th>
+            <th style={th}>연결 과정</th>
+            <th style={{ ...th, textAlign: "center", width: 100 }}>총 차시 수</th>
+            <th style={{ ...th, textAlign: "center", width: 90 }}>상태</th>
+            <th style={{ ...th, textAlign: "center", width: 120 }}>차시관리</th>
+            <th style={{ ...th, textAlign: "right", width: 130 }}>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          {result.data.map((lecture) => (
+            <tr key={lecture.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{lecture.title}</td>
+              <td style={td}>{lecture.courseName}</td>
+              <td style={{ ...td, textAlign: "center" }}>{lecture.sessionCount}</td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <LectureStatusBadge isPublished={lecture.isPublished} />
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button
                   type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => onEditClick?.(lecture)}
+                  onClick={() => router.push(`/admin/lectures/${lecture.id}/curriculum`)}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 7,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    background: M.accent,
+                    color: "#fff",
+                    border: "none",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  <Pencil className="size-4" />
-                  수정
-                </AdminButton>
-                <AdminButton
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => onDeleteClick?.(lecture)}
-                >
-                  <Trash2 className="size-4" />
-                  삭제
-                </AdminButton>
-              </div>
-            </AdminTableCell>
-          </AdminTableRow>
-        ))}
-      </AdminTableBody>
-    </AdminTable>
+                  차시관리
+                </button>
+              </td>
+              <td style={{ ...td, textAlign: "right" }}>
+                <div style={{ display: "inline-flex", gap: 6, justifyContent: "flex-end" }}>
+                  <button
+                    type="button"
+                    onClick={() => onEditClick?.(lecture)}
+                    style={{
+                      padding: "6px 10px",
+                      borderRadius: 7,
+                      fontSize: 12,
+                      background: "#fff",
+                      border: `1px solid ${M.border}`,
+                      color: M.text,
+                      cursor: "pointer",
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDeleteClick?.(lecture)}
+                    style={{
+                      padding: "6px 10px",
+                      borderRadius: 7,
+                      fontSize: 12,
+                      background: "#fff",
+                      border: "1px solid #e7c3c3",
+                      color: "#c0504d",
+                      cursor: "pointer",
+                    }}
+                  >
+                    삭제
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

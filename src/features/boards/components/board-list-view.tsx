@@ -18,7 +18,6 @@ import { BoardFormModal } from "@/features/boards/components/board-form-modal";
 import { BoardListTable } from "@/features/boards/components/board-list-table";
 import { BoardListToolbar } from "@/features/boards/components/board-list-toolbar";
 import { BoardReplyModal } from "@/features/boards/components/board-reply-modal";
-import { BoardSubNav } from "@/features/boards/components/board-sub-nav";
 import { BOARD_TYPE_LABELS } from "@/features/boards/constants";
 import { buildBoardPageHref } from "@/features/boards/lib/board-list-query";
 import type { BoardListItem, BoardListQuery } from "@/features/boards/types/board.types";
@@ -85,8 +84,6 @@ export function BoardListView({ boardType, result, query }: BoardListViewProps) 
         title="게시판관리"
         description={`${boardLabel} 게시글을 조회하고 관리할 수 있습니다.`}
       />
-
-      <BoardSubNav />
 
       {successMessage ? (
         <p className="rounded-lg bg-[#ECFDF5] px-4 py-3 text-sm text-[#047857]">

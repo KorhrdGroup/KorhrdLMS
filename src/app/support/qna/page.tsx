@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 import { QnaPage } from "@/components/support/qna-page";
-import { requireMockLogin } from "@/lib/mock-auth";
+import { getMySupportQnaList } from "@/features/support-qna/services/support-qna.service";
+import { requireStudentLogin } from "@/lib/mock-auth-server";
 
 export const metadata: Metadata = {
   title: "1:1 상담",
@@ -9,12 +10,18 @@ export const metadata: Metadata = {
 };
 
 /**
- * Mock access control: 1:1 상담 is member-only in the existing LMS.
- * Logged-out visitors are bounced to /login with a redirect target so the
- * real auth flow (once connected) can send them straight back here.
+ * 1:1 상담은 회원 전용입니다. 실제 로그인 세션을 확인하고,
+ * 본인이 작성한 상담글(board_posts, board_type='consultation')만 조회합니다.
  */
-export default function Page() {
-  requireMockLogin("/support/qna");
+export default async function Page() {
+  const member = await requireStudentLogin("/support/qna");
 
-  return <QnaPage />;
+  let tickets: Awaited<ReturnType<typeof getMySupportQnaList>> = [];
+  try {
+    tickets = await getMySupportQnaList(member.id);
+  } catch {
+    tickets = [];
+  }
+
+  return <QnaPage tickets={tickets} />;
 }

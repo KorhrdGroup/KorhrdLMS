@@ -1,17 +1,9 @@
 "use client";
 
-import { ArrowDown, ArrowUp, CheckCircle2, Pencil, Trash2, UploadCloud } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { formatVideoDuration } from "@/features/lectures/constants";
+import { M } from "@/features/courses/lib/course-design";
 import type { LectureSession } from "@/features/lectures/types/lecture.types";
 
 type LectureCurriculumTableProps = {
@@ -21,6 +13,31 @@ type LectureCurriculumTableProps = {
   onMoveClick?: (session: LectureSession, direction: "up" | "down") => void;
   onDeleteClick?: (session: LectureSession) => void;
   isMoving?: boolean;
+};
+
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+const smallBtn: CSSProperties = {
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  background: "#fff",
+  border: `1px solid ${M.border}`,
+  color: M.text,
+  cursor: "pointer",
 };
 
 export function LectureCurriculumTable({
@@ -33,115 +50,108 @@ export function LectureCurriculumTable({
 }: LectureCurriculumTableProps) {
   if (sessions.length === 0) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 차시가 없습니다. 차시 추가 버튼으로 첫 차시를 등록하세요.
       </div>
     );
   }
 
   return (
-    <AdminTable>
-      <AdminTableHeader>
-        <AdminTableRow className="hover:bg-transparent">
-          <AdminTableHead className="w-16">순서</AdminTableHead>
-          <AdminTableHead>차시명</AdminTableHead>
-          <AdminTableHead className="w-28 text-center">학습시간</AdminTableHead>
-          <AdminTableHead className="w-36 text-center">영상</AdminTableHead>
-          <AdminTableHead className="w-32 text-center">순서 변경</AdminTableHead>
-          <AdminTableHead className="w-24 text-center">수정</AdminTableHead>
-          <AdminTableHead className="w-24 text-center">삭제</AdminTableHead>
-        </AdminTableRow>
-      </AdminTableHeader>
-      <AdminTableBody>
-        {sessions.map((session, index) => (
-          <AdminTableRow key={session.id}>
-            <AdminTableCell className="text-[#6B7280]">
-              {session.order}차시
-            </AdminTableCell>
-            <AdminTableCell className="font-medium">{session.title}</AdminTableCell>
-            <AdminTableCell className="text-center text-[#6B7280]">
-              {session.durationMinutes != null ? `${session.durationMinutes}분` : "-"}
-            </AdminTableCell>
-            <AdminTableCell className="text-center">
-              {session.videoUrl ? (
-                <button
-                  type="button"
-                  onClick={() => onVideoClick?.(session)}
-                  className="inline-flex flex-col items-center gap-0.5 rounded-md bg-[#ECFDF5] px-2 py-1 text-left transition-colors hover:bg-[#D1FAE5]"
-                  title={session.videoFileName ?? session.videoUrl}
-                >
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#047857]">
-                    <CheckCircle2 className="size-3.5" />
-                    업로드완료
-                  </span>
-                  <span className="max-w-[110px] truncate text-[10px] text-[#059669]">
-                    {session.videoFileName ?? "외부 URL"}
-                    {session.videoDurationSeconds
-                      ? ` · ${formatVideoDuration(session.videoDurationSeconds)}`
-                      : ""}
-                  </span>
-                </button>
-              ) : (
-                <AdminButton
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onVideoClick?.(session)}
-                >
-                  <UploadCloud className="size-3.5" />
-                  영상 업로드
-                </AdminButton>
-              )}
-            </AdminTableCell>
-            <AdminTableCell>
-              <div className="flex items-center justify-center gap-1">
-                <AdminButton
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  disabled={isMoving || index === 0}
-                  aria-label="위로 이동"
-                  onClick={() => onMoveClick?.(session, "up")}
-                >
-                  <ArrowUp className="size-4" />
-                </AdminButton>
-                <AdminButton
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  disabled={isMoving || index === sessions.length - 1}
-                  aria-label="아래로 이동"
-                  onClick={() => onMoveClick?.(session, "down")}
-                >
-                  <ArrowDown className="size-4" />
-                </AdminButton>
-              </div>
-            </AdminTableCell>
-            <AdminTableCell className="text-center">
-              <AdminButton
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => onEditClick?.(session)}
-              >
-                <Pencil className="size-4" />
-                수정
-              </AdminButton>
-            </AdminTableCell>
-            <AdminTableCell className="text-center">
-              <AdminButton
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={() => onDeleteClick?.(session)}
-              >
-                <Trash2 className="size-4" />
-                삭제
-              </AdminButton>
-            </AdminTableCell>
-          </AdminTableRow>
-        ))}
-      </AdminTableBody>
-    </AdminTable>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, width: 64 }}>순서</th>
+            <th style={th}>차시명</th>
+            <th style={{ ...th, textAlign: "center", width: 90 }}>학습시간</th>
+            <th style={{ ...th, textAlign: "center", width: 150 }}>영상</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>순서 변경</th>
+            <th style={{ ...th, textAlign: "right", width: 130 }}>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sessions.map((session, index) => (
+            <tr key={session.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <td style={{ ...td, color: M.mute }}>{session.order}차시</td>
+              <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{session.title}</td>
+              <td style={{ ...td, textAlign: "center" }}>
+                {session.durationMinutes != null ? `${session.durationMinutes}분` : "-"}
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                {session.videoUrl ? (
+                  <button
+                    type="button"
+                    onClick={() => onVideoClick?.(session)}
+                    title={session.videoFileName ?? session.videoUrl}
+                    style={{
+                      display: "inline-flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 2,
+                      background: M.weakBg,
+                      border: "none",
+                      borderRadius: 7,
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                      maxWidth: 140,
+                    }}
+                  >
+                    <span style={{ fontSize: 11.5, fontWeight: 700, color: M.weakFg }}>✓ 업로드완료</span>
+                    <span style={{ fontSize: 10, color: M.weakFg, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {session.videoFileName ?? "외부 URL"}
+                      {session.videoDurationSeconds ? ` · ${formatVideoDuration(session.videoDurationSeconds)}` : ""}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onVideoClick?.(session)}
+                    style={{ ...smallBtn, fontWeight: 600, color: M.accent, borderColor: "#c3dafe" }}
+                  >
+                    영상 업로드
+                  </button>
+                )}
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <div style={{ display: "inline-flex", gap: 6 }}>
+                  <button
+                    type="button"
+                    aria-label="위로 이동"
+                    disabled={isMoving || index === 0}
+                    onClick={() => onMoveClick?.(session, "up")}
+                    style={{ ...smallBtn, padding: "5px 9px", opacity: index === 0 ? 0.4 : 1, cursor: index === 0 ? "default" : "pointer" }}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="아래로 이동"
+                    disabled={isMoving || index === sessions.length - 1}
+                    onClick={() => onMoveClick?.(session, "down")}
+                    style={{ ...smallBtn, padding: "5px 9px", opacity: index === sessions.length - 1 ? 0.4 : 1, cursor: index === sessions.length - 1 ? "default" : "pointer" }}
+                  >
+                    ↓
+                  </button>
+                </div>
+              </td>
+              <td style={{ ...td, textAlign: "right" }}>
+                <div style={{ display: "inline-flex", gap: 6, justifyContent: "flex-end" }}>
+                  <button type="button" onClick={() => onEditClick?.(session)} style={smallBtn}>
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDeleteClick?.(session)}
+                    style={{ ...smallBtn, border: "1px solid #f4c9cd", color: M.danger }}
+                  >
+                    삭제
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

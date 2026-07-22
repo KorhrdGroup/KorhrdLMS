@@ -24,6 +24,10 @@
 export type NoticeAttachmentInput = {
   fileName: string;
   fileSizeLabel: string;
+  /** Supabase Storage 공개 URL. 실제 업로드가 끝난 뒤 채워집니다. */
+  fileUrl?: string | null;
+  /** Storage 오브젝트 경로(교체/삭제 정리용). */
+  storagePath?: string | null;
 };
 
 export type Notice = {

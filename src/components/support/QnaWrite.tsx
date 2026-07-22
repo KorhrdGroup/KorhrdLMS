@@ -2,17 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 import { figma, figmaClass } from "@/components/home/home-design";
-import { MOCK_USER_NAME } from "@/lib/mock-auth";
-import { createTicket } from "@/lib/support/ticket-store";
+import { createSupportQnaAction } from "@/features/support-qna/actions/support-qna.actions";
 import { cn } from "@/lib/utils";
 
-export function QnaWrite() {
+export function QnaWrite({ authorName }: { authorName: string }) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   const handleConfirm = () => {
     if (!title.trim() || !content.trim()) {
@@ -20,9 +20,27 @@ export function QnaWrite() {
       return;
     }
 
-    createTicket({ title: title.trim(), content: content.trim() });
-    window.alert("게시물 등록을 완료하였습니다.");
-    router.push("/support/qna");
+    if (isPending) return;
+
+    startTransition(async () => {
+      try {
+        const result = await createSupportQnaAction({
+          title: title.trim(),
+          content: content.trim(),
+        });
+
+        if (!result.success) {
+          window.alert(result.message);
+          return;
+        }
+
+        window.alert("게시물 등록을 완료하였습니다.");
+        router.push("/support/qna");
+        router.refresh();
+      } catch {
+        window.alert("등록 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    });
   };
 
   const handleCancel = () => {
@@ -46,7 +64,7 @@ export function QnaWrite() {
             </label>
             <input
               type="text"
-              value={MOCK_USER_NAME}
+              value={authorName}
               readOnly
               className="h-10 w-full max-w-[240px] rounded-md border bg-[#f7f8fa] px-3 text-[13px] text-[#656565]"
               style={{ borderColor: figma.colors.border }}
@@ -91,10 +109,11 @@ export function QnaWrite() {
         <button
           type="button"
           onClick={handleConfirm}
-          className="flex h-11 w-28 items-center justify-center rounded-lg text-[14px] font-bold text-white transition-all duration-200 hover:brightness-110"
+          disabled={isPending}
+          className="flex h-11 w-28 items-center justify-center rounded-lg text-[14px] font-bold text-white transition-all duration-200 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
           style={{ backgroundColor: figma.colors.primary }}
         >
-          확인
+          {isPending ? "등록 중..." : "확인"}
         </button>
         <button
           type="button"

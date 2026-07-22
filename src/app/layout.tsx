@@ -12,6 +12,11 @@ const notoSansKr = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: "한평생직업훈련 LMS",
   description: "한평생직업훈련 학습관리시스템",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

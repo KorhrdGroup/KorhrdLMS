@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { NOTICE_LIST_ITEMS, getNoticeItem } from "@/components/notice/data/notice-data";
 import { NoticeDetailPage } from "@/components/notice/notice-detail-page";
+import { getPublishedNoticesForSite } from "@/features/notice-management/services/notice-student-view.service";
 
 type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-export function generateStaticParams() {
-  return NOTICE_LIST_ITEMS.map((item) => ({ id: item.id }));
+async function findNotice(id: string) {
+  const items = await getPublishedNoticesForSite();
+  return items.find((item) => item.id === id) ?? null;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const notice = getNoticeItem(id);
+  const notice = await findNotice(id);
   return {
     title: notice ? notice.title : "공지사항",
     description: notice ? notice.body.slice(0, 80) : undefined,
@@ -23,9 +24,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-  const notice = getNoticeItem(id);
+  const notice = await findNotice(id);
+
   if (!notice) {
     notFound();
   }
+
   return <NoticeDetailPage notice={notice} />;
 }

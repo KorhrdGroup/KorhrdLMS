@@ -2,9 +2,8 @@
 
 import { useState, useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
 import { updateMemberMemoAction } from "@/features/members/actions/member-edit.actions";
-import { cn } from "@/lib/utils";
+import { M } from "@/features/members/lib/member-design";
 
 type MemberHistoryMemoCellProps = {
   memberId: string;
@@ -12,16 +11,13 @@ type MemberHistoryMemoCellProps = {
 };
 
 /**
- * 회원목록 "회원정보이력" 컬럼. 회원수정 모달을 열지 않고도 목록에서 바로
- * 관리자 메모를 입력/수정/저장할 수 있게 합니다. 회원수정 모달의 "메모"
- * 필드(members.memo)와 동일한 컬럼을 공유합니다.
+ * 회원목록 "회원정보이력" 컬럼. 목록에서 바로 관리자 메모를 입력/저장합니다.
+ * 회원수정 모달의 "메모"(members.memo)와 같은 컬럼을 공유합니다.
  */
 export function MemberHistoryMemoCell({ memberId, memo }: MemberHistoryMemoCellProps) {
   const [savedValue, setSavedValue] = useState(memo ?? "");
   const [value, setValue] = useState(memo ?? "");
-  const [feedback, setFeedback] = useState<
-    { type: "success" | "error"; text: string } | null
-  >(null);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isSaving, startSaving] = useTransition();
 
   const isDirty = value !== savedValue;
@@ -30,51 +26,66 @@ export function MemberHistoryMemoCell({ memberId, memo }: MemberHistoryMemoCellP
     setFeedback(null);
     startSaving(async () => {
       const result = await updateMemberMemoAction(memberId, value);
-
       if (!result.success) {
         setFeedback({ type: "error", text: result.message });
         return;
       }
-
       setSavedValue(value);
-      setFeedback({ type: "success", text: "저장되었습니다." });
+      setFeedback({ type: "success", text: "저장됨" });
     });
   }
 
   return (
-    <div
-      className="flex w-40 flex-col gap-1.5"
-      onClick={(event) => event.stopPropagation()}
-    >
-      <textarea
-        value={value}
-        onChange={(event) => {
-          setValue(event.target.value);
-          setFeedback(null);
-        }}
-        placeholder="관리 메모를 입력하세요"
-        rows={2}
-        className="w-full resize-y rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30"
-      />
-      <div className="flex items-center justify-between gap-2">
-        <span
-          className={cn(
-            "text-[11px]",
-            feedback?.type === "error" ? "text-[#EF4444]" : "text-[#059669]",
-          )}
-        >
-          {feedback?.text ?? "\u00A0"}
-        </span>
-        <AdminButton
+    <div onClick={(e) => e.stopPropagation()}>
+      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        <input
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setFeedback(null);
+          }}
+          placeholder="관리 메모"
+          style={{
+            flex: 1,
+            minWidth: 0,
+            padding: "7px 10px",
+            border: `1px solid ${M.line}`,
+            borderRadius: 7,
+            fontSize: 12,
+            color: M.text,
+            outline: "none",
+          }}
+        />
+        <button
           type="button"
-          size="sm"
-          className="h-7 px-2.5 text-xs"
-          disabled={!isDirty || isSaving}
           onClick={handleSave}
+          disabled={!isDirty || isSaving}
+          style={{
+            flex: "none",
+            padding: "7px 12px",
+            borderRadius: 7,
+            border: "none",
+            background: isDirty && !isSaving ? M.accent : M.hover,
+            color: isDirty && !isSaving ? "#fff" : M.body,
+            fontSize: 12,
+            cursor: isDirty && !isSaving ? "pointer" : "default",
+          }}
         >
-          {isSaving ? "저장 중..." : "저장"}
-        </AdminButton>
+          {isSaving ? "저장 중" : "저장"}
+        </button>
       </div>
+      {feedback ? (
+        <span
+          style={{
+            display: "block",
+            marginTop: 3,
+            fontSize: 11,
+            color: feedback.type === "error" ? "#ef4444" : M.accentDim,
+          }}
+        >
+          {feedback.text}
+        </span>
+      ) : null}
     </div>
   );
 }

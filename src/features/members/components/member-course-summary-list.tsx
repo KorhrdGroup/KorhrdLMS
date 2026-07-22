@@ -11,10 +11,10 @@ function badgeClassName(item: MemberCourseSummaryItem) {
   }
 
   if (item.progressRate >= 100) {
-    return "bg-[#EFF6FF] text-[#3B82F6]";
+    return "bg-[#e8f3ff] text-[#1b64da]";
   }
 
-  return "bg-[#F9FAFB] text-[#6B7280]";
+  return "bg-[#f2f4f6] text-[#4e5968]";
 }
 
 /**

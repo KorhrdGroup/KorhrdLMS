@@ -25,7 +25,7 @@ function toListItem(notice: Notice): NoticeListItem {
 export async function getNoticeList(
   query: NoticeListQuery,
 ): Promise<PaginatedResult<NoticeListItem>> {
-  let items = listNotices().map(toListItem);
+  let items = (await listNotices()).map(toListItem);
 
   if (query.publish === "published") {
     items = items.filter((item) => item.isPublished);

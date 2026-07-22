@@ -1,19 +1,15 @@
 "use client";
 
-import { Download, MessageSquare, Search, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import { AdminCheckbox } from "@/components/admin/ui/admin-checkbox";
-import { AdminInput } from "@/components/admin/ui/admin-input";
-import { MemberRestoreButton } from "@/features/members/components/member-restore-button";
+import { M } from "@/features/members/lib/member-design";
 import {
   MEMBER_SEARCH_FIELD_LABELS,
   type MemberSearchField,
 } from "@/features/members/constants";
 import { buildListQueryString, type ListQuery } from "@/lib/shared/list-query";
-import { cn } from "@/lib/utils";
 
 type MemberListToolbarProps = {
   query: ListQuery;
@@ -22,7 +18,17 @@ type MemberListToolbarProps = {
   restorableSelectedCount: number;
   onDeleteClick?: () => void;
   onRestoreClick?: () => void;
-  className?: string;
+};
+
+const inputBox: CSSProperties = {
+  height: 38,
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
 };
 
 export function MemberListToolbar({
@@ -32,7 +38,6 @@ export function MemberListToolbar({
   restorableSelectedCount,
   onDeleteClick,
   onRestoreClick,
-  className,
 }: MemberListToolbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -44,98 +49,136 @@ export function MemberListToolbar({
     const field = String(formData.get("field") ?? "all") as MemberSearchField;
 
     startTransition(() => {
-      router.push(
-        `/admin/members${buildListQueryString({ page: 1, search, field }, query)}`,
-      );
+      router.push(`/admin/members${buildListQueryString({ page: 1, search, field }, query)}`);
     });
   }
 
   function handleShowDeletedToggle(checked: boolean) {
     startTransition(() => {
-      router.push(
-        `/admin/members${buildListQueryString({ page: 1, showDeleted: checked }, query)}`,
-      );
+      router.push(`/admin/members${buildListQueryString({ page: 1, showDeleted: checked }, query)}`);
     });
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-        <form
-          className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center"
-          onSubmit={handleSearchSubmit}
-        >
-          <select
-            name="field"
-            defaultValue={query.field}
-            className="h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30"
-          >
+    <div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 16,
+          flexWrap: "wrap",
+          paddingBottom: 16,
+        }}
+      >
+        {/* 검색 */}
+        <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <select name="field" defaultValue={query.field} style={{ ...inputBox, cursor: "pointer" }}>
             {Object.entries(MEMBER_SEARCH_FIELD_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
           </select>
-
-          <AdminInput
+          <input
             name="search"
-            variant="outline"
             defaultValue={query.search}
             placeholder="검색어를 입력하세요"
-            className="sm:max-w-xs"
+            style={{ ...inputBox, width: 300 }}
           />
-
-          <AdminButton type="submit" disabled={isPending}>
-            <Search className="size-4" />
+          <button
+            type="submit"
+            disabled={isPending}
+            style={{
+              height: 38,
+              padding: "0 18px",
+              borderRadius: 8,
+              background: M.ink,
+              color: "#fff",
+              fontSize: 13,
+              fontWeight: 600,
+              border: "none",
+              cursor: isPending ? "wait" : "pointer",
+              opacity: isPending ? 0.7 : 1,
+            }}
+          >
             검색
-          </AdminButton>
+          </button>
         </form>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <label className="flex h-10 items-center gap-2 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-3 text-sm text-[#374151]">
-            <AdminCheckbox
+        {/* 액션 */}
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, color: M.body, marginRight: 6, cursor: "pointer" }}>
+            <input
+              type="checkbox"
               checked={query.showDeleted === true}
-              onChange={(event) => handleShowDeletedToggle(event.target.checked)}
+              onChange={(e) => handleShowDeletedToggle(e.target.checked)}
               aria-label="삭제회원 보기"
+              style={{ width: 14, height: 14, accentColor: M.accent }}
             />
             삭제회원 보기
           </label>
 
-          <AdminButton
-            type="button"
-            variant="destructive"
-            disabled={deletableSelectedCount === 0}
+          <ActionButton
+            label="선택 삭제"
             onClick={onDeleteClick}
-          >
-            <Trash2 className="size-4" />
-            선택 삭제
-          </AdminButton>
+            disabled={deletableSelectedCount === 0}
+            variant="outline"
+          />
           {query.showDeleted ? (
-            <MemberRestoreButton
-              disabled={restorableSelectedCount === 0}
+            <ActionButton
+              label="선택 복구"
               onClick={onRestoreClick}
+              disabled={restorableSelectedCount === 0}
+              variant="outline"
             />
           ) : null}
-          <AdminButton variant="outline" disabled title="준비 중">
-            <Download className="size-4" />
-            Excel
-          </AdminButton>
-          <AdminButton variant="outline" disabled title="준비 중">
-            <MessageSquare className="size-4" />
-            문자발송
-          </AdminButton>
+          <ActionButton label="Excel 다운로드" disabled title="준비 중" variant="outline" />
+          <ActionButton label="문자발송" disabled title="준비 중" variant="accent" />
         </div>
       </div>
 
       {selectedCount > 0 ? (
-        <p className="text-sm text-[#3B82F6]">{selectedCount}명 선택됨</p>
+        <p style={{ fontSize: 13, color: M.accent, marginTop: 4 }}>{selectedCount}명 선택됨</p>
       ) : null}
-
       {query.showDeleted ? (
-        <p className="text-sm text-[#6B7280]">
+        <p style={{ fontSize: 13, color: M.body, marginTop: 4 }}>
           휴지통에 있는 삭제 회원을 포함해 표시합니다. 삭제 회원은 회색으로 구분됩니다.
         </p>
       ) : null}
     </div>
+  );
+}
+
+function ActionButton({
+  label,
+  onClick,
+  disabled,
+  title,
+  variant,
+}: {
+  label: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  title?: string;
+  variant: "outline" | "accent";
+}) {
+  const base: CSSProperties = {
+    padding: "8px 14px",
+    borderRadius: 8,
+    fontSize: 12.5,
+    fontWeight: variant === "accent" ? 600 : 400,
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.5 : 1,
+  };
+  const style: CSSProperties =
+    variant === "accent"
+      ? { ...base, background: M.accent, color: "#fff", border: "none" }
+      : { ...base, background: "#fff", color: M.text, border: `1px solid ${M.border}` };
+
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} title={title} style={style}>
+      {label}
+    </button>
   );
 }

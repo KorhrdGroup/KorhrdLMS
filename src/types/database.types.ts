@@ -844,11 +844,63 @@ export type Database = {
         };
         Relationships: [];
       };
+      notices: {
+        Row: {
+          id: string;
+          title: string;
+          content: string;
+          author_name: string;
+          is_pinned: boolean;
+          is_published: boolean;
+          view_count: number;
+          attachment_file_name: string | null;
+          attachment_file_size_label: string | null;
+          attachment_file_url: string | null;
+          attachment_storage_path: string | null;
+          deleted_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          content: string;
+          author_name?: string;
+          is_pinned?: boolean;
+          is_published?: boolean;
+          view_count?: number;
+          attachment_file_name?: string | null;
+          attachment_file_size_label?: string | null;
+          attachment_file_url?: string | null;
+          attachment_storage_path?: string | null;
+          deleted_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          content?: string;
+          author_name?: string;
+          is_pinned?: boolean;
+          is_published?: boolean;
+          view_count?: number;
+          attachment_file_name?: string | null;
+          attachment_file_size_label?: string | null;
+          attachment_file_url?: string | null;
+          attachment_storage_path?: string | null;
+          deleted_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       board_posts: {
         Row: {
           id: string;
           board_type: BoardType;
           parent_id: string | null;
+          member_id: string | null;
           title: string;
           content: string;
           author_name: string;
@@ -863,6 +915,7 @@ export type Database = {
           id?: string;
           board_type: BoardType;
           parent_id?: string | null;
+          member_id?: string | null;
           title: string;
           content: string;
           author_name: string;
@@ -877,6 +930,7 @@ export type Database = {
           id?: string;
           board_type?: BoardType;
           parent_id?: string | null;
+          member_id?: string | null;
           title?: string;
           content?: string;
           author_name?: string;

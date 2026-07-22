@@ -48,7 +48,7 @@ export async function createNotice(
     return { success: false, message: parsed.message, field: parsed.field };
   }
 
-  const notice: Notice = createNoticeRecord({
+  const notice: Notice = await createNoticeRecord({
     title: parsed.title,
     content: parsed.content,
     attachment: parsed.attachment,

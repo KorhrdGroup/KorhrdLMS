@@ -3,13 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardFooter,
-} from "@/components/admin/ui/admin-card";
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { M } from "@/features/courses/lib/course-design";
 import { CourseDeleteConfirmModal } from "@/features/courses/components/course-delete-confirm-modal";
 import { CourseEditModal } from "@/features/courses/components/course-edit-modal";
 import { CourseEnrolledStudentsModal } from "@/features/courses/components/course-enrolled-students-modal";
@@ -62,46 +57,61 @@ export function CourseListView({ result, query, categoryOptions }: CourseListVie
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="과정 목록"
-        description="운영 중인 과정을 조회하고 새 과정을 등록할 수 있습니다."
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      {/* 헤더 */}
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 22 }}>
+        <div>
+          <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+            과정관리 <span style={{ margin: "0 4px" }}>/</span>
+            <span style={{ color: M.ink, fontWeight: 600 }}>과정목록</span>
+          </div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>과정 목록</div>
+          <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+            운영 중인 과정을 조회하고 새 과정을 등록할 수 있습니다 · 총 {result.total}개
+          </div>
+        </div>
+      </div>
 
       {successMessage ? (
-        <div className="rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#059669]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
         </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <CourseListToolbar
-            query={query}
-            onRegisterClick={() => {
-              setSuccessMessage(null);
-              setRegisterOpen(true);
-            }}
-          />
-          <CourseListTable
-            result={result}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-            onViewStudentsClick={handleViewStudentsClick}
-          />
-        </AdminCardContent>
-        <AdminCardFooter>
-          <AdminListPagination
-            page={result.page}
-            totalPages={result.totalPages}
-            totalItems={result.total}
-            pageSize={result.pageSize}
-            query={query as ListQuery}
-            buildPageHref={(page) => buildCoursePageHref(page, query)}
-            className="w-full"
-          />
-        </AdminCardFooter>
-      </AdminCard>
+      <CourseListToolbar
+        query={query}
+        onRegisterClick={() => {
+          setSuccessMessage(null);
+          setRegisterOpen(true);
+        }}
+      />
+
+      <CourseListTable
+        result={result}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDeleteClick}
+        onViewStudentsClick={handleViewStudentsClick}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <AdminListPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          totalItems={result.total}
+          pageSize={result.pageSize}
+          query={query as ListQuery}
+          buildPageHref={(page) => buildCoursePageHref(page, query)}
+          className="w-full"
+        />
+      </div>
 
       <CourseRegistrationModal
         open={registerOpen}

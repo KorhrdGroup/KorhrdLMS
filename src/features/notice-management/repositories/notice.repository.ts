@@ -1,142 +1,209 @@
 import type { Notice } from "@/features/notice-management/types/notice.types";
+import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/database.types";
 
 /**
  * 공지사항(/admin/notices) Repository 계층입니다.
  *
- * 현재는 서버 메모리 Mock 배열로 동작합니다(서버 재시작 시 초기화).
- * 추후 Supabase 연동 시, 이 파일이 export하는 함수 시그니처는 그대로 둔 채
- * 내부 구현만 Supabase 쿼리로 교체하면 서비스 계층(services/*)은
- * 수정할 필요가 없습니다.
+ * Supabase `notices` 테이블을 사용합니다. 관리자 화면에서 등록/수정한 공지가
+ * 학생 화면(`/notice`)에도 그대로 노출됩니다.
  */
 
-function generateId(prefix: string) {
-  return `${prefix}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+const NOTICE_SELECT =
+  "id, title, content, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, created_at, updated_at" as const;
+
+type NoticeRow = {
+  id: string;
+  title: string;
+  content: string;
+  author_name: string;
+  is_pinned: boolean;
+  is_published: boolean;
+  view_count: number;
+  attachment_file_name: string | null;
+  attachment_file_size_label: string | null;
+  attachment_file_url: string | null;
+  attachment_storage_path: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+function toNotice(row: NoticeRow): Notice {
+  return {
+    id: row.id,
+    title: row.title,
+    content: row.content,
+    authorName: row.author_name,
+    isPinned: row.is_pinned,
+    isPublished: row.is_published,
+    viewCount: row.view_count,
+    attachment: row.attachment_file_name
+      ? {
+          fileName: row.attachment_file_name,
+          fileSizeLabel: row.attachment_file_size_label ?? "",
+          fileUrl: row.attachment_file_url,
+          storagePath: row.attachment_storage_path,
+        }
+      : null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
 }
 
-function nowIso() {
-  return new Date().toISOString();
+/** 고정 공지를 먼저, 그다음 최신순으로 정렬합니다. */
+function sortNotices(rows: NoticeRow[]) {
+  return [...rows].sort((a, b) => {
+    if (a.is_pinned !== b.is_pinned) {
+      return a.is_pinned ? -1 : 1;
+    }
+    return a.created_at < b.created_at ? 1 : -1;
+  });
 }
 
-function addDays(base: Date, days: number) {
-  const next = new Date(base);
-  next.setDate(next.getDate() + days);
-  return next.toISOString();
+export async function listNotices(): Promise<Notice[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .select(NOTICE_SELECT)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return sortNotices((data ?? []) as NoticeRow[]).map(toNotice);
 }
 
-function buildSeedNotices(): Notice[] {
-  const now = new Date();
+export async function findNoticeById(noticeId: string): Promise<Notice | undefined> {
+  if (!noticeId.trim()) {
+    return undefined;
+  }
 
-  return [
-    {
-      id: generateId("notice"),
-      title: "2026년 2학기 수강 안내",
-      content:
-        "2026년 2학기 수강 신청 일정을 안내드립니다. 자세한 사항은 첨부파일을 참고해주시기 바랍니다.",
-      authorName: "관리자",
-      isPinned: true,
-      isPublished: true,
-      viewCount: 128,
-      attachment: { fileName: "수강안내_2026-2.pdf", fileSizeLabel: "1.1MB" },
-      createdAt: addDays(now, -2),
-      updatedAt: addDays(now, -2),
-    },
-    {
-      id: generateId("notice"),
-      title: "시스템 점검 안내 (7/5 새벽)",
-      content: "서비스 안정화를 위한 정기 점검이 진행됩니다. 점검 시간 동안 서비스 이용이 제한됩니다.",
-      authorName: "관리자",
-      isPinned: true,
-      isPublished: true,
-      viewCount: 76,
-      attachment: null,
-      createdAt: addDays(now, -1),
-      updatedAt: addDays(now, -1),
-    },
-    {
-      id: generateId("notice"),
-      title: "여름방학 특강 모집 안내",
-      content: "여름방학 기간 진행되는 특강 프로그램 수강생을 모집합니다.",
-      authorName: "관리자",
-      isPinned: false,
-      isPublished: true,
-      viewCount: 54,
-      attachment: { fileName: "특강모집요강.docx", fileSizeLabel: "640KB" },
-      createdAt: addDays(now, -5),
-      updatedAt: addDays(now, -5),
-    },
-    {
-      id: generateId("notice"),
-      title: "(작성중) 하반기 자격증 시험 일정",
-      content: "하반기 자격증 시험 일정을 준비 중입니다.",
-      authorName: "관리자",
-      isPinned: false,
-      isPublished: false,
-      viewCount: 0,
-      attachment: null,
-      createdAt: addDays(now, -0.2),
-      updatedAt: addDays(now, -0.2),
-    },
-  ];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .select(NOTICE_SELECT)
+    .eq("id", noticeId)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data ? toNotice(data as NoticeRow) : undefined;
 }
 
-let notices: Notice[] = buildSeedNotices();
+export async function listPublishedNotices(): Promise<Notice[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .select(NOTICE_SELECT)
+    .eq("is_published", true)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
 
-export function listNotices(): Notice[] {
-  return notices;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return sortNotices((data ?? []) as NoticeRow[]).map(toNotice);
 }
 
-export function findNoticeById(noticeId: string): Notice | undefined {
-  return notices.find((notice) => notice.id === noticeId);
-}
-
-export function listPublishedNotices(): Notice[] {
-  return notices.filter((notice) => notice.isPublished);
-}
-
-export function createNoticeRecord(
+export async function createNoticeRecord(
   input: Omit<Notice, "id" | "createdAt" | "updatedAt" | "viewCount" | "authorName"> & {
     authorName: string;
   },
-): Notice {
-  const now = nowIso();
-  const notice: Notice = {
-    ...input,
-    id: generateId("notice"),
-    viewCount: 0,
-    createdAt: now,
-    updatedAt: now,
-  };
+): Promise<Notice> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .insert({
+      title: input.title,
+      content: input.content,
+      author_name: input.authorName,
+      is_pinned: input.isPinned,
+      is_published: input.isPublished,
+      attachment_file_name: input.attachment?.fileName ?? null,
+      attachment_file_size_label: input.attachment?.fileSizeLabel ?? null,
+      attachment_file_url: input.attachment?.fileUrl ?? null,
+      attachment_storage_path: input.attachment?.storagePath ?? null,
+    })
+    .select(NOTICE_SELECT)
+    .single();
 
-  notices = [notice, ...notices];
-  return notice;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return toNotice(data as NoticeRow);
 }
 
-export function updateNoticeRecord(
+export async function updateNoticeRecord(
   noticeId: string,
   patch: Partial<Omit<Notice, "id" | "createdAt" | "viewCount" | "authorName">>,
-): Notice | undefined {
-  let updated: Notice | undefined;
+): Promise<Notice | undefined> {
+  const payload: Database["public"]["Tables"]["notices"]["Update"] = {};
 
-  notices = notices.map((notice) => {
-    if (notice.id !== noticeId) {
-      return notice;
-    }
+  if (patch.title !== undefined) payload.title = patch.title;
+  if (patch.content !== undefined) payload.content = patch.content;
+  if (patch.isPinned !== undefined) payload.is_pinned = patch.isPinned;
+  if (patch.isPublished !== undefined) payload.is_published = patch.isPublished;
+  if (patch.attachment !== undefined) {
+    payload.attachment_file_name = patch.attachment?.fileName ?? null;
+    payload.attachment_file_size_label = patch.attachment?.fileSizeLabel ?? null;
+    payload.attachment_file_url = patch.attachment?.fileUrl ?? null;
+    payload.attachment_storage_path = patch.attachment?.storagePath ?? null;
+  }
 
-    updated = { ...notice, ...patch, updatedAt: nowIso() };
-    return updated;
-  });
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .update(payload)
+    .eq("id", noticeId)
+    .is("deleted_at", null)
+    .select(NOTICE_SELECT)
+    .maybeSingle();
 
-  return updated;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data ? toNotice(data as NoticeRow) : undefined;
 }
 
-export function deleteNoticeRecord(noticeId: string): boolean {
-  const before = notices.length;
-  notices = notices.filter((notice) => notice.id !== noticeId);
-  return notices.length < before;
+/** 소프트 삭제(deleted_at)로 처리합니다. */
+export async function deleteNoticeRecord(noticeId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("notices")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", noticeId)
+    .is("deleted_at", null);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return true;
 }
 
-export function incrementNoticeViewCount(noticeId: string): void {
-  notices = notices.map((notice) =>
-    notice.id === noticeId ? { ...notice, viewCount: notice.viewCount + 1 } : notice,
-  );
+export async function incrementNoticeViewCount(noticeId: string): Promise<void> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("notices")
+    .select("view_count")
+    .eq("id", noticeId)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (!data) {
+    return;
+  }
+
+  await supabase
+    .from("notices")
+    .update({ view_count: (data.view_count ?? 0) + 1 })
+    .eq("id", noticeId);
 }

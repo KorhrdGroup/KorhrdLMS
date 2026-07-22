@@ -20,7 +20,8 @@ export async function loginStudentAction(input: StudentLoginInput) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    // 보안상 세션을 24시간으로 제한합니다. 만료 후에는 다시 로그인해야 합니다.
+    maxAge: 60 * 60 * 24,
   });
 
   // Only allow same-origin relative paths as a redirect target (avoid open redirects).

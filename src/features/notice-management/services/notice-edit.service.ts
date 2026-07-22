@@ -12,7 +12,7 @@ import type {
 } from "@/features/notice-management/types/notice.types";
 
 export async function getNoticeForEdit(noticeId: string): Promise<GetNoticeForEditResult> {
-  const notice = findNoticeById(noticeId);
+  const notice = await findNoticeById(noticeId);
 
   if (!notice) {
     return { success: false, message: "공지 정보를 찾을 수 없습니다." };
@@ -37,7 +37,7 @@ export async function updateNotice(
   noticeId: string,
   input: NoticeEditInput,
 ): Promise<NoticeEditResult> {
-  const existing = findNoticeById(noticeId);
+  const existing = await findNoticeById(noticeId);
   if (!existing) {
     return { success: false, message: "공지 정보를 찾을 수 없습니다." };
   }
@@ -48,7 +48,7 @@ export async function updateNotice(
     return { success: false, message: parsed.message, field: parsed.field };
   }
 
-  const updated = updateNoticeRecord(noticeId, {
+  const updated = await updateNoticeRecord(noticeId, {
     title: parsed.title,
     content: parsed.content,
     attachment: parsed.attachment ?? existing.attachment,
@@ -64,13 +64,13 @@ export async function updateNotice(
 }
 
 export async function deleteNotice(noticeId: string): Promise<NoticeDeleteResult> {
-  const notice = findNoticeById(noticeId);
+  const notice = await findNoticeById(noticeId);
 
   if (!notice) {
     return { success: false, message: "삭제할 공지를 찾을 수 없습니다." };
   }
 
-  deleteNoticeRecord(noticeId);
+  await deleteNoticeRecord(noticeId);
 
   return { success: true, message: `"${notice.title}" 공지가 삭제되었습니다.` };
 }

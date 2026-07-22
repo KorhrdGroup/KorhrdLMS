@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-07-16T03:24:42.579Z",
+  "lastUpdated": "2026-07-22T08:23:13.056Z",
   "activeFeatures": [
     "signup",
     "auth",
@@ -15,7 +15,20 @@
     "layout",
     "classroom-lectures",
     "[slug]",
-    "classroom"
+    "classroom",
+    "qna",
+    "write",
+    "[id]",
+    "support-qna",
+    "support",
+    "notice-management",
+    "notice",
+    "boards",
+    "admin-dashboard",
+    "courses",
+    "course-categories",
+    "exam-management",
+    "exams"
   ],
   "primaryFeature": "signup",
   "features": {
@@ -41,9 +54,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-13T09:31:41.446Z",
-        "lastUpdated": "2026-07-14T09:01:12.601Z"
+        "lastUpdated": "2026-07-21T03:01:41.026Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/auth/student-login-form.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/auth/actions/student-login.actions.ts"
     },
     "home": {
       "phase": "do",
@@ -80,9 +93,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-15T09:40:33.382Z",
-        "lastUpdated": "2026-07-15T09:42:00.091Z"
+        "lastUpdated": "2026-07-22T08:23:13.056Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/lectures/components/lecture-video-upload-modal.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/lectures/components/lecture-curriculum-view.tsx"
     },
     "members": {
       "phase": "do",
@@ -93,9 +106,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-15T09:51:40.774Z",
-        "lastUpdated": "2026-07-15T09:52:04.672Z"
+        "lastUpdated": "2026-07-22T08:07:18.566Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/members/components/member-registration-modal.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/members/components/member-course-summary-list.tsx"
     },
     "admin-auth": {
       "phase": "do",
@@ -106,7 +119,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T01:54:17.936Z",
-        "lastUpdated": "2026-07-16T02:25:31.519Z"
+        "lastUpdated": "2026-07-21T03:03:33.021Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/admin-auth/actions/admin-auth.actions.ts"
     },
@@ -119,7 +132,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T01:54:31.435Z",
-        "lastUpdated": "2026-07-16T01:54:31.435Z"
+        "lastUpdated": "2026-07-21T03:02:44.577Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/proxy.ts"
     },
@@ -145,9 +158,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T01:55:02.035Z",
-        "lastUpdated": "2026-07-16T01:55:18.308Z"
+        "lastUpdated": "2026-07-22T08:07:46.249Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/login-form.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/pages/admin-home-page.tsx"
     },
     "layout": {
       "phase": "do",
@@ -158,9 +171,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T01:55:25.857Z",
-        "lastUpdated": "2026-07-16T01:55:33.739Z"
+        "lastUpdated": "2026-07-22T07:54:49.909Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/layout/admin-layout-provider.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/layout/admin-header.tsx"
     },
     "classroom-lectures": {
       "phase": "do",
@@ -200,6 +213,175 @@
         "lastUpdated": "2026-07-16T03:24:42.579Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/classroom/ClassroomCourseShell.tsx"
+    },
+    "qna": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T04:59:34.132Z",
+        "lastUpdated": "2026-07-16T04:59:34.132Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/support/qna/page.tsx"
+    },
+    "write": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T04:59:40.268Z",
+        "lastUpdated": "2026-07-16T04:59:40.268Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/support/qna/write/page.tsx"
+    },
+    "[id]": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-16T04:59:45.514Z",
+        "lastUpdated": "2026-07-16T04:59:50.650Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/support/qna/[id]/page.tsx"
+    },
+    "support-qna": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-20T02:43:34.041Z",
+        "lastUpdated": "2026-07-20T02:43:47.605Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/support-qna/actions/support-qna.actions.ts"
+    },
+    "support": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-20T02:44:07.832Z",
+        "lastUpdated": "2026-07-20T02:45:31.969Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/support/qna-page.tsx"
+    },
+    "notice-management": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-20T03:50:27.832Z",
+        "lastUpdated": "2026-07-20T03:55:22.837Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/notice-management/components/notice-attachment-picker.tsx"
+    },
+    "notice": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-20T03:56:08.745Z",
+        "lastUpdated": "2026-07-20T03:58:47.189Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/notice/NoticeDetail.tsx"
+    },
+    "boards": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-21T05:41:23.450Z",
+        "lastUpdated": "2026-07-21T05:41:31.132Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/boards/components/board-list-view.tsx"
+    },
+    "admin-dashboard": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-21T05:46:39.040Z",
+        "lastUpdated": "2026-07-21T05:55:16.438Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/admin-dashboard/services/admin-dashboard.service.ts"
+    },
+    "courses": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T07:45:22.234Z",
+        "lastUpdated": "2026-07-22T08:07:03.914Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/courses/lib/course-design.ts"
+    },
+    "course-categories": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T07:53:55.859Z",
+        "lastUpdated": "2026-07-22T07:54:19.537Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/course-categories/components/course-category-list-view.tsx"
+    },
+    "exam-management": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T08:14:55.703Z",
+        "lastUpdated": "2026-07-22T08:16:17.290Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exam-management/components/exam-list-view.tsx"
+    },
+    "exams": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T08:15:53.274Z",
+        "lastUpdated": "2026-07-22T08:15:53.274Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exams/components/exam-sub-nav.tsx"
     }
   },
   "pipeline": {
@@ -210,7 +392,7 @@
   "session": {
     "startedAt": "2026-07-07T05:18:58.673Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-07-16T03:24:42.579Z"
+    "lastActivity": "2026-07-22T08:23:13.056Z"
   },
   "history": [
     {
@@ -552,6 +734,432 @@
     {
       "timestamp": "2026-07-16T03:24:42.579Z",
       "feature": "classroom",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:52:41.789Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:59:11.252Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:59:20.500Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:59:34.132Z",
+      "feature": "qna",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:59:40.268Z",
+      "feature": "write",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:59:45.514Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-16T04:59:50.650Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T02:43:34.041Z",
+      "feature": "support-qna",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T02:43:47.605Z",
+      "feature": "support-qna",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T02:44:07.832Z",
+      "feature": "support",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T02:45:06.753Z",
+      "feature": "support",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T02:45:31.969Z",
+      "feature": "support",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T03:50:27.832Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T03:55:22.837Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T03:56:08.745Z",
+      "feature": "notice",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T03:56:18.876Z",
+      "feature": "notice",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T03:58:47.189Z",
+      "feature": "notice",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-20T04:01:48.627Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:01:41.026Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:01:56.348Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:02:13.564Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:02:35.659Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:02:44.577Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:03:18.248Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T03:03:33.021Z",
+      "feature": "admin-auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:41:15.760Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:41:23.450Z",
+      "feature": "boards",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:41:31.132Z",
+      "feature": "boards",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:41:38.465Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:46:39.040Z",
+      "feature": "admin-dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:46:47.558Z",
+      "feature": "admin-dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:47:02.370Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:55:16.438Z",
+      "feature": "admin-dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:55:57.769Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T05:57:27.305Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:02:47.329Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:03:15.585Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:04:14.102Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:04:48.513Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:04:57.356Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:05:14.854Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-21T06:15:01.852Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:41:38.235Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:42:28.143Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:45:22.234Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:45:57.987Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:46:19.342Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:46:27.107Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:46:42.154Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:53:55.859Z",
+      "feature": "course-categories",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:54:05.256Z",
+      "feature": "course-categories",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:54:19.537Z",
+      "feature": "course-categories",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:54:39.340Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T07:54:49.909Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:02:18.886Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:02:37.655Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:02:49.451Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:03:05.221Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:06:54.904Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:07:03.914Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:07:18.566Z",
+      "feature": "members",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:07:27.577Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:07:46.249Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:14:55.703Z",
+      "feature": "exam-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:15:41.593Z",
+      "feature": "exam-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:15:53.274Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:16:01.469Z",
+      "feature": "exam-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:16:17.290Z",
+      "feature": "exam-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:22:24.645Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:22:40.291Z",
+      "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:23:13.056Z",
+      "feature": "lectures",
       "phase": "do",
       "action": "updated"
     }

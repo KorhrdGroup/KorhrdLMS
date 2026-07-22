@@ -3,13 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardFooter,
-} from "@/components/admin/ui/admin-card";
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { M } from "@/features/courses/lib/course-design";
 import { ExamDeleteConfirmModal } from "@/features/exam-management/components/exam-delete-confirm-modal";
 import { ExamEditModal } from "@/features/exam-management/components/exam-edit-modal";
 import { ExamListTable } from "@/features/exam-management/components/exam-list-table";
@@ -57,53 +52,67 @@ export function ExamListView({ result, query, filterOptions }: ExamListViewProps
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="시험관리"
-        description="강의에 연결된 온라인 시험을 등록하고 문제를 관리할 수 있습니다."
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+          과정관리 <span style={{ margin: "0 4px" }}>/</span>
+          <span style={{ color: M.ink, fontWeight: 600 }}>시험관리</span>
+        </div>
+        <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>시험관리</div>
+        <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+          강의에 연결된 온라인 시험을 등록하고 문제를 관리할 수 있습니다 · 총 {result.total}개
+        </div>
+      </div>
 
-      <ExamSubNav />
+      <div style={{ marginBottom: 20 }}>
+        <ExamSubNav />
+      </div>
 
       {successMessage ? (
-        <div className="rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#059669]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
         </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <ExamListToolbar
-            query={query}
-            filterOptions={filterOptions}
-            onRegisterClick={() => {
-              setSuccessMessage(null);
-              setRegisterOpen(true);
-            }}
-          />
-          <ExamListTable
-            result={result}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
-        </AdminCardContent>
-        <AdminCardFooter>
-          <AdminListPagination
-            page={result.page}
-            totalPages={result.totalPages}
-            totalItems={result.total}
-            pageSize={result.pageSize}
-            query={{
-              page: query.page,
-              pageSize: query.pageSize,
-              search: "",
-              field: "all",
-            }}
-            buildPageHref={(page) => buildExamPageHref(page, query)}
-            className="w-full"
-          />
-        </AdminCardFooter>
-      </AdminCard>
+      <ExamListToolbar
+        query={query}
+        filterOptions={filterOptions}
+        onRegisterClick={() => {
+          setSuccessMessage(null);
+          setRegisterOpen(true);
+        }}
+      />
+
+      <ExamListTable
+        result={result}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDeleteClick}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <AdminListPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          totalItems={result.total}
+          pageSize={result.pageSize}
+          query={{
+            page: query.page,
+            pageSize: query.pageSize,
+            search: "",
+            field: "all",
+          }}
+          buildPageHref={(page) => buildExamPageHref(page, query)}
+          className="w-full"
+        />
+      </div>
 
       <ExamRegistrationModal
         open={registerOpen}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Download, Paperclip } from "lucide-react";
 
 import { figma, figmaClass } from "@/components/home/home-design";
 import type { NoticeListItem } from "@/components/notice/data/notice-data";
@@ -25,6 +26,31 @@ export function NoticeDetail({ notice }: { notice: NoticeListItem }) {
         <div className="border-b px-6 py-8 sm:px-8" style={{ borderColor: figma.colors.border }}>
           <p className={cn("text-[14px] leading-[1.8] whitespace-pre-line", figmaClass.textBody)}>{notice.body}</p>
         </div>
+
+        {notice.attachment ? (
+          <div className="border-b px-6 py-4 sm:px-8" style={{ borderColor: figma.colors.border }}>
+            <p className={cn("mb-2 text-[13px] font-semibold", figmaClass.textSub)}>첨부파일</p>
+            {/*
+              Supabase Storage는 교차 출처라 HTML의 download 속성이 무시되어 브라우저가
+              파일을 열어버립니다. Storage가 지원하는 ?download= 쿼리를 붙이면 응답에
+              Content-Disposition: attachment 가 설정되어 실제로 내려받습니다.
+            */}
+            <a
+              href={`${notice.attachment.fileUrl}?download=${encodeURIComponent(notice.attachment.fileName)}`}
+              className="inline-flex max-w-full items-center gap-2 rounded-lg border px-4 py-2.5 text-[13px] transition-colors duration-200 hover:bg-[#f4f8ff] hover:text-[#00376e]"
+              style={{ borderColor: figma.colors.border }}
+            >
+              <Paperclip className="size-4 shrink-0 text-[#9CA3AF]" />
+              <span className="truncate">{notice.attachment.fileName}</span>
+              {notice.attachment.fileSizeLabel ? (
+                <span className="shrink-0 text-[12px] text-[#9CA3AF]">
+                  {notice.attachment.fileSizeLabel}
+                </span>
+              ) : null}
+              <Download className="size-4 shrink-0 text-[#9CA3AF]" />
+            </a>
+          </div>
+        ) : null}
 
         <div className="flex justify-end px-6 py-5 sm:px-8">
           <Link

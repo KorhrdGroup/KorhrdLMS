@@ -2,26 +2,26 @@
 
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { figma, figmaClass } from "@/components/home/home-design";
 import { NoticePagination } from "@/components/notice/NoticePagination";
-import { getMyTickets, getTicketStatusLabel, type SupportTicket } from "@/lib/support/ticket-store";
+import type { SupportQnaItem } from "@/features/support-qna/services/support-qna.service";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 10;
 type SearchField = "title" | "content";
 
-export function QnaList() {
-  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+function getStatusLabel(status: SupportQnaItem["status"]) {
+  return status === "answered" ? "답변완료" : "대기중";
+}
+
+/** 목록 데이터는 서버(board_posts)에서 조회해 prop으로 전달받습니다. */
+export function QnaList({ tickets }: { tickets: SupportQnaItem[] }) {
   const [fields, setFields] = useState<SearchField[]>(["title"]);
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    setTickets(getMyTickets());
-  }, []);
 
   const toggleField = (field: SearchField) => {
     setFields((prev) => (prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]));
@@ -143,7 +143,7 @@ export function QnaList() {
                 <td className={cn("py-3.5 text-center text-[13px]", figmaClass.textPlaceholder)}>
                   {ticket.createdAt}
                 </td>
-                <td className={cn("py-3.5 text-center text-[13px]", figmaClass.textBody)}>{ticket.userName}</td>
+                <td className={cn("py-3.5 text-center text-[13px]", figmaClass.textBody)}>{ticket.authorName}</td>
                 <td className="py-3.5 text-center">
                   <span
                     className={cn(
@@ -153,7 +153,7 @@ export function QnaList() {
                         : "bg-[#f0f0f0] text-[#656565]",
                     )}
                   >
-                    {getTicketStatusLabel(ticket.status)}
+                    {getStatusLabel(ticket.status)}
                   </span>
                 </td>
               </tr>

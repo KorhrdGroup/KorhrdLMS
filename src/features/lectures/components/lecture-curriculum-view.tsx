@@ -2,26 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
 import { useState, useTransition } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import { adminButtonVariants, AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardHeader,
-  AdminCardTitle,
-} from "@/components/admin/ui/admin-card";
 import { moveLectureSessionAction } from "@/features/lectures/actions/lecture-curriculum.actions";
 import { LectureCurriculumTable } from "@/features/lectures/components/lecture-curriculum-table";
 import { LectureStatusBadge } from "@/features/lectures/components/lecture-status-badge";
 import { LectureSessionDeleteConfirmModal } from "@/features/lectures/components/lecture-session-delete-confirm-modal";
 import { LectureSessionFormModal } from "@/features/lectures/components/lecture-session-form-modal";
 import { LectureVideoUploadModal } from "@/features/lectures/components/lecture-video-upload-modal";
+import { M } from "@/features/courses/lib/course-design";
 import type { LectureCurriculumSummary } from "@/features/lectures/types/lecture-curriculum.types";
 import type { LectureSession } from "@/features/lectures/types/lecture.types";
-import { cn } from "@/lib/utils";
 
 type LectureCurriculumViewProps = {
   summary: LectureCurriculumSummary;
@@ -104,76 +95,115 @@ export function LectureCurriculumView({
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title={`${summary.lectureTitle} 차시 관리`}
-        description="강의의 차시를 추가하고 순서를 관리할 수 있습니다."
-        actions={
-          <Link
-            href="/admin/lectures"
-            className={cn(adminButtonVariants({ variant: "outline" }))}
-          >
-            목록으로
-          </Link>
-        }
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      {/* 헤더 */}
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 20 }}>
+        <div>
+          <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+            과정관리 <span style={{ margin: "0 4px" }}>/</span>
+            <Link href="/admin/lectures" style={{ color: M.mute }}>차시관리</Link>
+            <span style={{ margin: "0 4px" }}>/</span>
+            <span style={{ color: M.ink, fontWeight: 600 }}>차시 상세</span>
+          </div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>{summary.lectureTitle}</div>
+          <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+            강의의 차시를 추가하고 순서를 관리할 수 있습니다.
+          </div>
+        </div>
+        <Link
+          href="/admin/lectures"
+          style={{
+            padding: "8px 16px",
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 500,
+            border: `1px solid ${M.border}`,
+            background: "#fff",
+            color: M.text,
+            textDecoration: "none",
+          }}
+        >
+          ← 목록으로
+        </Link>
+      </div>
 
       {successMessage ? (
-        <div className="rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#059669]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
         </div>
       ) : null}
-
       {errorMessage ? (
-        <div className="rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm text-[#EF4444]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: "#fdeaec", color: M.danger, padding: "10px 14px", fontSize: 13 }}>
           {errorMessage}
         </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardHeader className="border-0 pb-0">
-          <AdminCardTitle className="text-base">강의 정보</AdminCardTitle>
-        </AdminCardHeader>
-        <AdminCardContent className="grid gap-4 pt-3 sm:grid-cols-3">
-          <div>
-            <p className="text-xs text-[#9CA3AF]">연결 과정</p>
-            <p className="text-sm font-medium text-[#111827]">{summary.courseName}</p>
-          </div>
-          <div>
-            <p className="text-xs text-[#9CA3AF]">상태</p>
-            <LectureStatusBadge isPublished={summary.isPublished} className="mt-0.5" />
-          </div>
-          <div>
-            <p className="text-xs text-[#9CA3AF]">총 차시수</p>
-            <p className="text-sm font-medium text-[#111827]">
-              {summary.sessionCount}차시
-            </p>
-          </div>
-        </AdminCardContent>
-      </AdminCard>
+      {/* 강의 정보 */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gap: "0 32px",
+          borderTop: `1.5px solid ${M.ink}`,
+          borderBottom: `1px solid ${M.line}`,
+          padding: "14px 4px",
+          marginBottom: 26,
+        }}
+      >
+        <div>
+          <p style={{ fontSize: 12, color: M.mute, margin: "0 0 4px" }}>연결 과정</p>
+          <p style={{ fontSize: 14, fontWeight: 500, color: M.ink, margin: 0 }}>{summary.courseName}</p>
+        </div>
+        <div>
+          <p style={{ fontSize: 12, color: M.mute, margin: "0 0 4px" }}>상태</p>
+          <LectureStatusBadge isPublished={summary.isPublished} />
+        </div>
+        <div>
+          <p style={{ fontSize: 12, color: M.mute, margin: "0 0 4px" }}>총 차시수</p>
+          <p style={{ fontSize: 14, fontWeight: 500, color: M.ink, margin: 0 }}>{summary.sessionCount}차시</p>
+        </div>
+      </div>
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs text-[#9CA3AF]">
-              MP4 파일을 Supabase Storage에 업로드하거나 외부 CDN 영상 URL을 등록할 수 있습니다.
-            </p>
-            <AdminButton type="button" onClick={handleAddClick}>
-              <Plus className="size-4" />
-              차시 추가
-            </AdminButton>
-          </div>
+      {/* 차시 목록 */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+        <p style={{ fontSize: 12, color: M.mute, margin: 0 }}>
+          MP4 파일을 Supabase Storage에 업로드하거나 외부 CDN 영상 URL을 등록할 수 있습니다.
+        </p>
+        <button
+          type="button"
+          onClick={handleAddClick}
+          style={{
+            height: 38,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.accent,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          + 차시 추가
+        </button>
+      </div>
 
-          <LectureCurriculumTable
-            sessions={sessions}
-            onEditClick={handleEditClick}
-            onVideoClick={handleVideoClick}
-            onMoveClick={handleMoveClick}
-            onDeleteClick={handleDeleteClick}
-            isMoving={isMoving}
-          />
-        </AdminCardContent>
-      </AdminCard>
+      <LectureCurriculumTable
+        sessions={sessions}
+        onEditClick={handleEditClick}
+        onVideoClick={handleVideoClick}
+        onMoveClick={handleMoveClick}
+        onDeleteClick={handleDeleteClick}
+        isMoving={isMoving}
+      />
 
       <LectureSessionFormModal
         open={formOpen}

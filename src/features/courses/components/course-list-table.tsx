@@ -1,17 +1,9 @@
 "use client";
 
-import { Pencil, Trash2, Users } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { CourseStatusBadge } from "@/features/courses/components/course-status-badge";
+import { M } from "@/features/courses/lib/course-design";
 import type { CourseListItem } from "@/features/courses/types/course.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
@@ -24,27 +16,58 @@ type CourseListTableProps = {
 };
 
 function formatPercent(value: number | null) {
-  if (value == null) {
-    return "—";
-  }
-
-  return `${value}%`;
+  return value == null ? "—" : `${value}%`;
 }
-
 function formatDuration(value: number | null) {
-  if (value == null) {
-    return "—";
-  }
-
-  return `${value}일`;
+  return value == null ? "—" : `${value}일`;
+}
+function formatPrice(value: number) {
+  return value ? `${value.toLocaleString("ko-KR")}원` : "문의";
 }
 
-function formatPrice(value: number) {
-  if (!value) {
-    return "문의";
-  }
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+  whiteSpace: "nowrap",
+};
 
-  return `${value.toLocaleString("ko-KR")}원`;
+function ActionBtn({
+  label,
+  onClick,
+  tone = "outline",
+}: {
+  label: string;
+  onClick?: () => void;
+  tone?: "outline" | "danger";
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        padding: "6px 10px",
+        borderRadius: 7,
+        fontSize: 12,
+        cursor: "pointer",
+        background: "#fff",
+        border: `1px solid ${tone === "danger" ? "#e7c3c3" : M.border}`,
+        color: tone === "danger" ? "#c0504d" : M.text,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {label}
+    </button>
+  );
 }
 
 export function CourseListTable({
@@ -55,95 +78,59 @@ export function CourseListTable({
 }: CourseListTableProps) {
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 220, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 과정이 없습니다. 과정등록 버튼으로 새 과정을 추가하세요.
       </div>
     );
   }
 
   return (
-    <AdminTable>
-      <AdminTableHeader>
-        <AdminTableRow className="hover:bg-transparent">
-          <AdminTableHead className="w-16">No</AdminTableHead>
-          <AdminTableHead>과정명</AdminTableHead>
-          <AdminTableHead>과정코드</AdminTableHead>
-          <AdminTableHead>과정분류</AdminTableHead>
-          <AdminTableHead>수강기간</AdminTableHead>
-          <AdminTableHead>수강료</AdminTableHead>
-          <AdminTableHead>출석률</AdminTableHead>
-          <AdminTableHead>시험점수</AdminTableHead>
-          <AdminTableHead>상태</AdminTableHead>
-          <AdminTableHead>등록일</AdminTableHead>
-          <AdminTableHead className="w-36 text-right">관리</AdminTableHead>
-        </AdminTableRow>
-      </AdminTableHeader>
-      <AdminTableBody>
-        {result.data.map((course, index) => {
-          const rowNumber =
-            result.total - (result.page - 1) * result.pageSize - index;
-
-          return (
-            <AdminTableRow key={course.id}>
-              <AdminTableCell className="text-[#6B7280]">{rowNumber}</AdminTableCell>
-              <AdminTableCell className="font-medium">{course.name}</AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">{course.code}</AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {course.categoryName ?? "—"}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatDuration(course.default_duration_days)}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatPrice(course.price)}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatPercent(course.completion_attendance_rate)}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatPercent(course.completion_exam_score)}
-              </AdminTableCell>
-              <AdminTableCell>
-                <CourseStatusBadge status={course.status} />
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatDate(course.created_at)}
-              </AdminTableCell>
-              <AdminTableCell>
-                <div className="flex justify-end gap-2">
-                  <AdminButton
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewStudentsClick?.(course)}
-                  >
-                    <Users className="size-4" />
-                    수강생보기
-                  </AdminButton>
-                  <AdminButton
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onEditClick?.(course)}
-                  >
-                    <Pencil className="size-4" />
-                    수정
-                  </AdminButton>
-                  <AdminButton
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => onDeleteClick?.(course)}
-                  >
-                    <Trash2 className="size-4" />
-                    삭제
-                  </AdminButton>
-                </div>
-              </AdminTableCell>
-            </AdminTableRow>
-          );
-        })}
-      </AdminTableBody>
-    </AdminTable>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1080 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, width: 48 }}>No</th>
+            <th style={th}>과정명</th>
+            <th style={th}>과정코드</th>
+            <th style={th}>과정분류</th>
+            <th style={th}>수강기간</th>
+            <th style={th}>수강료</th>
+            <th style={th}>출석률</th>
+            <th style={th}>시험점수</th>
+            <th style={th}>상태</th>
+            <th style={th}>등록일</th>
+            <th style={{ ...th, textAlign: "right" }}>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          {result.data.map((course, index) => {
+            const rowNumber = result.total - (result.page - 1) * result.pageSize - index;
+            return (
+              <tr key={course.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+                <td style={{ ...td, color: M.mute }}>{rowNumber}</td>
+                <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{course.name}</td>
+                <td style={td}>{course.code}</td>
+                <td style={td}>{course.categoryName ?? "—"}</td>
+                <td style={td}>{formatDuration(course.default_duration_days)}</td>
+                <td style={td}>{formatPrice(course.price)}</td>
+                <td style={td}>{formatPercent(course.completion_attendance_rate)}</td>
+                <td style={td}>{formatPercent(course.completion_exam_score)}</td>
+                <td style={td}>
+                  <CourseStatusBadge status={course.status} />
+                </td>
+                <td style={td}>{formatDate(course.created_at)}</td>
+                <td style={{ ...td, textAlign: "right" }}>
+                  <div style={{ display: "inline-flex", gap: 6, justifyContent: "flex-end" }}>
+                    <ActionBtn label="수강생" onClick={() => onViewStudentsClick?.(course)} />
+                    <ActionBtn label="수정" onClick={() => onEditClick?.(course)} />
+                    <ActionBtn label="삭제" tone="danger" onClick={() => onDeleteClick?.(course)} />
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

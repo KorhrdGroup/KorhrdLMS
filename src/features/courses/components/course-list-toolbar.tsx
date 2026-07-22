@@ -1,30 +1,34 @@
 "use client";
 
-import { Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import { AdminInput } from "@/components/admin/ui/admin-input";
+import { M } from "@/features/courses/lib/course-design";
 import {
   COURSE_SEARCH_FIELD_LABELS,
   type CourseSearchField,
 } from "@/features/courses/constants";
 import { buildCourseListQueryString } from "@/features/courses/lib/course-list-query";
 import type { CourseListQuery } from "@/features/courses/services/course-list.service";
-import { cn } from "@/lib/utils";
 
 type CourseListToolbarProps = {
   query: CourseListQuery;
   onRegisterClick?: () => void;
-  className?: string;
 };
 
-export function CourseListToolbar({
-  query,
-  onRegisterClick,
-  className,
-}: CourseListToolbarProps) {
+const inputBox: CSSProperties = {
+  height: 38,
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
+};
+
+export function CourseListToolbar({ query, onRegisterClick }: CourseListToolbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -35,53 +39,67 @@ export function CourseListToolbar({
     const field = String(formData.get("field") ?? "all") as CourseSearchField;
 
     startTransition(() => {
-      router.push(
-        `/admin/courses${buildCourseListQueryString({ page: 1, search, field }, query)}`,
-      );
+      router.push(`/admin/courses${buildCourseListQueryString({ page: 1, search, field }, query)}`);
     });
   }
 
   return (
     <div
-      className={cn(
-        "flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between",
-        className,
-      )}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+        paddingBottom: 16,
+      }}
     >
-      <form
-        className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center"
-        onSubmit={handleSearchSubmit}
-      >
-        <select
-          name="field"
-          defaultValue={query.field}
-          className="h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30"
-        >
+      <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <select name="field" defaultValue={query.field} style={{ ...inputBox, cursor: "pointer" }}>
           {Object.entries(COURSE_SEARCH_FIELD_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
             </option>
           ))}
         </select>
-
-        <AdminInput
-          name="search"
-          variant="outline"
-          defaultValue={query.search}
-          placeholder="검색어를 입력하세요"
-          className="sm:max-w-xs"
-        />
-
-        <AdminButton type="submit" disabled={isPending}>
-          <Search className="size-4" />
+        <input name="search" defaultValue={query.search} placeholder="검색어를 입력하세요" style={{ ...inputBox, width: 300 }} />
+        <button
+          type="submit"
+          disabled={isPending}
+          style={{
+            height: 38,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.ink,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: isPending ? "wait" : "pointer",
+            opacity: isPending ? 0.7 : 1,
+          }}
+        >
           검색
-        </AdminButton>
+        </button>
       </form>
 
-      <AdminButton type="button" onClick={onRegisterClick}>
-        <Plus className="size-4" />
-        과정등록
-      </AdminButton>
+      <button
+        type="button"
+        onClick={onRegisterClick}
+        style={{
+          height: 38,
+          padding: "0 18px",
+          borderRadius: 8,
+          background: M.accent,
+          color: "#fff",
+          fontSize: 13,
+          fontWeight: 600,
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        + 과정등록
+      </button>
     </div>
   );
 }
