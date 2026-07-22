@@ -1,16 +1,8 @@
 "use client";
 
 import { Eye } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { CoursePaymentStatusBadge } from "@/features/payments/components/course-payment-status-badge";
 import { getPaymentMethodLabel } from "@/features/payments/lib/payment-method.utils";
 import {
@@ -19,6 +11,7 @@ import {
   formatOptionalText,
   formatPaymentAmount,
 } from "@/features/payments/lib/subject-payment.utils";
+import { M } from "@/features/courses/lib/course-design";
 import type { SubjectPaymentListItem } from "@/features/payments/types/subject-payment.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
@@ -28,82 +21,102 @@ type SubjectPaymentListTableProps = {
   onDetailClick?: (item: SubjectPaymentListItem) => void;
 };
 
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+  whiteSpace: "nowrap",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  border: `1px solid ${M.border}`,
+  color: M.text,
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
+
 export function SubjectPaymentListTable({
   result,
   onDetailClick,
 }: SubjectPaymentListTableProps) {
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         조회된 결제 내역이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead>결제일</AdminTableHead>
-            <AdminTableHead>성명(ID)</AdminTableHead>
-            <AdminTableHead>쿠폰번호</AdminTableHead>
-            <AdminTableHead>신청과목</AdminTableHead>
-            <AdminTableHead>PG 주문번호</AdminTableHead>
-            <AdminTableHead>할당강사</AdminTableHead>
-            <AdminTableHead className="text-right">결제금액</AdminTableHead>
-            <AdminTableHead>결제방법</AdminTableHead>
-            <AdminTableHead className="text-center">쿠폰적용</AdminTableHead>
-            <AdminTableHead className="text-center">상태</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">상세보기</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1180 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={th}>결제일</th>
+            <th style={th}>성명(ID)</th>
+            <th style={th}>쿠폰번호</th>
+            <th style={th}>신청과목</th>
+            <th style={th}>PG 주문번호</th>
+            <th style={th}>할당강사</th>
+            <th style={{ ...th, textAlign: "right" }}>결제금액</th>
+            <th style={th}>결제방법</th>
+            <th style={{ ...th, textAlign: "center" }}>쿠폰적용</th>
+            <th style={{ ...th, textAlign: "center" }}>상태</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>상세보기</th>
+          </tr>
+        </thead>
+        <tbody>
           {result.data.map((item) => (
-            <AdminTableRow key={item.id}>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatDate(item.paymentDate)}
-              </AdminTableCell>
-              <AdminTableCell className="font-medium">
+            <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <td style={{ ...td, color: M.mute }}>{formatDate(item.paymentDate)}</td>
+              <td style={{ ...td, color: M.ink, fontWeight: 600 }}>
                 {formatMemberNameWithId(item.memberName, item.memberLoginId)}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatOptionalText(item.couponNumber)}
-              </AdminTableCell>
-              <AdminTableCell>{item.courseName}</AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatOptionalText(item.pgOrderId)}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatOptionalText(item.assignedInstructor)}
-              </AdminTableCell>
-              <AdminTableCell className="text-right font-medium">
+              </td>
+              <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.couponNumber)}</td>
+              <td style={td}>{item.courseName}</td>
+              <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.pgOrderId)}</td>
+              <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.assignedInstructor)}</td>
+              <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                 {formatPaymentAmount(item.amount)}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {getPaymentMethodLabel(item.paymentMethod)}
-              </AdminTableCell>
-              <AdminTableCell className="text-center text-[#6B7280]">
+              </td>
+              <td style={{ ...td, color: M.mute }}>{getPaymentMethodLabel(item.paymentMethod)}</td>
+              <td style={{ ...td, textAlign: "center", color: M.mute }}>
                 {formatCouponApplied(item.couponApplied)}
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
                 <CoursePaymentStatusBadge status={item.status} />
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
-                <AdminButton
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button
                   type="button"
-                  variant="outline"
-                  size="sm"
                   onClick={() => onDetailClick?.(item)}
+                  style={{ ...iconBtn, margin: "0 auto" }}
                 >
-                  <Eye className="size-4" />
+                  <Eye style={{ width: 14, height: 14 }} />
                   보기
-                </AdminButton>
-              </AdminTableCell>
-            </AdminTableRow>
+                </button>
+              </td>
+            </tr>
           ))}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

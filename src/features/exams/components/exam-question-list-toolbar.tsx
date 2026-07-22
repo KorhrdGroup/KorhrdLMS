@@ -1,10 +1,10 @@
 "use client";
 
-import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
+import { M } from "@/features/courses/lib/course-design";
 import {
   EXAM_KIND_LABELS,
   EXAM_TYPE_LABELS,
@@ -14,21 +14,26 @@ import type {
   ExamQuestionFilterOptions,
   ExamQuestionListQuery,
 } from "@/features/exams/types/exam-question.types";
-import { cn } from "@/lib/utils";
 
-const selectClassName =
-  "h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30";
+const inputBox: CSSProperties = {
+  height: 38,
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
+};
 
 type ExamQuestionListToolbarProps = {
   query: ExamQuestionListQuery;
   filterOptions: ExamQuestionFilterOptions;
-  className?: string;
 };
 
 export function ExamQuestionListToolbar({
   query,
   filterOptions,
-  className,
 }: ExamQuestionListToolbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -51,21 +56,18 @@ export function ExamQuestionListToolbar({
   }
 
   return (
-    <form
-      className={cn(
-        "flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end",
-        className,
-      )}
-      onSubmit={handleSearchSubmit}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+        paddingBottom: 16,
+      }}
     >
-      <label className="space-y-1.5 sm:min-w-[200px] sm:flex-1">
-        <span className="block text-sm font-medium text-[#374151]">과정 선택</span>
-        <select
-          name="courseId"
-          defaultValue={query.courseId}
-          className={cn(selectClassName, "w-full")}
-          disabled={isPending}
-        >
+      <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <select name="courseId" defaultValue={query.courseId} disabled={isPending} style={{ ...inputBox, cursor: "pointer", maxWidth: 220 }}>
           <option value="">전체 과정</option>
           {filterOptions.courses.map((course) => (
             <option key={course.id} value={course.id}>
@@ -73,16 +75,8 @@ export function ExamQuestionListToolbar({
             </option>
           ))}
         </select>
-      </label>
 
-      <label className="space-y-1.5 sm:min-w-[160px]">
-        <span className="block text-sm font-medium text-[#374151]">시험종류 선택</span>
-        <select
-          name="examKind"
-          defaultValue={query.examKind}
-          className={cn(selectClassName, "w-full")}
-          disabled={isPending}
-        >
+        <select name="examKind" defaultValue={query.examKind} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체 시험종류</option>
           {filterOptions.examKinds.map((kind) => (
             <option key={kind} value={kind}>
@@ -90,16 +84,8 @@ export function ExamQuestionListToolbar({
             </option>
           ))}
         </select>
-      </label>
 
-      <label className="space-y-1.5 sm:min-w-[160px]">
-        <span className="block text-sm font-medium text-[#374151]">시험유형 선택</span>
-        <select
-          name="examType"
-          defaultValue={query.examType}
-          className={cn(selectClassName, "w-full")}
-          disabled={isPending}
-        >
+        <select name="examType" defaultValue={query.examType} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체 시험유형</option>
           {filterOptions.examTypes.map((type) => (
             <option key={type} value={type}>
@@ -107,12 +93,26 @@ export function ExamQuestionListToolbar({
             </option>
           ))}
         </select>
-      </label>
 
-      <AdminButton type="submit" disabled={isPending}>
-        <Search className="size-4" />
-        검색
-      </AdminButton>
-    </form>
+        <button
+          type="submit"
+          disabled={isPending}
+          style={{
+            height: 38,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.ink,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: isPending ? "wait" : "pointer",
+            opacity: isPending ? 0.7 : 1,
+          }}
+        >
+          검색
+        </button>
+      </form>
+    </div>
   );
 }

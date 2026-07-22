@@ -3,13 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardFooter,
-} from "@/components/admin/ui/admin-card";
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { M } from "@/features/courses/lib/course-design";
 import { CertificatePrepaymentDeleteConfirmModal } from "@/features/certificate-prepayments/components/certificate-prepayment-delete-confirm-modal";
 import { CertificatePrepaymentFormModal } from "@/features/certificate-prepayments/components/certificate-prepayment-form-modal";
 import { CertificatePrepaymentListTable } from "@/features/certificate-prepayments/components/certificate-prepayment-list-table";
@@ -64,50 +59,62 @@ export function CertificatePrepaymentListView({
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="선납결제"
-        description="자격증 발급비를 미리 결제(입금 확인)한 학생을 관리합니다. 등록된 선납결제는 해당 학생이 이후 자격증발급신청을 제출할 때 자동으로 연결되어 최종결제금액에 반영됩니다."
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+          결제관리 <span style={{ margin: "0 4px" }}>/</span>
+          <span style={{ color: M.ink, fontWeight: 600 }}>선납결제</span>
+        </div>
+        <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>선납결제</div>
+        <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+          자격증 발급비를 미리 입금한 학생을 관리합니다 · 이후 발급신청 시 자동 연결되어 최종금액에 반영됩니다 · 총 {result.total}개
+        </div>
+      </div>
 
       {successMessage ? (
-        <p className="rounded-lg bg-[#ECFDF5] px-4 py-3 text-sm text-[#047857]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
-        </p>
+        </div>
       ) : null}
 
       {errorMessage ? (
-        <p className="rounded-lg bg-[#FEF2F2] px-4 py-3 text-sm text-[#EF4444]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: "#fdecee", color: M.danger, padding: "10px 14px", fontSize: 13 }}>
           {errorMessage}
-        </p>
+        </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <CertificatePrepaymentListToolbar query={query} onRegisterClick={handleRegisterClick} />
-          <CertificatePrepaymentListTable
-            result={result}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
-        </AdminCardContent>
-        <AdminCardFooter>
-          <AdminListPagination
-            page={result.page}
-            totalPages={result.totalPages}
-            totalItems={result.total}
-            pageSize={result.pageSize}
-            query={{
-              page: query.page,
-              pageSize: query.pageSize,
-              search: query.search,
-              field: "all",
-            }}
-            buildPageHref={(page) => buildCertificatePrepaymentPageHref(page, query)}
-            className="w-full"
-          />
-        </AdminCardFooter>
-      </AdminCard>
+      <CertificatePrepaymentListToolbar query={query} onRegisterClick={handleRegisterClick} />
+
+      <CertificatePrepaymentListTable
+        result={result}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDeleteClick}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <AdminListPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          totalItems={result.total}
+          pageSize={result.pageSize}
+          query={{
+            page: query.page,
+            pageSize: query.pageSize,
+            search: query.search,
+            field: "all",
+          }}
+          buildPageHref={(page) => buildCertificatePrepaymentPageHref(page, query)}
+          className="w-full"
+        />
+      </div>
 
       <CertificatePrepaymentFormModal
         open={formOpen}

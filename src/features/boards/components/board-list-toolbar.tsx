@@ -1,14 +1,24 @@
 "use client";
 
-import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import { AdminInput } from "@/components/admin/ui/admin-input";
+import { M } from "@/features/courses/lib/course-design";
 import { buildBoardListQueryString } from "@/features/boards/lib/board-list-query";
 import type { BoardListQuery } from "@/features/boards/types/board.types";
 import type { BoardType } from "@/types/database.types";
+
+const inputBox: CSSProperties = {
+  height: 38,
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
+};
 
 type BoardListToolbarProps = {
   boardType: BoardType;
@@ -32,21 +42,32 @@ export function BoardListToolbar({ boardType, query }: BoardListToolbarProps) {
   }
 
   return (
-    <form className="flex flex-col gap-3 sm:flex-row sm:items-end" onSubmit={handleSearchSubmit}>
-      <label className="flex-1 space-y-1.5">
-        <span className="block text-sm font-medium text-[#374151]">검색</span>
-        <AdminInput
-          name="search"
-          variant="outline"
-          defaultValue={query.search}
-          placeholder="제목, 내용, 작성자 검색"
-          disabled={isPending}
-        />
-      </label>
-      <AdminButton type="submit" disabled={isPending}>
-        <Search className="size-4" />
+    <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+      <input
+        name="search"
+        defaultValue={query.search}
+        placeholder="제목, 내용, 작성자 검색"
+        disabled={isPending}
+        style={{ ...inputBox, width: 280 }}
+      />
+      <button
+        type="submit"
+        disabled={isPending}
+        style={{
+          height: 38,
+          padding: "0 18px",
+          borderRadius: 8,
+          background: M.ink,
+          color: "#fff",
+          fontSize: 13,
+          fontWeight: 600,
+          border: "none",
+          cursor: isPending ? "wait" : "pointer",
+          opacity: isPending ? 0.7 : 1,
+        }}
+      >
         검색
-      </AdminButton>
+      </button>
     </form>
   );
 }

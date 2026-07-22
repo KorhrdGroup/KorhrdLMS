@@ -1,17 +1,32 @@
 "use client";
 
-import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import { AdminInput } from "@/components/admin/ui/admin-input";
+import { M } from "@/features/courses/lib/course-design";
 import { buildNoticePopupListQueryString } from "@/features/others/notice-popups/lib/notice-popup-list-query";
 import type { NoticePopupListQuery } from "@/features/others/notice-popups/types/notice-popup.types";
-import { cn } from "@/lib/utils";
 
-const selectClassName =
-  "h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30";
+const inputBox: CSSProperties = {
+  height: 38,
+  width: "100%",
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
+};
+
+const labelText: CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: M.body,
+  marginBottom: 6,
+};
 
 type NoticePopupListToolbarProps = {
   query: NoticePopupListQuery;
@@ -42,53 +57,51 @@ export function NoticePopupListToolbar({ query }: NoticePopupListToolbarProps) {
 
   return (
     <form
-      className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
       onSubmit={handleSearchSubmit}
+      style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}
     >
-      <label className="space-y-1.5">
-        <span className="block text-sm font-medium text-[#374151]">팝업 활성</span>
-        <select
-          name="isActive"
-          defaultValue={query.isActive}
-          className={cn(selectClassName, "w-full")}
-          disabled={isPending}
-        >
+      <label>
+        <span style={labelText}>팝업 활성</span>
+        <select name="isActive" defaultValue={query.isActive} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체</option>
           <option value="true">활성</option>
           <option value="false">비활성</option>
         </select>
       </label>
 
-      <label className="space-y-1.5">
-        <span className="block text-sm font-medium text-[#374151]">공지</span>
-        <select
-          name="isNotice"
-          defaultValue={query.isNotice}
-          className={cn(selectClassName, "w-full")}
-          disabled={isPending}
-        >
+      <label>
+        <span style={labelText}>공지</span>
+        <select name="isNotice" defaultValue={query.isNotice} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체</option>
           <option value="true">공지</option>
           <option value="false">일반</option>
         </select>
       </label>
 
-      <label className="space-y-1.5 md:col-span-2">
-        <span className="block text-sm font-medium text-[#374151]">검색</span>
-        <AdminInput
-          name="search"
-          variant="outline"
-          defaultValue={query.search}
-          placeholder="제목, 내용 검색"
-          disabled={isPending}
-        />
+      <label style={{ gridColumn: "1 / -1" }}>
+        <span style={labelText}>검색</span>
+        <input name="search" defaultValue={query.search} placeholder="제목, 내용 검색" disabled={isPending} style={inputBox} />
       </label>
 
-      <div className="flex items-end">
-        <AdminButton type="submit" disabled={isPending}>
-          <Search className="size-4" />
+      <div style={{ display: "flex", alignItems: "flex-end" }}>
+        <button
+          type="submit"
+          disabled={isPending}
+          style={{
+            height: 38,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.ink,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: isPending ? "wait" : "pointer",
+            opacity: isPending ? 0.7 : 1,
+          }}
+        >
           검색
-        </AdminButton>
+        </button>
       </div>
     </form>
   );

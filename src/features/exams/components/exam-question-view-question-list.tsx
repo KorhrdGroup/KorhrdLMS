@@ -1,36 +1,52 @@
+import type { CSSProperties } from "react";
+
 import { EXAM_QUESTION_TYPE_LABELS } from "@/features/exams/constants";
 import {
   formatQuestionAnswerDisplay,
   getQuestionChoicesDisplay,
 } from "@/features/exams/lib/exam-question-view.utils";
+import { M } from "@/features/courses/lib/course-design";
 import type { ExamQuestionViewItem } from "@/features/exams/types/exam-question-view.types";
 
 type ExamQuestionViewQuestionListProps = {
   questions: ExamQuestionViewItem[];
 };
 
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 14px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "14px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "top",
+};
+
 export function ExamQuestionViewQuestionList({ questions }: ExamQuestionViewQuestionListProps) {
   if (questions.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 문제가 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[960px] border-collapse text-sm">
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 960 }}>
         <thead>
-          <tr className="border-b border-[#E5E7EB] bg-[#F9FAFB]">
-            <th className="w-20 px-4 py-3 text-left font-medium text-[#374151]">문항번호</th>
-            <th className="min-w-[240px] px-4 py-3 text-left font-medium text-[#374151]">
-              문제내용
-            </th>
-            <th className="min-w-[220px] px-4 py-3 text-left font-medium text-[#374151]">보기</th>
-            <th className="w-24 px-4 py-3 text-center font-medium text-[#374151]">정답</th>
-            <th className="w-20 px-4 py-3 text-center font-medium text-[#374151]">배점</th>
-            <th className="w-24 px-4 py-3 text-center font-medium text-[#374151]">문제유형</th>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, width: 80 }}>문항번호</th>
+            <th style={{ ...th, minWidth: 240 }}>문제내용</th>
+            <th style={{ ...th, minWidth: 220 }}>보기</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>정답</th>
+            <th style={{ ...th, textAlign: "center", width: 72 }}>배점</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>문제유형</th>
           </tr>
         </thead>
         <tbody>
@@ -38,25 +54,25 @@ export function ExamQuestionViewQuestionList({ questions }: ExamQuestionViewQues
             const choices = getQuestionChoicesDisplay(item.questionType, item);
 
             return (
-              <tr key={item.id} className="border-b border-[#E5E7EB] align-top">
-                <td className="px-4 py-4 text-[#6B7280]">{item.number}</td>
-                <td className="px-4 py-4 whitespace-pre-wrap text-[#111827]">{item.question}</td>
-                <td className="px-4 py-4 text-[#374151]">
+              <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+                <td style={{ ...td, color: M.mute }}>{item.number}</td>
+                <td style={{ ...td, whiteSpace: "pre-wrap", color: M.ink }}>{item.question}</td>
+                <td style={td}>
                   {choices.length > 0 ? (
-                    <ul className="space-y-1">
+                    <ul style={{ display: "flex", flexDirection: "column", gap: 4, margin: 0, padding: 0, listStyle: "none" }}>
                       {choices.map((choice) => (
                         <li key={choice}>{choice}</li>
                       ))}
                     </ul>
                   ) : (
-                    <span className="text-[#9CA3AF]">—</span>
+                    <span style={{ color: M.mute }}>—</span>
                   )}
                 </td>
-                <td className="px-4 py-4 text-center font-medium text-[#111827]">
+                <td style={{ ...td, textAlign: "center", fontWeight: 600, color: M.ink }}>
                   {formatQuestionAnswerDisplay(item.questionType, item.answer)}
                 </td>
-                <td className="px-4 py-4 text-center text-[#6B7280]">{item.score}</td>
-                <td className="px-4 py-4 text-center">
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>{item.score}</td>
+                <td style={{ ...td, textAlign: "center" }}>
                   {EXAM_QUESTION_TYPE_LABELS[item.questionType]}
                 </td>
               </tr>

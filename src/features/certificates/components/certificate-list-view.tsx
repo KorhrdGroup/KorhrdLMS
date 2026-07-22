@@ -3,13 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardFooter,
-} from "@/components/admin/ui/admin-card";
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { M } from "@/features/courses/lib/course-design";
 import { CertificateDeleteConfirmModal } from "@/features/certificates/components/certificate-delete-confirm-modal";
 import { CertificateDetailModal } from "@/features/certificates/components/certificate-detail-modal";
 import { CertificateListTable } from "@/features/certificates/components/certificate-list-table";
@@ -56,65 +51,77 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
     setDeleteOpen(true);
   }
 
+  const description = query.deliveryStatus
+    ? `배송상태 "${CERTIFICATE_DELIVERY_STATUS_LABELS[query.deliveryStatus]}" 신청건만 조회 중입니다.`
+    : "학생이 프론트 자격증발급신청에서 접수한 신청 목록을 확인하고, 사진·배송정보·결제정보 확인 및 배송 여부를 관리할 수 있습니다.";
+
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="발급신청"
-        description={
-          query.deliveryStatus
-            ? `배송상태 "${CERTIFICATE_DELIVERY_STATUS_LABELS[query.deliveryStatus]}" 신청건만 조회 중입니다.`
-            : "학생이 프론트 자격증발급신청에서 접수한 신청 목록을 확인하고, 사진·배송정보·결제정보 확인 및 배송 여부를 관리할 수 있습니다."
-        }
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+          자격증신청 <span style={{ margin: "0 4px" }}>/</span>
+          <span style={{ color: M.ink, fontWeight: 600 }}>발급신청</span>
+        </div>
+        <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>발급신청</div>
+        <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+          {description} · 총 {result.total}개
+        </div>
+      </div>
 
       {successMessage ? (
-        <p className="rounded-lg bg-[#ECFDF5] px-4 py-3 text-sm text-[#047857]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
-        </p>
+        </div>
       ) : null}
 
       {errorMessage ? (
-        <p className="rounded-lg bg-[#FEF2F2] px-4 py-3 text-sm text-[#EF4444]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: "#fdecee", color: M.danger, padding: "10px 14px", fontSize: 13 }}>
           {errorMessage}
-        </p>
+        </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <CertificateListToolbar
-            query={query}
-            onExportError={(message) => {
-              setSuccessMessage(null);
-              setErrorMessage(message);
-            }}
-          />
-          <CertificateListTable
-            result={result}
-            onDetailClick={handleDetailClick}
-            onDeleteClick={handleDeleteClick}
-            onDeliveryError={(message) => {
-              setSuccessMessage(null);
-              setErrorMessage(message);
-            }}
-          />
-        </AdminCardContent>
-        <AdminCardFooter>
-          <AdminListPagination
-            page={result.page}
-            totalPages={result.totalPages}
-            totalItems={result.total}
-            pageSize={result.pageSize}
-            query={{
-              page: query.page,
-              pageSize: query.pageSize,
-              search: query.search,
-              field: "all",
-            }}
-            buildPageHref={(page) => buildCertificatePageHref(page, query)}
-            className="w-full"
-          />
-        </AdminCardFooter>
-      </AdminCard>
+      <CertificateListToolbar
+        query={query}
+        onExportError={(message) => {
+          setSuccessMessage(null);
+          setErrorMessage(message);
+        }}
+      />
+
+      <CertificateListTable
+        result={result}
+        onDetailClick={handleDetailClick}
+        onDeleteClick={handleDeleteClick}
+        onDeliveryError={(message) => {
+          setSuccessMessage(null);
+          setErrorMessage(message);
+        }}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <AdminListPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          totalItems={result.total}
+          pageSize={result.pageSize}
+          query={{
+            page: query.page,
+            pageSize: query.pageSize,
+            search: query.search,
+            field: "all",
+          }}
+          buildPageHref={(page) => buildCertificatePageHref(page, query)}
+          className="w-full"
+        />
+      </div>
 
       <CertificateDetailModal
         open={detailOpen}

@@ -1,18 +1,11 @@
 "use client";
 
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { NoticePinnedBadge } from "@/features/notice-management/components/notice-pinned-badge";
 import { NoticeStatusBadge } from "@/features/notice-management/components/notice-status-badge";
+import { M } from "@/features/courses/lib/course-design";
 import type { NoticeListItem } from "@/features/notice-management/types/notice.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
@@ -23,75 +16,99 @@ type NoticeListTableProps = {
   onDeleteClick?: (notice: NoticeListItem) => void;
 };
 
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
+
 export function NoticeListTable({ result, onEditClick, onDeleteClick }: NoticeListTableProps) {
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 공지가 없습니다. 공지등록 버튼으로 새 공지를 추가하세요.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead>제목</AdminTableHead>
-            <AdminTableHead className="w-28">작성자</AdminTableHead>
-            <AdminTableHead className="w-32 text-center">등록일</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">상단고정</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">공개여부</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">조회수</AdminTableHead>
-            <AdminTableHead className="w-44 text-right">관리</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 960 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={th}>제목</th>
+            <th style={{ ...th, width: 112 }}>작성자</th>
+            <th style={{ ...th, textAlign: "center", width: 128 }}>등록일</th>
+            <th style={{ ...th, textAlign: "center", width: 116 }}>상단고정</th>
+            <th style={{ ...th, textAlign: "center", width: 80 }}>공개여부</th>
+            <th style={{ ...th, textAlign: "center", width: 80 }}>조회수</th>
+            <th style={{ ...th, textAlign: "right", width: 176 }}>관리</th>
+          </tr>
+        </thead>
+        <tbody>
           {result.data.map((notice) => (
-            <AdminTableRow key={notice.id}>
-              <AdminTableCell className="font-medium">{notice.title}</AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">{notice.authorName}</AdminTableCell>
-              <AdminTableCell className="text-center text-[#6B7280]">
-                {formatDate(notice.createdAt)}
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
+            <tr key={notice.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{notice.title}</td>
+              <td style={{ ...td, color: M.mute }}>{notice.authorName}</td>
+              <td style={{ ...td, textAlign: "center", color: M.mute }}>{formatDate(notice.createdAt)}</td>
+              <td style={{ ...td, textAlign: "center" }}>
                 <NoticePinnedBadge isPinned={notice.isPinned} />
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
                 <NoticeStatusBadge isPublished={notice.isPublished} />
-              </AdminTableCell>
-              <AdminTableCell className="text-center text-[#6B7280]">
-                <span className="inline-flex items-center gap-1">
-                  <Eye className="size-3.5" />
+              </td>
+              <td style={{ ...td, textAlign: "center", color: M.mute }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <Eye style={{ width: 14, height: 14 }} />
                   {notice.viewCount}
                 </span>
-              </AdminTableCell>
-              <AdminTableCell>
-                <div className="flex justify-end gap-2">
-                  <AdminButton
+              </td>
+              <td style={{ ...td, textAlign: "right" }}>
+                <div style={{ display: "inline-flex", gap: 6, justifyContent: "flex-end" }}>
+                  <button
                     type="button"
-                    variant="secondary"
-                    size="sm"
                     onClick={() => onEditClick?.(notice)}
+                    style={{ ...iconBtn, border: `1px solid ${M.border}`, color: M.text }}
                   >
-                    <Pencil className="size-4" />
+                    <Pencil style={{ width: 14, height: 14 }} />
                     수정
-                  </AdminButton>
-                  <AdminButton
+                  </button>
+                  <button
                     type="button"
-                    variant="destructive"
-                    size="sm"
                     onClick={() => onDeleteClick?.(notice)}
+                    style={{ ...iconBtn, border: "1px solid #f4c9cd", color: M.danger }}
                   >
-                    <Trash2 className="size-4" />
+                    <Trash2 style={{ width: 14, height: 14 }} />
                     삭제
-                  </AdminButton>
+                  </button>
                 </div>
-              </AdminTableCell>
-            </AdminTableRow>
+              </td>
+            </tr>
           ))}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1,21 +1,14 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import {
   formatDisplayPeriod,
   hasAttachment,
   truncateNoticePopupTitle,
 } from "@/features/others/notice-popups/lib/notice-popup.utils";
+import { M } from "@/features/courses/lib/course-design";
 import type { NoticePopupListItem } from "@/features/others/notice-popups/types/notice-popup.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
@@ -26,6 +19,43 @@ type NoticePopupListTableProps = {
   onDeleteClick?: (item: NoticePopupListItem) => void;
 };
 
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
+
+const pill: CSSProperties = {
+  display: "inline-flex",
+  borderRadius: 999,
+  padding: "2px 8px",
+  fontSize: 12,
+  fontWeight: 600,
+  whiteSpace: "nowrap",
+};
+
 export function NoticePopupListTable({
   result,
   onEditClick,
@@ -33,99 +63,86 @@ export function NoticePopupListTable({
 }: NoticePopupListTableProps) {
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 공지팝업이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead className="w-16 text-center">번호</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">활성</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">공지</AdminTableHead>
-            <AdminTableHead>제목</AdminTableHead>
-            <AdminTableHead className="w-40">노출기간</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">첨부</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">순서</AdminTableHead>
-            <AdminTableHead className="w-28">등록일</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">수정</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">삭제</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1080 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, textAlign: "center", width: 56 }}>번호</th>
+            <th style={{ ...th, textAlign: "center", width: 72 }}>활성</th>
+            <th style={{ ...th, textAlign: "center", width: 72 }}>공지</th>
+            <th style={th}>제목</th>
+            <th style={{ ...th, width: 160 }}>노출기간</th>
+            <th style={{ ...th, textAlign: "center", width: 64 }}>첨부</th>
+            <th style={{ ...th, textAlign: "center", width: 64 }}>순서</th>
+            <th style={{ ...th, width: 112 }}>등록일</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>수정</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
           {result.data.map((item, index) => {
-            const rowNumber =
-              result.total - ((result.page - 1) * result.pageSize + index);
+            const rowNumber = result.total - ((result.page - 1) * result.pageSize + index);
 
             return (
-              <AdminTableRow key={item.id}>
-                <AdminTableCell className="text-center text-[#6B7280]">
-                  {rowNumber}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+              <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>{rowNumber}</td>
+                <td style={{ ...td, textAlign: "center" }}>
                   {item.isActive ? (
-                    <span className="rounded-full bg-[#D1FAE5] px-2 py-1 text-xs font-medium text-[#047857]">
-                      활성
-                    </span>
+                    <span style={{ ...pill, background: "#e6f6ee", color: "#1f9254" }}>활성</span>
                   ) : (
-                    <span className="text-[#9CA3AF]">비활성</span>
+                    <span style={{ color: M.mute }}>비활성</span>
                   )}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
                   {item.isNotice ? (
-                    <span className="rounded-full bg-[#FEE2E2] px-2 py-1 text-xs font-medium text-[#991B1B]">
-                      공지
-                    </span>
+                    <span style={{ ...pill, background: "#fdecee", color: M.danger }}>공지</span>
                   ) : (
-                    <span className="text-[#9CA3AF]">—</span>
+                    <span style={{ color: M.mute }}>—</span>
                   )}
-                </AdminTableCell>
-                <AdminTableCell className="max-w-[280px] font-medium">
+                </td>
+                <td style={{ ...td, maxWidth: 280, color: M.ink, fontWeight: 600 }}>
                   {truncateNoticePopupTitle(item.title)}
-                </AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">
+                </td>
+                <td style={{ ...td, color: M.mute }}>
                   {formatDisplayPeriod(item.displayStartDate, item.displayEndDate)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center text-[#6B7280]">
+                </td>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>
                   {hasAttachment(item.attachmentFileName) ? "Y" : "—"}
-                </AdminTableCell>
-                <AdminTableCell className="text-center text-[#6B7280]">
-                  {item.sortOrder}
-                </AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">
-                  {formatDate(item.createdAt)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
-                  <AdminButton
+                </td>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>{item.sortOrder}</td>
+                <td style={{ ...td, color: M.mute }}>{formatDate(item.createdAt)}</td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <button
                     type="button"
-                    variant="secondary"
-                    size="sm"
                     onClick={() => onEditClick?.(item)}
+                    style={{ ...iconBtn, margin: "0 auto", border: `1px solid ${M.border}`, color: M.text }}
                   >
-                    <Pencil className="size-4" />
+                    <Pencil style={{ width: 14, height: 14 }} />
                     수정
-                  </AdminButton>
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
-                  <AdminButton
+                  </button>
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <button
                     type="button"
-                    variant="destructive"
-                    size="sm"
                     onClick={() => onDeleteClick?.(item)}
+                    style={{ ...iconBtn, margin: "0 auto", border: "1px solid #f4c9cd", color: M.danger }}
                   >
-                    <Trash2 className="size-4" />
+                    <Trash2 style={{ width: 14, height: 14 }} />
                     삭제
-                  </AdminButton>
-                </AdminTableCell>
-              </AdminTableRow>
+                  </button>
+                </td>
+              </tr>
             );
           })}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1,24 +1,45 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { EXAM_QUESTION_TYPE_LABELS } from "@/features/exams/constants";
 import { truncateQuestionContent } from "@/features/exams/lib/exam-question-item.utils";
+import { M } from "@/features/courses/lib/course-design";
 import type { ExamQuestionItem } from "@/features/exams/types/exam-question-item.types";
 
 type ExamQuestionItemListTableProps = {
   questions: ExamQuestionItem[];
   onEditClick?: (item: ExamQuestionItem) => void;
   onDeleteClick?: (item: ExamQuestionItem) => void;
+};
+
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
 };
 
 export function ExamQuestionItemListTable({
@@ -28,68 +49,62 @@ export function ExamQuestionItemListTable({
 }: ExamQuestionItemListTableProps) {
   if (questions.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 문제가 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead className="w-16">번호</AdminTableHead>
-            <AdminTableHead>문제유형</AdminTableHead>
-            <AdminTableHead>문제내용</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">보기개수</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">정답</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">배점</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">수정</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">삭제</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 880 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, width: 64 }}>번호</th>
+            <th style={th}>문제유형</th>
+            <th style={th}>문제내용</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>보기개수</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>정답</th>
+            <th style={{ ...th, textAlign: "center", width: 72 }}>배점</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>수정</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
           {questions.map((item) => (
-            <AdminTableRow key={item.id}>
-              <AdminTableCell className="text-[#6B7280]">{item.number}</AdminTableCell>
-              <AdminTableCell>{EXAM_QUESTION_TYPE_LABELS[item.questionType]}</AdminTableCell>
-              <AdminTableCell className="max-w-[360px]">
+            <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <td style={{ ...td, color: M.mute }}>{item.number}</td>
+              <td style={td}>{EXAM_QUESTION_TYPE_LABELS[item.questionType]}</td>
+              <td style={{ ...td, maxWidth: 360, color: M.ink }}>
                 {truncateQuestionContent(item.question)}
-              </AdminTableCell>
-              <AdminTableCell className="text-center text-[#6B7280]">
-                {item.choiceCount}
-              </AdminTableCell>
-              <AdminTableCell className="text-center font-medium">{item.answer}</AdminTableCell>
-              <AdminTableCell className="text-center text-[#6B7280]">
-                {item.score}
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
-                <AdminButton
+              </td>
+              <td style={{ ...td, textAlign: "center", color: M.mute }}>{item.choiceCount}</td>
+              <td style={{ ...td, textAlign: "center", color: M.ink, fontWeight: 600 }}>{item.answer}</td>
+              <td style={{ ...td, textAlign: "center", color: M.mute }}>{item.score}</td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button
                   type="button"
-                  variant="secondary"
-                  size="sm"
                   onClick={() => onEditClick?.(item)}
+                  style={{ ...iconBtn, margin: "0 auto", border: `1px solid ${M.border}`, color: M.text }}
                 >
-                  <Pencil className="size-4" />
+                  <Pencil style={{ width: 14, height: 14 }} />
                   수정
-                </AdminButton>
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
-                <AdminButton
+                </button>
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button
                   type="button"
-                  variant="destructive"
-                  size="sm"
                   onClick={() => onDeleteClick?.(item)}
+                  style={{ ...iconBtn, margin: "0 auto", border: "1px solid #f4c9cd", color: M.danger }}
                 >
-                  <Trash2 className="size-4" />
+                  <Trash2 style={{ width: 14, height: 14 }} />
                   삭제
-                </AdminButton>
-              </AdminTableCell>
-            </AdminTableRow>
+                </button>
+              </td>
+            </tr>
           ))}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

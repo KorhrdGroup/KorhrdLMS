@@ -1,19 +1,12 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { PaymentStatusBadge } from "@/features/enrollments/components/payment-status-badge";
 import { formatCertificateAmount, formatOptionalText } from "@/features/certificates/lib/certificate.utils";
 import { getPaymentMethodLabel } from "@/features/payments/lib/payment-method.utils";
+import { M } from "@/features/courses/lib/course-design";
 import type { CertificatePrepaymentListItem } from "@/features/certificate-prepayments/types/certificate-prepayment.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
@@ -24,13 +17,51 @@ type CertificatePrepaymentListTableProps = {
   onDeleteClick?: (item: CertificatePrepaymentListItem) => void;
 };
 
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
+
 function UsageCell({ item }: { item: CertificatePrepaymentListItem }) {
   if (!item.usedAt) {
-    return <span className="text-xs text-[#6B7280]">미사용</span>;
+    return <span style={{ fontSize: 12, color: M.mute }}>미사용</span>;
   }
 
   return (
-    <span className="inline-flex rounded-md bg-[#EFF6FF] px-2 py-0.5 text-xs font-medium text-[#2563EB]">
+    <span
+      style={{
+        display: "inline-flex",
+        borderRadius: 6,
+        padding: "2px 8px",
+        fontSize: 12,
+        fontWeight: 600,
+        background: M.weakBg,
+        color: M.weakFg,
+      }}
+    >
       사용완료
     </span>
   );
@@ -38,14 +69,14 @@ function UsageCell({ item }: { item: CertificatePrepaymentListItem }) {
 
 function LinkedApplicationCell({ item }: { item: CertificatePrepaymentListItem }) {
   if (!item.linkedApplication) {
-    return <span className="text-xs text-[#9CA3AF]">—</span>;
+    return <span style={{ fontSize: 12, color: M.mute }}>—</span>;
   }
 
   return (
-    <span className="text-xs text-[#374151]">
+    <span style={{ fontSize: 12, color: M.body }}>
       {item.linkedApplication.certificateName}
       <br />
-      <span className="text-[#9CA3AF]">{formatDate(item.linkedApplication.appliedAt)} 신청</span>
+      <span style={{ color: M.mute }}>{formatDate(item.linkedApplication.appliedAt)} 신청</span>
     </span>
   );
 }
@@ -57,101 +88,96 @@ export function CertificatePrepaymentListTable({
 }: CertificatePrepaymentListTableProps) {
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         등록된 선납결제 내역이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead className="w-16 text-center">번호</AdminTableHead>
-            <AdminTableHead>학생명</AdminTableHead>
-            <AdminTableHead className="w-28">아이디</AdminTableHead>
-            <AdminTableHead className="w-32">연락처</AdminTableHead>
-            <AdminTableHead>선납 과정/자격증명</AdminTableHead>
-            <AdminTableHead className="w-28 text-right">선납금액</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">결제방법</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">결제상태</AdminTableHead>
-            <AdminTableHead className="w-28 text-center">선납일</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">사용여부</AdminTableHead>
-            <AdminTableHead className="min-w-[180px]">연결된 발급신청</AdminTableHead>
-            <AdminTableHead className="min-w-[140px]">메모</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">수정</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">삭제</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1320 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, textAlign: "center", width: 56 }}>번호</th>
+            <th style={th}>학생명</th>
+            <th style={{ ...th, width: 112 }}>아이디</th>
+            <th style={{ ...th, width: 128 }}>연락처</th>
+            <th style={th}>선납 과정/자격증명</th>
+            <th style={{ ...th, textAlign: "right", width: 112 }}>선납금액</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>결제방법</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>결제상태</th>
+            <th style={{ ...th, textAlign: "center", width: 112 }}>선납일</th>
+            <th style={{ ...th, textAlign: "center", width: 80 }}>사용여부</th>
+            <th style={{ ...th, minWidth: 180 }}>연결된 발급신청</th>
+            <th style={{ ...th, minWidth: 140 }}>메모</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>수정</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
           {result.data.map((item, index) => {
             const rowNumber = result.total - ((result.page - 1) * result.pageSize + index);
+            const used = Boolean(item.usedAt);
 
             return (
-              <AdminTableRow key={item.id}>
-                <AdminTableCell className="text-center text-[#6B7280]">{rowNumber}</AdminTableCell>
-                <AdminTableCell className="font-medium">{item.memberName}</AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">{item.memberLoginId}</AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">
-                  {formatOptionalText(item.memberPhone)}
-                </AdminTableCell>
-                <AdminTableCell>
+              <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>{rowNumber}</td>
+                <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.memberName}</td>
+                <td style={{ ...td, color: M.mute }}>{item.memberLoginId}</td>
+                <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.memberPhone)}</td>
+                <td style={td}>
                   {item.certificateName}
                   {item.courseName ? (
-                    <span className="ml-1 text-xs text-[#9CA3AF]">({item.courseName})</span>
+                    <span style={{ marginLeft: 4, fontSize: 12, color: M.mute }}>({item.courseName})</span>
                   ) : null}
-                </AdminTableCell>
-                <AdminTableCell className="text-right font-medium">
+                </td>
+                <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                   {formatCertificateAmount(item.amount)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center text-[#6B7280]">
+                </td>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>
                   {item.paymentMethod ? getPaymentMethodLabel(item.paymentMethod) : "—"}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
                   <PaymentStatusBadge status={item.paymentStatus} />
-                </AdminTableCell>
-                <AdminTableCell className="text-center text-[#6B7280]">
+                </td>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>
                   {item.paidAt ? formatDate(item.paidAt) : "—"}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
                   <UsageCell item={item} />
-                </AdminTableCell>
-                <AdminTableCell>
+                </td>
+                <td style={td}>
                   <LinkedApplicationCell item={item} />
-                </AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">
-                  {formatOptionalText(item.memo)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
-                  <AdminButton
+                </td>
+                <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.memo)}</td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <button
                     type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={Boolean(item.usedAt)}
+                    disabled={used}
                     onClick={() => onEditClick?.(item)}
+                    style={{ ...iconBtn, margin: "0 auto", border: `1px solid ${M.border}`, color: M.text, opacity: used ? 0.4 : 1, cursor: used ? "not-allowed" : "pointer" }}
                   >
-                    <Pencil className="size-4" />
+                    <Pencil style={{ width: 14, height: 14 }} />
                     수정
-                  </AdminButton>
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
-                  <AdminButton
+                  </button>
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <button
                     type="button"
-                    variant="destructive"
-                    size="sm"
-                    disabled={Boolean(item.usedAt)}
+                    disabled={used}
                     onClick={() => onDeleteClick?.(item)}
+                    style={{ ...iconBtn, margin: "0 auto", border: "1px solid #f4c9cd", color: M.danger, opacity: used ? 0.4 : 1, cursor: used ? "not-allowed" : "pointer" }}
                   >
-                    <Trash2 className="size-4" />
+                    <Trash2 style={{ width: 14, height: 14 }} />
                     삭제
-                  </AdminButton>
-                </AdminTableCell>
-              </AdminTableRow>
+                  </button>
+                </td>
+              </tr>
             );
           })}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

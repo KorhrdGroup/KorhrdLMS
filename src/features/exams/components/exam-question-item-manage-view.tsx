@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import { AdminButton, adminButtonVariants } from "@/components/admin/ui/admin-button";
-import { AdminCard, AdminCardContent } from "@/components/admin/ui/admin-card";
+import { M } from "@/features/courses/lib/course-design";
 import { ExamQuestionItemDeleteConfirmModal } from "@/features/exams/components/exam-question-item-delete-confirm-modal";
 import { ExamQuestionItemFormModal } from "@/features/exams/components/exam-question-item-form-modal";
 import { ExamQuestionItemListTable } from "@/features/exams/components/exam-question-item-list-table";
@@ -17,7 +15,6 @@ import type {
   ExamQuestionItem,
   ExamQuestionManageSummary,
 } from "@/features/exams/types/exam-question-item.types";
-import { cn } from "@/lib/utils";
 
 type ExamQuestionItemManageViewProps = {
   summary: ExamQuestionManageSummary;
@@ -64,52 +61,97 @@ export function ExamQuestionItemManageView({
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="문제등록"
-        description="시험 문제를 등록하고 관리할 수 있습니다."
-        actions={
-          <Link
-            href="/admin/exams/questions"
-            className={cn(adminButtonVariants({ variant: "outline" }))}
-          >
-            목록으로
-          </Link>
-        }
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
+        <div>
+          <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+            과정관리 <span style={{ margin: "0 4px" }}>/</span>
+            시험문제 관리 <span style={{ margin: "0 4px" }}>/</span>
+            <span style={{ color: M.ink, fontWeight: 600 }}>문제등록</span>
+          </div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>문제등록</div>
+          <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+            시험 문제를 등록하고 관리할 수 있습니다
+          </div>
+        </div>
 
-      <ExamSubNav />
+        <Link
+          href="/admin/exams/questions"
+          style={{
+            height: 38,
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "0 16px",
+            borderRadius: 8,
+            background: "#fff",
+            border: `1px solid ${M.border}`,
+            color: M.text,
+            fontSize: 13,
+            fontWeight: 600,
+            textDecoration: "none",
+          }}
+        >
+          목록으로
+        </Link>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <ExamSubNav />
+      </div>
 
       {successMessage ? (
-        <div className="rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#059669]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
         </div>
       ) : null}
 
       {errorMessage ? (
-        <div className="rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm text-[#EF4444]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: "#fdecee", color: M.danger, padding: "10px 14px", fontSize: 13 }}>
           {errorMessage}
         </div>
       ) : null}
 
-      <ExamQuestionItemSummary summary={summary} />
+      <div style={{ marginBottom: 20 }}>
+        <ExamQuestionItemSummary summary={summary} />
+      </div>
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <div className="flex justify-end">
-            <AdminButton type="button" onClick={handleRegisterClick}>
-              <Plus className="size-4" />
-              문제등록
-            </AdminButton>
-          </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", paddingBottom: 16 }}>
+        <button
+          type="button"
+          onClick={handleRegisterClick}
+          style={{
+            height: 38,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.accent,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <Plus style={{ width: 16, height: 16 }} />
+          문제등록
+        </button>
+      </div>
 
-          <ExamQuestionItemListTable
-            questions={questions}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
-        </AdminCardContent>
-      </AdminCard>
+      <ExamQuestionItemListTable
+        questions={questions}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDeleteClick}
+      />
 
       <ExamQuestionItemFormModal
         open={formOpen}

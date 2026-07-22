@@ -1,23 +1,16 @@
 "use client";
 
 import { Eye, FilePlus, Pencil } from "lucide-react";
+import type { CSSProperties } from "react";
 import { useState, useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
 import { AdminCheckbox } from "@/components/admin/ui/admin-checkbox";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { updateExamPrintEnabledAction } from "@/features/exams/actions/exam-question.actions";
 import {
   EXAM_KIND_LABELS,
   EXAM_TYPE_LABELS,
 } from "@/features/exams/constants";
+import { M } from "@/features/courses/lib/course-design";
 import type { ExamQuestionListItem } from "@/features/exams/types/exam-question.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
@@ -29,6 +22,37 @@ type ExamQuestionListTableProps = {
   onEditClick?: (item: ExamQuestionListItem) => void;
   onPrintChange?: () => void;
   onPrintError?: (message: string) => void;
+};
+
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+  whiteSpace: "nowrap",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  border: `1px solid ${M.border}`,
+  color: M.text,
+  cursor: "pointer",
+  whiteSpace: "nowrap",
 };
 
 export function ExamQuestionListTable({
@@ -67,91 +91,72 @@ export function ExamQuestionListTable({
 
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         조회된 시험이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead>연도</AdminTableHead>
-            <AdminTableHead>과정명</AdminTableHead>
-            <AdminTableHead>시험명</AdminTableHead>
-            <AdminTableHead>시험종류</AdminTableHead>
-            <AdminTableHead>시험유형</AdminTableHead>
-            <AdminTableHead>등록일</AdminTableHead>
-            <AdminTableHead className="w-28 text-center">문제등록</AdminTableHead>
-            <AdminTableHead className="w-28 text-center">문제보기</AdminTableHead>
-            <AdminTableHead className="w-20 text-center">출력</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">수정</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1080 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, width: 72 }}>연도</th>
+            <th style={th}>과정명</th>
+            <th style={th}>시험명</th>
+            <th style={th}>시험종류</th>
+            <th style={th}>시험유형</th>
+            <th style={th}>등록일</th>
+            <th style={{ ...th, textAlign: "center", width: 112 }}>문제등록</th>
+            <th style={{ ...th, textAlign: "center", width: 112 }}>문제보기</th>
+            <th style={{ ...th, textAlign: "center", width: 72 }}>출력</th>
+            <th style={{ ...th, textAlign: "center", width: 96 }}>수정</th>
+          </tr>
+        </thead>
+        <tbody>
           {result.data.map((item) => (
-            <AdminTableRow key={item.id}>
-              <AdminTableCell className="text-[#6B7280]">{item.year}</AdminTableCell>
-              <AdminTableCell className="font-medium">{item.courseName}</AdminTableCell>
-              <AdminTableCell>{item.name}</AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {EXAM_KIND_LABELS[item.examKind]}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {EXAM_TYPE_LABELS[item.examType]}
-              </AdminTableCell>
-              <AdminTableCell className="text-[#6B7280]">
-                {formatDate(item.createdAt)}
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
-                <AdminButton
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onRegisterClick?.(item)}
-                >
-                  <FilePlus className="size-4" />
+            <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <td style={{ ...td, color: M.mute }}>{item.year}</td>
+              <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.courseName}</td>
+              <td style={td}>{item.name}</td>
+              <td style={{ ...td, color: M.mute }}>{EXAM_KIND_LABELS[item.examKind]}</td>
+              <td style={{ ...td, color: M.mute }}>{EXAM_TYPE_LABELS[item.examType]}</td>
+              <td style={{ ...td, color: M.mute }}>{formatDate(item.createdAt)}</td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button type="button" onClick={() => onRegisterClick?.(item)} style={iconBtn}>
+                  <FilePlus style={{ width: 14, height: 14 }} />
                   문제등록
-                </AdminButton>
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
-                <AdminButton
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onViewClick?.(item)}
-                >
-                  <Eye className="size-4" />
+                </button>
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button type="button" onClick={() => onViewClick?.(item)} style={iconBtn}>
+                  <Eye style={{ width: 14, height: 14 }} />
                   문제보기
-                </AdminButton>
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
+                </button>
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
                 <AdminCheckbox
                   checked={item.printEnabled}
                   disabled={isUpdating && updatingExamId === item.id}
                   aria-label={`${item.name} 출력 설정`}
-                  onChange={(event) =>
-                    handlePrintChange(item, event.target.checked)
-                  }
+                  onChange={(event) => handlePrintChange(item, event.target.checked)}
                 />
-              </AdminTableCell>
-              <AdminTableCell className="text-center">
-                <AdminButton
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                <button
                   type="button"
-                  variant="secondary"
-                  size="sm"
                   onClick={() => onEditClick?.(item)}
+                  style={{ ...iconBtn, margin: "0 auto" }}
                 >
-                  <Pencil className="size-4" />
+                  <Pencil style={{ width: 14, height: 14 }} />
                   수정
-                </AdminButton>
-              </AdminTableCell>
-            </AdminTableRow>
+                </button>
+              </td>
+            </tr>
           ))}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

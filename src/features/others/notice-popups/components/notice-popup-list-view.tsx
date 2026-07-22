@@ -4,14 +4,8 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardFooter,
-} from "@/components/admin/ui/admin-card";
-import { AdminButton } from "@/components/admin/ui/admin-button";
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { M } from "@/features/courses/lib/course-design";
 import { OthersSubNav } from "@/features/others/components/others-sub-nav";
 import { NoticePopupDeleteConfirmModal } from "@/features/others/notice-popups/components/notice-popup-delete-confirm-modal";
 import { NoticePopupFormModal } from "@/features/others/notice-popups/components/notice-popup-form-modal";
@@ -58,52 +52,94 @@ export function NoticePopupListView({ result, query }: NoticePopupListViewProps)
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="팝업관리"
-        description="공지팝업을 등록하고 노출 상태를 관리할 수 있습니다."
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+          운영관리 <span style={{ margin: "0 4px" }}>/</span>
+          <span style={{ color: M.ink, fontWeight: 600 }}>팝업관리</span>
+        </div>
+        <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>팝업관리</div>
+        <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+          공지팝업을 등록하고 노출 상태를 관리할 수 있습니다 · 총 {result.total}개
+        </div>
+      </div>
 
-      <OthersSubNav />
+      <div style={{ marginBottom: 20 }}>
+        <OthersSubNav />
+      </div>
 
       {successMessage ? (
-        <p className="rounded-lg bg-[#ECFDF5] px-4 py-3 text-sm text-[#047857]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
-        </p>
+        </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <NoticePopupListToolbar query={query} />
-            <AdminButton type="button" onClick={handleRegisterClick}>
-              <Plus className="size-4" />
-              등록
-            </AdminButton>
-          </div>
-          <NoticePopupListTable
-            result={result}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-          />
-        </AdminCardContent>
-        <AdminCardFooter>
-          <AdminListPagination
-            page={result.page}
-            totalPages={result.totalPages}
-            totalItems={result.total}
-            pageSize={result.pageSize}
-            query={{
-              page: query.page,
-              pageSize: query.pageSize,
-              search: query.search,
-              field: "all",
-            }}
-            buildPageHref={(page) => buildNoticePopupPageHref(page, query)}
-            className="w-full"
-          />
-        </AdminCardFooter>
-      </AdminCard>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 16,
+          flexWrap: "wrap",
+          paddingBottom: 16,
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 280 }}>
+          <NoticePopupListToolbar query={query} />
+        </div>
+        <button
+          type="button"
+          onClick={handleRegisterClick}
+          style={{
+            height: 38,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.accent,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <Plus style={{ width: 16, height: 16 }} />
+          등록
+        </button>
+      </div>
+
+      <NoticePopupListTable
+        result={result}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDeleteClick}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <AdminListPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          totalItems={result.total}
+          pageSize={result.pageSize}
+          query={{
+            page: query.page,
+            pageSize: query.pageSize,
+            search: query.search,
+            field: "all",
+          }}
+          buildPageHref={(page) => buildNoticePopupPageHref(page, query)}
+          className="w-full"
+        />
+      </div>
 
       <NoticePopupFormModal
         open={formOpen}

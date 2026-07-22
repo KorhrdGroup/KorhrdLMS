@@ -1,18 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 import { Eye, Trash2 } from "lucide-react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import {
-  AdminTable,
-  AdminTableBody,
-  AdminTableCell,
-  AdminTableHead,
-  AdminTableHeader,
-  AdminTableRow,
-} from "@/components/admin/ui/admin-table";
 import { updateCertificateApplicationAction } from "@/features/certificates/actions/certificate.actions";
 import {
   formatApplicantWithId,
@@ -20,6 +12,7 @@ import {
   formatFullAddress,
   formatOptionalText,
 } from "@/features/certificates/lib/certificate.utils";
+import { M } from "@/features/courses/lib/course-design";
 import type { CertificateListItem } from "@/features/certificates/types/certificate.types";
 import { PaymentStatusBadge } from "@/features/enrollments/components/payment-status-badge";
 import { formatDate } from "@/lib/shared/format-date";
@@ -35,6 +28,34 @@ type CertificateListTableProps = {
 type DeliveryCheckboxProps = {
   item: CertificateListItem;
   onError?: (message: string) => void;
+};
+
+const th: CSSProperties = {
+  textAlign: "left",
+  padding: "11px 10px",
+  fontSize: 12,
+  fontWeight: 500,
+  color: M.mute,
+  whiteSpace: "nowrap",
+};
+const td: CSSProperties = {
+  padding: "13px 10px",
+  fontSize: 13,
+  color: M.body,
+  verticalAlign: "middle",
+};
+
+const iconBtn: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "6px 10px",
+  borderRadius: 7,
+  fontSize: 12,
+  fontWeight: 600,
+  background: "#fff",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
 };
 
 /**
@@ -70,16 +91,16 @@ function DeliveryCheckbox({ item, onError }: DeliveryCheckboxProps) {
   }
 
   return (
-    <label className="inline-flex cursor-pointer items-center justify-center gap-1.5">
+    <label style={{ display: "inline-flex", cursor: "pointer", alignItems: "center", justifyContent: "center", gap: 6 }}>
       <input
         type="checkbox"
         checked={isDelivered}
         disabled={isPending}
         onChange={(event) => handleChange(event.target.checked)}
-        className="size-4 rounded border-[#D1D5DB] accent-[#3B82F6] disabled:opacity-50"
+        style={{ width: 16, height: 16, accentColor: M.accent, opacity: isPending ? 0.5 : 1 }}
         aria-label={`${item.applicantName} 배송완료 여부`}
       />
-      <span className="text-xs text-[#6B7280]">
+      <span style={{ fontSize: 12, color: M.mute }}>
         {isPending ? "저장 중..." : isDelivered ? "배송완료" : "배송예정"}
       </span>
     </label>
@@ -88,7 +109,7 @@ function DeliveryCheckbox({ item, onError }: DeliveryCheckboxProps) {
 
 function CertificatePhotoCell({ item }: { item: CertificateListItem }) {
   if (!item.photoUrl) {
-    return <span className="text-xs text-[#9CA3AF]">사진 없음</span>;
+    return <span style={{ fontSize: 12, color: M.mute }}>사진 없음</span>;
   }
 
   return (
@@ -96,14 +117,24 @@ function CertificatePhotoCell({ item }: { item: CertificateListItem }) {
       href={item.photoUrl}
       target="_blank"
       rel="noreferrer"
-      className="inline-flex h-12 w-10 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-[#F9FAFB]"
       title="사진 크게 보기"
+      style={{
+        display: "inline-flex",
+        height: 48,
+        width: 40,
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        borderRadius: 6,
+        border: `1px solid ${M.border}`,
+        background: M.hover,
+      }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.photoUrl}
         alt={`${item.applicantName} 증명사진`}
-        className="h-full w-full object-cover"
+        style={{ height: "100%", width: "100%", objectFit: "cover" }}
       />
     </a>
   );
@@ -117,97 +148,86 @@ export function CertificateListTable({
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-[#9CA3AF]">
+      <div style={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
         조회된 자격증 신청 내역이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <AdminTable>
-        <AdminTableHeader>
-          <AdminTableRow className="hover:bg-transparent">
-            <AdminTableHead className="w-16 text-center">번호</AdminTableHead>
-            <AdminTableHead>자격증명</AdminTableHead>
-            <AdminTableHead>신청자</AdminTableHead>
-            <AdminTableHead className="w-32">연락처</AdminTableHead>
-            <AdminTableHead className="min-w-[220px]">배송정보</AdminTableHead>
-            <AdminTableHead className="w-16 text-center">사진</AdminTableHead>
-            <AdminTableHead className="w-28 text-right">발급비용</AdminTableHead>
-            <AdminTableHead className="w-28 text-right">실결제금액</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">결제상태</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">배송여부</AdminTableHead>
-            <AdminTableHead className="w-28 text-center">신청일</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">신청내역</AdminTableHead>
-            <AdminTableHead className="w-24 text-center">삭제</AdminTableHead>
-          </AdminTableRow>
-        </AdminTableHeader>
-        <AdminTableBody>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1280 }}>
+        <thead>
+          <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
+            <th style={{ ...th, textAlign: "center", width: 56 }}>번호</th>
+            <th style={th}>자격증명</th>
+            <th style={th}>신청자</th>
+            <th style={{ ...th, width: 128 }}>연락처</th>
+            <th style={{ ...th, minWidth: 220 }}>배송정보</th>
+            <th style={{ ...th, textAlign: "center", width: 56 }}>사진</th>
+            <th style={{ ...th, textAlign: "right", width: 112 }}>발급비용</th>
+            <th style={{ ...th, textAlign: "right", width: 112 }}>실결제금액</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>결제상태</th>
+            <th style={{ ...th, textAlign: "center", width: 104 }}>배송여부</th>
+            <th style={{ ...th, textAlign: "center", width: 112 }}>신청일</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>신청내역</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
           {result.data.map((item, index) => {
-            const rowNumber =
-              result.total - ((result.page - 1) * result.pageSize + index);
+            const rowNumber = result.total - ((result.page - 1) * result.pageSize + index);
 
             return (
-              <AdminTableRow key={item.id}>
-                <AdminTableCell className="text-center text-[#6B7280]">
-                  {rowNumber}
-                </AdminTableCell>
-                <AdminTableCell className="font-medium">{item.certificateName}</AdminTableCell>
-                <AdminTableCell>
-                  {formatApplicantWithId(item.applicantName, item.memberLoginId)}
-                </AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">
-                  {formatOptionalText(item.phone)}
-                </AdminTableCell>
-                <AdminTableCell className="text-[#6B7280]">
+              <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>{rowNumber}</td>
+                <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.certificateName}</td>
+                <td style={td}>{formatApplicantWithId(item.applicantName, item.memberLoginId)}</td>
+                <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.phone)}</td>
+                <td style={{ ...td, color: M.mute }}>
                   {formatFullAddress(item.postalCode, item.address, item.addressDetail)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
                   <CertificatePhotoCell item={item} />
-                </AdminTableCell>
-                <AdminTableCell className="text-right font-medium">
+                </td>
+                <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                   {formatCertificateAmount(item.issuanceCost)}
-                </AdminTableCell>
-                <AdminTableCell className="text-right font-medium">
+                </td>
+                <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                   {formatCertificateAmount(item.actualPaymentAmount)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
                   <PaymentStatusBadge status={item.paymentStatus} />
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
                   <DeliveryCheckbox item={item} onError={onDeliveryError} />
-                </AdminTableCell>
-                <AdminTableCell className="text-center text-[#6B7280]">
-                  {formatDate(item.appliedAt)}
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
-                  <AdminButton
+                </td>
+                <td style={{ ...td, textAlign: "center", color: M.mute }}>{formatDate(item.appliedAt)}</td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <button
                     type="button"
-                    variant="outline"
-                    size="sm"
                     onClick={() => onDetailClick?.(item)}
+                    style={{ ...iconBtn, margin: "0 auto", border: `1px solid ${M.border}`, color: M.text }}
                   >
-                    <Eye className="size-4" />
+                    <Eye style={{ width: 14, height: 14 }} />
                     보기
-                  </AdminButton>
-                </AdminTableCell>
-                <AdminTableCell className="text-center">
-                  <AdminButton
+                  </button>
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <button
                     type="button"
-                    variant="destructive"
-                    size="sm"
                     onClick={() => onDeleteClick?.(item)}
+                    style={{ ...iconBtn, margin: "0 auto", border: "1px solid #f4c9cd", color: M.danger }}
                   >
-                    <Trash2 className="size-4" />
+                    <Trash2 style={{ width: 14, height: 14 }} />
                     삭제
-                  </AdminButton>
-                </AdminTableCell>
-              </AdminTableRow>
+                  </button>
+                </td>
+              </tr>
             );
           })}
-        </AdminTableBody>
-      </AdminTable>
+        </tbody>
+      </table>
     </div>
   );
 }

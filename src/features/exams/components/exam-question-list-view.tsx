@@ -3,13 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { AdminPageHeader } from "@/components/admin/layout/admin-shell";
-import {
-  AdminCard,
-  AdminCardContent,
-  AdminCardFooter,
-} from "@/components/admin/ui/admin-card";
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { M } from "@/features/courses/lib/course-design";
 import { ExamEditModal } from "@/features/exams/components/exam-edit-modal";
 import { ExamSubNav } from "@/features/exams/components/exam-sub-nav";
 import { ExamQuestionListTable } from "@/features/exams/components/exam-question-list-table";
@@ -80,61 +75,75 @@ export function ExamQuestionListView({
   }
 
   return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title="시험문제 관리"
-        description="과정별 시험 문제를 조회하고 관리할 수 있습니다."
-      />
+    <div
+      style={{
+        background: "#ffffff",
+        color: M.text,
+        margin: -24,
+        padding: 24,
+        minHeight: "calc(100% + 48px)",
+      }}
+    >
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+          과정관리 <span style={{ margin: "0 4px" }}>/</span>
+          <span style={{ color: M.ink, fontWeight: 600 }}>시험문제 관리</span>
+        </div>
+        <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>시험문제 관리</div>
+        <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+          과정별 시험 문제를 조회하고 관리할 수 있습니다 · 총 {result.total}개
+        </div>
+      </div>
 
-      <ExamSubNav />
+      <div style={{ marginBottom: 20 }}>
+        <ExamSubNav />
+      </div>
 
       {successMessage ? (
-        <div className="rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#059669]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {successMessage}
         </div>
       ) : null}
 
       {infoMessage ? (
-        <div className="rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-3 text-sm text-[#2563EB]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: M.weakBg, color: M.weakFg, padding: "10px 14px", fontSize: 13 }}>
           {infoMessage}
         </div>
       ) : null}
 
       {errorMessage ? (
-        <div className="rounded-lg border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm text-[#EF4444]">
+        <div style={{ marginBottom: 16, borderRadius: 8, background: "#fdecee", color: M.danger, padding: "10px 14px", fontSize: 13 }}>
           {errorMessage}
         </div>
       ) : null}
 
-      <AdminCard>
-        <AdminCardContent className="space-y-4 py-5">
-          <ExamQuestionListToolbar query={query} filterOptions={filterOptions} />
-          <ExamQuestionListTable
-            result={result}
-            onRegisterClick={handleRegisterClick}
-            onViewClick={handleViewClick}
-            onEditClick={handleEditClick}
-            onPrintChange={handlePrintChange}
-            onPrintError={handlePrintError}
-          />
-        </AdminCardContent>
-        <AdminCardFooter>
-          <AdminListPagination
-            page={result.page}
-            totalPages={result.totalPages}
-            totalItems={result.total}
-            pageSize={result.pageSize}
-            query={{
-              page: query.page,
-              pageSize: query.pageSize,
-              search: "",
-              field: "all",
-            }}
-            buildPageHref={(page) => buildExamQuestionPageHref(page, query)}
-            className="w-full"
-          />
-        </AdminCardFooter>
-      </AdminCard>
+      <ExamQuestionListToolbar query={query} filterOptions={filterOptions} />
+
+      <ExamQuestionListTable
+        result={result}
+        onRegisterClick={handleRegisterClick}
+        onViewClick={handleViewClick}
+        onEditClick={handleEditClick}
+        onPrintChange={handlePrintChange}
+        onPrintError={handlePrintError}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <AdminListPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          totalItems={result.total}
+          pageSize={result.pageSize}
+          query={{
+            page: query.page,
+            pageSize: query.pageSize,
+            search: "",
+            field: "all",
+          }}
+          buildPageHref={(page) => buildExamQuestionPageHref(page, query)}
+          className="w-full"
+        />
+      </div>
 
       <ExamEditModal
         open={editOpen}

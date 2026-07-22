@@ -9,17 +9,17 @@ type NoticePinnedBadgeProps = {
 
 export function NoticePinnedBadge({ isPinned, className }: NoticePinnedBadgeProps) {
   if (!isPinned) {
-    return <span className={cn("text-xs text-[#9CA3AF]", className)}>-</span>;
+    return <span className={cn("text-xs text-[#8b95a1]", className)}>-</span>;
   }
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md bg-[#FEF2F2] px-2 py-0.5 text-xs font-medium text-[#DC2626]",
+        "inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-[#fdecee] px-2.5 py-1 text-xs font-semibold text-[#e42939]",
         className,
       )}
     >
-      <Pin className="size-3" />
+      <Pin className="size-3 fill-current" />
       상단고정
     </span>
   );

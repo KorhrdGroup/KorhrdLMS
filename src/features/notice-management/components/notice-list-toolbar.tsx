@@ -1,33 +1,35 @@
 "use client";
 
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import { AdminInput } from "@/components/admin/ui/admin-input";
+import { M } from "@/features/courses/lib/course-design";
 import {
   NOTICE_PINNED_FILTER_LABELS,
   NOTICE_PUBLISH_FILTER_LABELS,
 } from "@/features/notice-management/constants";
 import { buildNoticeListQueryString } from "@/features/notice-management/lib/notice-list-query";
 import type { NoticeListQuery } from "@/features/notice-management/types/notice.types";
-import { cn } from "@/lib/utils";
 
-const selectClassName =
-  "h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30";
+const inputBox: CSSProperties = {
+  height: 38,
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
+};
 
 type NoticeListToolbarProps = {
   query: NoticeListQuery;
   onRegisterClick?: () => void;
-  className?: string;
 };
 
-export function NoticeListToolbar({
-  query,
-  onRegisterClick,
-  className,
-}: NoticeListToolbarProps) {
+export function NoticeListToolbar({ query, onRegisterClick }: NoticeListToolbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -50,21 +52,17 @@ export function NoticeListToolbar({
 
   return (
     <div
-      className={cn(
-        "flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between",
-        className,
-      )}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+        paddingBottom: 16,
+      }}
     >
-      <form
-        className="flex flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center"
-        onSubmit={handleSearchSubmit}
-      >
-        <select
-          name="pinned"
-          defaultValue={query.pinned}
-          className={selectClassName}
-          disabled={isPending}
-        >
+      <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <select name="pinned" defaultValue={query.pinned} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체 고정상태</option>
           {Object.entries(NOTICE_PINNED_FILTER_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -73,12 +71,7 @@ export function NoticeListToolbar({
           ))}
         </select>
 
-        <select
-          name="publish"
-          defaultValue={query.publish}
-          className={selectClassName}
-          disabled={isPending}
-        >
+        <select name="publish" defaultValue={query.publish} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체 상태</option>
           {Object.entries(NOTICE_PUBLISH_FILTER_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -87,24 +80,49 @@ export function NoticeListToolbar({
           ))}
         </select>
 
-        <AdminInput
-          name="search"
-          variant="outline"
-          defaultValue={query.search}
-          placeholder="제목으로 검색"
-          className="sm:max-w-xs"
-        />
+        <input name="search" defaultValue={query.search} placeholder="제목으로 검색" style={{ ...inputBox, width: 240 }} />
 
-        <AdminButton type="submit" disabled={isPending}>
-          <Search className="size-4" />
+        <button
+          type="submit"
+          disabled={isPending}
+          style={{
+            height: 38,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.ink,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: isPending ? "wait" : "pointer",
+            opacity: isPending ? 0.7 : 1,
+          }}
+        >
           검색
-        </AdminButton>
+        </button>
       </form>
 
-      <AdminButton type="button" onClick={onRegisterClick}>
-        <Plus className="size-4" />
+      <button
+        type="button"
+        onClick={onRegisterClick}
+        style={{
+          height: 38,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          padding: "0 18px",
+          borderRadius: 8,
+          background: M.accent,
+          color: "#fff",
+          fontSize: 13,
+          fontWeight: 600,
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        <Plus style={{ width: 16, height: 16 }} />
         공지등록
-      </AdminButton>
+      </button>
     </div>
   );
 }

@@ -1,11 +1,10 @@
 "use client";
 
-import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "react";
 
-import { AdminButton } from "@/components/admin/ui/admin-button";
-import { AdminInput } from "@/components/admin/ui/admin-input";
+import { M } from "@/features/courses/lib/course-design";
 import {
   MESSAGE_CHANNEL_FILTER_OPTIONS,
   MESSAGE_CHANNEL_LABELS,
@@ -20,10 +19,26 @@ import {
   resolveQuickPeriodRange,
 } from "@/features/others/message-center/lib/message-dispatch-list-query";
 import type { MessageDispatchListQuery } from "@/features/others/message-center/types/message-dispatch.types";
-import { cn } from "@/lib/utils";
 
-const selectClassName =
-  "h-10 rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30";
+const inputBox: CSSProperties = {
+  height: 38,
+  width: "100%",
+  border: `1px solid ${M.border}`,
+  borderRadius: 8,
+  padding: "0 14px",
+  fontSize: 13,
+  color: M.text,
+  outline: "none",
+  background: "#fff",
+};
+
+const labelText: CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: M.body,
+  marginBottom: 6,
+};
 
 type MessageDispatchListToolbarProps = {
   query: MessageDispatchListQuery;
@@ -68,116 +83,110 @@ export function MessageDispatchListToolbar({ query }: MessageDispatchListToolbar
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSearchSubmit}>
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label className="space-y-1.5">
-          <span className="block text-sm font-medium text-[#374151]">채널</span>
-          <select
-            name="channel"
-            defaultValue={query.channel}
-            className={cn(selectClassName, "w-full")}
-            disabled={isPending}
-          >
-            <option value="">전체</option>
-            {MESSAGE_CHANNEL_FILTER_OPTIONS.map((value) => (
-              <option key={value} value={value}>
-                {MESSAGE_CHANNEL_LABELS[value]}
-              </option>
-            ))}
-          </select>
-        </label>
+    <form
+      onSubmit={handleSearchSubmit}
+      style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", paddingBottom: 16 }}
+    >
+      <label>
+        <span style={labelText}>채널</span>
+        <select name="channel" defaultValue={query.channel} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
+          <option value="">전체</option>
+          {MESSAGE_CHANNEL_FILTER_OPTIONS.map((value) => (
+            <option key={value} value={value}>
+              {MESSAGE_CHANNEL_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </label>
 
-        <label className="space-y-1.5">
-          <span className="block text-sm font-medium text-[#374151]">발송유형</span>
-          <select
-            name="dispatchType"
-            defaultValue={query.dispatchType}
-            className={cn(selectClassName, "w-full")}
-            disabled={isPending}
-          >
-            <option value="">전체</option>
-            {MESSAGE_DISPATCH_TYPE_FILTER_OPTIONS.map((value) => (
-              <option key={value} value={value}>
-                {MESSAGE_DISPATCH_TYPE_LABELS[value]}
-              </option>
-            ))}
-          </select>
-        </label>
+      <label>
+        <span style={labelText}>발송유형</span>
+        <select name="dispatchType" defaultValue={query.dispatchType} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
+          <option value="">전체</option>
+          {MESSAGE_DISPATCH_TYPE_FILTER_OPTIONS.map((value) => (
+            <option key={value} value={value}>
+              {MESSAGE_DISPATCH_TYPE_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </label>
 
-        <label className="space-y-1.5">
-          <span className="block text-sm font-medium text-[#374151]">발송상태</span>
-          <select
-            name="status"
-            defaultValue={query.status}
-            className={cn(selectClassName, "w-full")}
-            disabled={isPending}
-          >
-            <option value="">전체</option>
-            {MESSAGE_SEND_STATUS_FILTER_OPTIONS.map((value) => (
-              <option key={value} value={value}>
-                {MESSAGE_SEND_STATUS_LABELS[value]}
-              </option>
-            ))}
-          </select>
-        </label>
+      <label>
+        <span style={labelText}>발송상태</span>
+        <select name="status" defaultValue={query.status} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
+          <option value="">전체</option>
+          {MESSAGE_SEND_STATUS_FILTER_OPTIONS.map((value) => (
+            <option key={value} value={value}>
+              {MESSAGE_SEND_STATUS_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </label>
 
-        <label className="space-y-1.5 md:col-span-2 xl:col-span-4">
-          <span className="block text-sm font-medium text-[#374151]">기간 빠른검색</span>
-          <div className="flex flex-wrap gap-2">
-            {MESSAGE_QUICK_PERIOD_OPTIONS.map((option) => (
-              <AdminButton
+      <label style={{ gridColumn: "1 / -1" }}>
+        <span style={labelText}>기간 빠른검색</span>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {MESSAGE_QUICK_PERIOD_OPTIONS.map((option) => {
+            const active = query.quickPeriod === option.value;
+            return (
+              <button
                 key={option.value}
                 type="button"
-                variant={query.quickPeriod === option.value ? "primary" : "outline"}
-                size="sm"
                 disabled={isPending}
                 onClick={() => handleQuickPeriodClick(option.value)}
+                style={{
+                  height: 34,
+                  padding: "0 14px",
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isPending ? "wait" : "pointer",
+                  background: active ? M.accent : "#fff",
+                  color: active ? "#fff" : M.text,
+                  border: active ? "none" : `1px solid ${M.border}`,
+                }}
               >
                 {option.label}
-              </AdminButton>
-            ))}
-          </div>
-        </label>
-
-        <label className="space-y-1.5">
-          <span className="block text-sm font-medium text-[#374151]">시작일</span>
-          <AdminInput
-            name="startDate"
-            type="date"
-            variant="outline"
-            defaultValue={query.startDate}
-            disabled={isPending}
-          />
-        </label>
-
-        <label className="space-y-1.5">
-          <span className="block text-sm font-medium text-[#374151]">종료일</span>
-          <AdminInput
-            name="endDate"
-            type="date"
-            variant="outline"
-            defaultValue={query.endDate}
-            disabled={isPending}
-          />
-        </label>
-
-        <label className="space-y-1.5 md:col-span-2">
-          <span className="block text-sm font-medium text-[#374151]">검색</span>
-          <AdminInput
-            name="search"
-            variant="outline"
-            defaultValue={query.search}
-            placeholder="수신자, 내용, 제목 검색"
-            disabled={isPending}
-          />
-        </label>
-
-        <div className="flex items-end">
-          <AdminButton type="submit" disabled={isPending}>
-            <Search className="size-4" />
-            검색
-          </AdminButton>
+              </button>
+            );
+          })}
         </div>
+      </label>
+
+      <label>
+        <span style={labelText}>시작일</span>
+        <input name="startDate" type="date" defaultValue={query.startDate} disabled={isPending} style={inputBox} />
+      </label>
+
+      <label>
+        <span style={labelText}>종료일</span>
+        <input name="endDate" type="date" defaultValue={query.endDate} disabled={isPending} style={inputBox} />
+      </label>
+
+      <label style={{ gridColumn: "1 / -1" }}>
+        <span style={labelText}>검색</span>
+        <input name="search" defaultValue={query.search} placeholder="수신자, 내용, 제목 검색" disabled={isPending} style={inputBox} />
+      </label>
+
+      <div style={{ display: "flex", alignItems: "flex-end" }}>
+        <button
+          type="submit"
+          disabled={isPending}
+          style={{
+            height: 38,
+            padding: "0 18px",
+            borderRadius: 8,
+            background: M.ink,
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: isPending ? "wait" : "pointer",
+            opacity: isPending ? 0.7 : 1,
+          }}
+        >
+          검색
+        </button>
       </div>
     </form>
   );
