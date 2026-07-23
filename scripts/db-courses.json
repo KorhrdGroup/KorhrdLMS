@@ -1,0 +1,427 @@
+[
+ {
+  "code": "CRS-KH-0001",
+  "name": "ESG경영평가사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0002",
+  "name": "ESG인증평가사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0003",
+  "name": "SNS마케팅전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0004",
+  "name": "가족상담사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0005",
+  "name": "간병사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0006",
+  "name": "네일아트코디네이터",
+  "session_count": 28
+ },
+ {
+  "code": "CRS-KH-0007",
+  "name": "노인돌봄생활지원사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0008",
+  "name": "노인심리상담사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0009",
+  "name": "다문화심리상담사",
+  "session_count": 30
+ },
+ {
+  "code": "CRS-KH-0010",
+  "name": "데이터라벨러",
+  "session_count": 12
+ },
+ {
+  "code": "CRS-KH-0011",
+  "name": "도시농업전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0012",
+  "name": "독서논술지도사1급",
+  "session_count": 40
+ },
+ {
+  "code": "CRS-KH-0013",
+  "name": "독서심리상담사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0014",
+  "name": "독서지도사",
+  "session_count": 24
+ },
+ {
+  "code": "CRS-KH-0015",
+  "name": "동화구연지도사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0016",
+  "name": "디지털리터러시지도사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0017",
+  "name": "디지털중독예방지도사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0018",
+  "name": "마케팅기획전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0019",
+  "name": "메이크업코디네이터",
+  "session_count": 16
+ },
+ {
+  "code": "CRS-KH-0020",
+  "name": "명리심리상담사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0021",
+  "name": "미술심리상담사",
+  "session_count": 35
+ },
+ {
+  "code": "CRS-KH-0022",
+  "name": "바리스타",
+  "session_count": 24
+ },
+ {
+  "code": "CRS-KH-0023",
+  "name": "반려동물관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0024",
+  "name": "반려동물행동상담지도사",
+  "session_count": 26
+ },
+ {
+  "code": "CRS-KH-0025",
+  "name": "방과후돌봄교실지도사",
+  "session_count": 10
+ },
+ {
+  "code": "CRS-KH-0026",
+  "name": "방과후수학지도사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0027",
+  "name": "방과후아동지도사",
+  "session_count": 35
+ },
+ {
+  "code": "CRS-KH-0028",
+  "name": "방과후학교지도사",
+  "session_count": 44
+ },
+ {
+  "code": "CRS-KH-0029",
+  "name": "방역관리사",
+  "session_count": 22
+ },
+ {
+  "code": "CRS-KH-0030",
+  "name": "베이비시터",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0031",
+  "name": "병원동행매니저",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0032",
+  "name": "병원원무행정전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0033",
+  "name": "병원코디네이터1급",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0034",
+  "name": "부동산권리분석사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0035",
+  "name": "부모교육상담사",
+  "session_count": 28
+ },
+ {
+  "code": "CRS-KH-0036",
+  "name": "산모신생아건강관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0037",
+  "name": "산후관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0038",
+  "name": "생활지원사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0039",
+  "name": "손유희지도사",
+  "session_count": 10
+ },
+ {
+  "code": "CRS-KH-0040",
+  "name": "실버보드게임지도사",
+  "session_count": 15
+ },
+ {
+  "code": "CRS-KH-0041",
+  "name": "실버인지활동지도사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0042",
+  "name": "실버케어지도사",
+  "session_count": 19
+ },
+ {
+  "code": "CRS-KH-0043",
+  "name": "심리분석사1급",
+  "session_count": 1
+ },
+ {
+  "code": "CRS-KH-0044",
+  "name": "심리상담사",
+  "session_count": 35
+ },
+ {
+  "code": "CRS-KH-0045",
+  "name": "아동공예지도자",
+  "session_count": 50
+ },
+ {
+  "code": "CRS-KH-0046",
+  "name": "아동미술심리상담사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0047",
+  "name": "아동미술지도사",
+  "session_count": 50
+ },
+ {
+  "code": "CRS-KH-0048",
+  "name": "아동심리상담사",
+  "session_count": 30
+ },
+ {
+  "code": "CRS-KH-0049",
+  "name": "아동요리지도사1급",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0050",
+  "name": "영농형태양광전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0051",
+  "name": "운동처방전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0052",
+  "name": "유튜브크리에이터",
+  "session_count": 10
+ },
+ {
+  "code": "CRS-KH-0053",
+  "name": "은퇴설계전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0054",
+  "name": "인형극공연지도사",
+  "session_count": 32
+ },
+ {
+  "code": "CRS-KH-0055",
+  "name": "자기주도학습지도사",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0056",
+  "name": "자원봉사지도사1급",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0057",
+  "name": "자원순환관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0058",
+  "name": "정원관리사",
+  "session_count": 15
+ },
+ {
+  "code": "CRS-KH-0059",
+  "name": "조향사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0060",
+  "name": "종이접기지도사",
+  "session_count": 24
+ },
+ {
+  "code": "CRS-KH-0061",
+  "name": "지역아동교육지도사1급",
+  "session_count": 25
+ },
+ {
+  "code": "CRS-KH-0062",
+  "name": "진로적성상담사",
+  "session_count": 23
+ },
+ {
+  "code": "CRS-KH-0063",
+  "name": "집합건물관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0064",
+  "name": "초등돌봄전담사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0065",
+  "name": "코딩지도사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0066",
+  "name": "타로심리상담사",
+  "session_count": 34
+ },
+ {
+  "code": "CRS-KH-0067",
+  "name": "피부미용코디네이터",
+  "session_count": 16
+ },
+ {
+  "code": "CRS-KH-0068",
+  "name": "학교안전지도사",
+  "session_count": 17
+ },
+ {
+  "code": "CRS-KH-0069",
+  "name": "학교폭력예방상담사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0070",
+  "name": "헤어코디네이터",
+  "session_count": 21
+ },
+ {
+  "code": "CRS-KH-0071",
+  "name": "환경관리전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0072",
+  "name": "안전관리사",
+  "session_count": 15
+ },
+ {
+  "code": "CRS-KH-0073",
+  "name": "클레이아트지도사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0074",
+  "name": "영어동화구연지도사",
+  "session_count": 0
+ },
+ {
+  "code": "CRS-KH-0075",
+  "name": "AI프롬프트엔지니어",
+  "session_count": 35
+ },
+ {
+  "code": "CRS-KH-0076",
+  "name": "강아지산책전문가",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0077",
+  "name": "교통안전지도사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0078",
+  "name": "동물병원코디네이터",
+  "session_count": 21
+ },
+ {
+  "code": "CRS-KH-0079",
+  "name": "등하원보호사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0080",
+  "name": "디지털튜터",
+  "session_count": 21
+ },
+ {
+  "code": "CRS-KH-0081",
+  "name": "보험심사관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0082",
+  "name": "세차관리사",
+  "session_count": 20
+ },
+ {
+  "code": "CRS-KH-0083",
+  "name": "유품정리사",
+  "session_count": 41
+ },
+ {
+  "code": "CRS-KH-0084",
+  "name": "음악심리상담사",
+  "session_count": 26
+ },
+ {
+  "code": "CRS-KH-0085",
+  "name": "치과병원코디네이터",
+  "session_count": 20
+ }
+]
