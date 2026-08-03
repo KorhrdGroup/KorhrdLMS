@@ -49,9 +49,12 @@ export function CourseDetailPage({ course }: { course: CourseDetailData }) {
               <LecturePlan items={course.lecturePlan} />
               <CourseDescription description={course.description} />
               <CourseGoal goal={course.goal} />
-              <ActivitySection items={course.activities} />
-              <TargetSection targets={course.targets} />
-              <CareerSection heading={course.career.heading} bullets={course.career.bullets} />
+              {/* 데이터가 없는 과정(예: 자료 미확보)에서는 빈 섹션을 그리지 않습니다. */}
+              {course.activities.length > 0 && <ActivitySection items={course.activities} />}
+              {course.targets.length > 0 && <TargetSection targets={course.targets} />}
+              {course.career.bullets.length > 0 && (
+                <CareerSection heading={course.career.heading} bullets={course.career.bullets} />
+              )}
               <ProfessorSection professor={course.professor} />
               <CertificateSection samples={course.certificateSamples} note={course.certificateNote} />
               <RequirementSection requirements={course.requirements} notes={course.requirementNotes} />

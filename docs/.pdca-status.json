@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-07-22T08:23:13.056Z",
+  "lastUpdated": "2026-08-03T11:47:49.368Z",
   "activeFeatures": [
     "signup",
     "auth",
@@ -28,7 +28,15 @@
     "courses",
     "course-categories",
     "exam-management",
-    "exams"
+    "exams",
+    "grades",
+    "exam-results",
+    "certificates",
+    "payments",
+    "certificate-prepayments",
+    "others",
+    "scratchpad",
+    "course-detail"
   ],
   "primaryFeature": "signup",
   "features": {
@@ -197,9 +205,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T02:33:24.570Z",
-        "lastUpdated": "2026-07-16T02:33:24.570Z"
+        "lastUpdated": "2026-08-03T11:46:11.703Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/classroom/[slug]/page.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/courses/[slug]/page.tsx"
     },
     "classroom": {
       "phase": "do",
@@ -288,9 +296,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-20T03:50:27.832Z",
-        "lastUpdated": "2026-07-20T03:55:22.837Z"
+        "lastUpdated": "2026-07-22T08:53:28.106Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/notice-management/components/notice-attachment-picker.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/notice-management/components/notice-list-table.tsx"
     },
     "notice": {
       "phase": "do",
@@ -314,7 +322,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-21T05:41:23.450Z",
-        "lastUpdated": "2026-07-21T05:41:31.132Z"
+        "lastUpdated": "2026-07-22T08:55:27.887Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/boards/components/board-list-view.tsx"
     },
@@ -366,9 +374,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-22T08:14:55.703Z",
-        "lastUpdated": "2026-07-22T08:16:17.290Z"
+        "lastUpdated": "2026-07-22T08:49:54.932Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exam-management/components/exam-list-view.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exam-management/components/exam-question-table.tsx"
     },
     "exams": {
       "phase": "do",
@@ -379,9 +387,113 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-22T08:15:53.274Z",
-        "lastUpdated": "2026-07-22T08:15:53.274Z"
+        "lastUpdated": "2026-07-22T08:47:01.035Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exams/components/exam-sub-nav.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exams/components/exam-question-view-page.tsx"
+    },
+    "grades": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T08:37:22.237Z",
+        "lastUpdated": "2026-07-22T08:37:54.574Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/grades/components/grade-list-view.tsx"
+    },
+    "exam-results": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T08:40:20.772Z",
+        "lastUpdated": "2026-07-22T08:41:01.434Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/exam-results/components/exam-result-retake-button.tsx"
+    },
+    "certificates": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T08:58:33.531Z",
+        "lastUpdated": "2026-07-22T08:59:26.512Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/certificates/components/certificate-list-view.tsx"
+    },
+    "payments": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T09:01:49.062Z",
+        "lastUpdated": "2026-07-22T09:02:20.511Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/payments/components/subject-payment-list-view.tsx"
+    },
+    "certificate-prepayments": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T09:02:36.830Z",
+        "lastUpdated": "2026-07-22T09:28:30.387Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/certificate-prepayments/components/certificate-prepayment-list-view.tsx"
+    },
+    "others": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-07-22T09:04:34.271Z",
+        "lastUpdated": "2026-07-22T09:06:35.823Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/others/notice-popups/components/notice-popup-list-view.tsx"
+    },
+    "scratchpad": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-08-03T06:55:56.469Z",
+        "lastUpdated": "2026-08-03T11:32:12.058Z"
+      },
+      "lastFile": "/private/tmp/claude-501/-Users-korhrd-Documents-GitHub-hanpyeong-lms-main/bc2db42f-0d8f-45e4-9688-a4f56371b722/scratchpad/gen_import_sql.py"
+    },
+    "course-detail": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-08-03T11:37:35.899Z",
+        "lastUpdated": "2026-08-03T11:47:49.368Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/course-detail/components/course-detail-interactions.tsx"
     }
   },
   "pipeline": {
@@ -392,7 +504,7 @@
   "session": {
     "startedAt": "2026-07-07T05:18:58.673Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-07-22T08:23:13.056Z"
+    "lastActivity": "2026-08-03T11:47:49.368Z"
   },
   "history": [
     {
@@ -1160,6 +1272,390 @@
     {
       "timestamp": "2026-07-22T08:23:13.056Z",
       "feature": "lectures",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:37:22.237Z",
+      "feature": "grades",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:37:39.942Z",
+      "feature": "grades",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:37:54.574Z",
+      "feature": "grades",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:40:20.772Z",
+      "feature": "exam-results",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:40:34.160Z",
+      "feature": "exam-results",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:40:51.492Z",
+      "feature": "exam-results",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:41:01.434Z",
+      "feature": "exam-results",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:44:37.686Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:44:53.043Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:45:16.285Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:45:27.033Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:45:48.165Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:46:04.744Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:46:16.593Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:46:23.695Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:46:37.242Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:47:01.035Z",
+      "feature": "exams",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:49:33.196Z",
+      "feature": "exam-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:49:54.932Z",
+      "feature": "exam-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:51:05.187Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:51:24.219Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:51:41.979Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:53:21.105Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:53:28.106Z",
+      "feature": "notice-management",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:54:43.491Z",
+      "feature": "boards",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:55:05.026Z",
+      "feature": "boards",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:55:27.887Z",
+      "feature": "boards",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:58:33.531Z",
+      "feature": "certificates",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:59:06.635Z",
+      "feature": "certificates",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T08:59:26.512Z",
+      "feature": "certificates",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:01:49.062Z",
+      "feature": "payments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:02:08.021Z",
+      "feature": "payments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:02:20.511Z",
+      "feature": "payments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:02:36.830Z",
+      "feature": "certificate-prepayments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:03:03.852Z",
+      "feature": "certificate-prepayments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:03:25.324Z",
+      "feature": "certificate-prepayments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:04:34.271Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:04:58.955Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:05:15.718Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:05:36.740Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:05:51.841Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:06:13.266Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:06:35.823Z",
+      "feature": "others",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:28:18.193Z",
+      "feature": "certificate-prepayments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-07-22T09:28:30.387Z",
+      "feature": "certificate-prepayments",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T06:55:56.469Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T06:56:18.351Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T07:10:42.167Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:29:51.743Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:32:04.019Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:32:12.058Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:37:35.899Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:38:08.943Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:38:29.735Z",
+      "feature": "[slug]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:38:38.961Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:43:40.818Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:43:49.905Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:43:59.688Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:44:04.629Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:44:10.369Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:44:37.247Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:46:01.373Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:46:11.703Z",
+      "feature": "[slug]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-03T11:47:49.368Z",
+      "feature": "course-detail",
       "phase": "do",
       "action": "updated"
     }

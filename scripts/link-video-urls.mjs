@@ -105,7 +105,8 @@ const FOLDER_TO_CODE = {
  *  subdir   : 이 하위 경로 안의 파일만 사용
  */
 const SPECIAL = {
-  "방과후지도사_신규": { include: /^b_school_\d+\.mp4$/i },
+  // b_school_01~44 는 구버전이라 폐기하고, 최상위 01~35.mp4(진짜 최신본)만 사용합니다.
+  "방과후지도사_신규": { onlyTop: true, include: /^\d+\.mp4$/i },
   "운동처방전문가_김창혁": { subdir: "강의영상", include: /^exercise_\d+\.mp4$/i },
   "영농형태양광전문가": { onlyTop: true },
   "인형극공연지도사": { onlyTop: true },
