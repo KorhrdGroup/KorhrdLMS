@@ -64,9 +64,14 @@ function buildProfessor(row: CourseRow): ProfessorData {
 
   for (const line of bio) {
     const { label, body } = splitLabeled(line);
-    if (!body) continue;
-    const isEducation = PROFESSOR_EDUCATION_LABELS.some((keyword) => label.includes(keyword));
-    (isEducation ? education : intro).push(body);
+    // `[Extensive experience ...]` 처럼 대괄호가 라벨이 아니라 본문 전체인 줄이 있습니다.
+    // 이 경우 라벨을 그대로 본문으로 씁니다(빈 줄로 사라지지 않도록).
+    const text = body || label;
+    if (!text) continue;
+    const isEducation = body
+      ? PROFESSOR_EDUCATION_LABELS.some((keyword) => label.includes(keyword))
+      : false;
+    (isEducation ? education : intro).push(text);
   }
 
   return {

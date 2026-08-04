@@ -4,19 +4,27 @@ import { useRef, useState } from "react";
 
 import { AdminButton } from "@/components/admin/ui/admin-button";
 import { CourseFormField } from "@/features/courses/components/course-form-field";
-import { uploadCourseThumbnailFile } from "@/features/courses/lib/course-thumbnail-upload.client";
+import { uploadProfessorPhotoAction } from "@/features/professors/actions/professor.actions";
 
 type ProfessorPhotoFieldProps = {
   value: string;
   onChange: (url: string) => void;
+  /** 업로드 파일명을 교수명 기반으로 만들기 위해 전달합니다. */
+  professorName?: string;
   error?: string;
 };
 
 /**
- * 교수 사진 업로드 필드. 별도 버킷을 만들지 않고 기존 course-thumbnails 버킷을
- * 재사용합니다(이미 Public으로 운영 중). 상세페이지 교수 소개에 150x150으로 노출됩니다.
+ * 교수 사진 업로드 필드. 강의 영상과 같은 Cloudflare R2 버킷에 올립니다.
+ * R2는 브라우저에서 직접 올릴 수 없어 서버 액션을 거칩니다.
+ * 상세페이지 교수 소개에 150x150으로 노출됩니다.
  */
-export function ProfessorPhotoField({ value, onChange, error }: ProfessorPhotoFieldProps) {
+export function ProfessorPhotoField({
+  value,
+  onChange,
+  professorName,
+  error,
+}: ProfessorPhotoFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -33,8 +41,16 @@ export function ProfessorPhotoField({ value, onChange, error }: ProfessorPhotoFi
     setIsUploading(true);
 
     try {
-      const url = await uploadCourseThumbnailFile(file);
-      onChange(url);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", professorName ?? "");
+
+      const result = await uploadProfessorPhotoAction(formData);
+      if (result.success) {
+        onChange(result.url);
+      } else {
+        setUploadError(result.message);
+      }
     } catch (uploadErr) {
       setUploadError(
         uploadErr instanceof Error ? uploadErr.message : "사진 업로드에 실패했습니다.",

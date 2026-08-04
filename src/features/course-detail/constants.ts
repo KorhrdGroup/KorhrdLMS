@@ -148,10 +148,15 @@ export const MINISTRY_LOGO_SLUG: Record<string, string> = {
   보건복지부: "mohw",
   산림청: "forest",
   산업통상자원부: "motie",
-  산업통상부: "motie",
   식품의약품안전처: "mfds",
   여성가족부: "mogef",
   환경부: "me",
+
+  // 운영 사이트(korhrd.co.kr) 표기를 그대로 쓰는 과정들. 정식 명칭과 달라도
+  // 로고는 같은 부처 것을 써야 하므로 별칭으로 함께 매핑합니다.
+  산업통상부: "motie", // → 산업통상자원부
+  식품의약품안전처부: "mfds", // → 식품의약품안전처
+  "교육부/고용노동부": "moe", // 두 부처 공동 소관, 로고는 교육부로 표시
 };
 
 export function ministryLogo(agency: string | null, tone: "white" | "black"): string | null {

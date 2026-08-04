@@ -160,6 +160,7 @@ export function ProfessorFormModal({
         <ProfessorPhotoField
           value={form.photoUrl}
           onChange={(url) => updateField("photoUrl", url)}
+          professorName={form.name}
           error={fieldErrors.photoUrl}
         />
 
