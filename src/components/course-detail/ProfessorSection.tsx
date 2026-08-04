@@ -20,16 +20,16 @@ export function ProfessorSection({ professor }: { professor: ProfessorData }) {
         <div>
           <p className={cn("mb-2 text-[13px] font-bold", figmaClass.textSub)}>[ 소속 ]</p>
           <ul className={cn("space-y-1 text-[13px]", figmaClass.textBody)}>
-            {professor.intro.map((line) => (
-              <li key={line}>- {line}</li>
+            {professor.intro.map((line, index) => (
+              <li key={`${index}-${line}`}>- {line}</li>
             ))}
           </ul>
         </div>
         <div>
           <p className={cn("mb-2 text-[13px] font-bold", figmaClass.textSub)}>[ 학력 및 이력 ]</p>
           <ul className={cn("space-y-1 text-[13px]", figmaClass.textBody)}>
-            {professor.education.map((line) => (
-              <li key={line}>- {line}</li>
+            {professor.education.map((line, index) => (
+              <li key={`${index}-${line}`}>- {line}</li>
             ))}
           </ul>
         </div>

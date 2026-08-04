@@ -187,7 +187,8 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
               <>
                 <div className="dwho" data-who-track>
                   {course.targets.map((target, index) => (
-                    <div className="dwho__card" key={target}>
+                    // 원본 데이터에 같은 문구가 두 번 들어간 과정이 있어 순서를 키에 함께 씁니다.
+                    <div className="dwho__card" key={`${index}-${target}`}>
                       <span className="dwho__no">{String(index + 1).padStart(2, "0")}</span>
                       <p>{target}</p>
                     </div>
@@ -217,7 +218,9 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                   <a className="dintro__guide" href="/jobs">취업 길찾기 <span aria-hidden="true">→</span></a>
                 </p>
                 <ul>
-                  {course.career.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                  {course.career.bullets.map((bullet, index) => (
+                    <li key={`${index}-${bullet}`}>{bullet}</li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -395,8 +398,8 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
               <div>
                 <p className="dprof__name">{course.professor.name}</p>
                 <ul className="dprof__list">
-                  {[...course.professor.intro, ...course.professor.education].map((line) => (
-                    <li key={line}>{line}</li>
+                  {[...course.professor.intro, ...course.professor.education].map((line, index) => (
+                    <li key={`${index}-${line}`}>{line}</li>
                   ))}
                 </ul>
               </div>
