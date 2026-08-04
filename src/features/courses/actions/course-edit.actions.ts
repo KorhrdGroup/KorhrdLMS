@@ -2,11 +2,13 @@
 
 import { deleteCourse } from "@/features/courses/services/course-delete.service";
 import {
+  getCourseDetailEditOptions,
   getCourseForEdit,
   updateCourse,
 } from "@/features/courses/services/course-edit.service";
 import type {
   CourseDeleteResult,
+  CourseDetailEditOptions,
   CourseEditInput,
   CourseEditResult,
   GetCourseForEditResult,
@@ -29,4 +31,8 @@ export async function deleteCourseAction(
   courseId: string,
 ): Promise<CourseDeleteResult> {
   return deleteCourse(courseId);
+}
+
+export async function getCourseDetailEditOptionsAction(): Promise<CourseDetailEditOptions> {
+  return getCourseDetailEditOptions();
 }

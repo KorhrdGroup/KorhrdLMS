@@ -95,6 +95,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     children: [
       { label: "과정목록", href: "/admin/courses" },
       { label: "카테고리관리", href: "/admin/courses/categories" },
+      { label: "교수관리", href: "/admin/professors" },
       { label: "차시관리", href: "/admin/lectures" },
       { label: "시험관리", href: "/admin/exams" },
     ],

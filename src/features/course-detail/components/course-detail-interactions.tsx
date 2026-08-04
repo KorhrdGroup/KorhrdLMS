@@ -14,6 +14,7 @@ import { useEffect } from "react";
  */
 export function CourseDetailInteractions({ deadline }: { deadline: string }) {
   // body 스타일 — style.css가 body.page--flat 기준으로 배경/헤더선을 잡습니다.
+  // (폰트는 CourseDetailView의 래퍼가 Pretendard 스택을 지정합니다)
   useEffect(() => {
     const { body } = document;
     body.classList.add("page--flat");
@@ -107,20 +108,40 @@ export function CourseDetailInteractions({ deadline }: { deadline: string }) {
     };
   }, []);
 
-  // FAQ 아코디언
+  // FAQ 아코디언 — 원본 main.js와 동일한 구조로 맞춥니다.
+  //
+  // style.css는 `.faq__a { grid-template-rows: 0fr }` ↔ `1fr` 모프로 여닫습니다.
+  // 이때 패딩이 클리핑 요소에 있으면 0fr에서도 그 높이만큼 남아 완전히 접히지 않으므로,
+  // 내용을 .faq__a-inner(클리핑) > .faq__a-pad(여백)로 감싸야 합니다.
+  // 접힘은 hidden이 아니라 0fr로 표현하므로 hidden은 걷어냅니다.
   useEffect(() => {
     const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-faq-q]"));
-    const toggle = (button: HTMLButtonElement) => {
+    const handlers: { button: HTMLButtonElement; handler: () => void }[] = [];
+
+    for (const button of buttons) {
       const panel = document.getElementById(button.getAttribute("aria-controls") ?? "");
-      const opened = button.getAttribute("aria-expanded") === "true";
-      button.setAttribute("aria-expanded", opened ? "false" : "true");
-      if (panel) panel.hidden = opened;
-    };
-    const handlers = buttons.map((button) => {
-      const handler = () => toggle(button);
+      if (!panel) continue;
+
+      panel.hidden = false;
+
+      if (!panel.querySelector(".faq__a-inner")) {
+        const inner = document.createElement("div");
+        inner.className = "faq__a-inner";
+        const pad = document.createElement("div");
+        pad.className = "faq__a-pad";
+        while (panel.firstChild) pad.appendChild(panel.firstChild);
+        inner.appendChild(pad);
+        panel.appendChild(inner);
+      }
+
+      const handler = () => {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", String(!expanded));
+      };
       button.addEventListener("click", handler);
-      return { button, handler };
-    });
+      handlers.push({ button, handler });
+    }
+
     return () => handlers.forEach(({ button, handler }) => button.removeEventListener("click", handler));
   }, []);
 
@@ -151,10 +172,12 @@ export function CourseDetailInteractions({ deadline }: { deadline: string }) {
       (Object.keys(slots) as (keyof typeof slots)[]).forEach((key) => {
         const slot = slots[key];
         if (!slot) return;
-        // 각 자릿수를 개별 박스로 그립니다(원본 timer__unit 규칙).
+        // 각 자릿수를 개별 박스로 그립니다. 원본(main.js)과 동일하게
+        // span.timer__box 를 써야 style.css의 박스 스타일이 적용됩니다.
         slot.replaceChildren(
           ...value[key].split("").map((digit) => {
-            const box = document.createElement("i");
+            const box = document.createElement("span");
+            box.className = "timer__box";
             box.textContent = digit;
             return box;
           }),

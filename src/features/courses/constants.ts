@@ -23,6 +23,11 @@ export const COURSE_DISPLAY_PRICE_DEFAULT = 0;
 /** 과정 썸네일 이미지 업로드용 Storage 버킷명. */
 export const COURSE_THUMBNAIL_BUCKET = "course-thumbnails";
 
+/** 상세페이지 강의형태 기본값(DB 컬럼 기본값과 동일). */
+export const COURSE_LECTURE_FORMAT_DEFAULT = "이론 중심, 사례 안내";
+/** 상세페이지 자격증 발급비 기본값(원, DB 컬럼 기본값과 동일). */
+export const COURSE_CERTIFICATE_FEE_DEFAULT = 100000;
+
 export const COURSE_SEARCH_FIELD_LABELS = {
   all: "전체",
   name: "과정명",

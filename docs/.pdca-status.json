@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-03T11:47:49.368Z",
+  "lastUpdated": "2026-08-04T03:37:31.568Z",
   "activeFeatures": [
     "signup",
     "auth",
@@ -36,7 +36,8 @@
     "certificate-prepayments",
     "others",
     "scratchpad",
-    "course-detail"
+    "course-detail",
+    "professors"
   ],
   "primaryFeature": "signup",
   "features": {
@@ -140,9 +141,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T01:54:31.435Z",
-        "lastUpdated": "2026-07-21T03:02:44.577Z"
+        "lastUpdated": "2026-08-04T02:37:59.991Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/proxy.ts"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/types/database.types.ts"
     },
     "(app)": {
       "phase": "do",
@@ -166,9 +167,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-16T01:55:02.035Z",
-        "lastUpdated": "2026-07-22T08:07:46.249Z"
+        "lastUpdated": "2026-08-04T02:45:38.315Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/components/admin/pages/admin-home-page.tsx"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/lib/admin/navigation.ts"
     },
     "layout": {
       "phase": "do",
@@ -348,9 +349,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-07-22T07:45:22.234Z",
-        "lastUpdated": "2026-07-22T08:07:03.914Z"
+        "lastUpdated": "2026-08-04T02:49:13.373Z"
       },
-      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/courses/lib/course-design.ts"
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/courses/components/course-string-list-field.tsx"
     },
     "course-categories": {
       "phase": "do",
@@ -478,9 +479,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-08-03T06:55:56.469Z",
-        "lastUpdated": "2026-08-03T11:32:12.058Z"
+        "lastUpdated": "2026-08-04T02:57:22.094Z"
       },
-      "lastFile": "/private/tmp/claude-501/-Users-korhrd-Documents-GitHub-hanpyeong-lms-main/bc2db42f-0d8f-45e4-9688-a4f56371b722/scratchpad/gen_import_sql.py"
+      "lastFile": "/private/tmp/claude-501/-Users-korhrd-Documents-GitHub-hanpyeong-lms-main/bc2db42f-0d8f-45e4-9688-a4f56371b722/scratchpad/gen_session_titles_sql.py"
     },
     "course-detail": {
       "phase": "do",
@@ -491,9 +492,22 @@
       "documents": {},
       "timestamps": {
         "started": "2026-08-03T11:37:35.899Z",
-        "lastUpdated": "2026-08-03T11:47:49.368Z"
+        "lastUpdated": "2026-08-04T03:37:31.568Z"
       },
       "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/features/course-detail/components/course-detail-interactions.tsx"
+    },
+    "professors": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-08-04T02:43:43.560Z",
+        "lastUpdated": "2026-08-04T02:45:25.419Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/hanpyeong-lms-main/src/app/admin/(app)/professors/page.tsx"
     }
   },
   "pipeline": {
@@ -504,7 +518,7 @@
   "session": {
     "startedAt": "2026-07-07T05:18:58.673Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-08-03T11:47:49.368Z"
+    "lastActivity": "2026-08-04T03:37:31.568Z"
   },
   "history": [
     {
@@ -1655,6 +1669,228 @@
     },
     {
       "timestamp": "2026-08-03T11:47:49.368Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:37:37.751Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:37:43.416Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:37:59.991Z",
+      "feature": "hanpyeong-lms-main",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:38:25.514Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:38:38.357Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:38:44.370Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:38:49.578Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:39:00.444Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:39:14.643Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:39:21.459Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:39:29.762Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:39:38.903Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:39:45.948Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:40:01.938Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:40:07.274Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:40:30.605Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:40:59.873Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:41:05.704Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:41:17.481Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:41:33.477Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:41:55.864Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:43:43.560Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:44:03.216Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:44:09.028Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:44:24.655Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:44:46.294Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:45:14.648Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:45:25.419Z",
+      "feature": "professors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:45:38.317Z",
+      "feature": "admin",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:49:13.373Z",
+      "feature": "courses",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T02:57:22.094Z",
+      "feature": "scratchpad",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T03:24:34.598Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T03:26:37.245Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T03:26:57.853Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T03:27:09.983Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T03:27:15.506Z",
+      "feature": "course-detail",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-08-04T03:37:31.568Z",
       "feature": "course-detail",
       "phase": "do",
       "action": "updated"

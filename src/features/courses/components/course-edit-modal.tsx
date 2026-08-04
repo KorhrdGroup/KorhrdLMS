@@ -7,6 +7,7 @@ import { AdminCheckbox } from "@/components/admin/ui/admin-checkbox";
 import { AdminInput } from "@/components/admin/ui/admin-input";
 import { AdminModal } from "@/components/admin/ui/admin-modal";
 import {
+  getCourseDetailEditOptionsAction,
   getCourseForEditAction,
   updateCourseAction,
 } from "@/features/courses/actions/course-edit.actions";
@@ -15,9 +16,12 @@ import {
   CourseFormSelect,
   CourseFormTextarea,
 } from "@/features/courses/components/course-form-field";
+import { CourseStringListField } from "@/features/courses/components/course-string-list-field";
 import { CourseThumbnailField } from "@/features/courses/components/course-thumbnail-field";
 import {
+  COURSE_CERTIFICATE_FEE_DEFAULT,
   COURSE_DISPLAY_PRICE_DEFAULT,
+  COURSE_LECTURE_FORMAT_DEFAULT,
   COURSE_LECTURE_TIME_DEFAULT,
   COURSE_REGULAR_PRICE_DEFAULT,
   COURSE_STATUS_LABELS,
@@ -26,10 +30,19 @@ import {
 } from "@/features/courses/constants";
 import type { CourseCategoryOption } from "@/features/course-categories/types/course-category.types";
 import type {
+  CourseDetailEditOptions,
   CourseEditDetail,
   CourseEditInput,
 } from "@/features/courses/types/course-edit.types";
 import type { CourseStatus } from "@/types/database.types";
+import { cn } from "@/lib/utils";
+
+type CourseEditTab = "basic" | "detail";
+
+const COURSE_EDIT_TABS: { value: CourseEditTab; label: string }[] = [
+  { value: "basic", label: "기본 정보" },
+  { value: "detail", label: "상세페이지" },
+];
 
 type CourseEditModalProps = {
   open: boolean;
@@ -59,6 +72,14 @@ function createFormFromCourse(course: CourseEditDetail): CourseEditInput {
     displayPrice: course.displayPrice,
     isFreeCourse: course.isFreeCourse,
     thumbnailUrl: course.thumbnailUrl,
+    heroDescription: course.heroDescription,
+    licenseNumber: course.licenseNumber,
+    lectureFormat: course.lectureFormat,
+    certificateFee: course.certificateFee,
+    targetAudience: course.targetAudience,
+    careerPaths: course.careerPaths,
+    professorId: course.professorId,
+    issuingAgencyId: course.issuingAgencyId,
   };
 }
 
@@ -74,6 +95,11 @@ export function CourseEditModal({
     Partial<Record<keyof CourseEditInput, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<CourseEditTab>("basic");
+  const [detailOptions, setDetailOptions] = useState<CourseDetailEditOptions>({
+    professors: [],
+    agencies: [],
+  });
   const [isLoading, startLoad] = useTransition();
   const [isSubmitting, startSubmit] = useTransition();
 
@@ -86,15 +112,20 @@ export function CourseEditModal({
       setForm(null);
       setFieldErrors({});
       setFormError(null);
+      setActiveTab("basic");
 
       try {
-        const result = await getCourseForEditAction(courseId);
+        const [result, options] = await Promise.all([
+          getCourseForEditAction(courseId),
+          getCourseDetailEditOptionsAction(),
+        ]);
 
         if (!result.success) {
           setFormError(result.message);
           return;
         }
 
+        setDetailOptions(options);
         setForm(createFormFromCourse(result.course));
       } catch (error) {
         setFormError(
@@ -112,6 +143,7 @@ export function CourseEditModal({
       setForm(null);
       setFieldErrors({});
       setFormError(null);
+      setActiveTab("basic");
     }
   }
 
@@ -202,6 +234,28 @@ export function CourseEditModal({
             </p>
           ) : null}
 
+          {/* 두 탭 모두 마운트를 유지하고 숨김 처리만 합니다(썸네일 업로드 등 내부 상태 보존). */}
+          <div className="flex gap-1 border-b border-[#E5E7EB]" role="tablist">
+            {COURSE_EDIT_TABS.map((tab) => (
+              <button
+                key={tab.value}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className={cn(
+                  "-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+                  activeTab === tab.value
+                    ? "border-[#3B82F6] text-[#3B82F6]"
+                    : "border-transparent text-[#6B7280] hover:text-[#111827]",
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className={cn("space-y-4", activeTab !== "basic" && "hidden")}>
           <div className="grid gap-4 sm:grid-cols-2">
             <CourseFormField
               label="과정명"
@@ -489,6 +543,133 @@ export function CourseEditModal({
               onChange={(event) => updateField("description", event.target.value)}
             />
           </CourseFormField>
+          </div>
+
+          {/* ── 상세페이지 탭 — /courses/[slug] 화면에 노출되는 내용 ── */}
+          <div className={cn("space-y-4", activeTab !== "detail" && "hidden")}>
+            <CourseFormField
+              label="자격증 소개 (~란?)"
+              htmlFor="edit-course-hero-description"
+              error={fieldErrors.heroDescription}
+              hint="상세페이지 최상단 히어로에 노출됩니다. 3줄(약 250자) 이내를 권장합니다."
+            >
+              <CourseFormTextarea
+                id="edit-course-hero-description"
+                value={form.heroDescription}
+                onChange={(event) => updateField("heroDescription", event.target.value)}
+                placeholder="예: 생활지원사는 노인맞춤돌봄서비스를 제공하는 전문 인력입니다…"
+              />
+            </CourseFormField>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <CourseFormField
+                label="민간자격등록번호"
+                htmlFor="edit-course-license-number"
+                error={fieldErrors.licenseNumber}
+              >
+                <AdminInput
+                  id="edit-course-license-number"
+                  variant="outline"
+                  value={form.licenseNumber}
+                  onChange={(event) => updateField("licenseNumber", event.target.value)}
+                  placeholder="예: 2024-005425"
+                />
+              </CourseFormField>
+
+              <CourseFormField
+                label="강의형태"
+                htmlFor="edit-course-lecture-format"
+                error={fieldErrors.lectureFormat}
+              >
+                <AdminInput
+                  id="edit-course-lecture-format"
+                  variant="outline"
+                  value={form.lectureFormat}
+                  onChange={(event) => updateField("lectureFormat", event.target.value)}
+                  placeholder={COURSE_LECTURE_FORMAT_DEFAULT}
+                />
+              </CourseFormField>
+
+              <CourseFormField
+                label="자격증 발급비(원)"
+                htmlFor="edit-course-certificate-fee"
+                error={fieldErrors.certificateFee}
+                hint="수강료와 별개로 상세페이지 스펙 카드에 노출됩니다."
+              >
+                <AdminInput
+                  id="edit-course-certificate-fee"
+                  type="number"
+                  min={0}
+                  step={1000}
+                  variant="outline"
+                  value={form.certificateFee}
+                  onChange={(event) => updateField("certificateFee", event.target.value)}
+                  placeholder={String(COURSE_CERTIFICATE_FEE_DEFAULT)}
+                />
+              </CourseFormField>
+
+              <CourseFormField
+                label="담당 교수"
+                htmlFor="edit-course-professor-id"
+                error={fieldErrors.professorId}
+                hint="교수 이력·사진이 상세페이지 교수 소개에 노출됩니다."
+              >
+                <CourseFormSelect
+                  id="edit-course-professor-id"
+                  value={form.professorId}
+                  onChange={(event) => updateField("professorId", event.target.value)}
+                >
+                  <option value="">미지정</option>
+                  {detailOptions.professors.map((professor) => (
+                    <option key={professor.id} value={professor.id}>
+                      {professor.name}
+                    </option>
+                  ))}
+                </CourseFormSelect>
+              </CourseFormField>
+
+              <CourseFormField
+                label="자격관리기관"
+                htmlFor="edit-course-issuing-agency"
+                error={fieldErrors.issuingAgencyId}
+                hint="상세페이지 하단 자격관리기관 정보 표에 노출됩니다."
+                className="sm:col-span-2"
+              >
+                <CourseFormSelect
+                  id="edit-course-issuing-agency"
+                  value={form.issuingAgencyId}
+                  onChange={(event) => updateField("issuingAgencyId", event.target.value)}
+                >
+                  <option value="">미지정</option>
+                  {detailOptions.agencies.map((agency) => (
+                    <option key={agency.id} value={agency.id}>
+                      {agency.name}
+                    </option>
+                  ))}
+                </CourseFormSelect>
+              </CourseFormField>
+            </div>
+
+            <CourseStringListField
+              label="이런 분들에게 유용해요"
+              idPrefix="edit-course-target"
+              items={form.targetAudience}
+              onChange={(items) => updateField("targetAudience", items)}
+              placeholder="예: 퇴직 후 안정적이며 보람있는 직무를 찾고 계시는 분"
+              hint="상세페이지 추천 대상 카드로 순서대로 노출됩니다."
+              error={fieldErrors.targetAudience}
+            />
+
+            <CourseStringListField
+              label="진로 및 전망"
+              idPrefix="edit-course-career"
+              items={form.careerPaths}
+              onChange={(items) => updateField("careerPaths", items)}
+              placeholder="예: 노인맞춤돌봄서비스 생활지원사 (지자체 및 수행기관)"
+              hint="상세페이지 과정 상세 소개에 순서대로 노출됩니다."
+              error={fieldErrors.careerPaths}
+            />
+          </div>
         </form>
       ) : (
         <div className="flex min-h-[280px] items-center justify-center text-sm text-[#EF4444]">

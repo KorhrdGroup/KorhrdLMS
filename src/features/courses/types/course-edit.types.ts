@@ -1,7 +1,7 @@
 import type { CourseStatus } from "@/types/database.types";
 
 export const COURSE_EDIT_SELECT =
-  "id, code, name, category, category_id, default_duration_days, completion_attendance_rate, completion_exam_score, price, status, description, professor_name, study_method, lecture_time, supervising_agency, is_deadline_soon, regular_price, display_price, is_free_course, thumbnail_url" as const;
+  "id, code, name, category, category_id, default_duration_days, completion_attendance_rate, completion_exam_score, price, status, description, professor_name, study_method, lecture_time, supervising_agency, is_deadline_soon, regular_price, display_price, is_free_course, thumbnail_url, hero_description, license_number, lecture_format, certificate_fee, target_audience, career_paths, professor_id, issuing_agency_id" as const;
 
 export type CourseEditInput = {
   name: string;
@@ -33,6 +33,30 @@ export type CourseEditInput = {
   isFreeCourse: boolean;
   /** 과정 카드 썸네일 이미지 공개 URL(course-thumbnails 버킷 업로드 결과). 빈 문자열이면 기본 이미지 사용. */
   thumbnailUrl: string;
+
+  // ── 상세페이지 탭 (`/courses/[slug]`에 노출) ──
+  /** 자격증 소개("~란?"). 상세페이지 히어로 본문. 목록 카드용 description과 별개입니다. */
+  heroDescription: string;
+  /** 민간자격등록번호(예: 2024-005425). */
+  licenseNumber: string;
+  /** 강의형태(예: 이론 중심, 사례 안내). */
+  lectureFormat: string;
+  /** 자격증 발급비(원). 수강료와 별개입니다. */
+  certificateFee: string;
+  /** "이런 분들에게 유용해요" 항목. 순서대로 카드로 렌더링됩니다. */
+  targetAudience: string[];
+  /** "진로 및 전망" 항목. */
+  careerPaths: string[];
+  /** 담당 교수(professors.id). 빈 문자열이면 미지정. */
+  professorId: string;
+  /** 자격관리기관(issuing_agencies.id). 빈 문자열이면 미지정. */
+  issuingAgencyId: string;
+};
+
+/** 상세페이지 탭의 교수/자격관리기관 select 옵션 */
+export type CourseDetailEditOptions = {
+  professors: { id: string; name: string }[];
+  agencies: { id: string; name: string }[];
 };
 
 export type CourseEditDetail = CourseEditInput & {

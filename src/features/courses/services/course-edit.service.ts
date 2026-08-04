@@ -1,5 +1,7 @@
 import {
+  COURSE_CERTIFICATE_FEE_DEFAULT,
   COURSE_DISPLAY_PRICE_DEFAULT,
+  COURSE_LECTURE_FORMAT_DEFAULT,
   COURSE_LECTURE_TIME_DEFAULT,
   COURSE_REGULAR_PRICE_DEFAULT,
   COURSE_STUDY_METHOD_DEFAULT,
@@ -10,6 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
 
 import type {
+  CourseDetailEditOptions,
   CourseEditDetail,
   CourseEditInput,
   CourseEditResult,
@@ -140,6 +143,14 @@ function mapRowToEditDetail(row: {
   display_price: number;
   is_free_course: boolean;
   thumbnail_url: string | null;
+  hero_description: string | null;
+  license_number: string | null;
+  lecture_format: string | null;
+  certificate_fee: number;
+  target_audience: string[] | null;
+  career_paths: string[] | null;
+  professor_id: string | null;
+  issuing_agency_id: string | null;
 }): CourseEditDetail {
   return {
     id: row.id,
@@ -161,6 +172,14 @@ function mapRowToEditDetail(row: {
     displayPrice: String(row.display_price),
     isFreeCourse: row.is_free_course,
     thumbnailUrl: row.thumbnail_url ?? "",
+    heroDescription: row.hero_description ?? "",
+    licenseNumber: row.license_number ?? "",
+    lectureFormat: row.lecture_format ?? "",
+    certificateFee: String(row.certificate_fee),
+    targetAudience: row.target_audience ?? [],
+    careerPaths: row.career_paths ?? [],
+    professorId: row.professor_id ?? "",
+    issuingAgencyId: row.issuing_agency_id ?? "",
   };
 }
 
@@ -242,7 +261,21 @@ export function validateCourseEditInput(input: CourseEditInput): CourseEditResul
     return { success: false, message: displayPrice.message, field: "displayPrice" };
   }
 
+  const certificateFee = parsePriceWithDefault(
+    input.certificateFee,
+    COURSE_CERTIFICATE_FEE_DEFAULT,
+    "자격증 발급비",
+  );
+  if (!certificateFee.ok) {
+    return { success: false, message: certificateFee.message, field: "certificateFee" };
+  }
+
   return { success: true, message: "" };
+}
+
+/** 배열 항목의 앞뒤 공백을 정리하고 빈 항목을 버립니다. */
+function normalizeListItems(items: string[]): string[] {
+  return items.map((item) => item.trim()).filter((item) => item.length > 0);
 }
 
 async function isCourseNameTaken(name: string, excludeCourseId: string) {
@@ -352,6 +385,11 @@ export async function updateCourse(
     COURSE_DISPLAY_PRICE_DEFAULT,
     "표시가",
   );
+  const certificateFee = parsePriceWithDefault(
+    input.certificateFee,
+    COURSE_CERTIFICATE_FEE_DEFAULT,
+    "자격증 발급비",
+  );
 
   if (
     !duration.ok ||
@@ -359,7 +397,8 @@ export async function updateCourse(
     !examScore.ok ||
     !price.ok ||
     !regularPrice.ok ||
-    !displayPrice.ok
+    !displayPrice.ok ||
+    !certificateFee.ok
   ) {
     return { success: false, message: "입력값을 확인해주세요." };
   }
@@ -383,6 +422,14 @@ export async function updateCourse(
     display_price: displayPrice.value,
     is_free_course: input.isFreeCourse,
     thumbnail_url: emptyToNull(input.thumbnailUrl),
+    hero_description: emptyToNull(input.heroDescription),
+    license_number: emptyToNull(input.licenseNumber),
+    lecture_format: emptyToDefault(input.lectureFormat, COURSE_LECTURE_FORMAT_DEFAULT),
+    certificate_fee: certificateFee.value,
+    target_audience: normalizeListItems(input.targetAudience),
+    career_paths: normalizeListItems(input.careerPaths),
+    professor_id: emptyToNull(input.professorId),
+    issuing_agency_id: emptyToNull(input.issuingAgencyId),
   };
 
   const supabase = await createClient();
@@ -438,5 +485,37 @@ export async function updateCourse(
     message: thumbnailSaveFailed
       ? `"${data.name}" 과정이 수정되었습니다. (썸네일 이미지는 저장하지 못했습니다. 잠시 후 다시 시도해주세요.)`
       : `"${data.name}" 과정이 수정되었습니다.`,
+  };
+}
+
+/**
+ * 상세페이지 탭의 교수/자격관리기관 select 옵션을 불러옵니다.
+ * 모달을 열 때 과정 정보와 함께 한 번만 조회합니다.
+ */
+export async function getCourseDetailEditOptions(): Promise<CourseDetailEditOptions> {
+  const supabase = await createClient();
+
+  const [professorsResult, agenciesResult] = await Promise.all([
+    supabase
+      .from("professors")
+      .select("id, name")
+      .is("deleted_at", null)
+      .order("name", { ascending: true }),
+    supabase
+      .from("issuing_agencies")
+      .select("id, name")
+      .order("name", { ascending: true }),
+  ]);
+
+  if (professorsResult.error) {
+    throw new Error(professorsResult.error.message);
+  }
+  if (agenciesResult.error) {
+    throw new Error(agenciesResult.error.message);
+  }
+
+  return {
+    professors: professorsResult.data ?? [],
+    agencies: agenciesResult.data ?? [],
   };
 }

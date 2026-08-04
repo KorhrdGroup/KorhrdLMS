@@ -249,6 +249,24 @@ export type Database = {
           is_free_course: boolean;
           /** 과정 카드 썸네일 이미지 공개 URL(course-thumbnails 버킷). 미설정 시 기본 이미지 사용. */
           thumbnail_url: string | null;
+          /** 상세페이지 히어로 소개문("~란?"). 목록 카드용 description과 별개입니다. */
+          hero_description: string | null;
+          /** 상세페이지 히어로 배경 이미지. 없으면 thumbnail_url → 공용 샘플 순으로 대체합니다. */
+          hero_image_url: string | null;
+          /** 민간자격등록번호(예: 2024-005425). */
+          license_number: string | null;
+          /** 강의형태(예: 이론 중심, 사례 안내). */
+          lecture_format: string;
+          /** 자격증 발급비(원). 수강료(price)와 별개입니다. */
+          certificate_fee: number;
+          /** "이런 분들에게 유용해요" 항목. 상세페이지 추천 대상 카드로 렌더링됩니다. */
+          target_audience: string[];
+          /** "진로 및 전망" 항목. */
+          career_paths: string[];
+          /** 담당 교수(professors.id). 이관 완료 전까지 professor_name도 함께 유지합니다. */
+          professor_id: string | null;
+          /** 자격관리기관(issuing_agencies.id). */
+          issuing_agency_id: string | null;
           deleted_at: string | null;
           created_at: string;
           updated_at: string;
@@ -275,6 +293,15 @@ export type Database = {
           display_price?: number;
           is_free_course?: boolean;
           thumbnail_url?: string | null;
+          hero_description?: string | null;
+          hero_image_url?: string | null;
+          license_number?: string | null;
+          lecture_format?: string;
+          certificate_fee?: number;
+          target_audience?: string[];
+          career_paths?: string[];
+          professor_id?: string | null;
+          issuing_agency_id?: string | null;
           deleted_at?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -301,7 +328,83 @@ export type Database = {
           thumbnail_url?: string | null;
           display_price?: number;
           is_free_course?: boolean;
+          hero_description?: string | null;
+          hero_image_url?: string | null;
+          license_number?: string | null;
+          lecture_format?: string;
+          certificate_fee?: number;
+          target_audience?: string[];
+          career_paths?: string[];
+          professor_id?: string | null;
+          issuing_agency_id?: string | null;
           deleted_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      /**
+       * 담당 교수. 한 교수가 여러 과정을 담당하므로 courses.professor_id에서 참조합니다.
+       * 상세페이지 "교수 소개"에 이력·사진이 노출됩니다.
+       */
+      professors: {
+        Row: {
+          id: string;
+          name: string;
+          /** 이력. 상세페이지에서 한 줄씩 <li>로 렌더링합니다. */
+          bio: string[];
+          /** 사진(권장 150x150). 없으면 플레이스홀더를 표시합니다. */
+          photo_url: string | null;
+          deleted_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          bio?: string[];
+          photo_url?: string | null;
+          deleted_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          bio?: string[];
+          photo_url?: string | null;
+          deleted_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      /** 자격관리(발급)기관. 상세페이지 하단 "자격관리기관 정보" 표에 노출됩니다. */
+      issuing_agencies: {
+        Row: {
+          id: string;
+          name: string;
+          ceo: string | null;
+          phone: string | null;
+          address: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          ceo?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          ceo?: string | null;
+          phone?: string | null;
+          address?: string | null;
           created_at?: string;
           updated_at?: string;
         };
