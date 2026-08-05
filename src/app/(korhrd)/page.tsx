@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { getMyLectureData } from '@/features/korhrd/lib/my-lecture-data';
 import { listCourseReviews } from '@/features/korhrd/services/course-review.service';
+import { getLiveFeed } from '@/features/korhrd/services/live-feed.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 import { JOB_GROUPS } from '@/features/korhrd/data/jobs';
-import { LIVE_FEED } from '@/features/korhrd/data/liveFeed';
 import TrustStrip from '@/features/korhrd/components/home/TrustStrip';
 import BannerCarousel from '@/features/korhrd/components/home/BannerCarousel';
 import LoginBox from '@/features/korhrd/components/home/LoginBox';
@@ -51,6 +51,9 @@ const NATCERTS = [
 
 export default async function HomePage() {
   const homeReviews = (await listCourseReviews()).slice(0, 3);
+  // 실제 수강완료·발급완료 내역. 티커는 최소 몇 줄이 있어야 자연스러워
+  // 아직 기록이 적으면 아예 감춥니다(LiveTicker 자리 자체를 비움).
+  const liveFeed = await getLiveFeed();
 
   /* 로그인 상태면 히어로 오른쪽 박스에 실제 수강중인 강의를 최대 3개 보여줍니다 */
   const member = await getMockableStudentMember();
@@ -115,10 +118,13 @@ export default async function HomePage() {
       <section className="section section--alt" aria-label="실시간 수강 현황 및 상담 안내">
         <div className="container">
           <div className="content live-grid">
-            <div className="live-box">
-              <p className="live-box__title">수강생들의 한 걸음 <br />더 성장한 순간</p>
-              <LiveTicker rows={LIVE_FEED} />
-            </div>
+            {/* 실적이 몇 건뿐이면 티커가 어색해 보여, 최소 개수를 넘길 때만 보여줍니다 */}
+            {liveFeed.length >= 4 ? (
+              <div className="live-box">
+                <p className="live-box__title">수강생들의 한 걸음 <br />더 성장한 순간</p>
+                <LiveTicker rows={liveFeed} />
+              </div>
+            ) : null}
 
             <div className="tel-box">
               <p className="tel-box__q">궁금한 점이 있으신가요?</p>

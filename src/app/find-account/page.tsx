@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { FindAccountPage } from "@/components/auth/find-account-page";
-
-export const metadata: Metadata = {
-  title: "아이디/비밀번호 찾기",
-  description: "한평생직업훈련 아이디/비밀번호 찾기",
-};
-
+/** 구 경로 — korhrd 디자인의 /find 로 통합했습니다. */
 export default function Page() {
-  return <FindAccountPage />;
+  redirect("/find");
 }
