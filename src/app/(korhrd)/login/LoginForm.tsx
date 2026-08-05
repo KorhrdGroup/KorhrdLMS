@@ -109,9 +109,9 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
         <p className="login-links">
           <Link href="/signup">회원가입</Link>
           <span aria-hidden="true">|</span>
-          <Link href="/find-account">아이디 찾기</Link>
+          <Link href="/find">아이디 찾기</Link>
           <span aria-hidden="true">|</span>
-          <Link href="/find-account">비밀번호 찾기</Link>
+          <Link href="/find">비밀번호 찾기</Link>
         </p>
       </form>
 

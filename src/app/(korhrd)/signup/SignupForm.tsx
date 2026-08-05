@@ -94,7 +94,7 @@ export function SignupForm() {
       );
 
       if (result.success) {
-        router.push('/login');
+        router.push('/signup/complete');
         router.refresh();
       } else {
         setError(result.message);

@@ -61,7 +61,11 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
         )}
 
         {courseCode ? (
-          <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}`}>
+          /* 응시 이력이 있으면 시험 목록이 아니라 성적 확인 화면으로 바로 보냅니다 */
+          <Link
+            className="btn btn--ghost btn--block"
+            href={enrollment.score !== undefined ? `/exam/${courseCode}/result` : `/exam/${courseCode}`}
+          >
             {enrollment.score !== undefined ? '시험성적 확인' : '시험 응시하기'}
           </Link>
         ) : !ended ? (

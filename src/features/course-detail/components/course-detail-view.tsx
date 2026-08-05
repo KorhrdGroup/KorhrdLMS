@@ -88,8 +88,8 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
           </a>
           <nav className="gnb" id="gnb" aria-label="주 메뉴">
             <a href="/jobs">취업 길찾기</a>
-            <a href="/enrollment" aria-current="page">수강신청</a>
-            <a href="/classroom">나의 강의실</a>
+            <a href="/courses" aria-current="page">수강신청</a>
+            <a href="/mylecture">나의 강의실</a>
             <a href="/certificate">자격증 발급신청</a>
             <a href="/reviews">합격후기</a>
             <a href="/notice">공지사항</a>

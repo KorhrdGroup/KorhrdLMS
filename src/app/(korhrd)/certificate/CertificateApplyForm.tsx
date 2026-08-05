@@ -68,7 +68,7 @@ export function CertificateApplyForm({
       });
 
       if (result.success) {
-        router.push('/certificate/status');
+        router.push(`/certificate/complete?id=${result.applicationId}`);
         router.refresh();
       } else {
         setError(result.message);
