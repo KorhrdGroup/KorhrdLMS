@@ -1,0 +1,14 @@
+/*
+ * 메인 전용 조정.
+ *
+ * 공통 스타일은 styles/*.css(전역, 프로토타입과 같은 클래스명)에 있습니다.
+ * 이 파일에는 "이 화면에서만" 필요한 것만 두세요.
+ */
+
+/* 메인 후기 카드는 길이가 제각각이라 3줄로 잘라 카드 높이를 맞춥니다 */
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

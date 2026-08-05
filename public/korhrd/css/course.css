@@ -1,0 +1,464 @@
+/* =========================================================================
+   course.css — 과정 카드/행 · 장바구니 · 필터 · 실시간 · 절차
+   프로토타입 assets/css/style.css의 섹션 13, 14, 15, 16, 17, 18, 19를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   13. Course Card (그리드형) — border 없이 흰 카드
+   -------------------------------------------------------------------------- */
+.card-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-5)}
+.card-grid--3{ grid-template-columns:repeat(3,1fr) }
+
+.course-card{
+  display:flex; flex-direction:column; overflow:hidden;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  transition:background-color .15s, border-color .15s;
+}
+.course-card:hover{ background:var(--surface-sunken); border-color:var(--line) }
+
+/* 썸네일 자리 — 실제 이미지로 교체.
+   수강신청 목록(.course-row__thumb)과 같은 구조: 위쪽 딤 + 흰색 주무부처 로고 */
+.thumb{ position:relative; overflow:hidden; border-radius:var(--r-lg) var(--r-lg) 0 0 }
+.thumb .ph--thumb{ width:100% }
+/* 실제 썸네일 이미지 — 자리표시와 같은 비율(16:9.5)을 유지합니다 */
+.thumb img{ width:100%; aspect-ratio:16/9.5; object-fit:cover; display:block }
+.thumb::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 30%);
+}
+.thumb .gov-mark{ top:12px; left:14px; right:14px }
+.thumb__tags{
+  position:absolute; z-index:2; inset:9px 9px auto 9px;
+  display:flex; align-items:flex-start; justify-content:flex-end; gap:var(--s-2);
+}
+
+.course-card__body{ display:flex; flex-direction:column; gap:var(--s-2); flex:1; padding:13px 15px 15px }
+.course-card__cat{ font-size:var(--fs-xs); color:var(--faint) }
+.course-card__title{ font-size:var(--fs-sm); font-weight:700; color:var(--ink); line-height:1.4 }
+.course-card__badges{ display:flex; gap:var(--s-1); flex-wrap:wrap }
+
+/* 스펙 — 배경 톤으로 구분 (구분선 없음) */
+.spec-list{
+  display:flex; flex-direction:column; gap:var(--s-1);
+  background:var(--surface-sunken); border-radius:var(--r-md);
+  padding:9px 11px; font-size:var(--fs-xs); color:var(--muted);
+}
+.spec-list div{ display:flex; justify-content:space-between; gap:var(--s-3)}
+.spec-list b{ color:var(--ink-2); font-weight:700; font-variant-numeric:tabular-nums }
+.spec-list .is-fee{ color:var(--amber) }
+
+.price{ margin-top:auto; display:flex; align-items:baseline; justify-content:flex-end; gap:var(--s-2); padding-top:7px }
+.price del{ font-size:var(--fs-xs); color:var(--disabled) }
+.price strong{ font-size:var(--fs-lg); font-weight:700; color:var(--navy) }
+
+/* --------------------------------------------------------------------------
+   14. Course Row (목록형 · 장바구니)
+   -------------------------------------------------------------------------- */
+/* 영역을 이름으로 배치합니다. 구분선(rule)이 본문·가격 두 칸과 그 사이 간격까지
+   한 번에 덮어야 끊김 없이 한 줄로 이어집니다. */
+.course-row{
+  display:grid; align-items:start;
+  /* 썸네일 폭은 4:3 높이가 카드 콘텐츠 높이와 같아지도록 잡았습니다.
+     → 이미지 위아래 여백이 카드 패딩과 정확히 일치합니다. */
+  grid-template-columns:265px 1fr 172px;
+  grid-template-areas:
+    "thumb head price"
+    "thumb rule rule"
+    "thumb spec act";
+  gap:var(--s-5) var(--s-6);
+  background:var(--surface); border-radius:var(--r-lg); padding:var(--pad-card-y) var(--pad-card);
+  border:1.5px solid transparent;
+  transition:background-color .15s, border-color .15s;
+}
+.course-row__rule{ grid-area:rule; height:1px; background:var(--line) }
+/* 태그 목록과 버튼을 썸네일 아래끝에 정확히 맞춥니다.
+   두 열 모두 자기 행 높이를 꽉 채우고, 남는 공간을 항목 사이에 균등 분배합니다. */
+.course-row__actions{
+  grid-area:act; display:flex; flex-direction:column; justify-content:space-between;
+  height:100%; gap:var(--s-2);
+}
+.course-row .spec-table{ grid-area:spec; height:100%; justify-content:space-between }
+.course-row + .course-row{ margin-top:11px }
+.course-row.is-selected{ background:#F0F5FF }
+
+/* 목록 썸네일 — Figma image (101:3392)
+   테두리 1px + radius 8 안에 이미지를 담고, 상단에 dim을 깔아
+   그 위에 주무부처 로고(흰색 버전)를 올립니다. */
+.course-row__thumb{
+  grid-area:thumb;
+  position:relative; display:block; overflow:hidden;
+  border:1px solid var(--line); border-radius:var(--r-lg);
+}
+/* 썸네일이 태그·버튼 열과 아래끝을 정확히 맞추도록 행 높이를 채웁니다 */
+.course-row__thumb{ height:100% }
+.course-row__thumb .ph{ width:100%; height:100%; border-radius:0 }
+/* 실제 썸네일 이미지 — 자리표시(.ph)와 같은 칸을 채웁니다 */
+.course-row__thumb img{ width:100%; height:100%; object-fit:cover; display:block }
+.course-row__thumb::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 30%);
+}
+
+/* 주무부처 마크 — 로고 파일이 있으면 이미지, 없으면 흰색 텍스트
+   Figma 카드(282px / 로고 30px / 여백 12·14)를 썸네일 폭 240px에 맞춰 비례 축소했습니다. */
+.gov-mark{
+  position:absolute; z-index:1; top:10px; left:12px; right:12px;
+  display:flex; align-items:center;
+}
+.gov-mark img{ display:block; height:26px; width:auto; max-width:100% }
+.gov-mark span{
+  font-size:var(--fs-sm); font-weight:700; color:#fff; letter-spacing:-.02em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.course-row__head{ grid-area:head; display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap }
+.course-row__head h2,
+.course-row__head h3{ font-size:var(--fs-xl); font-weight:700; color:var(--ink); letter-spacing:-.02em }
+
+/* 핵심 정보 4가지를 한 줄로 나열 (담당교수 · 수업방식 · 강의시간 · 주무부처) */
+/* 담당교수 · 수업방식 · 강의시간 · 주무부처를 위에서 아래로 나열 */
+.spec-table{
+  display:flex; flex-direction:column; align-items:flex-start; gap:var(--s-3);
+}
+.spec-table div{ display:flex; gap:var(--s-4); font-size:var(--fs-sm); color:var(--muted); align-items:center }
+.spec-table .label{
+  flex-shrink:0; min-width:62px; text-align:center;
+  background:var(--blue-soft); border-radius:var(--r-sm); padding:5px 9px;
+  font-size:var(--fs-xs); font-weight:700; color:var(--ink-3);
+}
+.spec-table b{ color:var(--ink-2); font-weight:600 }
+.spec-table .is-fee{ color:var(--amber) }
+
+/* 24px 수강료가 기본 행간을 그대로 쓰면 제목 줄보다 높아져,
+   그 차이만큼 구분선 위 여백이 벌어집니다. 행간을 없애고 제목과 중앙을 맞춥니다. */
+.course-row__price{
+  grid-area:price; display:flex; align-items:baseline; gap:var(--s-2); justify-content:flex-end;
+  line-height:1; align-self:center;
+}
+.course-row__price del{ font-size:var(--fs-xs); color:var(--disabled) }
+.course-row__price strong{ font-size:var(--fs-2xl); font-weight:700; color:var(--navy); letter-spacing:-.02em }
+.course-row__policy{ display:none }   /* 스펙 표를 감추는 모바일에서만 노출 */
+
+.select-toggle{
+  display:flex; align-items:center; justify-content:center; gap:var(--s-3);
+  background:var(--navy); color:#fff; border-radius:var(--r-md);
+  padding:10px; font-size:var(--fs-sm); font-weight:700; width:100%;
+}
+.select-toggle:hover{ background:#002a54 }
+.select-toggle__box{ width:15px; height:15px; border-radius:var(--r-sm); background:#fff; position:relative; flex-shrink:0 }
+.select-toggle[aria-pressed="true"] .select-toggle__box{ background:var(--blue-300) }
+.select-toggle[aria-pressed="true"] .select-toggle__box::after{
+  content:"✓"; position:absolute; left:2.5px; top:-3px; color:#fff; font-size:var(--fs-2xs); font-weight:700;
+}
+
+/* --------------------------------------------------------------------------
+   15. 장바구니 바
+   -------------------------------------------------------------------------- */
+.cart-bar{
+  position:sticky; bottom:0; z-index:40; background:var(--blue-soft); padding:16px 0;
+  box-shadow:0 -6px 18px rgba(0,0,0,.10);   /* 뒤 목록 위에 떠 보이도록 */
+  transition:background-color .3s;
+}
+/* 상세페이지에서 담고 넘어왔을 때 잠깐 강조 */
+.cart-bar.is-bump{ animation:cart-bump 1.4s ease }
+@keyframes cart-bump{
+  0%{ background:var(--blue-soft) } 15%{ background:#D3E1FF } 60%{ background:#D3E1FF } 100%{ background:var(--blue-soft) }
+}
+@media (prefers-reduced-motion:reduce){ .cart-bar.is-bump{ animation:none } }
+
+/* 안내 토스트 — 화면 하단 중앙에 잠깐 */
+.toast{
+  position:fixed; left:50%; bottom:96px; transform:translate(-50%, 12px); z-index:120;
+  max-width:calc(100vw - 32px); padding:12px 20px; border-radius:var(--r-full);
+  background:var(--navy); color:#fff; font-size:var(--fs-sm); font-weight:600; text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.22); opacity:0; pointer-events:none;
+  transition:opacity .28s ease, transform .28s ease;
+}
+.toast.is-on{ opacity:1; transform:translate(-50%, 0) }
+.cart-bar__in{
+  max-width:var(--container); margin:0 auto; padding:0 20px;
+  display:flex; align-items:center; gap:var(--s-6); flex-wrap:wrap;
+}
+.cart-bar__count{ font-size:var(--fs-sm); font-weight:700; color:var(--ink-2) }
+.cart-bar__count b{ font-size:var(--fs-xl); color:var(--blue); margin:0 3px; font-variant-numeric:tabular-nums }
+.cart-bar__chips{ display:flex; gap:var(--s-2); flex-wrap:wrap; flex:1; min-width:180px }
+.cart-chip{
+  display:flex; align-items:center; gap:var(--s-2);
+  background:var(--surface); border-radius:var(--r-md); padding:6px 11px;
+  font-size:var(--fs-xs); color:var(--ink-2);
+}
+.cart-chip button{ color:var(--disabled); font-size:var(--fs-sm); line-height:1 }
+.cart-chip button:hover{ color:var(--red) }
+.cart-bar__total{ display:flex; align-items:baseline; gap:var(--s-2)}
+.cart-bar__total del{ font-size:var(--fs-sm); color:var(--faint) }
+.cart-bar__total strong{ font-size:var(--fs-xl); font-weight:700; color:var(--navy) }
+.cart-bar__total-label{ display:none }   /* 모바일에서만 '수강료' 라벨을 붙입니다 */
+.cart-bar [data-enroll]{ padding:13px 24px; font-size:14.5px }
+.cart-bar.is-empty{ display:none }
+
+/* --------------------------------------------------------------------------
+   16. 필터 사이드바
+   -------------------------------------------------------------------------- */
+.layout-side{ display:grid; grid-template-columns:210px 1fr; gap:var(--s-8); align-items:start }
+
+/* 모바일 필터 드롭다운 버튼 — 데스크톱은 사이드바가 항상 펼쳐져 있어 감춥니다.
+   접힘 상태는 hidden 속성이 아니라 클래스로 둡니다. hidden은 전역 리셋에서
+   !important라 데스크톱으로 넓혔을 때 되돌릴 수 없기 때문입니다. */
+.filter-toggle{ display:none }
+
+/* 모바일 검색바·정책 배지 — 데스크톱에서는 헤더 검색과 중복이라 감춥니다 */
+.m-search{ display:none }
+.promo-chip{ display:none }
+
+/* ------------------------- 필터 바텀시트 (모바일) ------------------------- */
+/* display 토글 대신 visibility로 감춥니다. display:none이면 전환이 걸리지 않고,
+   visibility:hidden은 클릭·접근성 트리에서도 빠지므로 닫힌 시트는 그대로 무해합니다.
+   닫을 때는 패널이 다 내려간 뒤 사라지도록 visibility 전환만 지연시킵니다. */
+.fsheet{ position:fixed; inset:0; z-index:80; visibility:hidden; transition:visibility 0s linear .28s }
+.fsheet.is-open{ visibility:visible; transition-delay:0s }
+.fsheet__dim{ position:absolute; inset:0; background:rgba(0,0,0,.45); opacity:0; transition:opacity .28s ease }
+.fsheet.is-open .fsheet__dim{ opacity:1 }
+.fsheet.is-open .fsheet__panel{ transform:none }
+.fsheet__panel{
+  transform:translateY(100%); transition:transform .28s cubic-bezier(.32,.72,0,1);
+  /* 그룹마다 항목 수가 달라도 시트가 들썩이지 않도록 높이를 고정합니다
+     (가장 긴 '과정별' 그룹이 차지하던 높이) */
+  position:absolute; left:0; right:0; bottom:0; height:80vh;
+  display:flex; flex-direction:column;
+  background:var(--surface); border-radius:var(--r-xl) var(--r-xl) 0 0; overflow:hidden;
+}
+.fsheet__head{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+  padding:var(--pad-card-y) var(--pad-card); border-bottom:1px solid var(--line);
+}
+.fsheet__head h2{ font-size:var(--fs-lg); font-weight:700; color:var(--ink) }
+.fsheet__close{ font-size:var(--fs-lg); color:var(--faint); padding:4px 6px }
+/* 좌: 필터 그룹 / 우: 그룹 안 항목 — Figma Forms 29:30 구조 */
+.fsheet__body{ display:grid; grid-template-columns:118px 1fr; flex:1; min-height:0 }
+.fsheet__groups{ background:var(--surface-alt); overflow-y:auto }
+.fsheet__group{
+  display:block; width:100%; text-align:left;
+  padding:14px 16px; font-size:var(--fs-sm); color:var(--muted);
+}
+.fsheet__group[aria-selected="true"]{ background:var(--surface); color:var(--blue); font-weight:700 }
+.fsheet__items{ overflow-y:auto; padding:4px 0 }
+.fsheet__item{
+  display:flex; align-items:center; gap:var(--s-3); width:100%;
+  padding:13px 18px; font-size:var(--fs-sm); color:var(--ink-2); text-align:left;
+}
+.fsheet__item .num{ margin-left:auto; font-size:var(--fs-2xs); color:var(--disabled) }
+.fsheet__item[aria-pressed="true"]{ color:var(--blue); font-weight:700 }
+.fsheet__item[aria-pressed="true"] .num{ color:var(--blue) }
+.fsheet__item::before{
+  content:""; flex:none; width:18px; height:18px; border-radius:var(--r-sm);
+  border:1.5px solid var(--line); background:var(--surface);
+}
+.fsheet__item[aria-pressed="true"]::before{
+  border-color:var(--blue); background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' stroke='%23fff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat;
+}
+.fsheet__foot{
+  display:grid; grid-template-columns:1fr 1.4fr; gap:var(--s-3);
+  padding:10px 14px; border-top:1px solid var(--line);
+}
+/* 시트 하단은 여백을 줄이고 버튼을 키워 손가락으로 누르기 쉽게 합니다 */
+.fsheet__foot .btn{ padding:14px 16px; font-size:var(--fs-sm) }
+
+.filter-group{ position:relative; background:var(--surface); border-radius:var(--r-lg); padding:14px }
+.filter-group + .filter-group{ margin-top:10px }
+.filter-group__title{ font-size:var(--fs-xs); font-weight:700; color:var(--faint); margin-bottom:8px }
+/* 그룹 안에 선택된 조건이 있을 때만 스크립트가 만들어 넣습니다 */
+.filter-group__reset{
+  position:absolute; top:11px; right:11px;
+  display:inline-flex; align-items:center; gap:var(--s-1);
+  border-radius:var(--r-md); padding:3px 7px;
+  font-size:var(--fs-xs); font-weight:700; color:var(--muted);
+  transition:background-color .15s, color .15s;
+}
+.filter-group__reset svg{ width:11px; height:11px }
+.filter-group__reset:hover{ background:var(--surface-alt); color:var(--ink-2) }
+.filter-item{
+  display:flex; align-items:center; gap:var(--s-3); width:100%;
+  border-radius:var(--r-md); padding:9px 11px;
+  font-size:var(--fs-sm); font-weight:600; color:var(--ink-3); background:transparent;
+}
+/* 다중 선택임을 알리는 체크박스 — 기본 회색, 선택 시 파란색 채움 + 체크 */
+.filter-item::before{
+  content:''; flex-shrink:0; width:16px; height:16px; border-radius:var(--r-sm);
+  border:1.5px solid var(--line); background:var(--surface);
+  background-position:center; background-repeat:no-repeat; background-size:10px;
+  transition:background-color .12s, border-color .12s;
+}
+.filter-item .num{ margin-left:auto; font-size:var(--fs-xs); color:var(--disabled); font-variant-numeric:tabular-nums }
+.filter-item + .filter-item{ margin-top:2px }
+.filter-item:hover{ background:var(--surface-sunken) }
+.filter-item:hover::before{ border-color:var(--faint) }
+.filter-item[aria-pressed="true"]{ background:var(--blue-soft); color:var(--blue); font-weight:700 }
+.filter-item[aria-pressed="true"]::before{
+  border-color:var(--blue); background-color:var(--blue);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 6.2l2.2 2.3 4.8-5' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.filter-item[aria-pressed="true"] .num{ color:var(--blue) }
+
+/* 사이드 메뉴 (나의 강의실) — filter-group과 같은 박스, 체크박스 없는 단일 선택 */
+.side-nav__item{
+  display:flex; align-items:center; gap:var(--s-3); width:100%;
+  border-radius:var(--r-md); padding:10px 12px;
+  font-size:var(--fs-sm); font-weight:600; color:var(--ink-3); background:transparent;
+  transition:background-color .15s, color .15s;
+}
+.side-nav__item .num{ margin-left:auto; font-size:var(--fs-xs); color:var(--disabled); font-variant-numeric:tabular-nums }
+.side-nav__item + .side-nav__item{ margin-top:2px }
+.side-nav__item:hover{ background:var(--surface-sunken) }
+/* 탭(button)은 aria-selected, 페이지 이동(a)은 aria-current로 선택 상태를 나타냅니다 */
+.side-nav__item[aria-selected="true"],
+.side-nav__item[aria-current="page"]{ background:var(--blue-soft); color:var(--blue); font-weight:700 }
+.side-nav__item[aria-selected="true"] .num,
+.side-nav__item[aria-current="page"] .num{ color:var(--blue) }
+
+.side-card{
+  background:var(--surface); border-radius:var(--r-lg);
+  padding:16px; margin-top:10px; text-align:center;
+  font-size:var(--fs-xs); color:var(--muted); line-height:1.7;
+}
+.side-card strong{ display:block; font-size:var(--fs-sm); color:var(--ink); margin-bottom:6px }
+.side-card .tel{ font-size:var(--fs-md); font-weight:700; color:var(--navy) }
+
+.toolbar{ display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; margin-bottom:14px }
+.toolbar__result{ font-size:var(--fs-sm); color:var(--muted) }
+.toolbar__result b{ color:var(--blue); font-variant-numeric:tabular-nums }
+.sort-group{ margin-left:auto; display:flex; gap:var(--s-1)}
+.sort-group button{ font-size:var(--fs-sm); color:var(--faint); padding:6px 11px; border-radius:var(--r-md) }
+.sort-group button:hover{ color:var(--ink-2) }
+.sort-group button[aria-pressed="true"]{ color:var(--ink); font-weight:700; background:var(--surface) }
+
+.empty-state{
+  background:var(--surface); border-radius:var(--r-lg);
+  padding:48px 20px; text-align:center; color:var(--muted);
+}
+.empty-state strong{ display:block; font-size:var(--fs-md); color:var(--ink); margin-bottom:6px }
+
+/* --------------------------------------------------------------------------
+   17. 실시간 활동 · 상담
+   -------------------------------------------------------------------------- */
+.live-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:var(--s-5)}
+
+/* 섹션 바탕이 옅은 회색이라 흰 카드가 묻힙니다 — 다른 흰 카드들처럼 테두리로 경계를 만듭니다 */
+.live-box{
+  display:flex; gap:var(--s-6); padding:18px 20px;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+}
+/* 폭을 넓혀 '수강생들의 한 걸음 / 더 성장한 순간' 두 줄로 끊기게 합니다 */
+.live-box__title{ flex-shrink:0; width:150px; font-size:var(--fs-md); font-weight:700; color:var(--ink); line-height:1.5 }
+/* 1초마다 위로 올라가는 티커 — JS가 .live-list를 .live-view로 감싸 클리핑합니다 */
+.live-view{ flex:1; min-width:0; overflow:hidden }
+.live-list{ display:grid; gap:var(--s-5); flex:1; min-width:0; will-change:transform }
+.live-list li{ display:flex; align-items:center; gap:var(--s-3); font-size:var(--fs-sm); color:var(--muted) }
+.live-list .state{ flex-shrink:0; font-size:var(--fs-xs); font-weight:700; border-radius:var(--r-sm); padding:3px 8px }
+.live-list .state--done{ background:var(--surface-alt); color:var(--muted) }
+.live-list .state--issued{ background:var(--blue-soft); color:var(--blue) }
+.live-list .date{ margin-left:auto; color:var(--disabled); font-variant-numeric:tabular-nums }
+
+/* 운영시간 안내는 박스 아래에 붙도록 세로 플렉스로 둡니다 */
+.tel-box{
+  display:flex; flex-direction:column;
+  background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:18px 20px;
+}
+.tel-box__q{ font-size:var(--fs-xs); color:rgba(255,255,255,.72) }
+.tel-box__t{ font-size:var(--fs-lg); font-weight:700; line-height:1.3; margin:4px 0 8px }
+.tel-box__n{ font-size:var(--fs-xl); font-weight:700; letter-spacing:-.02em }
+.tel-box__h{ font-size:var(--fs-xs); color:rgba(255,255,255,.6); margin-top:auto; padding-top:10px; line-height:1.5 }
+
+/* 실시간 카카오톡 상담 배너 — Figma card_cs (86:9854)
+   노랑 var(--yellow) / radius 10 / padding 20 / 좌 텍스트 18 Bold · 우 말풍선 38 */
+.kakao-box{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-5);
+  background:var(--yellow); color:var(--ink);
+  border-radius:var(--r-xl); padding:20px;
+  transition:background .15s ease;
+}
+.kakao-box:hover{ background:#F7D200 }
+.kakao-box__q{
+  display:block; font-size:var(--fs-sm); font-weight:600; line-height:1;
+  color:rgba(1,1,1,.58); margin-bottom:8px;
+}
+.kakao-box__t{ display:block; font-size:var(--fs-lg); font-weight:700; line-height:1; letter-spacing:-.02em }
+/* 말풍선 — Figma freepik 3D 이미지 (card_cs 291:2652) */
+.kakao-box__ico{ flex-shrink:0; display:block; width:44px; height:44px }
+.kakao-box__ico img{ display:block; width:100%; height:100%; object-fit:contain }
+
+/* 메인 상담 영역 — 옆 전화 상담 박스와 같은 구성으로 맞춥니다.
+   글은 왼쪽 위, 말풍선 아이콘은 오른쪽 아래. (좁은 사이드바용 --sm은 기존 가로형 유지) */
+.kakao-box:not(.kakao-box--sm){
+  flex-direction:column; align-items:stretch; justify-content:space-between;
+  gap:var(--s-4); padding:18px 20px;
+}
+.kakao-box:not(.kakao-box--sm) .kakao-box__q{ font-size:var(--fs-xs); margin-bottom:4px }
+.kakao-box:not(.kakao-box--sm) .kakao-box__t{ font-size:var(--fs-lg); line-height:1.3 }
+.kakao-box:not(.kakao-box--sm) .kakao-box__ico{ align-self:flex-end; width:52px; height:52px }
+
+/* 좁은 사이드바(210px)용 축소 변형 */
+.kakao-box--sm{ padding:16px; gap:var(--s-4)}
+.kakao-box--sm .kakao-box__t{ font-size:var(--fs-md) }
+.kakao-box--sm .kakao-box__ico{ width:34px; height:34px }
+
+/* --------------------------------------------------------------------------
+   18. 신뢰 밴드
+   -------------------------------------------------------------------------- */
+.stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-5); margin-bottom:20px }
+.stat{ background:rgba(255,255,255,.08); border-radius:var(--r-lg); padding:20px 18px }
+.stat b{ display:block; font-size:var(--fs-2xl); font-weight:700; letter-spacing:-.025em; font-variant-numeric:tabular-nums }
+.stat b small{ font-size:var(--fs-sm); font-weight:700; color:var(--blue-line) }
+.stat span{ font-size:var(--fs-xs); color:rgba(255,255,255,.65) }
+
+/* 주무부처 로고 띠 — 좌우 끝을 페이드 처리하고 안쪽에서 가로로 흘려보냅니다 */
+.gov-marquee{
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.gov-marquee__track{ display:flex; width:max-content }
+/* JS가 사본을 붙인 뒤에만 굴립니다 (사본 없이 움직이면 빈 구간이 생깁니다) */
+.gov-marquee__track.is-rolling{ animation:gov-roll 45s linear infinite }
+.gov-marquee:hover .gov-marquee__track.is-rolling{ animation-play-state:paused }
+@keyframes gov-roll{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+
+.gov-row{ display:flex; gap:var(--s-4); flex-wrap:nowrap; padding-right:10px }
+.gov-row li{
+  display:inline-flex; align-items:center; flex:none;
+  background:rgba(255,255,255,.08); border-radius:var(--r-lg);
+  padding:10px 16px;
+}
+/* 로고에 부처명이 함께 들어 있어 텍스트 없이 로고만 놓습니다 (흰색 버전) */
+.gov-row img{ display:block; height:28px; width:auto }
+
+@media (prefers-reduced-motion:reduce){
+  .gov-marquee__track.is-rolling{ animation:none }
+}
+
+/* --------------------------------------------------------------------------
+   19. 취득 절차
+   -------------------------------------------------------------------------- */
+.step-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-4); counter-reset:step }
+/* 테두리는 기본값으로 둡니다 — 메인(회색 배경)·취득 절차(흰 배경) 어디서든 동일하게 보입니다 */
+.step{
+  position:relative;   /* 소요시간 배지를 카드 우측 상단에 고정 */
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r-lg); padding:var(--pad-card-y) var(--pad-card);
+}
+.step::before{
+  counter-increment:step; content:"STEP 0" counter(step);
+  display:block; font-size:var(--fs-xs); font-weight:700; letter-spacing:.09em;
+  color:var(--faint); margin-bottom:10px;   /* 아이콘·배지가 파랑이라 라벨은 회색으로 */
+}
+.step .ph{ margin-bottom:11px }
+/* 단계 아이콘 — Figma Frame 316에서 내려받은 SVG (1~4단계 순서대로) */
+.step__ico{ display:block; width:40px; height:40px; margin-bottom:11px }
+.step__head{ margin-bottom:4px }
+.step h3{ font-size:var(--fs-sm); font-weight:700; color:var(--ink) }
+.step p{ font-size:var(--fs-sm); color:var(--muted) }
+/* 소요시간 배지 — STEP 라벨과 같은 선상, 카드 오른쪽 위 */
+.step__dur{
+  position:absolute; top:var(--pad-card-y); right:var(--pad-card);
+  font-size:var(--fs-xs); font-weight:700; line-height:1.55;
+  color:var(--blue); background:var(--blue-soft); border-radius:var(--r-sm); padding:0 8px;
+}

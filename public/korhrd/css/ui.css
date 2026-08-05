@@ -1,0 +1,73 @@
+/* =========================================================================
+   ui.css — 버튼 · 배지
+   프로토타입 assets/css/style.css의 섹션 8, 9를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   8. Buttons
+   -------------------------------------------------------------------------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
+  border-radius:var(--r-md); font-weight:700; white-space:nowrap;
+  padding:10px 18px; font-size:var(--fs-sm); border:1.5px solid transparent;
+  transition:background-color .15s, border-color .15s, color .15s;
+}
+.btn--primary{ background:var(--navy); color:#fff }
+.btn--primary:hover{ background:#002a54 }
+.btn--blue{ background:var(--blue); color:#fff }
+.btn--blue:hover{ background:#1a54d6 }
+/* 아웃라인 버튼 — 테두리가 곧 버튼의 형태이므로 유지 */
+.btn--ghost{ background:var(--surface); border-color:var(--line); color:var(--ink-2) }
+/* 테두리·글자색은 그대로 두고 배경만 옅은 회색으로 (사이트 공통) */
+.btn--ghost:hover{ background-color:var(--surface-alt) }
+.btn--soft{ background:var(--blue-soft); color:var(--blue) }
+.btn--soft:hover{ background:#D6E3FF }
+.btn--soft-ink{ background:var(--blue-soft); color:var(--ink-3) }        /* Figma: 회원가입 */
+.btn--soft-ink:hover{ background:#D6E3FF; color:var(--ink) }
+.btn--yellow{ background:var(--yellow); color:var(--ink) }
+.btn--yellow:hover{ background:#f2da00 }
+.btn--white{ background:#fff; color:var(--navy) }
+.btn--white:hover{ background:var(--surface-alt) }
+/* 아웃라인 버튼의 회색 글씨 변형 — 테두리·배경·호버는 .btn--ghost 그대로 */
+.btn--ghost.btn--quiet{ color:var(--muted) }
+
+.btn--lg{ padding:15px 30px; font-size:var(--fs-md); border-radius:var(--r-lg) }
+.btn--sm{ padding:8px 14px; font-size:var(--fs-sm) }
+.btn--block{ width:100% }
+.btn__ico{ flex:none }   /* 버튼 안 아이콘 — 좁은 폭에서도 찌그러지지 않게 */
+
+.btn:disabled,
+.btn[aria-disabled="true"]{
+  background:var(--surface-sunken); color:var(--disabled); border-color:transparent;
+  cursor:not-allowed; pointer-events:none;
+}
+
+/* --------------------------------------------------------------------------
+   9. Badges
+   -------------------------------------------------------------------------- */
+/* Figma 태그: BEST=진파랑(Blue/400)·흰 / 나머지=연블루(Blue/50)·어두운 텍스트 */
+.badge{
+  display:inline-flex; align-items:center; gap:var(--s-1);
+  font-size:var(--fs-xs); font-weight:600; border-radius:var(--r-md);
+  padding:4px 9px; white-space:nowrap;
+}
+.badge--free{ background:var(--blue-soft); color:var(--ink-2) }  /* 무료수강권 — 연령 뱃지와 같은 무채색 */
+.badge--best{ background:var(--blue);      color:#fff }          /* BEST/NEW/인기 */
+.badge--age{  background:var(--blue-soft); color:var(--ink-2) }  /* 연령 추천 (Figma 톤) */
+.badge--hot{  background:var(--navy);      color:#fff }         /* 신규 */
+/* 마감임박 — Figma tag (101:3404). 관리자가 체크한 과정에만 붙습니다 */
+.badge--closing{ background:var(--red-300); color:#fff; font-weight:700 }
+.badge--fee{  background:var(--amber-soft); color:var(--amber) } /* 발급비 — 비용 고지 유지 */
+.badge--gov{  background:var(--surface-alt); color:var(--ink-3) }
+/* 나의 강의실 상태 태그 — 상태별 의미색, 모두 채움+흰 텍스트 */
+.badge--pass{     background:var(--green); color:#fff }  /* 초록 · 응시완료(합격) */
+.badge--fail{     background:var(--red);  color:#fff }   /* 빨강 · 응시완료(불합격) */
+.badge--learning{ background:var(--blue-300); color:#fff }   /* 파랑 · 학습중 */
+
+/* 주무부처 태그 — 로고 자리는 회색 플레이스홀더 */
+.gov-tag{
+  display:inline-flex; align-items:center; gap:var(--s-1);
+  background:rgba(255,255,255,.95); border-radius:var(--r-sm);
+  padding:3px 7px; font-size:var(--fs-xs); font-weight:700; color:var(--ink-2);
+}

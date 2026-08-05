@@ -1,0 +1,210 @@
+/* =========================================================================
+   responsive.css — 반응형 (1100 / 980 / 560)
+   프로토타입 assets/css/style.css의 섹션 29를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   29. Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width:1100px){
+  .cat-grid{ grid-template-columns:repeat(6,1fr) }
+
+  /* 이 폭부터 상단 메뉴가 두 줄로 깨지므로 태블릿 헤더(햄버거)로 바꿉니다.
+     햄버거는 항상 오른쪽 끝. 메뉴·검색·로그인은 모두 열리는 패널 안으로 들어갑니다. */
+  /* 햄버거는 항상 오른쪽 끝. 메뉴·검색·로그인은 모두 열리는 패널 안으로 들어갑니다. */
+  .nav-toggle{ display:block; margin-left:auto; order:9 }
+  .header__nav{
+    display:none; position:absolute; top:100%; left:0; right:0;
+    padding:8px; background:var(--surface);
+    border-bottom:1px solid var(--line); box-shadow:0 10px 24px rgba(0,0,0,.06);
+  }
+  .header__nav.is-open{ display:block }
+
+  .gnb{ flex-direction:column; gap:0 }
+  .gnb a{ padding:12px 14px; border-radius:var(--r-md) }
+
+  .header__util{
+    margin-left:0; flex-direction:column; align-items:stretch; gap:var(--s-3);
+    margin-top:8px; padding-top:8px; border-top:1px solid var(--line);
+  }
+  /* 패널 안에서는 검색 버튼도 라벨을 그대로 보여줍니다 */
+  .search-trigger{ min-width:0; width:100%; padding:12px 14px }
+  .header__auth{ display:flex; gap:var(--s-3) }
+  .header__auth .util-link{
+    flex:1; padding:12px 14px; border-radius:var(--r-md);
+    background:var(--surface-sunken); text-align:center; font-weight:700;
+  }
+  /* 메인 로그인 박스와 같은 색 위계 — 로그인은 주 버튼, 회원가입은 연블루 */
+  /* 로그인 상태의 '한평생 님'도 같은 자리·같은 무게이므로 함께 남색으로 (로그아웃은 그대로) */
+  .header__auth .util-link--login,
+  .header__auth .util-link--strong{ background:var(--navy); color:#fff }
+  .header__auth .util-link--join{ background:var(--blue-soft); color:var(--ink-2) }
+}
+
+@media (max-width:980px){
+  .hero__grid, .detail-spec, .layout-side, .two-col, .footer__grid{ grid-template-columns:1fr }
+
+  /* 수강신청 필터 — 사이드바를 펼쳐두면 과정 목록까지 한참 스크롤해야 해서
+     드롭다운 버튼 뒤로 접습니다 (Figma 모바일 325:7593) */
+  .filter-toggle{
+    display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+    width:100%; padding:11px 14px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md);
+    font-size:var(--fs-sm); font-weight:600; color:var(--ink-2);
+  }
+  /* 모양·색·회전은 공통 셰브론 규칙을 쓰고 여기서는 크기만 줄입니다 */
+  .filter-toggle .chev{ width:18px; height:18px; -webkit-mask-size:16px; mask-size:16px }
+  /* 사이드바는 모바일에서 바텀시트로 대체됩니다. DOM에는 남겨둬야
+     필터 상태(aria-pressed)와 결과 개수 계산이 한 곳에서 유지됩니다. */
+  .layout-side > aside.is-collapsed{ display:none }
+  .layout-side > aside{ margin-top:8px }
+
+  /* 상단 검색바 (Figma 330:8237) */
+  .m-search{
+    display:flex; align-items:center; gap:var(--s-2); margin-bottom:var(--s-5);
+    padding:0 14px; height:48px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md);
+  }
+  .m-search input{
+    flex:1; min-width:0; border:0; background:none; padding:0;
+    font-size:var(--fs-sm); color:var(--ink);
+  }
+  .m-search input::placeholder{ color:var(--disabled) }
+  .m-search button{ flex:none; display:flex; color:var(--ink-2); padding:4px }
+
+  /* 정책 안내 배지 (Figma 333:8258) */
+  .page-head--row{ display:flex; align-items:center; justify-content:space-between; gap:var(--s-4) }
+  .promo-chip{ display:flex; align-items:center; gap:2px; flex:none }
+  .promo-chip img{ width:34px; height:34px; object-fit:cover }
+  .promo-chip span{
+    display:flex; flex-direction:column; align-items:flex-end;
+    font-size:12px; font-weight:700; line-height:1.4; color:var(--ink);
+  }
+  .promo-chip b{ font-weight:700; color:var(--navy) }
+
+  .stat-grid, .who-grid, .req-grid, .spec-card{ grid-template-columns:repeat(2,1fr) }
+  .live-grid, .review-grid, .curriculum, .guide-box ul{ grid-template-columns:1fr }
+  /* 한 줄로 내려오면 제목(150px)이 목록 폭을 잡아먹으므로 위아래로 쌓습니다 */
+  .live-box{ flex-direction:column; gap:var(--s-4) }
+  .live-box__title{ width:auto }
+  .live-box__title br{ display:none }
+  /* 세로 배치에서는 flex:1이 높이를 무시하므로 스크립트가 지정한 높이를 그대로 씁니다 */
+  .live-view{ flex:none; width:100% }
+  .my-card, .review-row{ grid-template-columns:1fr }
+  /* 스펙 표는 카드를 길게만 만들어 감춥니다 — 필요한 정보는 상세 페이지에서 봅니다.
+     태블릿은 가로 배치를 유지한 채 표 자리만 비우고, 모바일에서만 세로로 쌓습니다. */
+  .course-row .spec-table{ display:none }
+  .course-row{
+    grid-template-areas:
+      "thumb head  price"
+      "thumb rule  rule"
+      "thumb act   act";
+  }
+  .review-row__cert{ display:flex; gap:var(--s-4)}
+  /* 모바일 띠배너 — Figma wrapper_count (155:4744)
+     3칸 균등 + 구분선 유지, 라벨은 두 줄로 접어 한 줄 안에 담습니다 */
+  .trust-strip ul{ flex-wrap:nowrap; gap:var(--s-4); padding:10px 16px }
+  .trust-strip li{ font-size:var(--fs-xs); line-height:1.4; gap:var(--s-4)}
+  .trust-strip__txt br{ display:inline }
+  .trust-strip__divider{ height:32px }
+  .search-panel{ padding-left:0 }   /* 로고 숨김 시 들여쓰기 해제 */
+  .search-cols{ grid-template-columns:1fr; gap:var(--s-8)}
+  .search-cols > div + div{ padding-left:0; border-left:0; padding-top:24px; border-top:1px solid var(--line) }
+  .search-overlay__bar{ gap:var(--s-5)}
+  .search-overlay__bar .logo{ display:none }
+}
+
+@media (max-width:560px){
+  /* 카드 안쪽 여백을 한 단계 낮춥니다 — 화면이 좁을수록 여백보다 내용 폭이 중요합니다.
+     이 두 값만 바꾸면 card·form-card·loginbox·my-card·review-row·guide-box에 한 번에 반영됩니다. */
+  :root{ --pad-card:18px; --pad-card-y:16px }
+
+  /* 헤더 간격을 좁혀 좁은 화면에서 넘치지 않게 한다 */
+  :root{ --header-h:56px }
+  /* 모바일 — 스크롤을 내릴 때는 헤더를 숨기고 올릴 때만 다시 보여줍니다 */
+  .header.is-hidden{ transform:translateY(-100%) }
+  .header__in{ gap:var(--s-4); min-height:56px }
+  .logo img{ height:16px }
+  /* 검색·로그인은 햄버거 패널 안에 있으므로 헤더 바 기준 축약 규칙을 두지 않는다 */
+
+  .section{ padding:var(--s-9) 0 }
+  .cat-grid{ grid-template-columns:repeat(4,1fr) }
+  /* 통계는 숫자가 짧아 모바일에서도 2열을 유지합니다 — 1열로 쌓으면
+     남색 영역이 화면 하나를 통째로 차지해 스크롤 내내 남색만 보입니다 */
+  .who-grid, .req-grid, .spec-card{ grid-template-columns:1fr }
+  .stat{ padding:16px 14px }
+  .detail-hero h1{ font-size:var(--fs-2xl) }
+  /* 로그인 박스 — 좁은 화면에서 로고·문구·버튼을 한 단계씩 줄입니다 */
+  .loginbox{ gap:var(--s-7)}
+  .loginbox__brand img{ height:17px }
+  .loginbox h2,
+  .loginbox__hello{ font-size:var(--fs-md) }
+  .loginbox__actions{ gap:var(--s-3)}
+  .loginbox__actions .btn{ padding:11px 12px; font-size:var(--fs-sm) }
+  .page-head h1{ font-size:var(--fs-xl) }
+  /* 과정 카드 — 여기서부터 세로로 쌓입니다 (태블릿까지는 가로 배치 유지) */
+  .course-row{
+    grid-template-columns:1fr;
+    grid-template-areas:"thumb" "head" "price" "rule" "act";
+    cursor:pointer;
+  }
+  /* 과정명 22→18, 가격 28→22로 나란히 한 단계씩 낮춥니다.
+     둘의 간격(4px)이 그대로라 가격이 제목보다 크다는 위계는 유지됩니다. */
+  .course-row__head h2,
+  .course-row__head h3{ font-size:var(--fs-lg) }
+  /* 가격 블록 — Figma wrapper_price (330:7879).
+     안내 문구가 윗줄, 정가와 수강료가 아랫줄에 나란히 놓이고 모두 우측 정렬입니다. */
+  .course-row__price{
+    display:flex; flex-wrap:wrap; align-items:baseline; justify-content:flex-end;
+    column-gap:6px; row-gap:4px;
+  }
+  .course-row__policy{
+    display:block; width:100%; text-align:right;
+    font-size:var(--fs-sm); font-weight:600; color:var(--navy); line-height:1.4;
+  }
+  .course-row__price del{ font-size:var(--fs-sm) }
+  .course-row__price strong{ font-size:var(--fs-xl) }
+  .course-row__price strong span{ color:var(--ink) }
+  /* 세로로 쌓이면 썸네일이 카드 폭을 꽉 채웁니다.
+     행 높이를 맞출 이웃 열이 없어져 height:100%는 비율로 대체합니다. */
+  .course-row__thumb{ max-width:none; height:auto; aspect-ratio:4/3 }
+  /* 버튼 3개가 세로로 쌓이면 카드가 지나치게 길어집니다.
+     '상세 정보'는 카드 클릭으로 대신하고 나머지 둘을 한 줄에 놓습니다. */
+  .course-row__actions [data-detail-link]{ display:none }
+  /* flex는 두 버튼의 좌우 패딩이 달라(18 / 10) 폭이 어긋납니다.
+     그리드 트랙으로 나누면 패딩과 무관하게 정확히 반씩 나뉩니다. */
+  .course-row__actions{ display:grid; grid-template-columns:1fr 1fr; height:auto; gap:var(--s-3) }
+  /* 공지사항·자주 묻는 질문 제목도 다른 섹션 제목과 같은 크기로 */
+  .section-head h2,
+  .list-head h2{ font-size:var(--fs-lg) }
+  /* 장바구니 바 — Figma 모바일 (334:8886)
+     칩 줄 → (개수 | 금액) 한 줄 → 전폭 CTA 순으로 쌓습니다 */
+  .cart-bar__in{
+    display:grid; grid-template-columns:1fr auto;
+    grid-template-areas:"chips chips" "count total" "cta cta";
+    align-items:end; column-gap:var(--s-4); row-gap:10px; padding:0 16px;
+  }
+  /* Figma는 칩 줄과 개수 줄 사이가 30px이지만 실제 화면에서는 떠 보여
+     row-gap 10에 6만 더한 16px로 좁혔습니다 */
+  .cart-bar__chips{ grid-area:chips; width:100%; flex:none; min-width:0; gap:6px; margin-bottom:6px }
+  .cart-chip{
+    border:1px solid var(--line); border-radius:var(--r-md); padding:10px 12px; gap:4px;
+    font-size:var(--fs-sm); font-weight:700; color:var(--ink);
+  }
+  .cart-chip button{ font-size:var(--fs-md) }
+  .cart-bar__count{ grid-area:count; font-size:var(--fs-md) }
+  .cart-bar__count b{ font-size:20px }
+  /* 정가는 윗줄, '수강료 0원'은 아랫줄에 오른쪽 정렬 */
+  .cart-bar__total{
+    grid-area:total; display:grid; justify-items:end; align-items:baseline;
+    grid-template-areas:"del del" "label price"; column-gap:var(--s-3); row-gap:var(--s-2);
+  }
+  .cart-bar__total del{ grid-area:del }
+  .cart-bar__total-label{ grid-area:label; display:block; font-size:var(--fs-lg); font-weight:700; color:var(--ink-2) }
+  .cart-bar__total strong{ grid-area:price; font-size:20px }
+  .cart-bar [data-enroll]{ grid-area:cta; padding:18px; font-size:var(--fs-lg); border-radius:var(--r-lg) }
+  .review-hero{ padding:24px }
+  .review-hero h1{ font-size:var(--fs-xl) }
+  .issue-banner{ padding:22px }
+}

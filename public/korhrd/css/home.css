@@ -1,0 +1,148 @@
+/* =========================================================================
+   home.css — 메인 히어로 · 목적/연령 칩 · 분야 아이콘
+   프로토타입 assets/css/style.css의 섹션 10, 11, 12를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   10. Hero
+   -------------------------------------------------------------------------- */
+/* padding-top/bottom만 지정 — 좌우 20px는 .container 값을 유지해 섹션과 정렬 */
+/* Figma section (291:3333) — 배너 791 : 로그인 383, gap 24, 높이 320 */
+.hero-band{ background:var(--surface) }
+.hero{ padding-top:var(--s-7); padding-bottom:var(--s-9) }
+/* 로그인 박스는 Figma 실측 폭(383px)을 고정하고, 배너가 남는 폭을 가져갑니다.
+   → 문구 줄바꿈이 디자인과 동일하게 유지됩니다. */
+.hero__grid{ display:grid; grid-template-columns:minmax(0,1fr) 383px; gap:var(--s-8)}
+
+/* 배너 캐러셀 — 디자인된 이미지를 가로로 이어 붙이고 좌우로 밀어 넘깁니다.
+   높이는 이미지 원본 비율을 따르므로 어떤 크기의 배너를 넣어도 찌그러지지 않습니다.
+   align-self:start로 그리드가 높이를 늘리지 못하게 막습니다. */
+.banner{
+  position:relative; overflow:hidden; align-self:start;
+  border:1px solid var(--line); border-radius:var(--r-xl);
+}
+.banner__track{ display:flex; width:100%; transition:transform .5s cubic-bezier(.4,0,.2,1) }
+.banner__slide{ flex:0 0 100%; width:100%; height:auto; display:block }
+@media (prefers-reduced-motion:reduce){ .banner__track{ transition:none } }
+.banner__dots{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:16px;
+  display:flex; align-items:center; gap:var(--s-2);
+}
+/* course-detail 점처럼 원 → 알약으로 부드럽게 모프 */
+.banner__dots button{
+  width:8px; height:8px; border-radius:var(--r-full); background:rgba(255,255,255,.6);
+  transition:width .4s cubic-bezier(.4,0,.2,1), background-color .3s ease;
+}
+.banner__dots button[aria-current="true"]{ width:20px; background:#fff }
+
+/* 로그인 박스 — 위쪽 브랜드 문구, 아래쪽 버튼 두 개 */
+.loginbox{
+  background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--r-xl); padding:var(--pad-card);
+  display:flex; flex-direction:column; justify-content:space-between; gap:var(--s-9);
+}
+.loginbox__brand{ margin-bottom:6px }
+.loginbox__brand img{ display:block; height:20px; width:auto }
+.loginbox h2{
+  font-size:var(--fs-xl); font-weight:700; line-height:1.4;
+  letter-spacing:-.02em; color:var(--ink-2);
+  word-break:keep-all;   /* 한글은 단어 단위로 줄바꿈 */
+}
+.loginbox h2 em{ font-style:normal; color:var(--blue) }
+.loginbox__actions{ display:flex; gap:var(--s-5)}
+.loginbox__actions .btn{ flex:1; padding:14px 16px; font-size:var(--fs-md); border-radius:var(--r-md)}
+
+/* 로그인 상태 전환 — body[data-logged-in]에 따라 게스트/회원 박스 토글 */
+.loginbox--member{ display:none }
+body[data-logged-in="true"] .loginbox--guest{ display:none }
+body[data-logged-in="true"] .loginbox--member{ display:flex }
+.loginbox__hello{ font-size:var(--fs-xl); font-weight:700; letter-spacing:-.02em; color:var(--ink-2) }
+.loginbox__hello em{ font-style:normal; color:var(--blue) }
+.loginbox__member-bottom{ display:flex; flex-direction:column; gap:var(--s-5)}
+
+/* 수강중인 강의 미니 목록 (Figma list_lecture 348:10382) */
+.mylec-mini{
+  background:var(--surface-sunken); border:1px solid var(--line); border-radius:var(--r-xl);
+  padding:14px 16px; max-height:118px; overflow-y:auto;
+}
+.mylec-mini__list{ display:grid; gap:var(--s-5)}
+/* 강의 항목 전체가 강의실로 가는 링크 */
+.mylec-mini__list li > a{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+  margin:-4px -6px; padding:4px 6px; border-radius:var(--r-md);
+  transition:background-color .15s;
+}
+.mylec-mini__list li > a:hover{ background:var(--surface-alt) }
+
+.mylec-mini__tit{ font-size:var(--fs-md); font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .15s }
+.mylec-mini__dday{
+  flex-shrink:0; background:var(--red-soft); color:var(--red);
+  border:1px solid #FF9C9C; border-radius:var(--r-md);
+  padding:5px 9px; font-size:var(--fs-sm); font-weight:700;
+}
+.mylec-mini__empty{ padding:8px 0; text-align:center; font-size:var(--fs-sm); color:var(--faint) }
+
+/* --------------------------------------------------------------------------
+   11. 목적 · 연령 선택
+   -------------------------------------------------------------------------- */
+.pill-row{ display:flex; gap:var(--s-2); flex-wrap:wrap; align-items:center; margin-top:20px }
+/* 라벨 폭을 맞춰 두 필터 줄의 칩 시작점이 일치하게 합니다 */
+.pill-row__label{ flex-shrink:0; width:44px; font-size:var(--fs-sm); font-weight:700; color:var(--faint) }
+/* 목적·연령 두 필터 줄의 칩 높이를 맞춰 같은 위계로 보이게 합니다
+   (.pill은 다른 페이지에서도 쓰므로 이 두 줄에만 적용) */
+[data-goal-group] .pill,
+[data-age-group] .pill{
+  display:inline-flex; align-items:center; min-height:36px;
+  border:1px solid var(--line);          /* 기본 상태 — 회색 테두리 */
+  transition:background-color .15s, color .15s, border-color .15s;
+}
+/* 호버 — 배경만 옅은 회색으로. 글자색은 그대로 둡니다(선택된 칩은 남색 유지) */
+[data-goal-group] .pill:not([aria-pressed="true"]):hover,
+[data-age-group] .pill:not([aria-pressed="true"]):hover{
+  background:var(--surface-alt); color:var(--muted); border-color:var(--line);
+}
+[data-goal-group] .pill[aria-pressed="true"],
+[data-age-group] .pill[aria-pressed="true"]{ border-color:var(--navy) }
+/* 목적 칩 안의 과정 수 */
+[data-goal-group] .pill b{
+  margin-left:5px; font-weight:700; font-size:var(--fs-xs); color:var(--faint);
+  font-variant-numeric:tabular-nums;
+}
+[data-goal-group] .pill[aria-pressed="true"] b{ color:rgba(255,255,255,.7) }
+.pill{
+  background:var(--surface); border-radius:var(--r-full);
+  padding:7px 16px; font-size:var(--fs-sm); font-weight:700; color:var(--muted);
+  transition:background-color .15s, color .15s;
+}
+/* hover는 선택 상태(네이비)의 옅은 예고편 — 글자색만 바뀌면 반응이 약하다 */
+.pill:hover{ background:var(--blue-soft) }
+.pill[aria-pressed="true"],
+.pill[aria-current="page"],
+.pill[aria-selected="true"]{ background:var(--navy); color:#fff }
+
+/* --------------------------------------------------------------------------
+   12. 분야 아이콘
+   -------------------------------------------------------------------------- */
+.cat-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:var(--s-2)}
+.cat-item{ display:block; text-align:center; padding:18px 4px; border-radius:var(--r-lg) }
+.cat-item:hover{ background:var(--surface) }
+.cat-item .ph{ margin:0 auto 8px }
+.cat-item__ico{ display:block; width:52px; height:52px; margin:0 auto 8px; object-fit:contain }
+/* 분야 아이콘 자체는 크게 — 목적 칩에서 같은 이미지를 26px로 쓰므로 여기만 키운다 */
+.cat-item .cat-item__ico{ width:64px; height:64px; margin-bottom:10px }
+.cat-item span{ display:block; font-size:var(--fs-xs); font-weight:600; color:var(--ink-3); line-height:1.35; white-space:nowrap }
+
+/* 국가자격증 안내 (Figma 334:9450) — 사진 카드 4개 + 전체 폭 버튼 */
+.natcert-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-8)}
+.natcert-card{ display:block }
+.natcert-card img{
+  display:block; width:100%; aspect-ratio:282/188; object-fit:cover;
+  border-radius:var(--r-lg); background:var(--surface-alt);
+}
+.natcert-card strong{
+  display:block; margin-top:16px;
+  font-size:var(--fs-md); font-weight:700; color:var(--ink); letter-spacing:-.01em;
+}
+/* 카드 아래 전체 폭 버튼 */
+.natcert-more{ margin-top:24px; padding:16px }

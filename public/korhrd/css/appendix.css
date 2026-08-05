@@ -1,0 +1,680 @@
+/* =========================================================================
+   appendix.css — Print + 이후 추가분 (탭바·가로 스와이프·후기 탭 등)
+   프로토타입 assets/css/style.css의 섹션 35를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   35. Print
+   -------------------------------------------------------------------------- */
+@media print{
+  .header,.trust-strip,.cart-bar,.detail-cta,.cta-band,.footer,.search-overlay{ display:none }
+  body{ color:#000; background:#fff }
+  .detail-hero{ background:none; color:#000 }
+}
+
+/* ==========================================================================
+   강의 상세페이지 — Figma wrapper_section (419:13400)
+   ========================================================================== */
+.dsec{ padding:72px 0 }
+.dsec--navy{ background:var(--navy); color:#fff }
+/* 과정 정보 — 히어로 그라데이션 끝색과 같게 해 설명글에서 자연스럽게 이어집니다 */
+.dsec--info{ background:#00182F }
+/* 수강 이유(#why) — 지정된 그라데이션 배경 */
+#why.dsec--navy{ background:linear-gradient(180deg, #002983 0%, #001C58 100%) }
+.dsec--tint{ background:#F4F7FF }
+.dsec__title{ font-size:var(--fs-xl); font-weight:700; letter-spacing:-.025em; text-align:center; color:var(--ink) }
+.dsec__title--on-navy{ color:#fff }
+.dsec__sub{ margin-top:8px; font-size:var(--fs-sm); color:var(--muted); text-align:center }
+.dsec--navy .dsec__sub{ color:rgba(255,255,255,.7) }
+.dsec__title + *:not(.dsec__sub){ margin-top:26px }
+.dsec__sub + *{ margin-top:26px }
+/* 한 섹션에 제목이 2개 이상일 때, 두 번째 이후 제목은 앞 블록과 넉넉히 띄웁니다.
+   (mt-6/mt-7 유틸리티보다 우선하도록 지정) */
+.dsec .dsec__title ~ .dsec__title{ margin-top:64px }
+
+/* 히어로 — Figma image (419:13633)
+   배경 사진 위에 아래로 짙어지는 그라데이션을 깔고 그 위에 문구를 올립니다.
+   사진이 없는 지금은 그라데이션만으로도 성립하도록 바탕색을 함께 지정했습니다. */
+.dhero{ position:relative; background:#062B52; overflow:hidden }
+.dhero__bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
+.dhero::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  /* Figma 스펙 그대로: 20%까지 투명, 이후 하단(#00182F)까지 직선 램프 */
+  background:linear-gradient(180deg, rgba(0,24,47,0) 20%, #00182F 100%);
+}
+.dhero__in{
+  position:relative; z-index:1;
+  min-height:400px; padding-top:56px; padding-bottom:56px;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-end; text-align:center;
+}
+.dhero__gov img{ display:block; height:32px; width:auto }
+.dhero__title{
+  margin-top:16px;
+  font-size:clamp(28px, 3.4vw, 44px); font-weight:700; line-height:1.15;
+  letter-spacing:-.03em; color:#fff;
+}
+.dhero__rule{ width:90px; height:1px; border:0; background:rgba(255,255,255,.5); margin:38px 0 26px }
+.dhero__desc{
+  max-width:760px; font-size:var(--fs-sm); font-weight:400; line-height:1.8;
+  color:rgba(255,255,255,.86); word-break:keep-all;
+}
+
+/* 섹션 바로가기 — 스크롤 시 상단 고정 */
+.dtabs{ position:sticky; top:var(--header-h); z-index:50; background:var(--surface); border-bottom:1px solid var(--line) }
+.dtabs__in{
+  max-width:var(--container); margin:0 auto; padding:0 20px;
+  display:flex; justify-content:center; overflow-x:auto; scrollbar-width:none;
+}
+.dtabs__in::-webkit-scrollbar{ display:none }
+.dtabs a{
+  padding:16px 22px; font-size:var(--fs-sm); font-weight:700; color:var(--faint);
+  white-space:nowrap;
+}
+.dtabs a:hover{ color:var(--ink-2) }
+.dtabs a[aria-current="true"]{ color:var(--blue) }   /* 파란 밑줄 바 없이 색상만 강조 */
+/* 고정된 탭에 제목이 가리지 않도록 */
+.dsec[id]{ scroll-margin-top:calc(var(--header-h) + 55px) }   /* 헤더 + 고정 탭 높이 */
+/* 오른쪽 페이드 — 탭이 더 있다는 신호. 없으면 글자가 잘린 것처럼 보입니다. */
+.dtabs::after{
+  content:''; position:absolute; right:0; top:0; bottom:1px; width:40px; pointer-events:none;
+  background:linear-gradient(90deg, rgba(255,255,255,0), var(--surface) 70%);
+  opacity:0; transition:opacity .15s;
+}
+.dtabs.has-more::after{ opacity:1 }
+
+/* 스펙 · 등록번호 *//* 스펙 · 등록번호 */
+.dspec-grid{ display:grid; grid-template-columns:792fr 376fr; gap:var(--s-6); align-items:stretch }
+.dspec{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5) var(--s-9); align-content:center; padding:24px }
+.dspec > div{ display:flex; align-items:center; gap:var(--s-4); font-size:var(--fs-sm) }
+.dspec .tag{
+  flex-shrink:0; background:var(--blue-soft); color:var(--ink-3);
+  border-radius:var(--r-md); padding:9px 12px; font-size:var(--fs-xs); font-weight:700; white-space:nowrap;
+}
+.dspec b{ font-weight:600; color:var(--ink-2) }
+
+.dreg{ display:flex; flex-direction:column; padding:24px }
+.dreg__no{ font-size:var(--fs-lg); font-weight:700; color:var(--ink); letter-spacing:-.02em }
+.dreg__desc{ margin:14px 0 auto; font-size:var(--fs-sm); color:var(--muted); line-height:1.75 }
+.dreg .btn{ margin-top:18px; padding:15px }
+
+/* 수강료 배너 — Figma Frame73 (764:1795)
+   흰 카드 대신 옅은 블루 그라데이션 + 우측 금색 월계관 배지 */
+.card.dprice{
+  margin-top:var(--s-6); padding:24px 42px; border:0;
+  background:linear-gradient(102deg, #EFF7FF 0%, #FBFDFF 53%, #EAF4FF 100%);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-8);
+}
+.dprice__label{ color:var(--navy) !important }
+.dprice__label{ font-size:var(--fs-sm); font-weight:700; color:var(--blue) }
+.dprice__main{
+  margin-top:10px; display:flex; align-items:baseline; flex-wrap:wrap; gap:var(--s-5);
+  font-size:var(--fs-2xl); font-weight:700; color:var(--ink); letter-spacing:-.03em;
+}
+.dprice__main strong{ font-size:var(--fs-2xl); color:var(--navy) }
+.dprice__main strong em{ font-style:normal; font-size:42px; line-height:1; color:var(--navy) }
+.dprice__main del{ font-size:var(--fs-md); font-weight:600; color:var(--disabled) }
+/* 금색 월계관 배지 — 월계관 이미지 위에 문구는 Figma 원본 벡터(SVG) */
+.dprice__badge{
+  flex-shrink:0; width:118px; height:118px;
+  background:url("/gold-badge.png") no-repeat center / contain;
+  display:flex; align-items:flex-start; justify-content:center;
+  padding-top:34px;   /* 월계관 위쪽 빈 공간에 문구가 오도록 살짝 위로 */
+}
+.dprice__badge-text{ display:block; width:46px; height:auto }
+
+/* 추천 대상 */
+.dstars{ display:block; width:150px; height:auto; margin:0 auto }   /* Figma 별점 이미지 */
+.dstars + .dsec__title{ margin-top:8px }
+.dwho{
+  display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 3*16px)/4); gap:var(--s-6);
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  scrollbar-width:none;                 /* 인디케이터로 위치를 알리므로 스크롤바는 감춥니다 */
+  cursor:grab;                          /* 잡아서 끌 수 있음을 커서로 안내 */
+}
+.dwho::-webkit-scrollbar{ display:none }
+/* 마우스로 끌고 있는 동안엔 스냅을 풀어 손가락을 부드럽게 따라오게 하고, 텍스트 선택은 막습니다 */
+.dwho.is-grabbing{ cursor:grabbing; scroll-snap-type:none; user-select:none }
+.dwho__card{
+  scroll-snap-align:start; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r-lg); padding:24px; text-align:center; min-height:180px;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:var(--s-5);
+}
+.dwho__no{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:52px; height:34px; padding:0 14px; border-radius:var(--r-full);
+  background:var(--navy); color:#fff; font-size:var(--fs-sm); font-weight:700;
+}
+.dwho__card p{ margin:0; font-size:var(--fs-sm); font-weight:600; color:var(--ink-2); line-height:1.6 }
+.dwho__dots{ display:flex; justify-content:center; gap:var(--s-2); margin-top:16px }
+/* 원 → 길쭉한 알약으로 모프. border-radius:var(--r-full)라 두 상태 모두 둥글고 폭만 늘어납니다. */
+.dwho__dots button{
+  width:8px; height:8px; border-radius:var(--r-full); background:var(--line);
+  transition:width .4s cubic-bezier(.4,0,.2,1), background-color .3s ease;
+}
+.dwho__dots button[aria-current="true"]{ width:16px; background:var(--navy) }
+
+/* 과정 상세 소개 */
+.dintro{ padding:28px 32px }
+.dintro__head{ display:flex; align-items:center; gap:var(--s-5); margin:0; font-size:var(--fs-lg); font-weight:700; color:var(--ink) }
+.dintro__ico{ flex-shrink:0; width:44px; height:44px }
+.dintro > p:not(.dintro__head), .dintro ul{ margin-top:16px; font-size:var(--fs-sm); color:var(--muted); line-height:1.85 }
+.dintro--blue{ background:var(--blue); border-radius:var(--r-lg); color:#fff }
+.dintro--blue .dintro__head{ color:#fff }
+.dintro--blue ul{ color:rgba(255,255,255,.92); list-style:none }
+.dintro--blue li{ padding-left:12px; position:relative }
+.dintro--blue li::before{ content:"·"; position:absolute; left:0 }
+/* 진로 및 전망 카드 오른쪽 위 — 취업 길찾기로 가는 버튼 (해당 직업이 있을 때만 JS가 추가) */
+.dintro__head{ min-height:44px }   /* 아이콘 높이만큼 확보해 버튼이 세로 중앙에 오게 */
+.dintro__guide{
+  margin-left:auto; flex-shrink:0;
+  display:inline-flex; align-items:center; gap:var(--s-1);
+  padding:8px 15px; border-radius:var(--r-full);
+  background:rgba(255,255,255,.16); color:#fff; font-size:var(--fs-sm); font-weight:700;
+  transition:background-color .15s;
+}
+.dintro__guide:hover{ background:rgba(255,255,255,.28) }
+
+/* 타 교육원 비교 */
+/* 타 교육원 vs 한평생 — Figma 545:17983의 240 : 795 비율을 그대로 두고 가운데 정렬.
+   '타 교육원' 박스는 세로로 짧게(가운데 정렬), 오른쪽 '한평생' 박스가 위로 겹칩니다. */
+.dcompare{ display:grid; grid-template-columns:200px minmax(0,795px); justify-content:center; align-items:center }
+.dcompare__other{
+  background:#041C3A; border-radius:var(--r-lg) 0 0 var(--r-lg);
+  padding:40px 24px 40px 28px; margin-right:-11px;
+}
+.dcompare__label{ font-size:var(--fs-sm); font-weight:700; color:#fff; text-align:center }
+.dcompare__other ul{ margin-top:16px; font-size:var(--fs-xs); color:rgba(255,255,255,.55); line-height:2 }
+.dcompare__other li{ padding-left:10px; position:relative }
+.dcompare__other li::before{ content:"·"; position:absolute; left:0 }
+.dcompare__ours{
+  position:relative; z-index:1;
+  background:linear-gradient(180deg,#CFDCFF 0%,#C2D2FF 100%);
+  border-radius:var(--r-lg); padding:32px;   /* 상하좌우 동일 */
+}
+.dcompare__brand{ text-align:center }
+.dcompare__brand img{ height:22px; width:auto; display:inline-block }
+.dbenefit{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-5); margin-top:32px }
+.dbenefit li{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  background:var(--surface); border-radius:var(--r-lg); padding:22px 12px 26px; min-height:216px;
+  text-align:center; font-size:var(--fs-sm); font-weight:700; color:var(--ink-2); line-height:1.55;
+}
+.dbenefit__ico{ display:block; width:118px; height:118px; object-fit:contain; margin:0 auto 12px }
+/* '자격증 발급비 별도*' — 장학지원 카드 우측 아래 모서리에 작게 */
+.dbenefit__note{ position:absolute; right:12px; bottom:9px; font-size:var(--fs-xs); font-weight:600; color:var(--faint); line-height:1 }
+
+/* 정식 등록 자격증 과정 */
+.dcert{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6) }
+.dcert__card{ background:rgba(255,255,255,.07); border-radius:var(--r-lg); padding:30px; text-align:center }
+.dcert__tag{
+  display:inline-block; background:var(--surface); color:var(--ink-2);
+  border-radius:var(--r-full); padding:9px 16px; font-size:var(--fs-sm); font-weight:700;
+}
+/* 로고 카드 — 흰 배경 위 기관/부처 로고 (Figma 535:16784) */
+.dcert__logo{
+  display:flex; align-items:center; justify-content:center;
+  width:300px; max-width:100%; height:150px; margin:22px auto;
+  background:var(--surface); border-radius:var(--r-md);
+}
+.dcert__logo img{ width:auto; max-width:82% }
+.dcert__logo--gov img{ height:62px; max-width:none }   /* 보건복지부: 가로 로고 */
+/* 좁은 화면에서는 로고 카드(300px 고정)가 카드 폭을 밀어내므로 폭에 맞춰 줄입니다 */
+@media (max-width:560px){
+  .dcert__card{ padding:24px 16px }
+  .dcert__logo{ width:100% }
+  .dcert__logo--gov img{ height:auto; max-width:100% }
+}
+.dcert__card p:last-child{ font-size:var(--fs-sm); color:rgba(255,255,255,.72); line-height:1.85 }
+
+/* 취득 절차 */
+/* 취득 절차 — Figma 430:13723: 네이비 섹션 위 파란 말풍선 카드(#224187) */
+.dstep{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-8); text-align:center }
+.dstep li{
+  position:relative; background:#224187; border-radius:var(--r-lg);
+  padding:26px 18px 24px;
+}
+/* 말풍선 꼬리 — 회전한 정사각형의 바깥 꼭짓점만 둥글게(border-radius) 해서
+   뾰족하지 않고 카드 radius와 어울리게. 데스크탑(가로 배열)에서는 오른쪽(→).
+   마지막 카드는 꼬리를 붙이지 않습니다. */
+.dstep li:not(:last-child)::after{
+  content:''; position:absolute; z-index:1;
+  right:-9px; top:50%;
+  width:26px; height:26px; background:#224187;
+  transform:translateY(-50%) rotate(45deg);
+  border-radius:0 var(--r-md) 0 0;   /* 회전 후 오른쪽 꼭짓점 */
+}
+.dstep__ico{ display:block; width:66px; height:66px; object-fit:contain; margin:0 auto 12px }
+.dstep b{ display:block; font-size:var(--fs-md); font-weight:700; color:#fff }
+.dstep span:not(.ph){ display:block; margin-top:10px; font-size:var(--fs-sm); color:rgba(255,255,255,.7); line-height:1.7 }
+
+/* 자격증 발급 예시 */
+/* 발급 예시 — 견본 두 장이 담긴 합성 이미지 (Figma 771:1895)
+   이미지에 파란 배경이 포함돼 있어 네이비 섹션 위에 박스처럼 얹힙니다. */
+.dsample__img{ display:block; width:100%; max-width:920px; height:auto; margin:0 auto; border-radius:var(--r-lg) }
+.dsample__note{ margin-top:22px; text-align:center; font-size:var(--fs-xs); color:var(--faint) }
+
+/* 커리큘럼 */
+.dcurri{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4) var(--s-5)}
+.dcurri li{
+  display:flex; align-items:center; gap:var(--s-5);
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:16px 20px; font-size:var(--fs-sm); font-weight:600; color:var(--ink-2);
+}
+.dcurri .no{
+  flex-shrink:0; min-width:50px; text-align:center;
+  background:var(--blue); color:#fff; border-radius:var(--r-md);
+  padding:8px 6px; font-size:var(--fs-xs); font-weight:700;
+}
+
+/* 교수 소개 */
+.dprof{ display:flex; align-items:center; gap:var(--s-8); padding:24px }
+.dprof__img{ width:150px; height:150px; border-radius:var(--r-lg); flex-shrink:0 }
+.dprof__name{ font-size:var(--fs-lg); font-weight:700; color:var(--ink) }
+.dprof__list{ margin-top:16px; display:grid; gap:var(--s-3)}
+.dprof__list li{ display:flex; align-items:center; gap:var(--s-3); font-size:var(--fs-sm); color:var(--ink-3) }
+.dprof__list li::before{
+  content:"✓"; flex-shrink:0; width:18px; height:18px; border-radius:50%;
+  background:var(--blue); color:#fff; font-size:var(--fs-2xs);
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* 자격관리기관 표 */
+.dtable{ width:100%; border-collapse:separate; border-spacing:0; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden }
+.dtable th, .dtable td{ padding:19px 24px; font-size:var(--fs-sm); border-bottom:1px solid var(--line) }
+.dtable tr:last-child th, .dtable tr:last-child td{ border-bottom:0 }
+.dtable th{ width:250px; background:var(--surface-sunken); color:var(--ink-2); font-weight:700; text-align:center; border-right:1px solid var(--line) }
+.dtable td{ color:var(--ink-3) }
+
+@media (max-width:980px){
+  .dspec-grid, .dcert, .dsample, .dcurri{ grid-template-columns:1fr }
+  /* 스펙 8개는 태블릿에서 2열(4줄+4줄) 유지 — 모바일에서만 1열(8줄) */
+  .dcompare{ grid-template-columns:1fr }
+  /* 세로로 쌓일 땐 '타 교육원' 박스를 아래 한평생 박스보다 좁게, 가운데 정렬 */
+  .dcompare__other{ width:70%; margin:0 auto -12px; border-radius:var(--r-lg) }
+  /* 넓어진 '타 교육원' 박스에선 목록을 2열(2줄+2줄)로 */
+  .dcompare__other ul{ display:grid; grid-template-columns:auto auto; justify-content:center; column-gap:var(--s-10); row-gap:var(--s-1)}
+  .dbenefit{ grid-template-columns:repeat(2,1fr) }
+  /* 취득 절차는 태블릿·모바일 모두 한 줄에 하나씩 세로로 쌓고, 말풍선 꼬리는 아래(↓)로 */
+  .dstep{ grid-template-columns:1fr }
+  .dstep li:not(:last-child)::after{
+    right:auto; left:50%; top:auto; bottom:-9px;
+    transform:translateX(-50%) rotate(45deg);
+    border-radius:0 0 var(--r-md) 0;   /* 회전 후 아래쪽 꼭짓점 */
+  }
+  .dwho{ grid-auto-columns:calc((100% - 16px)/2) }
+  /* 수강료 카드 — 좁아지면 텍스트는 왼쪽 위, 금색 배지는 오른쪽 아래 구석으로 */
+  .card.dprice{ display:block; position:relative; padding:22px; min-height:132px }
+  .dprice > div{ padding-right:124px }   /* 오른쪽 아래 배지 자리를 비워 텍스트가 겹치지 않게 */
+  .dprice__badge{ position:absolute; right:18px; bottom:14px; width:104px; height:104px; padding-top:30px }
+  /* 교수 소개는 태블릿에선 사진 왼쪽 · 텍스트 오른쪽(가로형) 유지 → flex row 그대로 둡니다 */
+  .dtable th{ width:120px }
+}
+/* 태블릿 전용 — 취득 절차 카드를 가로형(이미지 왼쪽 / 제목·설명 오른쪽, 왼쪽 정렬)으로.
+   모바일(≤560)은 세로 가운데 정렬을 그대로 유지합니다. */
+@media (min-width:561px) and (max-width:980px){
+  .dstep li{
+    display:grid; grid-template-columns:auto 1fr; column-gap:var(--s-8);
+    align-items:center; text-align:left; padding:24px 30px;
+  }
+  .dstep__ico{ grid-row:1 / span 2; width:96px; height:96px; margin:0 }
+  .dstep b{ grid-column:2; align-self:end }
+  .dstep span:not(.ph){ grid-column:2; align-self:start; margin-top:6px }
+}
+@media (max-width:560px){
+  .dwho{ grid-auto-columns:88% }
+  .dbenefit, .dstep{ grid-template-columns:1fr }
+  .dspec{ grid-template-columns:1fr }               /* 모바일: 스펙 1열(8줄) */
+  .dcompare__other ul{ display:block }              /* 모바일: 목록 1열(4줄) */
+  /* 교수 소개 — 모바일에선 세로로 쌓고 가운데 정렬 */
+  .dprof{ flex-direction:column; align-items:center; text-align:center }
+  .dprof__list li{ justify-content:center }
+  .dprice__main{ font-size:var(--fs-xl) }
+  .dprice__main strong em{ font-size:var(--fs-2xl) }
+}
+
+/* 합격후기 · 이력서 배너 — 더 짙은 네이비 */
+/* Figma 545 프레임: 위에서 아래로 짙어지는 네이비 그라데이션 */
+.dsec--deep{ background:linear-gradient(180deg, #001C58 0%, #000613 100%); color:#fff }
+/* 커리큘럼·교수소개 — Figma 442:14288: 옅은 블루 바탕(#F3F6FE) 위에
+   부드러운 블루 그라데이션 이미지를 30% 멀티플라이로 깔았습니다. */
+.dsec--soft{ position:relative; background:#F3F6FE; overflow:hidden }
+.dsec--soft::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:url("/curri-bg.jpg") center / cover no-repeat;
+  opacity:.35; mix-blend-mode:multiply;
+}
+.dsec--soft > .container{ position:relative; z-index:1 }
+
+/* 취득절차·발급예시·이력서 세 섹션을 하나의 연속된 그라데이션으로 묶습니다.
+   그라데이션은 그룹 전체에 한 번만 적용하고, 각 섹션 배경은 투명 처리해 이음매를 없앱니다. */
+.deep-group{ background:linear-gradient(180deg, #001C58 0%, #000613 100%) }
+.deep-group > .dsec--deep{ background:transparent }
+
+/* 합격후기 — Figma 574:19786: 밝은 파랑 배경 + 반짝이 + 트로피 + 가로 자동 스크롤 */
+.dsec--reviews{ position:relative; overflow:hidden; background:#0037AF; color:#fff }
+/* 별 배경 — 섹션 전체를 덮도록 cover. 폭이 줄어도 높이를 유지해 아래 빈칸이 생기지 않습니다. */
+.drev-sparkle{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  max-width:none; pointer-events:none; mix-blend-mode:screen; opacity:.9; z-index:0;
+}
+.dsec--reviews .container{ position:relative; z-index:1 }
+.drev-trophy{ display:block; width:130px; height:auto; margin:20px auto 0 }
+
+/* 마르퀴 — 트랙이 왼쪽으로 흐르고, 카드 두 벌이라 -50%에서 자연스럽게 반복 */
+.drev-marquee{ position:relative; z-index:1; margin-top:34px; overflow:hidden }
+.drev-track{
+  display:flex; gap:var(--s-8); width:max-content;
+  padding:6px 20px;   /* 카드 그림자 잘림 방지 */
+  animation:drev-scroll 44s linear infinite;
+}
+.drev-marquee:hover .drev-track{ animation-play-state:paused }
+@keyframes drev-scroll{ from{ transform:translateX(0) } to{ transform:translateX(calc(-50% - 12px)) } }
+@media (prefers-reduced-motion:reduce){ .drev-track{ animation:none } }
+
+.drev__card{
+  flex:0 0 auto; width:300px; box-sizing:border-box;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:20px; color:var(--ink-2);
+}
+.drev__top{ display:flex; gap:var(--s-5); align-items:flex-start }
+.drev__ava{ width:72px; height:72px; border-radius:var(--r-md); flex-shrink:0 }
+.drev__tit{ font-size:var(--fs-md); font-weight:700; color:var(--ink); line-height:1.4;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
+.drev__who{ margin-top:8px; font-size:var(--fs-sm); color:var(--muted) }
+.drev__body{
+  margin-top:14px; font-size:var(--fs-xs); color:var(--muted); line-height:1.7;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.drev__tags{ display:flex; align-items:center; gap:var(--s-4); margin-top:14px; flex-wrap:wrap }
+.drev__tags span{
+  background:var(--blue-soft); color:var(--ink-3); border-radius:var(--r-md);
+  padding:7px 11px; font-size:var(--fs-xs); font-weight:600;
+}
+.drev__tags em{ font-style:normal; font-size:var(--fs-xs); color:var(--faint) }
+.drev__more{ text-align:center; margin-top:26px }
+/* 합격후기 전체 보기 — '취업 길찾기' 버튼과 같은 반투명 흰색 알약 스타일 */
+.drev__more .btn--white{
+  gap:var(--s-2); padding:10px 20px; font-size:var(--fs-sm); font-weight:700; border-radius:var(--r-full);
+  background:rgba(255,255,255,.16); color:#fff;
+}
+.drev__more .btn--white:hover{ background:rgba(255,255,255,.28); color:#fff }
+
+/* 이력서 기재 배너 — 합성 이미지 한 장 (Figma 771:1898) */
+.dresume{ position:relative; overflow:hidden; padding-bottom:0 }
+.dresume .dsec__title em{ font-style:normal; color:var(--blue-300) }
+/* 투명 PNG 이력서 이미지 (합격 배지·태그·글로우 포함) */
+.dresume .dresume__stage{ position:relative; z-index:0; margin-top:12px }
+.dresume__shot{ display:block; width:100%; max-width:1120px; height:auto; margin:0 auto; position:relative; z-index:0 }
+/* 이미지 아랫부분을 덮는 어두운 받침 박스 — 이미지가 어둠으로 잠기는 효과 (Figma Rectangle 1708).
+   높이를 이미지(스테이지) 높이의 비율로 잡아, 화면 폭이 줄어 이미지가 작아져도
+   덮는 비율이 그대로라 뒤 이미지가 점점 가려지지 않습니다. 폭은 100vw로 풀블리드. */
+.dresume__base{
+  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:100vw; height:21.5%; z-index:1;
+  background:#010715; box-shadow:0 -4px 28px rgba(0,0,0,.45); pointer-events:none;
+}
+
+@media (max-width:560px){
+  .dtabs__in{ padding:0 16px }
+  .dtabs a{ padding:13px 14px; font-size:var(--fs-sm) }
+  .drev__card{ width:260px }
+  .dhero__rule{ margin:40px 0 28px }
+  .dhero__desc{ font-size:var(--fs-sm) }
+  /* 딤 값은 그대로 두고, 헤더 내용을 아래(어두운 영역)로 밀어 잘 보이게 위 여백을 키웁니다 */
+  .dhero__in{ min-height:300px; padding-top:250px }
+}
+
+/* ==========================================================================
+   게시판 상세 (공지 상세 · 합격후기 상세)
+   ========================================================================== */
+.article{ max-width:840px; margin:0 auto }
+.article__head{ padding-bottom:20px; border-bottom:2px solid var(--ink) }
+.article__cat{
+  display:inline-block; background:var(--blue-soft); color:var(--navy);
+  border-radius:var(--r-md); padding:5px 11px; font-size:var(--fs-xs); font-weight:700;
+}
+.article__title{
+  margin-top:14px; font-size:var(--fs-2xl); font-weight:700; color:var(--ink);
+  line-height:1.4; letter-spacing:-.02em;
+}
+.article__meta{ margin-top:14px; display:flex; gap:var(--s-5); font-size:var(--fs-sm); color:var(--faint) }
+.article__meta b{ color:var(--muted); font-weight:600 }
+.article__body{
+  padding:32px 4px; font-size:var(--fs-sm); color:var(--ink-2); line-height:1.9;
+  border-bottom:1px solid var(--line);
+}
+.article__body p{ margin:0 0 18px }
+.article__body p:last-child{ margin-bottom:0 }
+.article__body h2{ font-size:var(--fs-lg); font-weight:700; color:var(--ink); margin:28px 0 12px }
+.article__body ul{ margin:0 0 18px; padding-left:2px; list-style:none }
+.article__body li{ position:relative; padding-left:16px; margin-bottom:8px }
+.article__body li::before{ content:"·"; position:absolute; left:4px; color:var(--muted) }
+.article__body .ph{ width:100%; aspect-ratio:16/9; border-radius:var(--r-lg); margin:8px 0 20px }
+.article__body strong{ color:var(--ink); font-weight:700 }
+
+/* 합격후기 상세 — 수강생 정보 카드 */
+.article__profile{
+  display:flex; align-items:center; gap:var(--s-6); margin-top:20px;
+  background:var(--surface-sunken); border-radius:var(--r-lg); padding:16px 18px;
+}
+.article__profile .ph{ width:56px; height:56px; border-radius:50%; flex-shrink:0 }
+.article__profile .ph[hidden]{ display:none }   /* 사진이 없으면 자리도 차지하지 않게 */
+.article__profile b{ font-size:var(--fs-sm); color:var(--ink) }
+.article__profile span{ display:block; margin-top:3px; font-size:var(--fs-xs); color:var(--faint) }
+.article__tags{ display:flex; gap:var(--s-2); flex-wrap:wrap; margin-top:16px }
+.article__tags span{
+  background:var(--blue-soft); color:var(--ink-3); border-radius:var(--r-md);
+  padding:6px 11px; font-size:var(--fs-xs); font-weight:700;
+}
+
+/* 이전/다음 글 이동 */
+.article__nav{ margin-top:4px; border-bottom:1px solid var(--line) }
+.article__nav a{
+  display:flex; gap:var(--s-6); align-items:center; padding:16px 4px;
+  font-size:var(--fs-sm); color:var(--muted); border-top:1px solid var(--line);
+}
+.article__nav a:first-child{ border-top:0 }
+.article__nav a:hover .article__nav-tit{ text-decoration:underline }
+.article__nav-label{ flex-shrink:0; width:64px; font-weight:700; color:var(--faint) }
+.article__nav-tit{ color:var(--ink-2); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.article__actions{ margin-top:26px; text-align:center }
+/* 좁은 화면에서 28px 제목은 세 줄까지 넘어가 본문이 한참 밀립니다 — 한 단계 낮춥니다 */
+@media (max-width:560px){
+  .article__title{ font-size:var(--fs-xl) }
+}
+
+/* ==========================================================================
+   404 · 준비중 안내 페이지
+   ========================================================================== */
+.errpage{
+  max-width:560px; margin:0 auto; padding:56px 20px 40px; text-align:center;
+}
+.errpage__code{
+  font-size:96px; font-weight:700; line-height:1; letter-spacing:-.04em;
+  color:var(--navy);
+}
+.errpage__code small{ font-size:40px; font-weight:700; color:var(--blue) }
+.errpage__title{ margin-top:22px; font-size:var(--fs-xl); font-weight:700; color:var(--ink); letter-spacing:-.02em }
+.errpage__desc{ margin-top:12px; font-size:var(--fs-sm); color:var(--muted); line-height:1.8 }
+.errpage__actions{ margin-top:28px; display:flex; gap:var(--s-4); justify-content:center; flex-wrap:wrap }
+.errpage__links{
+  margin-top:34px; padding-top:22px; border-top:1px solid var(--line);
+  display:flex; gap:var(--s-3) var(--s-6); justify-content:center; flex-wrap:wrap;
+  font-size:var(--fs-sm);
+}
+.errpage__links a{ color:var(--muted); font-weight:600 }
+.errpage__links a:hover{ color:var(--ink-2) }
+
+/* --------------------------------------------------------------------------
+   초소형 화면(320px) 대응 — 고정 폭 요소가 화면을 밀어내지 않게 합니다
+   -------------------------------------------------------------------------- */
+@media (max-width:560px){
+  /* 고정 최소폭(280px) 버튼 → 화면 폭에 맞춤 */
+  .exam-submit .btn, .result-cta .btn, .result-cta .btn--ghost{ min-width:0; width:100% }
+  /* 발급 신청 표 — 여백을 줄여 좁은 폭에 들어가게 */
+  .issue-table thead th, .issue-table td{ padding:10px 8px }
+  /* 좁은 화면에서는 합격일을 감춰 자격증명·신청 기한에 폭을 넘깁니다 */
+  .issue-table .col-pass{ display:none }
+  /* 날짜는 26-04-27, 금액은 10만원으로 줄여 한 줄에 들어가게 합니다.
+     금액 원문은 DOM에 그대로 남겨 두어야 결제 합산이 정확합니다(::after로만 대체 표기). */
+  .issue-table .yy{ display:none }
+  .issue-table .fee{ font-size:0 }
+  .issue-table .fee::after{ content:attr(data-short); font-size:var(--fs-sm) }
+  /* 날짜·금액은 중간에서 끊기지 않게 — 대신 자격증명이 줄바꿈을 담당합니다 */
+  .issue-table .due, .issue-table .fee{ white-space:nowrap }
+  /* 나의 강의실 — 과목명·상태 뱃지가 두 줄로 넘치지 않게 한 단계씩 줄입니다 */
+  .my-card__head h2{ font-size:var(--fs-md) }
+  .my-card__head .badge{ font-size:var(--fs-2xs); padding:3px 7px }
+  /* 하단 고정 CTA — 카운트다운이 길면 줄을 넘깁니다 */
+  .detail-cta__bottom{ flex-wrap:wrap; justify-content:center }
+}
+
+/* --------------------------------------------------------------------------
+   하단 고정 탭바 (태블릿·모바일 전용 · Figma tabbar 351:10964)
+   -------------------------------------------------------------------------- */
+.tabbar{ display:none }
+@media (max-width:980px){
+  .tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    display:flex; align-items:center; justify-content:space-around;
+    /* 상단 GNB와 같은 높이 (--header-h · 데스크톱 64 / 모바일 56) */
+    height:var(--header-h); padding-bottom:env(safe-area-inset-bottom);
+    background:var(--surface); border-top:1px solid var(--line);
+  }
+  .tabbar__item{
+    display:inline-flex; align-items:center; gap:var(--s-1);
+    font-size:var(--fs-sm); font-weight:700; color:var(--navy);
+  }
+  .tabbar__item img{ display:block; width:21px; height:21px }
+  /* 탭바에 마지막 내용이 가리지 않도록 본문 아래 여백 확보 */
+  body.has-tabbar{ padding-bottom:calc(var(--header-h) + env(safe-area-inset-bottom)) }
+}
+
+/* --------------------------------------------------------------------------
+   태블릿·모바일 카드 줄 — 2열로 접지 않고 한 줄로 두어 옆으로 넘겨 봅니다
+   (Figma 868:2112 · 카드 282px + 간격 16px, 다음 카드가 살짝 보이게)
+   -------------------------------------------------------------------------- */
+@media (max-width:980px){
+  .card-grid, .card-grid--3, .natcert-grid, .step-grid{
+    display:grid; grid-template-columns:none;
+    grid-auto-flow:column; grid-auto-columns:min(282px, 76%);
+    gap:var(--s-6);
+    overflow-x:auto; scroll-snap-type:x proximity;
+    /* 스냅 기준을 여백만큼 안으로 들여야 첫 카드가 화면 끝에 붙지 않습니다 */
+    scroll-padding-left:20px; scroll-padding-right:20px;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    /* 컨테이너 좌우 여백 밖까지 흘려 화면 끝에서 끝까지 넘길 수 있게 합니다 */
+    margin-left:-20px; margin-right:-20px;
+    padding-left:20px; padding-right:20px;
+  }
+  .card-grid::-webkit-scrollbar,
+  .natcert-grid::-webkit-scrollbar,
+  .step-grid::-webkit-scrollbar{ display:none }
+  .card-grid > *, .natcert-grid > *, .step-grid > *{ scroll-snap-align:start }
+}
+
+/* 태블릿·모바일 — 목적·연령대 칩은 줄바꿈 대신 한 줄로 두고 옆으로 넘겨 봅니다
+   (여러 줄로 늘어나면 카드가 화면 밖으로 밀려납니다) */
+@media (max-width:980px){
+  .pill-row{
+    flex-wrap:nowrap; overflow-x:auto;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    margin-left:-20px; margin-right:-20px;
+    padding-left:20px; padding-right:20px;
+  }
+  .pill-row::-webkit-scrollbar{ display:none }
+  .pill-row > *{ flex:0 0 auto }
+  /* 라벨은 넘겨도 자리에 남아 무엇을 고르는 줄인지 계속 보이게.
+     흰 배경 + 오른쪽 끝 그러데이션으로 칩이 라벨 밑으로 자연스럽게 지나갑니다.
+     (섹션 좌우 여백 20px까지 덮도록 왼쪽으로 늘립니다) */
+  /* 넘길 내용이 있을 때(.is-scrollable)만 고정 + 흰 배경을 씁니다.
+     연령대처럼 한 화면에 다 들어오는 줄에서는 배경이 칩과 겹쳐 보이므로 그대로 둡니다. */
+  .pill-row.is-scrollable .pill-row__label{
+    /* left를 -20px로 둬야 좌우 여백(20px)까지 덮어 그 틈으로 칩이 보이지 않습니다 */
+    position:sticky; left:-20px; z-index:2;
+    display:flex; align-items:center; align-self:stretch;   /* 칩 높이만큼 덮어야 위아래로 새지 않습니다 */
+    width:64px; padding-left:20px; margin-left:-20px;
+    background:var(--surface);
+  }
+  /* 라벨 오른쪽 끝은 살짝 흐려지게 — 칩이 라벨 밑으로 자연스럽게 사라집니다 */
+  .pill-row.is-scrollable .pill-row__label::after{
+    content:''; position:absolute; left:100%; top:0; bottom:0; width:14px;
+    background:linear-gradient(90deg, var(--surface), rgba(255,255,255,0));
+  }
+  [data-goal-group] .pill, [data-age-group] .pill{ min-height:32px }
+}
+
+/* 후기 카드 안쪽 여백 — 화면 크기별로 상하좌우 동일하게 */
+@media (max-width:980px){ .review-row{ padding:20px } }
+@media (max-width:560px){
+  .review-row{ padding:16px }
+}
+
+/* --------------------------------------------------------------------------
+   나의 합격후기 탭 (mylecture.html #tab-review) — 이 탭에서만 쓰는 구성
+   ① rv-panel : 후기를 쓸 수 있는 과정 + 작성 진입
+   ② rv-item  : 이미 작성한 후기
+   -------------------------------------------------------------------------- */
+/* 한 덩어리로 묶이는 블록 — 흰 배경 + 회색 테두리 */
+.rv-panel{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl);
+  padding:24px 26px;
+}
+.rv-panel__head{ display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-6) }
+.rv-panel__head h2{ font-size:var(--fs-lg); font-weight:700; color:var(--ink) }
+.rv-panel__head p{ margin-top:5px; font-size:var(--fs-sm); color:var(--muted) }
+/* 남은 개수 — 숫자만 크게 두어 '할 일'이라는 신호를 줍니다 */
+.rv-panel__count{
+  flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;
+  min-width:40px; height:40px; padding:0 10px; border-radius:var(--r-full);
+  background:var(--blue-soft); color:var(--blue);
+  font-size:var(--fs-lg); font-weight:700; font-variant-numeric:tabular-nums;
+}
+
+.rv-list{ margin-top:var(--s-8); border-top:1px solid var(--line) }
+.rv-list li{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-5);
+  padding:16px 2px; border-bottom:1px solid var(--line);
+}
+.rv-list li:last-child{ border-bottom:0; padding-bottom:0 }
+.rv-list__name{ font-size:var(--fs-sm); font-weight:600; color:var(--ink-2) }
+.rv-list__date{ flex-shrink:0; font-size:var(--fs-xs); color:var(--faint); font-variant-numeric:tabular-nums }
+
+/* ② 작성한 후기 */
+/* 블록 바깥 액션 — 블록과 살짝 띄우고 폭은 블록에 맞춥니다 */
+.rv-cta{ margin-top:var(--s-6) }
+.rv-cta .btn{ display:flex; width:100% }
+/* 나의 강의실 안의 구역 제목은 .rv-panel__head h2·.card__title과 같은 크기로 */
+.rv-title{ margin:var(--s-10) 0 var(--s-6); font-size:var(--fs-lg); font-weight:700; color:var(--ink) }
+.rv-title span{ margin-left:5px; color:var(--blue); font-variant-numeric:tabular-nums }
+
+.rv-item{
+  display:grid; grid-template-columns:76px 1fr auto; gap:var(--s-6); align-items:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:20px 22px;
+}
+.rv-item + .rv-item{ margin-top:var(--s-5) }
+#tab-review .guide-box{ margin-top:var(--s-10) }
+.rv-item__body{ min-width:0 }
+.rv-item__top{ display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap }
+.rv-item__top h3{ font-size:var(--fs-md); font-weight:700; color:var(--ink) }
+.rv-item__tags{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin-top:8px }
+.rv-item__tags span{
+  background:var(--blue-soft); color:var(--ink-3); border-radius:var(--r-md);
+  padding:7px 11px; font-size:var(--fs-xs); font-weight:600;
+}
+.rv-item__meta{ margin-top:8px; font-size:var(--fs-xs); color:var(--faint) }
+.rv-item__meta b{ color:var(--ink-3); font-weight:700 }
+.rv-item__actions{ display:grid; gap:var(--s-2); width:150px }
+
+/* 썸네일은 고정 크기(76px) 대신 열 폭에 맞춥니다 — 좁은 화면에서 열을 넘어
+   옆 텍스트와의 간격을 먹어버리기 때문입니다 */
+.rv-item > .ph{ width:100%; height:auto; aspect-ratio:1 }
+
+@media (max-width:640px){
+  .rv-panel{ padding:20px }
+  .rv-item{ grid-template-columns:64px 1fr; gap:var(--s-5) }
+  .rv-item__actions{ grid-column:1 / -1; width:auto; grid-template-columns:1fr 1fr }
+}

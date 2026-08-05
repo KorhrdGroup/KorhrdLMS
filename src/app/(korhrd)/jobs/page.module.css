@@ -1,0 +1,4 @@
+/* 취업 길찾기 전용 조정 — 직업 카드 그리드 간격 (배치는 styles/job.css 의 .job-list) */
+.list {
+  margin-top: var(--s-6);
+}

@@ -64,7 +64,14 @@ export async function insertProgress(
     attendance_status: attendanceStatus,
   };
 
-  const { error } = await supabase.from("lecture_progress").insert(insertData);
+  // 같은 차시에 동시에 두 번 들어오면(개발 모드의 이중 렌더 등) 유니크 제약에 걸립니다.
+  // 이미 있는 행은 그대로 두고 넘어갑니다 — 진도를 낮추지 않기 위해 덮어쓰지 않습니다.
+  const { error } = await supabase
+    .from("lecture_progress")
+    .upsert(insertData, {
+      onConflict: "enrollment_id,lecture_session_id",
+      ignoreDuplicates: true,
+    });
 
   if (error) {
     throw new Error(error.message);

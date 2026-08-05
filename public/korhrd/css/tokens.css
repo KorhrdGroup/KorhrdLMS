@@ -1,0 +1,94 @@
+/* =========================================================================
+   tokens.css — 디자인 토큰 — 색·간격·글자·라운드 (46개)
+   프로토타입 assets/css/style.css의 섹션 1를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   1. Design Tokens
+   -------------------------------------------------------------------------- */
+/* 브레이크포인트 — 이 3개만 사용합니다
+   1100px : 넓은 화면(5·4열 그리드 축소)
+    980px : 태블릿(가로 배치 → 세로 배치)
+    560px : 모바일
+   태블릿 전용 규칙은 (min-width:561px) and (max-width:980px) */
+:root{
+  /* ── Brand (Figma 디자인 시스템 기준) ──
+     Blue #00376E 를 단일 축으로, 밝은 강조는 Blue/400 #2469FF */
+  --navy:            #00376E;   /* Figma: Blue — 신뢰 스트립·히어로·후기 배경·주 버튼 */
+  --blue:            #2469FF;   /* Figma: Atomic/Blue/400 — 강조·링크·활성·BEST */
+  --blue-300:        #4C85FF;   /* Figma: Atomic/Blue/300 */
+  --blue-soft:       #E5EDFF;   /* Figma: Atomic/Blue/50 — 연블루 배경·태그·선택 */
+  --blue-line:       #CBDBFF;   /* 선택 상태 테두리 */
+
+  /* Semantic — Figma 팔레트에 없어 기존 값 유지 (비용 고지·상태 표시에 필요) */
+  --yellow:          #FFE02F;   /* Figma: card_cs 배경 — 카카오톡 상담 전용 */
+  --red:             #DA1F18;   /* 필수·경고·불합격 — 글씨·배지 채움 겸용 */
+  --red-300:         #FF6969;   /* Figma: Atomic/Red/300 — 마감임박 태그 */
+  --mono-400:        #B2B2B2;   /* Figma: Atomic/Mono/400 — 페이지네이션 비활성 숫자 */
+  /* 페이지네이션 화살표(한 칸 / 끝으로) — 셰브론과 같이 마스크로 씁니다 */
+  --arr:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9 5l7 7-7 7' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --arr2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M5 5l7 7-7 7M13 5l7 7-7 7' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* 접기·펴기 셰브론 — 마스크로 쓰므로 stroke 색은 의미 없습니다(색은 background-color) */
+  --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --red-soft:        #FFF1F1;   /* 경고·주의 배경 */
+  --green:           #008254;   /* 완료·합격 — 글씨·배지 채움 겸용 */
+  --green-soft:      #e4f5ee;
+  --amber:           #a3620a;
+  --amber-soft:      #fbf1e0;
+
+  /* Neutral — 배경 계층 (구분의 핵심) */
+  --surface:         #FFFFFF;   /* Figma: White — 카드·콘텐츠 블록 */
+  --surface-sunken:  #FAFAFA;   /* 카드 안에 중첩되는 영역 */
+  --surface-alt:     #F2F4F7;   /* 교차 섹션 — 페이지보다 한 단계 진하게 */
+
+  /* Neutral — 텍스트 (Figma: Atomic/Mono 스케일) */
+  --ink:             #010101;   /* Mono/900 — 본문 제목 */
+  --ink-2:           #1D1D1D;   /* Mono/800 — 태그·강조 본문 */
+  --muted:           #656565;   /* Mono/600 — 보조 텍스트 */
+  --faint:           #919191;   /* Mono/500 — placeholder */
+  --disabled:        #D0D0D0;   /* Mono/300 — 비활성 */
+  --ink-3:           #3D3D3D;   /* Mono/700 — secondary 버튼 텍스트 */
+
+  /* 최소한으로 남긴 선 (Figma: Atomic/Mono/200) */
+  --line:            #E4E4E4;   /* 기본 테두리 · 폼 입력 · 아웃라인 버튼 */
+
+  /* Layout — 모든 콘텐츠 폭을 1200px로 통일 (좌우 정렬 일치) */
+  --container:       1200px;
+  --header-h:        64px;   /* 상단 고정 헤더 높이 (모바일 56px) */
+
+  /* Radius (Figma: unit-2/3/4) */
+  --r-sm:            4px;   /* 검색바·작은 요소 (unit-2) */
+  --r-md:            6px;   /* 버튼·배지 (unit-3) */
+  --r-lg:            8px;   /* 카드·썸네일 (unit-4) */
+  --r-xl:            12px;  /* 큰 카드·모달 */
+  --r-full:          999px;
+
+  /* 간격 — 8단계 스케일 (gap 전용, 그 외 큰 여백은 개별 지정) */
+  --s-1:      4px;
+  --s-2:      6px;
+  --s-3:      8px;
+  --s-4:      10px;
+  --s-5:      12px;
+  --s-6:      16px;
+  --s-7:      20px;
+  --s-8:      24px;
+  /* 레이아웃 — 섹션 사이 리듬 (컴포넌트 내부 간격과 범위가 다릅니다) */
+  --s-9:      32px;
+  --s-10:     48px;
+  --s-11:     64px;
+
+  /* 카드 안쪽 여백 — 좁은 화면에서 한 번에 줄이려고 토큰으로 뺐습니다.
+     (모바일 값은 @media max-width:560px 에서 재정의) */
+  --pad-card:   24px;   /* 상하좌우 동일한 카드 */
+  --pad-card-y: 20px;   /* 상하를 좌우보다 좁게 쓰는 카드 */
+
+  /* 글자 크기 — 7단계 스케일 (특대 40·42·96px만 개별 지정) */
+  --fs-2xs:   11px;   /* 배지·캡션 */
+  --fs-xs:    12px;   /* 보조 텍스트 */
+  --fs-sm:    14px;   /* 본문 */
+  --fs-md:    16px;   /* 본문 강조·큰 버튼 */
+  --fs-lg:    18px;   /* 카드 제목 */
+  --fs-xl:    22px;   /* 섹션 제목 */
+  --fs-2xl:   28px;   /* 페이지·히어로 제목 */
+}

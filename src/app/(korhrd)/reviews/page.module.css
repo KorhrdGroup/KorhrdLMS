@@ -1,0 +1,6 @@
+/* 합격후기 목록 전용 조정 — 카드 사이 간격 */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+}

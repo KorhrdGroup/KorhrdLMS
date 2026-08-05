@@ -1,0 +1,186 @@
+/* =========================================================================
+   job.css — 취업 길찾기
+   프로토타입 assets/css/style.css의 섹션 34를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   34. 취업 길찾기 (jobs.html · job-detail.html)
+   -------------------------------------------------------------------------- */
+/* 진입 안내 배너 */
+.jobguide-intro{
+  background:var(--navy); color:#fff; border-radius:var(--r-lg);
+  padding:30px 34px; margin-bottom:28px;
+}
+.jobguide-intro .eyebrow{ color:#8FB4F0 }
+.jobguide-intro h2{ font-size:var(--fs-2xl); font-weight:700; letter-spacing:-.025em; margin:6px 0 8px; text-wrap:balance }
+.jobguide-intro p{ font-size:var(--fs-sm); color:rgba(255,255,255,.72); line-height:1.7 }
+
+/* 직업군 선택 */
+.job-groups{ display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-4)}
+/* 점(dot) 인디케이터 — 직업군·추천대상 캐러셀 공용 */
+.carousel-dots{ display:flex; justify-content:center; gap:var(--s-2); margin-top:14px }
+.carousel-dots[hidden]{ display:none }
+.carousel-dots button{
+  width:7px; height:7px; border-radius:var(--r-full);
+  background:var(--disabled); transition:background-color .15s, width .15s;
+}
+.carousel-dots button[aria-current="true"]{ width:20px; background:var(--navy) }
+
+/* 메인 직업군 — 한 줄 캐러셀 (한 화면 5개, 끌어서 넘김) */
+.job-groups--carousel{
+  /* 기본 .job-groups의 5열 그리드를 풀고 한 줄로 흐르게 합니다 */
+  display:grid; grid-template-columns:none; grid-auto-flow:column;
+  grid-auto-columns:calc((100% - 4 * 10px) / 5);
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  scrollbar-width:none; cursor:grab;
+}
+.job-groups--carousel::-webkit-scrollbar{ display:none }
+.job-groups--carousel.is-grabbing{ cursor:grabbing; scroll-snap-type:none; user-select:none }
+.job-groups--carousel > .job-group{ scroll-snap-align:start }
+.job-group{
+  display:block; text-align:center; padding:20px 12px 16px;
+  background:var(--surface); border-radius:var(--r-lg);
+  transition:background-color .15s;
+}
+.job-group[aria-pressed="true"]{ background:var(--navy) }
+.job-group[aria-pressed="true"] strong{ color:#fff }
+.job-group[aria-pressed="true"] span{ color:rgba(255,255,255,.7) }
+/* 직업군 아이콘 — 연블루 라운드 사각형 위 파란 글리프 (Figma 855:2069) */
+.job-group .job-group__ico{
+  display:flex; align-items:center; justify-content:center;
+  width:52px; height:52px; margin:0 auto 10px;
+  border-radius:16px; background:var(--blue-soft); color:var(--blue);
+  transition:background-color .15s, color .15s;
+}
+.job-group .job-group__ico img{ display:block; width:28px; height:28px; object-fit:contain }
+/* 선택(남색) 카드에서도 아이콘 원본 색을 유지하기 위해 연블루 배경을 그대로 둡니다 */
+.job-group strong{ display:block; font-size:var(--fs-sm); font-weight:700; color:var(--ink); letter-spacing:-.01em }
+.job-group span{ display:block; font-size:var(--fs-xs); color:var(--faint); margin-top:3px }
+
+/* 직업 목록 */
+.job-result-head{ margin:28px 0 14px; display:flex; align-items:baseline; gap:var(--s-4); flex-wrap:wrap }
+.job-result-head h2{ font-size:var(--fs-lg); font-weight:700; color:var(--ink) }
+.job-result-head span{ font-size:var(--fs-sm); color:var(--muted) }
+.job-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-5)}
+.job-card{
+  display:flex; flex-direction:column; gap:var(--s-3);
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:var(--pad-card-y) var(--pad-card);
+  transition:background-color .15s, border-color .15s;
+}
+.job-card:hover{ background:var(--surface-sunken); border-color:var(--line) }
+.job-card h3{ font-size:var(--fs-md); font-weight:700; color:var(--ink); letter-spacing:-.01em }
+.job-card p{ font-size:var(--fs-sm); color:var(--muted); line-height:1.6; flex:1 }
+/* 카드마다 파란 태그가 반복되면 강조가 흩어져, 여기서는 모노톤으로 둡니다 */
+.job-card__course{
+  display:inline-flex; align-items:center; gap:var(--s-2); align-self:flex-start;
+  font-size:var(--fs-xs); font-weight:600; color:var(--ink-2);
+  background:var(--surface-alt); border-radius:var(--r-sm); padding:5px 10px;
+}
+/* 취업 흐름 (직업→자격증→수강→...→취업) — 진입 배너(남색) 안에 들어갑니다 */
+.job-flow{
+  display:flex; align-items:center; gap:var(--s-3);
+  margin-top:22px; padding-top:20px; border-top:1px solid rgba(255,255,255,.16);
+}
+/* 단계 칸은 폭을 균등 분배해 한 줄을 꽉 채웁니다 (화살표는 고정 폭) */
+.job-flow__step{
+  flex:1; text-align:center; white-space:nowrap;
+  font-size:var(--fs-sm); font-weight:700; color:rgba(255,255,255,.82);
+  background:rgba(255,255,255,.12); border-radius:var(--r-md); padding:9px 10px;
+}
+.job-flow__step.is-key{ background:#fff; color:var(--navy) }
+.job-flow__arrow{ flex:none; color:rgba(255,255,255,.45); font-size:var(--fs-sm) }
+/* 좁은 화면에서는 한 줄을 유지한 채 가로로 자동으로 흘려보냅니다.
+   여섯 단계가 다 안 들어가는데 스크롤은 눈에 띄지 않아 뒤 단계를 놓치기 쉽습니다.
+   JS가 순서를 한 벌 복제해 넣은 뒤에만 굴립니다 (사본 없이 움직이면 빈 구간이 생깁니다). */
+@media (max-width:980px){
+  .job-flow{
+    display:block; overflow:hidden;
+    margin-left:-34px; margin-right:-34px;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  }
+  .job-flow__track{ display:flex; width:max-content; gap:0 }
+  .job-flow__track.is-rolling{ animation:job-flow-roll 18s linear infinite }
+  /* 사본 사이 간격도 항목 사이와 같아지도록 각 벌이 뒤쪽 여백을 안고 갑니다
+     — 그래야 -50% 이동이 정확히 한 벌만큼 맞아떨어집니다 */
+  .job-flow__seq{ display:flex; align-items:center; gap:var(--s-2); padding-right:var(--s-2) }
+  .job-flow__step{ flex:0 0 auto }
+
+  /* 모션을 줄이는 설정에서는 손으로 넘겨 볼 수 있게 되돌립니다 */
+  @media (prefers-reduced-motion:reduce){
+    .job-flow{ overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch }
+    .job-flow::-webkit-scrollbar{ display:none }
+  }
+}
+@keyframes job-flow-roll{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+@media (max-width:560px){
+  /* 배너 패딩이 24px로 줄어드는 구간 */
+  .job-flow{ margin-left:-24px; margin-right:-24px }
+}
+
+/* ── 직업 상세 (job-detail.html) ── */
+.jobd-hero{ background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:34px; margin-bottom:22px }
+.jobd-hero__group{ display:inline-block; font-size:var(--fs-xs); font-weight:700; color:#8FB4F0; background:rgba(255,255,255,.1); border-radius:var(--r-sm); padding:5px 11px; margin-bottom:14px }
+.jobd-hero h1{ font-size:var(--fs-2xl); font-weight:700; letter-spacing:-.03em; margin-bottom:10px }
+.jobd-hero p{ font-size:var(--fs-sm); color:rgba(255,255,255,.78); line-height:1.7; max-width:60ch }
+
+.jobd-grid{ display:grid; grid-template-columns:1fr 320px; gap:var(--s-7); align-items:start }
+.jobd-main{ display:grid; gap:var(--s-5)}
+.jobd-block{ background:var(--surface); border-radius:var(--r-lg); padding:24px }
+.jobd-block h2{ font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:14px; display:flex; align-items:center; gap:var(--s-3)}
+.jobd-block h2::before{ content:""; width:4px; height:17px; border-radius:var(--r-sm); background:var(--blue) }
+.jobd-tasklist{ display:grid; gap:var(--s-3)}
+.jobd-tasklist li{ position:relative; padding-left:26px; font-size:var(--fs-sm); color:var(--ink-2); line-height:1.6 }
+.jobd-tasklist li::before{
+  content:""; position:absolute; left:0; top:6px; width:16px; height:16px; border-radius:50%;
+  background:var(--blue-soft);
+}
+.jobd-tasklist li::after{
+  content:""; position:absolute; left:5px; top:10px; width:6px; height:6px; border-radius:50%; background:var(--blue);
+}
+.jobd-chips{ display:flex; flex-wrap:wrap; gap:var(--s-3)}
+.jobd-chip{ font-size:var(--fs-sm); font-weight:600; color:var(--ink-2); background:var(--surface-sunken); border-radius:var(--r-full); padding:8px 15px }
+.jobd-sites{ display:flex; flex-wrap:wrap; gap:var(--s-3)}
+.jobd-site{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  font-size:var(--fs-sm); font-weight:600; color:var(--ink-2);
+  border:1px solid var(--line); border-radius:var(--r-md); padding:9px 15px;
+}
+.jobd-site .ph{ width:16px; height:16px; border-radius:var(--r-sm)}
+.jobd-note{ font-size:var(--fs-xs); color:var(--faint); margin-top:12px; line-height:1.6 }
+
+/* 우측: 필요한 과정 → 수강 CTA */
+.jobd-course{ background:var(--surface); border-radius:var(--r-lg); padding:24px; position:sticky; top:20px }
+.jobd-course__label{ font-size:var(--fs-xs); font-weight:700; color:var(--muted); margin-bottom:12px }
+.jobd-course__name{ font-size:var(--fs-lg); font-weight:700; color:var(--ink); letter-spacing:-.02em; margin-bottom:6px }
+.jobd-course__meta{ font-size:var(--fs-sm); color:var(--muted); margin-bottom:16px }
+.jobd-course__meta b{ color:var(--navy) }
+.jobd-course__flow{ display:grid; gap:var(--s-3); margin:16px 0 18px }
+.jobd-course__flow li{ display:flex; align-items:center; gap:var(--s-4); font-size:var(--fs-sm); color:var(--ink-2) }
+.jobd-course__flow .n{ flex:none; width:20px; height:20px; border-radius:50%; background:var(--blue-soft); color:var(--blue); font-size:var(--fs-2xs); font-weight:700; display:flex; align-items:center; justify-content:center }
+
+@media (max-width:980px){
+  /* 직업군은 여러 줄로 쌓으면 아래쪽 직업이 묻혀서, 한 줄 캐러셀(dot 이동)로 바꿉니다.
+     스크롤바는 감추고 이동은 아래 dot으로 — 터치 스와이프도 그대로 동작합니다. */
+  .job-groups{
+    display:flex; flex-wrap:nowrap; overflow-x:auto;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .job-groups::-webkit-scrollbar{ display:none }
+  /* 한 화면에 4개 (gap 10px × 3) */
+  .job-group{ flex:0 0 calc((100% - 30px) / 4); scroll-snap-align:start }
+
+  .job-list{ grid-template-columns:repeat(2,1fr) }
+  .jobd-grid{ grid-template-columns:1fr }
+  .jobd-course{ position:static }
+}
+@media (max-width:560px){
+  /* 한 화면에 2개 (gap 10px × 1) */
+  .job-group{ flex-basis:calc((100% - 10px) / 2) }
+  .job-list{ grid-template-columns:1fr }
+  .jobguide-intro{ padding:24px }
+  .jobd-hero{ padding:26px }
+  .jobd-hero h1{ font-size:var(--fs-xl) }
+}

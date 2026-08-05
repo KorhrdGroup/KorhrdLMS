@@ -1,0 +1,145 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '@/features/korhrd/lib/useAuth';
+import SearchOverlay from './SearchOverlay';
+
+/** GNB 메뉴 — data-requires-login 인 항목은 비로그인 시 로그인으로 유도합니다 */
+const NAV = [
+  { href: '/jobs', label: '취업 길찾기' },
+  { href: '/courses', label: '수강신청' },
+  { href: '/mylecture', label: '나의 강의실', requiresLogin: true },
+  { href: '/certificate', label: '자격증 발급신청', requiresLogin: true },
+  { href: '/reviews', label: '합격후기' },
+  { href: '/notice', label: '공지사항' },
+];
+
+/**
+ * 상단 고정 헤더.
+ *
+ * 동작 규칙 (프로토타입 initNavToggle · initStickyHeader 를 옮긴 것)
+ *  - 1100px 이하: 햄버거 패널로 전환 (그 위 폭에서는 메뉴가 두 줄로 깨집니다)
+ *  - 스크롤을 시작하면 그림자(.is-stuck)
+ *  - 모바일(560px 이하)에서 아래로 스크롤하면 숨김(.is-hidden), 위로 올리면 표시
+ *    · 맨 위 근처(헤더 높이 이내)에서는 항상 표시 — 숨은 채로 남으면 흰 띠가 보입니다
+ *    · 메뉴 패널이 열려 있으면 숨기지 않습니다
+ */
+export default function Header() {
+  const pathname = usePathname();
+  const { isLoggedIn, userName } = useAuth();
+  const [navOpen, setNavOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [stuck, setStuck] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const lastY = useRef(0);
+
+  /* 라우트가 바뀌면 열려 있던 패널을 닫습니다 */
+  useEffect(() => {
+    setNavOpen(false);
+    setSearchOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const h = headerRef.current?.offsetHeight ?? 56;
+      setStuck(y > 4);
+
+      if (y <= h) {
+        setHidden(false);
+      } else if (!navOpen && Math.abs(y - lastY.current) > 4) {
+        setHidden(y > lastY.current);
+      }
+      lastY.current = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [navOpen]);
+
+  const loginHref = `/login?redirect=${encodeURIComponent(pathname)}`;
+
+  return (
+    <>
+      <header
+        ref={headerRef}
+        className={['header', stuck && 'is-stuck', hidden && 'is-hidden'].filter(Boolean).join(' ')}
+      >
+        <div className="header__in">
+          <Link className="logo" href="/">
+            <img src="/logo.svg" alt="한평생 직업훈련" width={147} height={18} />
+          </Link>
+
+          <button
+            className="nav-toggle"
+            type="button"
+            aria-expanded={navOpen}
+            aria-controls="gnb"
+            aria-label={navOpen ? '메뉴 닫기' : '메뉴 열기'}
+            onClick={() => setNavOpen((v) => !v)}
+          >
+            ☰
+          </button>
+
+          <div className={['header__nav', navOpen && 'is-open'].filter(Boolean).join(' ')}>
+            <nav className="gnb" id="gnb" aria-label="주 메뉴">
+              {NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.requiresLogin && !isLoggedIn ? loginHref : item.href}
+                  aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="header__util">
+              <button
+                className="search-trigger"
+                type="button"
+                aria-haspopup="dialog"
+                onClick={() => setSearchOpen(true)}
+              >
+                <span className="txt">자격증 검색</span>
+                <span className="ico" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                    <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
+                    <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </span>
+              </button>
+
+              <span className="header__auth">
+                {isLoggedIn ? (
+                  <>
+                    <Link className="util-link util-link--strong" href="/mylecture?tab=mypage">
+                      {userName} 님
+                    </Link>
+                    <Link className="util-link" href="/logout">
+                      로그아웃
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link className="util-link util-link--login" href={loginHref}>
+                      로그인
+                    </Link>
+                    <Link className="util-link util-link--join" href="/signup">
+                      회원가입
+                    </Link>
+                  </>
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
+  );
+}

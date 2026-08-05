@@ -1,0 +1,160 @@
+/* =========================================================================
+   layout.css — 헤더/GNB · 신뢰 띠 · 전체화면 검색
+   프로토타입 assets/css/style.css의 섹션 5, 6, 7를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   5. Header / GNB
+   흰색 헤더가 회색 페이지 위에 놓여 border 없이 분리된다.
+   -------------------------------------------------------------------------- */
+/* 어떤 기기에서도 상단에 고정 — 아래 sticky 요소들은 이 높이만큼 내려서 붙습니다.
+   맨 위에서는 페이지의 일부처럼 보이고, 스크롤을 시작하면 그림자가 생겨 떠 보입니다. */
+.header{ position:sticky; top:0; z-index:60; background:var(--surface) }
+.header.is-stuck{ box-shadow:0 10px 24px rgba(0,0,0,.06) }
+.header{ transition:box-shadow .2s ease, transform .25s ease }
+.header__in{
+  max-width:var(--container); margin:0 auto; padding:0 20px;
+  display:flex; align-items:center; gap:var(--s-7); min-height:64px;
+}
+
+/* 로고 — assets/logo.svg (마크 + 워드마크 통합, 원본 비율 344.42 × 42.53)
+   어두운 배경에서는 assets/logo_white.svg 를 src로 사용한다. */
+.logo{ display:inline-flex; align-items:center; flex-shrink:0 }
+.logo img{ display:block; width:auto; height:18px }
+.logo--sm img{ height:16px }
+
+.gnb{ display:flex; gap:var(--s-1)}
+.gnb a{
+  display:flex; align-items:center; gap:var(--s-1);
+  padding:8px 12px; border-radius:var(--r-md);
+  font-size:var(--fs-sm); font-weight:700; color:var(--ink-2);
+}
+.gnb a[aria-current="page"]{ color:var(--blue) }   /* 선택 메뉴는 배경 없이 파란 글자만 */
+.gnb a:hover{ background:var(--surface-sunken) }    /* 배경은 hover에만 */
+
+.header__util{ margin-left:auto; display:flex; align-items:center; gap:var(--s-4)}
+
+/* 헤더 검색 버튼 — 클릭 시 전체화면 검색 오버레이 */
+.search-trigger{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+  min-width:190px; padding:8px 13px;
+  background:var(--surface-sunken); border-radius:var(--r-md);
+  font-size:var(--fs-sm); color:var(--faint); font-weight:600;
+}
+.search-trigger:hover{ background:var(--surface-alt) }
+.search-trigger .ico{ color:var(--blue); font-weight:700 }
+
+.header__auth{ display:inline-flex; align-items:center; gap:var(--s-4)}
+.header__auth:empty{ display:none }
+.util-link{ font-size:var(--fs-sm); font-weight:600; color:var(--muted); white-space:nowrap }
+.util-link:hover{ color:var(--ink) }
+.util-link--strong{ color:var(--navy); font-weight:700 }
+
+.nav-toggle{ display:none; font-size:var(--fs-xl); color:var(--ink-2); padding:6px }
+
+/* 데스크톱에서는 래퍼가 레이아웃에 관여하지 않도록 투명하게 둡니다.
+   (gnb·header__util이 header__in의 직계 flex 아이템처럼 그대로 동작) */
+.header__nav{ display:contents }
+
+/* --------------------------------------------------------------------------
+   6. Trust Strip
+   -------------------------------------------------------------------------- */
+/* 띠배너 — Figma wrapper_info (291:2546) · 메인 페이지 전용
+   구분선을 항목 사이에 균등 배치하기 위해 li로 넣고 화면낭독기에서는 감춥니다. */
+.trust-strip{ background:var(--navy); color:#fff }
+.trust-strip ul{
+  max-width:var(--container); margin:0 auto; padding:10px 20px;
+  display:flex; align-items:center; justify-content:center; gap:var(--s-6);
+}
+/* 항목 세 칸을 균등폭으로 나누고 각 칸 안에서 가운데 정렬 →
+   폭이 줄어도 좌우 항목이 화면 끝에 붙지 않고 항상 균형 있게 보입니다. */
+.trust-strip li:not(.trust-strip__divider){
+  flex:1 1 0; justify-content:center; min-width:0;
+}
+.trust-strip li{
+  display:flex; align-items:center; gap:var(--s-4);
+  font-size:var(--fs-md); font-weight:600; line-height:1; white-space:nowrap;
+}
+.trust-strip__divider{ width:1px; height:24px; background:var(--faint); flex-shrink:0 }
+.trust-strip__ico{ flex-shrink:0; width:24px; height:24px }   /* Figma 아이콘:텍스트 = 1.6 비율 유지 */
+/* 라벨 줄바꿈은 모바일에서만 — 데스크톱에선 br을 죽여 한 줄로 이어 붙입니다(앞의 공백이 살아 있음) */
+.trust-strip__txt br{ display:none }
+.trust-strip__ico svg{ display:block; width:100%; height:100% }
+
+/* --------------------------------------------------------------------------
+   7. 전체화면 검색 오버레이
+   -------------------------------------------------------------------------- */
+.search-overlay{
+  position:fixed; inset:0; z-index:120; display:none;
+}
+.search-overlay.is-open{ display:block }
+.search-overlay__dim{
+  position:absolute; inset:0; background:rgba(20,26,36,.42);
+}
+.search-overlay__panel{
+  position:relative; background:var(--surface);
+  padding:34px 0 26px; animation:searchIn .16s ease-out;   /* 좌우 padding은 bar/body가 담당 */
+}
+@keyframes searchIn{ from{ opacity:0; transform:translateY(-8px) } to{ opacity:1; transform:none } }
+
+/* 헤더와 동일한 폭 체계(container 1200 + padding 20)로 로고를 헤더 로고와 정렬 */
+.search-overlay__bar{
+  max-width:var(--container); margin:0 auto; padding:0 20px;
+  display:flex; align-items:center; gap:var(--s-8);
+}
+.search-overlay__bar .logo{ flex-shrink:0 }
+.search-field{
+  flex:1; display:flex; align-items:center; gap:var(--s-4);
+  border:1.5px solid var(--blue); border-radius:var(--r-md);
+  padding:12px 18px; background:var(--surface);
+}
+.search-field input{
+  flex:1; min-width:0; border:0; outline:0; background:none;
+  font-size:var(--fs-md); font-weight:600; color:var(--ink);
+}
+.search-field input::placeholder{ color:var(--disabled); font-weight:600 }
+/* type=search의 브라우저 기본 지우기(✕)를 숨깁니다 — 우리 ✕ 버튼과 두 개로 겹칩니다 */
+.search-field input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-decoration{ -webkit-appearance:none; appearance:none }
+.search-field button{ color:var(--muted); font-size:var(--fs-md); line-height:1 }
+.search-field button[hidden]{ display:none }   /* 입력이 없을 때 지우기 버튼 숨김 */
+.search-field .submit{ color:var(--blue); font-weight:700 }
+
+.search-overlay__body{
+  max-width:var(--container); margin:26px auto 0; padding:0 20px;
+}
+/* 검색 결과·인기목록을 검색 입력창과 정렬 (로고 폭 147px + gap 26px 만큼 들여쓰기) */
+.search-panel{ padding-left:calc(147px + 26px) }
+.search-panel[hidden]{ display:none }
+
+/* 기본 상태 — 인기 검색어 / 최근 검색어 */
+.search-cols{ display:grid; grid-template-columns:1.2fr 1fr; gap:var(--s-9) }
+.search-cols > div + div{ padding-left:36px; border-left:1px solid var(--line) }
+.search-cols h2{ font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:14px }
+.search-cols h2 em{ font-style:normal; color:var(--blue) }
+.rank-list li{ display:flex; gap:var(--s-6); align-items:center; padding:6px 0; font-size:var(--fs-sm) }
+.rank-list .no{ width:18px; text-align:center; font-weight:700; color:var(--blue); font-variant-numeric:tabular-nums }
+.rank-list li:nth-child(n+4) .no{ color:var(--disabled) }
+.rank-list a{ color:var(--ink-2) }
+.rank-list a:hover{ text-decoration:underline }
+.recent-list li{ padding:6px 0; font-size:var(--fs-sm); display:flex; justify-content:space-between; gap:var(--s-5)}
+.recent-list a{ color:var(--ink-2) }
+.recent-list a:hover{ text-decoration:underline }
+.recent-list .del{ color:var(--disabled); font-size:var(--fs-xs) }
+.recent-list .empty{ color:var(--faint); font-size:var(--fs-sm) }
+
+/* 결과 상태 — 카테고리별 그룹 */
+.search-group + .search-group{ margin-top:22px; padding-top:22px; border-top:1px solid var(--line) }
+.search-group h2{ font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:12px }
+.search-group ul{ display:flex; flex-wrap:wrap; gap:var(--s-5) var(--s-8) }
+.search-group a{ font-size:var(--fs-sm); color:var(--ink-2) }
+.search-group a:hover{ text-decoration:underline }
+.search-group mark{ background:none; color:var(--blue); font-weight:700 }
+
+.search-overlay__close{
+  display:block; margin:26px auto 0;
+  width:34px; height:34px; border-radius:var(--r-md);
+  background:var(--surface-alt); color:var(--muted); font-size:var(--fs-md);
+}
+.search-overlay__close:hover{ background:var(--line); color:var(--ink) }

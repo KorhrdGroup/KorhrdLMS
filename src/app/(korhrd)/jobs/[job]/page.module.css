@@ -1,0 +1,16 @@
+/*
+ * 직업 상세 전용 조정.
+ * 오른쪽 '필요한 과정' 박스는 본문이 길어 스크롤해도 따라오게 고정합니다.
+ * (좁은 화면에서는 styles/job.css 가 .jobd-grid 를 1열로 바꾸므로 고정을 풉니다)
+ */
+.sticky {
+  position: sticky;
+  top: calc(var(--header-h) + var(--s-6));
+  align-self: start;
+}
+
+@media (max-width: 980px) {
+  .sticky {
+    position: static;
+  }
+}

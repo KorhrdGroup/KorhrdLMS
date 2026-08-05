@@ -1,0 +1,364 @@
+/* =========================================================================
+   account.css — 폼 · 나의 강의실 · 목록 · 발급신청 · 유틸
+   프로토타입 assets/css/style.css의 섹션 24, 25, 26, 27, 28를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   24. 폼 · 신청 플로우
+   -------------------------------------------------------------------------- */
+.steps-indicator{
+  display:flex; gap:var(--s-2); align-items:center; justify-content:center;
+  padding:16px 0 4px; font-size:var(--fs-sm); font-weight:700; color:var(--disabled);
+}
+.steps-indicator li{ display:flex; align-items:center; gap:var(--s-2)}
+.steps-indicator .n{
+  width:21px; height:21px; border-radius:50%; background:var(--surface-alt);
+  display:flex; align-items:center; justify-content:center; font-size:var(--fs-2xs);
+}
+/* 단계 이름은 모노톤으로만 두고, 상태는 번호 뱃지 색으로 구분합니다.
+   현재 단계가 가장 진하고 완료·예정 순으로 옅어집니다. */
+.steps-indicator .is-current{ color:var(--ink-2) }
+.steps-indicator .is-current .n{ background:var(--blue); color:#fff }
+.steps-indicator .is-done{ color:var(--muted) }
+.steps-indicator .is-done .n{ background:var(--blue-line); color:var(--blue) }
+.steps-indicator .bar{ width:30px; height:1.5px; background:var(--line) }
+@media (max-width:560px){
+  .steps-indicator{ flex-wrap:wrap }
+  .steps-indicator .bar{ width:16px }
+}
+
+.form{ max-width:560px; margin:0 auto; display:grid; gap:var(--s-5)}
+.form-card{ background:var(--surface); border-radius:var(--r-lg); padding:var(--pad-card) }
+.field label{ display:block; font-size:var(--fs-sm); font-weight:700; color:var(--ink-2); margin-bottom:6px }
+.field__label{ display:block; font-size:var(--fs-sm); font-weight:700; color:var(--ink-2); margin-bottom:6px }
+/* 입력 아래 보조 설명 */
+.field__note{ margin-top:7px; font-size:var(--fs-xs); color:var(--faint); line-height:1.6 }
+/* 체크박스 줄 — 함께 수강한 과정처럼 여러 개를 고르는 경우 */
+.check-row{ display:flex; flex-wrap:wrap; gap:var(--s-3) var(--s-6) }
+/* .field label{display:block}이 더 구체적이라 선택자를 한 단계 올립니다 */
+.field .check{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  font-size:var(--fs-sm); font-weight:400; color:var(--ink-2); margin-bottom:0;
+}
+/* 크기·모양은 공통 체크박스 규칙(아래 input[type="checkbox"])을 그대로 씁니다 */
+
+.field .req{ color:var(--red) }
+.field .hint{ font-weight:600; color:var(--faint) }
+/* 폼 입력 — 테두리가 조작 가능함의 신호이므로 유지 */
+.field input,
+.field select,
+.field textarea{
+  width:100%; min-width:0;   /* 기본 입력 폭(약 180px)이 좁은 화면에서 칸을 밀어내지 않게 */
+  border:1.5px solid var(--line); border-radius:var(--r-lg);
+  padding:12px 14px; font-size:var(--fs-sm); background:var(--surface);
+}
+.field input::placeholder{ color:var(--disabled) }
+.field input:focus,
+.field select:focus,
+.field textarea:focus{ border-color:var(--blue); outline:0 }
+
+/* --------------------------------------------------------------------------
+   체크박스 — Figma checkbox (882:2233 기본 / 882:2230 선택)
+   기본은 흰 바탕 + 옅은 회색 체크, 선택하면 파란 바탕 + 흰 체크로 바뀝니다.
+   원본은 24px이지만 14px 본문 옆에 놓이는 자리가 대부분이라 20px로 맞췄습니다.
+   .field input 규칙(폭 100%·큰 radius·패딩)을 덮어야 해서 그 아래에 둡니다.
+   -------------------------------------------------------------------------- */
+input[type="checkbox"]{
+  appearance:none; -webkit-appearance:none;
+  flex:none; width:20px; height:20px; min-width:0; margin:0; padding:0;
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M10.9706 4.97C11.1115 4.83589 11.299 4.76175 11.4935 4.76322C11.688 4.76469 11.8743 4.84166 12.0131 4.97789C12.1519 5.11412 12.2324 5.29895 12.2375 5.49338C12.2427 5.68781 12.1721 5.87663 12.0406 6.02L8.05065 11.01C7.98204 11.0839 7.89923 11.1432 7.80718 11.1844C7.71513 11.2255 7.61572 11.2477 7.5149 11.2496C7.41408 11.2514 7.31392 11.233 7.2204 11.1952C7.12689 11.1575 7.04194 11.1013 6.97065 11.03L4.32465 8.384C4.25096 8.31534 4.19186 8.23254 4.15086 8.14054C4.10987 8.04854 4.08783 7.94923 4.08605 7.84852C4.08428 7.74782 4.1028 7.64779 4.14052 7.5544C4.17824 7.46102 4.23439 7.37618 4.30561 7.30496C4.37683 7.23374 4.46166 7.1776 4.55505 7.13988C4.64844 7.10216 4.74847 7.08363 4.84917 7.08541C4.94987 7.08719 5.04918 7.10923 5.14118 7.15022C5.23318 7.19121 5.31598 7.25031 5.38465 7.324L7.47865 9.417L10.9516 4.992L10.9706 4.97Z' fill='%23D9D9D9'/%3E%3C/svg%3E") center / 15px no-repeat;
+  cursor:pointer;
+  transition:background-color .15s, border-color .15s;
+}
+/* 선택 상태에서도 Figma는 회색 테두리를 유지합니다.
+   채움색만 Figma의 #007BFF 대신 사이트 팔레트의 --blue를 씁니다 */
+input[type="checkbox"]:checked{
+  background-color:var(--blue);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M10.9706 4.97C11.1115 4.83589 11.299 4.76175 11.4935 4.76322C11.688 4.76469 11.8743 4.84166 12.0131 4.97789C12.1519 5.11412 12.2324 5.29895 12.2375 5.49338C12.2427 5.68781 12.1721 5.87663 12.0406 6.02L8.05065 11.01C7.98204 11.0839 7.89923 11.1432 7.80718 11.1844C7.71513 11.2255 7.61572 11.2477 7.5149 11.2496C7.41408 11.2514 7.31392 11.233 7.2204 11.1952C7.12689 11.1575 7.04194 11.1013 6.97065 11.03L4.32465 8.384C4.25096 8.31534 4.19186 8.23254 4.15086 8.14054C4.10987 8.04854 4.08783 7.94923 4.08605 7.84852C4.08428 7.74782 4.1028 7.64779 4.14052 7.5544C4.17824 7.46102 4.23439 7.37618 4.30561 7.30496C4.37683 7.23374 4.46166 7.1776 4.55505 7.13988C4.64844 7.10216 4.74847 7.08363 4.84917 7.08541C4.94987 7.08719 5.04918 7.10923 5.14118 7.15022C5.23318 7.19121 5.31598 7.25031 5.38465 7.324L7.47865 9.417L10.9516 4.992L10.9706 4.97Z' fill='%23fff'/%3E%3C/svg%3E");
+}
+input[type="checkbox"]:focus-visible{ outline:2px solid var(--blue); outline-offset:2px }
+input[type="checkbox"]:disabled{ cursor:default; opacity:.5 }
+
+.summary{ background:var(--surface); border-radius:var(--r-lg); overflow:hidden }
+.summary li{
+  display:flex; justify-content:space-between; gap:var(--s-5);
+  padding:12px 16px; font-size:var(--fs-sm);
+}
+.summary li:nth-child(even){ background:var(--surface-sunken) }
+.summary .k{ color:var(--faint); flex-shrink:0 }
+.summary .v{ color:var(--ink); font-weight:700; text-align:right }
+.summary li.is-total{ background:var(--blue-soft) }
+.summary li.is-total .v{ color:var(--blue); font-size:var(--fs-md) }
+/* 취소선 정가는 어느 행에 있든 회색으로 — 강조는 실제 수강료 쪽에 둡니다 */
+.summary .v del{ color:var(--faint); font-weight:400; font-size:var(--fs-sm) }
+
+.agree{
+  display:flex; gap:var(--s-4); align-items:flex-start;
+  background:var(--surface-sunken); border-radius:var(--r-lg); padding:13px 15px;
+  font-size:var(--fs-xs); color:var(--muted); line-height:1.75;
+}
+.agree input{ margin-top:3px; flex-shrink:0 }
+.agree b{ color:var(--ink-2) }
+
+.complete{ max-width:560px; margin:0 auto; text-align:center; padding:10px 0 }
+.complete__mark{
+  width:58px; height:58px; margin:0 auto 14px; border-radius:50%;
+  background:var(--green-soft); color:var(--green);
+  display:flex; align-items:center; justify-content:center; font-size:var(--fs-2xl);
+}
+.complete h1{ font-size:var(--fs-lg); font-weight:700; color:var(--ink); margin-bottom:5px }
+.complete__sub{ font-size:var(--fs-sm); color:var(--muted); margin-bottom:18px }
+.next-list{ display:grid; gap:var(--s-3); text-align:left; margin-bottom:18px }
+.next-list li{
+  display:flex; gap:var(--s-5); align-items:center;
+  background:var(--surface); border-radius:var(--r-lg); padding:14px 16px;
+  font-size:var(--fs-sm); color:var(--ink-3);
+}
+.next-list b{ color:var(--ink) }
+
+/* 로그인 페이지 — 래퍼·제목은 회원가입과 같은 .auth-wrap / .page-head를 씁니다 */
+.login-notice{
+  background:var(--blue-soft); border-radius:var(--r-lg); padding:14px 16px;
+  font-size:var(--fs-sm); color:var(--navy); line-height:1.7; margin-bottom:18px;
+}
+.login-links{ display:flex; justify-content:center; gap:var(--s-5); margin-top:16px; font-size:var(--fs-sm); color:var(--muted) }
+.login-links a:hover{ text-decoration:underline }
+
+/* 인증 계열 페이지(회원가입·찾기·완료) 공통 래퍼 */
+.auth-wrap{ max-width:460px; margin:0 auto; padding-top:var(--s-9) }
+.auth-wrap .page-head h1{ font-size:var(--fs-2xl) }
+.auth-links{ text-align:center; margin-top:16px; font-size:var(--fs-sm); color:var(--muted) }
+.auth-links a{ color:var(--blue); font-weight:600 }
+.auth-links a:hover{ text-decoration:underline }
+
+/* 정책 문서 (이용약관·개인정보처리방침) */
+.policy{ line-height:1.75 }
+.policy-sec + .policy-sec{ margin-top:26px; padding-top:26px; border-top:1px solid var(--line) }
+.policy-sec h2{ font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:10px }
+.policy-sec p{ font-size:var(--fs-sm); color:var(--ink-3) }
+.policy-list{ display:grid; gap:var(--s-2); margin-top:4px }
+.policy-list li{ position:relative; padding-left:13px; font-size:var(--fs-sm); color:var(--ink-3) }
+.policy-list li::before{ content:"·"; position:absolute; left:3px; color:var(--faint); font-weight:700 }
+.policy .info-table{ margin-top:4px }
+
+/* 고객센터 상단 3분할 */
+.support-grid{ display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:var(--s-5); margin-bottom:8px }
+.support-card{ display:flex; flex-direction:column; gap:var(--s-2); justify-content:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:var(--pad-card-y) var(--pad-card) }
+.support-card:hover{ border-color:var(--blue) }
+.support-card b{ font-size:var(--fs-md); color:var(--ink); font-weight:700 }
+.support-card span{ font-size:var(--fs-xs); color:var(--muted) }
+@media (max-width:980px){ .support-grid{ grid-template-columns:1fr } }
+
+/* --------------------------------------------------------------------------
+   25. 나의 강의실
+   -------------------------------------------------------------------------- */
+.my-card{
+  background:var(--surface); border-radius:var(--r-lg); padding:var(--pad-card-y) var(--pad-card);
+  display:grid; grid-template-columns:1fr 190px; gap:var(--s-7); align-items:center;
+  /* 수강중(3버튼)·수강종료(2버튼) 카드 높이 통일.
+     3버튼 열의 실측 높이(약 187px)보다 크게 잡아야 두 탭이 모두 이 값으로 결정된다. */
+  min-height:192px;
+}
+.my-card + .my-card{ margin-top:var(--s-5) }
+/* 버튼 열이 없는 단일 컬럼 변형 — 발급 신청 현황 카드 */
+.my-card--stack{ grid-template-columns:1fr; align-items:stretch; min-height:0; gap:0 }
+/* 진도율·상태 문구가 없는 짧은 카드 — 합격후기 목록 (버튼 2개 열 기준) */
+.my-card--sm{ min-height:140px }
+
+/* 진행 단계는 카드 안에 한 단계 눌린 영역으로 묶어 본문과 분리한다 */
+.issue-steps{ background:var(--surface-sunken); border-radius:var(--r-md); padding:13px 16px }
+.issue-actions{ display:flex; flex-wrap:wrap; gap:var(--s-3); margin-top:14px }
+/* 4단계를 카드 폭에 균등하게 펼칩니다 — 왼쪽으로 몰아두면 오른쪽 절반이 빕니다 */
+.steps-indicator--left{ justify-content:space-between; padding:0 }
+.steps-indicator--left .bar{ flex:1; width:auto; min-width:12px }
+
+/* 모바일 요약 — 4단계가 두 줄로 접히면 한눈에 안 들어와, 현재 단계 + 진행바로 줄입니다.
+   내용은 main.js가 위 단계 목록을 읽어 만들어 넣습니다. */
+.issue-steps__mini{ display:none }
+.issue-steps__now{ display:flex; align-items:baseline; gap:var(--s-2); font-size:var(--fs-sm) }
+.issue-steps__now b{ font-weight:700; color:var(--blue) }
+.issue-steps__now .txt{ font-weight:600; color:var(--ink-2) }
+.issue-steps__now .of{ margin-left:auto; font-size:var(--fs-xs); color:var(--faint) }
+.issue-steps__track{
+  display:block; height:4px; margin-top:9px; border-radius:var(--r-full);
+  background:var(--line); overflow:hidden;
+}
+.issue-steps__track i{ display:block; height:100%; background:var(--blue); border-radius:inherit }
+/* 마지막 단계까지 끝났으면 옅은 파랑 — 단계 뱃지의 완료색과 같은 계열입니다 */
+.issue-steps__mini.is-done .issue-steps__now b{ color:var(--blue-300) }
+.issue-steps__mini.is-done .issue-steps__track i{ background:var(--blue-300) }
+@media (max-width:560px){
+  .issue-steps .steps-indicator{ display:none }
+  .issue-steps__mini{ display:block }
+}
+.my-card__head{ display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; margin-bottom:5px }
+.my-card__head h3{ font-size:var(--fs-md); font-weight:700; color:var(--ink) }
+
+.my-card__date{ font-size:var(--fs-sm); color:var(--faint); font-variant-numeric:tabular-nums; margin-bottom:16px }
+
+.progress{ display:flex; align-items:center; gap:var(--s-5)}
+.progress__bar{ flex:1; height:8px; border-radius:var(--r-sm); background:var(--surface-alt); overflow:hidden }
+.progress__bar i{ display:block; height:100%; background:var(--navy); border-radius:var(--r-sm)}
+.progress__value{ font-size:var(--fs-sm); color:var(--muted); white-space:nowrap }
+.progress__value b{ font-size:var(--fs-lg); font-weight:700; color:var(--navy); margin-left:5px; font-variant-numeric:tabular-nums }
+
+.my-card__status{ font-size:var(--fs-xs); font-weight:600; margin-top:10px }
+/* 상태 문구 톤 — 케이스 번호는 mylecture.html 상단 주석표 참고 */
+.my-card__status--pass{  color:var(--green) }   /* 초록 · 6·7   합격 */
+.my-card__status--fail{  color:var(--red) }     /* 빨강 · 5     불합격 */
+.my-card__status--ready{ color:var(--blue) }    /* 파랑 · 3·4   시험 응시 가능 */
+.my-card__status--done{  color:var(--navy) }    /* 남색 · 8·12·13 발급 신청·배송 완료 */
+.my-card__status--info{  color:#1F1F1F }        /* 검정 · 1·2·9~11·14~18 일반 안내 */
+.my-card__actions{ display:grid; gap:var(--s-2)}
+
+/* 안내·유의사항 블록 — 본문 카드와 구분되도록 옅은 회색 */
+.guide-box{ background:var(--surface-alt); border-radius:var(--r-lg); padding:var(--pad-card-y) var(--pad-card); margin-top:12px }
+.guide-box strong{ display:block; font-size:var(--fs-sm); color:var(--ink); margin-bottom:10px }
+.guide-box ul{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-1) var(--s-8)}
+.guide-box li{ position:relative; padding-left:11px; font-size:var(--fs-xs); color:var(--muted); line-height:1.7 }
+.guide-box li::before{ content:"•"; position:absolute; left:0; color:var(--blue-line) }
+
+/* --------------------------------------------------------------------------
+   26. 목록 (공지사항 등)
+   -------------------------------------------------------------------------- */
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-8)}
+.list-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px }
+/* 섹션 제목과 같은 크기·자간으로 통일 */
+.list-head h2{ font-size:var(--fs-xl); font-weight:700; letter-spacing:-.02em; line-height:1.35; color:var(--ink) }
+
+.notice-list{ display:grid; gap:var(--s-1); font-size:var(--fs-sm); color:var(--ink-3) }
+.notice-list li{ display:flex; justify-content:space-between; gap:var(--s-5)}
+.notice-list a{ display:flex; justify-content:space-between; gap:var(--s-5); width:100%; padding:9px 12px; border-radius:var(--r-md) }
+.notice-list .date{ color:var(--disabled); flex-shrink:0; font-variant-numeric:tabular-nums }
+
+/* 공지사항 · 자주 묻는 질문 (메인, Figma 334:9544) — 배경은 흰색 유지 */
+/* 공지 목록을 옅은 테두리 카드로 감싸고 행 사이에 구분선 */
+.two-col .notice-list{
+  border:1px solid var(--line); border-radius:var(--r-xl); background:var(--surface);
+  padding:2px 12px; gap:0;
+}
+.two-col .notice-list li:not(:last-child){ border-bottom:1px solid var(--line) }
+.two-col .notice-list a{ padding:14px 6px; border-radius:0 }
+/* FAQ를 개별 라운드 카드로 — 화살표는 공통 셰브론(.faq__q .arrow)을 그대로 씁니다 */
+/* 공지사항 · 자주 묻는 질문 두 칸의 아래끝을 맞춥니다.
+   각 칸이 세로로 늘어나고, 목록/아코디언이 남는 높이를 나눠 가집니다. */
+.two-col > div{ display:flex; flex-direction:column }
+.two-col .notice-list{ flex:1; align-content:space-between }
+/* .faq의 margin:0 auto가 세로 플렉스 안에서 폭을 줄이므로 여기서 해제합니다 */
+.two-col .faq{ flex:1; align-content:space-between; gap:var(--s-4); margin:0; width:100% }
+.two-col .faq__item{ border:1px solid var(--line); border-radius:var(--r-xl)}
+/* 메인 FAQ는 펼치지 않고 FAQ 페이지로 이동하는 링크 — 화살표는 오른쪽(›) 고정 */
+.faq__q--link .arrow{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9 6l6 6-6 6' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9 6l6 6-6 6' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  transform:none;
+}
+.two-col .faq__item:hover{ border-color:var(--line) }
+
+/* 공지사항 페이지 표 */
+/* 게시판 목록 — 나의 합격후기의 .rv-list와 같은 결.
+   줄무늬(짝수행 음영) 대신 행 사이 얇은 구분선만 두어 제목이 먼저 읽히게 합니다. */
+.board{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl);
+  padding:2px 26px;
+}
+.board li{ display:flex; align-items:center; gap:var(--s-6); padding:16px 2px; font-size:var(--fs-sm) }
+.board li:not(:last-child){ border-bottom:1px solid var(--line) }
+.board .no{ width:40px; flex-shrink:0; color:var(--disabled); font-size:var(--fs-xs); font-variant-numeric:tabular-nums }
+.board .tit{ flex:1; color:var(--ink-2); font-weight:600 }
+
+.board .date{ color:var(--faint); font-size:var(--fs-xs); flex-shrink:0; font-variant-numeric:tabular-nums }
+/* 모바일에서는 제목 폭을 벌기 위해 앞 두 자리(20)를 감춰 YY-MM-DD로 보여줍니다 */
+@media (max-width:560px){ .board .date__cent{ display:none } }
+.board .badge{ flex-shrink:0 }
+
+/* 좁은 화면에서 페이지 번호가 줄을 넘겨 가로 스크롤이 생기지 않게 합니다 */
+/* 페이지네이션 — Figma pagination (150:4329)
+   36px 정사각 칸, 현재 페이지만 남색 채움. 화살표 칸도 같은 크기·테두리를 씁니다. */
+.pagination{ display:flex; flex-wrap:wrap; justify-content:center; gap:var(--s-3); margin-top:26px }
+.pagination a,
+.pagination span{
+  width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm);
+  font-size:var(--fs-md); font-weight:600; color:var(--mono-400);
+  font-variant-numeric:tabular-nums; transition:background-color .15s, color .15s;
+}
+.pagination a:hover{ background:var(--surface-alt); color:var(--ink-2) }
+.pagination [aria-current="page"]{ background:var(--navy); border-color:var(--navy); color:#fff }
+/* 화살표는 텍스트 대신 마스크 아이콘 — 색이 숫자와 같이 움직입니다 */
+.pagination__arrow{ font-size:0 }
+.pagination__arrow::before{
+  content:""; width:14px; height:14px; background-color:currentColor;
+  -webkit-mask:var(--arr) center / contain no-repeat; mask:var(--arr) center / contain no-repeat;
+}
+.pagination__arrow--prev::before{ transform:rotate(180deg) }
+.pagination__arrow--last::before,
+.pagination__arrow--first::before{
+  width:16px;
+  -webkit-mask-image:var(--arr2); mask-image:var(--arr2);
+}
+.pagination__arrow--first::before{ transform:rotate(180deg) }
+/* 모바일은 번호 5칸 + 화살표 4칸 = 9칸이라 36px 그대로면 줄이 넘어갑니다 */
+@media (max-width:560px){
+  .pagination{ gap:4px }
+  .pagination a,
+  .pagination span{ width:32px; height:32px; font-size:var(--fs-sm) }
+  .pagination__arrow::before{ width:12px; height:12px }
+  .pagination__arrow--last::before,
+  .pagination__arrow--first::before{ width:14px }
+}
+
+/* --------------------------------------------------------------------------
+   27. 자격증 발급신청
+   -------------------------------------------------------------------------- */
+.issue-banner{
+  background:var(--navy); color:#fff; border-radius:var(--r-lg);
+  padding:26px 30px; display:flex; align-items:center; gap:var(--s-8); flex-wrap:wrap;
+}
+.issue-banner__txt{ flex:1; min-width:220px }
+.issue-banner__label{ font-size:var(--fs-xs); color:rgba(255,255,255,.7) }
+.issue-banner h2{ font-size:var(--fs-xl); font-weight:700; letter-spacing:-.025em; margin:5px 0 8px }
+.issue-banner h2 em{ font-style:normal; color:var(--yellow) }
+.issue-banner p{ font-size:var(--fs-sm); color:rgba(255,255,255,.72); line-height:1.7 }
+/* 견본 이미지는 가로세로 비율이 서로 달라 높이만 맞추고 너비는 자동 */
+.issue-banner__certs{ display:flex; gap:var(--s-5); flex-shrink:0; align-items:center }
+.issue-banner__certs img{ display:block; height:112px; width:auto; border-radius:var(--r-md) }
+/* 태블릿·모바일에서 줄이 바뀌면 견본 이미지를 오른쪽으로 붙입니다 */
+@media (max-width:980px){
+  .issue-banner__certs{ margin-left:auto }
+}
+
+.issue-table thead th{
+  background:var(--surface-sunken); font-size:var(--fs-xs); font-weight:700; color:var(--muted);
+  padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);
+}
+.issue-table td{ padding:14px; font-size:var(--fs-sm); color:var(--ink-2); border-bottom:1px solid var(--line) }
+.issue-table tr:last-child td{ border-bottom:0 }
+.issue-table tr.is-picked td{ background:var(--blue-soft) }   /* 강의실에서 넘어와 선택된 과목 */
+
+.fee-summary{ background:var(--surface-sunken); border-radius:var(--r-lg); padding:18px 20px; text-align:center }
+.fee-summary__row{ font-size:var(--fs-sm); color:var(--muted) }
+.fee-summary__row b{ color:var(--navy); font-size:var(--fs-md) }
+.fee-summary__total{ font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-top:8px }
+.fee-summary__total b{ color:var(--blue); font-size:var(--fs-xl) }
+
+/* --------------------------------------------------------------------------
+   28. 유틸리티
+   -------------------------------------------------------------------------- */
+/* 모바일에서만 줄을 바꾸는 유틸리티 — 데스크톱에서는 공백처럼 무시됩니다 */
+.br-mo{ display:none }
+@media (max-width:560px){ .br-mo{ display:inline } }
+.text-center{ text-align:center }
+/* 여백 유틸리티 — 숫자는 원래의 4·8·12·16·20·32·48·64px 리듬을 유지합니다 */
+.mt-1{ margin-top:var(--s-1) }  .mt-2{ margin-top:var(--s-3) }
+.mt-3{ margin-top:var(--s-5) }  .mt-4{ margin-top:var(--s-6) }
+.mt-5{ margin-top:var(--s-7) }  .mt-6{ margin-top:var(--s-9) }
+.mt-7{ margin-top:var(--s-10) } .mt-8{ margin-top:var(--s-11) }
+.tabular{ font-variant-numeric:tabular-nums }
+.card{ background:var(--surface); border-radius:var(--r-lg); padding:var(--pad-card) }
+.card--note{ background:var(--surface-alt) }   /* 필독사항처럼 읽고 넘어가는 카드 */
+/* 카드 안 구역 제목 — 인라인 style로 흩어져 있던 크기를 한곳으로 모읍니다 */
+.card__title{ font-size:var(--fs-lg); font-weight:700; color:var(--ink); margin-bottom:14px }

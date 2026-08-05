@@ -26,7 +26,8 @@ export async function loginStudentAction(input: StudentLoginInput) {
 
   // Only allow same-origin relative paths as a redirect target (avoid open redirects).
   const isSafeRedirect = input.redirectTo?.startsWith("/") && !input.redirectTo.startsWith("//");
-  redirect(isSafeRedirect ? input.redirectTo! : "/classroom");
+  // 기본 도착지는 korhrd 디자인의 나의 강의실입니다(구 /classroom 아님).
+  redirect(isSafeRedirect ? input.redirectTo! : "/mylecture");
 }
 
 export async function logoutStudentAction() {

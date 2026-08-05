@@ -1,0 +1,237 @@
+/* =========================================================================
+   review.css — 후기 · FAQ · CTA/푸터
+   프로토타입 assets/css/style.css의 섹션 20, 21, 22를 그대로 옮긴 파일입니다.
+   ※ 파일 순서(globals.css의 import 순서)가 곧 캐스케이드 순서입니다. 바꾸지 마세요.
+   ========================================================================= */
+
+/* --------------------------------------------------------------------------
+   20. 후기
+   -------------------------------------------------------------------------- */
+/* 메인 합격후기 카드 — 상세페이지 후기(.drev__card)와 같은 구조 */
+.review-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-5)}
+.review{
+  display:flex; flex-direction:column; padding:20px;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+}
+.review__top{ display:flex; gap:var(--s-5); align-items:flex-start }
+/* 자격증 사진 — 1:1 */
+.review__ava{ width:72px; height:72px; aspect-ratio:1; border-radius:var(--r-md); flex-shrink:0 }
+.review h3{
+  font-size:var(--fs-md); font-weight:700; color:var(--ink); line-height:1.4;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.review__who{ margin-top:8px; font-size:var(--fs-sm); color:var(--muted) }
+.review__text{
+  margin-top:14px; font-size:var(--fs-xs); color:var(--muted); line-height:1.7;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.review__tags{ display:flex; align-items:center; gap:var(--s-4); margin-top:14px; flex-wrap:wrap }
+.review__tags span{
+  background:var(--blue-soft); color:var(--ink-3); border-radius:var(--r-md);
+  padding:7px 11px; font-size:var(--fs-xs); font-weight:600;
+}
+.review p{ font-size:var(--fs-xs); color:var(--muted); line-height:1.55 }
+.review__foot{
+  display:flex; align-items:center; gap:var(--s-3); margin-top:14px; padding-top:12px;
+  border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--disabled);
+}
+.review__help{
+  margin-left:auto; background:var(--surface-sunken); border-radius:var(--r-md);
+  padding:3px 8px; font-size:var(--fs-xs); font-weight:700; color:var(--muted);
+}
+
+/* 합격후기 페이지 — 히어로 */
+.review-hero{
+  background:var(--navy); color:#fff; border-radius:var(--r-lg);
+  padding:30px 34px; display:grid; gap:var(--s-7);
+}
+.review-hero__top{ display:flex; align-items:center; justify-content:space-between; gap:var(--s-8)}
+/* 텍스트가 남는 공간을 채워, 이미지가 항상 오른쪽에 나란히 붙게 합니다 */
+.review-hero__top > div:first-child{ flex:1 1 auto; min-width:0 }
+/* 우측 장식 그래픽 (Figma freepik__background 150:4319, 원본 비율 2720:1360) */
+.review-hero__graphic{ flex:0 0 auto; width:230px; max-width:38%; height:auto; align-self:center }
+@media (max-width:980px){
+  .review-hero__top{ flex-wrap:wrap }
+  .review-hero__graphic{ display:none }
+}
+.review-hero__brand{ display:flex; align-items:center; gap:var(--s-3); font-size:var(--fs-sm); font-weight:700; color:rgba(255,255,255,.75) }
+.review-hero h1{ font-size:var(--fs-2xl); font-weight:700; letter-spacing:-.025em; margin:8px 0 10px }
+.review-hero p{ font-size:var(--fs-sm); color:rgba(255,255,255,.72); line-height:1.7 }
+.review-hero__event{ background:rgba(255,255,255,.1); border-radius:var(--r-lg); padding:16px 20px }
+.review-hero__event strong{ display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px }
+.review-hero__event span{ font-size:var(--fs-sm); color:rgba(255,255,255,.72) }
+
+/* 합격후기 목록 (행 형태) */
+/* Figma card_review(249:12331) 구조 —
+   ① 사진 + (제목·작성자) ② 과정 태그 ③ 본문 ④ 도움됐어요(오른쪽 아래) */
+.review-row{
+  display:flex; flex-direction:column; gap:var(--s-5);
+  background:var(--surface); border-radius:var(--r-lg);
+  padding:24px;   /* 상하좌우 동일 — 태블릿 20px · 모바일 16px (아래 미디어쿼리) */
+}
+.review-row__top{ display:flex; gap:var(--s-6); align-items:stretch }
+.review-row__top > .ph{ flex-shrink:0 }
+.review-row__top > div{
+  flex:1; min-width:0;
+  display:flex; flex-direction:column; justify-content:space-between;   /* 작성자·날짜는 사진 아래끝에 맞춤 */
+}
+.review-row + .review-row{ margin-top:10px }
+.review-row:hover{ background:var(--surface-sunken) }
+.review-row__tags{ display:flex; gap:var(--s-2); flex-wrap:wrap }
+.review-row__tags span{
+  background:var(--blue-soft); color:var(--ink-3); border-radius:var(--r-md);
+  padding:7px 11px; font-size:var(--fs-xs); font-weight:600;
+}
+/* 도움됐어요 — Figma Button/outline (135:2705). 클릭 시 채워진 엄지 + 파란 카운트 */
+.review-row__help{
+  flex-shrink:0; align-self:flex-end;   /* 카드 오른쪽 아래 */
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
+  min-width:104px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--r-md);   /* 기본은 회색 — 누른 뒤에만 파랑 */
+  padding:6px 12px; font-size:var(--fs-sm); font-weight:600; color:var(--ink-3);
+  transition:background-color .12s, border-color .12s;
+}
+.review-row__help:hover{ background:var(--blue-soft) }
+.review-row__help b{ color:var(--ink-3); font-weight:600 }
+.review-row__help .helpful__ico{ display:inline-flex; width:16px; height:16px; color:var(--ink-3) }
+.review-row__help .helpful__ico svg{ width:100%; height:100% }
+.review-row__help .ico-fill{ display:none }
+/* 활성(내가 눌렀을 때) — 엄지 채우고 카운트는 파랑 */
+.review-row__help.is-active{ border-color:var(--blue) }
+.review-row__help.is-active .helpful__ico{ color:var(--blue) }
+.review-row__help.is-active .ico-line{ display:none }
+.review-row__help.is-active .ico-fill{ display:block }
+.review-row__help.is-active b{ color:var(--blue) }
+.review-row h2{ font-size:var(--fs-lg); font-weight:700; color:var(--ink); line-height:1.4 }
+.review-row p{ font-size:var(--fs-sm); color:var(--muted); line-height:1.75; margin:0 }
+/* 본문은 4줄까지만 (Figma 기준) */
+.review-row p:not(.review-row__meta):not(.review-row__tags){
+  display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+}
+.review-row__meta{ font-size:var(--fs-xs) !important; color:var(--faint) !important }
+
+/* 태블릿·PC는 이전처럼 '사진 | 내용' 2열로 되돌립니다.
+   모바일(Figma 249:12331)만 세로 4단 구조를 씁니다.
+   래퍼를 display:contents로 풀어 사진·제목·작성자를 직접 배치합니다. */
+@media (min-width:561px){
+  .review-row{
+    display:grid; align-items:center;
+    grid-template-columns:140px 1fr auto;
+    grid-template-areas:
+      "photo tags  help"
+      "photo title title"
+      "photo body  body"
+      "photo meta  meta";
+    column-gap:var(--s-8); row-gap:0;
+  }
+  .review-row__top, .review-row__top > div{ display:contents }
+  .review-row__top > .ph{ grid-area:photo }
+  .review-row__tags{ grid-area:tags; align-self:start }
+  /* 제목·본문이 2·3열에 걸쳐 있어 3열 폭이 넓어집니다 —
+     버튼이 따라 늘어나지 않도록 오른쪽 끝에 붙입니다 */
+  .review-row__help{ grid-area:help; align-self:start; justify-self:end }
+  .review-row h2{ grid-area:title; font-size:var(--fs-md); margin:5px 0 3px }
+  .review-row p:not(.review-row__meta):not(.review-row__tags){ grid-area:body; -webkit-line-clamp:2 }
+  .review-row__meta{
+    grid-area:meta; margin-top:4px; text-align:right;
+    color:var(--disabled) !important;
+  }
+}
+
+.review-filter{ display:flex; align-items:center; gap:var(--s-5); flex-wrap:wrap; margin-bottom:16px }
+.select-box{
+  /* 네이티브 화살표를 없애고 커스텀 셰브론을 우측 14px에 고정 —
+     좌측 텍스트 패딩(14px)과 대칭을 맞춥니다. */
+  appearance:none; -webkit-appearance:none;
+  /* select는 배경색이 필드 전체를 칠하므로 마스크 대신 이미지로 두되,
+     공통 셰브론과 같은 모양·같은 회색(--faint)을 씁니다 */
+  background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23919191' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  background-size:16px;
+  border:0; border-radius:var(--r-md);
+  padding:9px 34px 9px 14px; font-size:var(--fs-sm); color:var(--ink-2); font-weight:600;
+  line-height:1.4; cursor:pointer;
+}
+.review-filter .sort-group{ margin-left:auto }   /* 총 개수 표기를 없애 정렬 버튼을 오른쪽 끝으로 */
+
+/* --------------------------------------------------------------------------
+   21. FAQ
+   -------------------------------------------------------------------------- */
+.faq{ max-width:760px; margin:0 auto; display:grid; gap:var(--s-3)}
+.faq--wide{ max-width:none }
+.faq__item{ background:var(--surface); border-radius:var(--r-lg); overflow:hidden }
+.faq__q{
+  display:flex; justify-content:space-between; align-items:center; gap:var(--s-5); width:100%;
+  padding:18px 20px; font-size:var(--fs-sm); font-weight:700; color:var(--ink); text-align:left;
+}
+/* 접기·펴기 화살표 (공통) — ⌄ 글자 대신 SVG 셰브론, 박스로 수직 중앙 정렬.
+   배경 이미지 대신 마스크로 그려 색을 background-color 한 곳에서만 관리합니다
+   (색을 바꾸려고 data URI를 여러 벌 복제하지 않아도 됩니다). */
+.faq__q .arrow,
+.panel-toggle .chev,
+.filter-toggle .chev,
+.footer__box .chev{
+  flex-shrink:0; width:22px; height:22px; font-size:0;
+  background-color:var(--faint);
+  -webkit-mask:var(--chev) center / 18px no-repeat;
+  mask:var(--chev) center / 18px no-repeat;
+  transition:transform .18s;
+}
+.faq__q[aria-expanded="true"] .arrow,
+.panel-toggle[aria-expanded="true"] .chev,
+.filter-toggle[aria-expanded="true"] .chev,
+.footer__box[aria-expanded="true"] .chev{ transform:rotate(180deg) }
+/* 부드럽게 펼쳐지고 접히는 아코디언 — grid-template-rows 0fr↔1fr 모프.
+   실제 내용 높이를 단일 속성으로 애니메이션하므로 높이 측정 없이 열림·닫힘 모두 매끄럽습니다.
+   JS가 내용을 .faq__a-inner로 감싸 클리핑을 담당하게 합니다. */
+.faq__a{
+  display:grid; grid-template-rows:0fr; opacity:0;
+  background:var(--surface-sunken);
+  font-size:var(--fs-sm); color:var(--muted); line-height:1.75;
+  transition:grid-template-rows .32s cubic-bezier(.4,0,.2,1), opacity .24s ease;
+}
+.faq__q[aria-expanded="true"] + .faq__a{ grid-template-rows:1fr; opacity:1 }
+/* 클리핑 담당(패딩 없음 — 패딩이 있으면 0fr가 그 높이로 고정되어 안 닫힘) */
+.faq__a-inner{ overflow:hidden; min-height:0 }
+/* 실제 여백은 안쪽 요소가 담당 */
+.faq__a-pad{ padding:14px 20px 16px }
+/* JS 미실행(폴백) 시에는 hidden 속성으로 접힌 항목을 감춥니다 */
+.faq__a[hidden]{ display:none }
+
+/* --------------------------------------------------------------------------
+   22. CTA · Footer
+   -------------------------------------------------------------------------- */
+/* 시작점을 남색에서 Blue/400으로 올리고 Blue/300으로 끝내 한 단계 밝게 —
+   흰 본문(78% 흰색)이 읽히는 선에서 가장 밝은 조합입니다 */
+.cta-band{
+  background:linear-gradient(120deg,var(--blue),var(--blue-300));
+  color:#fff; text-align:center; padding:52px 20px;
+}
+.cta-band h2{ font-size:var(--fs-xl); font-weight:700; letter-spacing:-.022em; text-wrap:balance }
+.cta-band p{ font-size:var(--fs-sm); color:rgba(255,255,255,.78); margin:9px 0 22px }
+.cta-band__aux{ margin-top:13px; font-size:var(--fs-xs); color:rgba(255,255,255,.6) }
+
+.footer{ background:var(--ink-2); color:var(--faint); padding:32px 0; font-size:var(--fs-xs) }
+.footer__grid{ display:grid; grid-template-columns:1.7fr 1fr; gap:var(--s-8)}
+.footer__links{ display:flex; gap:var(--s-5); margin-bottom:11px; font-size:var(--fs-xs); font-weight:700; color:var(--line); flex-wrap:wrap }
+.footer__links a:hover{ color:#fff }
+.footer address{ font-style:normal; line-height:1.85 }
+.footer__side{ display:grid; gap:var(--s-3); align-content:start }
+.footer__box{
+  background:#2b2b2b; border-radius:var(--r-lg); padding:12px 15px;
+  display:flex; justify-content:space-between; align-items:center; gap:var(--s-4);
+}
+.footer__box:hover{ background:#3a3a3a }
+button.footer__box{ width:100%; text-align:left }
+
+/* 패밀리 사이트 드롭다운 — 푸터 하단이라 위로 열립니다 */
+.footer__family{ position:relative }
+.footer__family-list{
+  position:absolute; left:0; right:0; bottom:calc(100% + 6px); z-index:5;
+  background:#2b2b2b; border-radius:var(--r-lg); padding:6px; display:grid; gap:var(--s-1);
+  box-shadow:0 10px 28px rgba(0,0,0,.4);
+}
+.footer__family-list[hidden]{ display:none }
+.footer__family-list a{ display:block; padding:10px 12px; border-radius:var(--r-md); font-size:var(--fs-xs); color:var(--line) }
+.footer__family-list a:hover{ background:#3a3a3a }
+.footer__box strong{ display:block; color:var(--line); font-size:var(--fs-xs) }
+.footer__legal{ margin-top:20px; padding-top:16px; color:var(--muted); font-size:var(--fs-xs); background:none }

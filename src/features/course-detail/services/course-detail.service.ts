@@ -205,10 +205,35 @@ export async function getCourseDetail(code: string): Promise<CourseDetailData | 
     .is("deleted_at", null)
     .maybeSingle<CourseRow>();
 
-  if (error || !data) return null;
+  if (!error && data) {
+    const lecturePlan = await fetchLecturePlan(supabase, data.id);
+    return mapToCourseDetail(data, lecturePlan);
+  }
 
-  const lecturePlan = await fetchLecturePlan(supabase, data.id);
-  return mapToCourseDetail(data, lecturePlan);
+  // korhrd 디자인의 목록·홈 카드는 과정 "이름"으로 링크합니다(전달본 규칙).
+  // 코드 매칭이 실패하면 이름으로 한 번 더 찾습니다 — "생활지원사 1급"처럼
+  // 급수가 붙은 표기와 띄어쓰기 차이를 흡수합니다.
+  const normalize = (value: string) =>
+    value.replace(/\s+/g, "").replace(/\d급$/, "");
+  const wanted = normalize(decodeURIComponent(code));
+
+  const { data: all } = await supabase
+    .from("courses")
+    .select("code, name")
+    .is("deleted_at", null);
+  const matched = (all ?? []).find((row) => normalize(row.name) === wanted);
+  if (!matched) return null;
+
+  const { data: byName } = await supabase
+    .from("courses")
+    .select(COURSE_DETAIL_SELECT)
+    .eq("code", matched.code)
+    .is("deleted_at", null)
+    .maybeSingle<CourseRow>();
+  if (!byName) return null;
+
+  const lecturePlan = await fetchLecturePlan(supabase, byName.id);
+  return mapToCourseDetail(byName, lecturePlan);
 }
 
 /** 상세페이지를 만들 과정 코드 목록. 숨김 과정은 제외합니다. */
