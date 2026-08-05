@@ -96,13 +96,52 @@ export function CourseDetailInteractions({ deadline }: { deadline: string }) {
     track.addEventListener("scroll", render, { passive: true });
     window.addEventListener("resize", render);
 
-    const timer = window.setInterval(() => {
-      const next = (currentPage() + 1) % pageCount();
-      track.scrollTo({ left: next * track.clientWidth, behavior: "smooth" });
-    }, 4500);
+    // 자동 넘김은 이 영역이 화면에 들어온 뒤에만 돕니다.
+    // 그렇지 않으면 페이지를 연 순간부터 넘어가서, 스크롤해 내려왔을 때
+    // 이미 2~3페이지로 밀려 있거나 넘어가는 중간이 보입니다.
+    let timer = 0;
+    const stop = () => {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = 0;
+      }
+    };
+    const start = () => {
+      if (timer || pageCount() <= 1) return;
+      timer = window.setInterval(() => {
+        const next = (currentPage() + 1) % pageCount();
+        track.scrollTo({ left: next * track.clientWidth, behavior: "smooth" });
+      }, 4500);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          stop();
+          return;
+        }
+        // 처음 보이는 순간에는 항상 첫 페이지부터 보여줍니다.
+        if (track.scrollLeft !== 0 && !track.dataset.whoSeen) {
+          track.scrollTo({ left: 0, behavior: "auto" });
+        }
+        track.dataset.whoSeen = "1";
+        start();
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(track);
+
+    // 읽는 중에 넘어가지 않도록 마우스를 올리거나 직접 끌면 멈춥니다.
+    track.addEventListener("pointerenter", stop);
+    track.addEventListener("pointerleave", start);
+    track.addEventListener("pointerdown", stop);
 
     return () => {
-      window.clearInterval(timer);
+      stop();
+      observer.disconnect();
+      track.removeEventListener("pointerenter", stop);
+      track.removeEventListener("pointerleave", start);
+      track.removeEventListener("pointerdown", stop);
       track.removeEventListener("scroll", render);
       window.removeEventListener("resize", render);
     };

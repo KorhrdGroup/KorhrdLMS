@@ -2002,11 +2002,16 @@ div.req{ background:var(--surface-sunken); border-radius:var(--r-lg); padding:18
 .dtabs a{
   padding:16px 22px; font-size:14px; font-weight:700; color:var(--faint);
   white-space:nowrap;
+  transition:color .25s ease;   /* 스크롤에 따라 현재 구역 표시가 부드럽게 바뀌도록 */
 }
 .dtabs a:hover{ color:var(--ink-2) }
 .dtabs a[aria-current="true"]{ color:var(--blue) }   /* 파란 밑줄 바 없이 색상만 강조 */
 /* 고정된 탭에 제목이 가리지 않도록 */
 .dsec[id]{ scroll-margin-top:55px }   /* 고정 탭 높이와 정확히 맞춰 흰 틈 제거 */
+/* 탭을 눌렀을 때 해당 구역까지 부드럽게 이동합니다.
+   상세페이지에만 걸어 다른 화면의 스크롤 동작은 건드리지 않습니다.
+   (prefers-reduced-motion 사용자는 위쪽 규칙이 auto로 되돌립니다) */
+html:has(body.page--flat){ scroll-behavior:smooth }
 /* 오른쪽 페이드 — 탭이 더 있다는 신호. 없으면 글자가 잘린 것처럼 보입니다. */
 .dtabs::after{
   content:''; position:absolute; right:0; top:0; bottom:1px; width:40px; pointer-events:none;
