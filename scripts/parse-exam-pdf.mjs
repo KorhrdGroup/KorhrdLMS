@@ -15,6 +15,7 @@
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { basename } from "node:path";
+import { pathToFileURL } from "node:url";
 
 /** 두 벌의 원문자를 같은 순번으로 봅니다 */
 const CIRCLE_SETS = [
@@ -161,8 +162,10 @@ export function parseExamText(text) {
 }
 
 /* ---------- CLI ---------- */
+// 다른 스크립트가 import 할 때는 CLI 가 돌지 않아야 합니다(parse-exam-auto.mjs)
+const isMain = import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
 const [, , pdfPath, outPath] = process.argv;
-if (pdfPath) {
+if (isMain && pdfPath) {
   const text = execFileSync("pdftotext", ["-layout", pdfPath, "-"], {
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
