@@ -368,6 +368,8 @@ export type Database = {
           member_id: string
           member_login_id: string
           memo: string | null
+          paid_at: string | null
+          payapp_mul_no: string | null
           payment_info: string | null
           payment_method: Database["public"]["Enums"]["payment_method"] | null
           payment_status: Database["public"]["Enums"]["payment_status"]
@@ -396,6 +398,8 @@ export type Database = {
           member_id: string
           member_login_id: string
           memo?: string | null
+          paid_at?: string | null
+          payapp_mul_no?: string | null
           payment_info?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
@@ -424,6 +428,8 @@ export type Database = {
           member_id?: string
           member_login_id?: string
           memo?: string | null
+          paid_at?: string | null
+          payapp_mul_no?: string | null
           payment_info?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
