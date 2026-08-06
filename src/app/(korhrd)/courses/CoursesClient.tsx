@@ -160,6 +160,7 @@ export default function CoursesClient({ initial = {} }: {
   };
 
   return (
+    <>
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
         <ol>
@@ -241,9 +242,11 @@ export default function CoursesClient({ initial = {} }: {
           </div>
         </div>
       </div>
+    </div>
 
-      {/* 필터 바텀시트 — 사이드바를 비추기만 하고, 상태는 계속 위 picked 한 곳에 있습니다.
-          닫힘 상태는 display가 아니라 visibility라 열고 닫을 때 전환이 걸립니다. */}
+      {/* 시트와 장바구니 바는 .container 밖에 둡니다 — 원본(courses.html)도 <main> 밖에
+          있습니다. 안에 넣으면 컨테이너의 max-width·좌우 여백을 같이 받아, 화면 폭을
+          꽉 채워야 할 장바구니 바가 안쪽으로 밀립니다. */}
       <div className={`fsheet${filterOpen ? ' is-open' : ''}`}>
         <div className="fsheet__dim" onClick={() => setFilterOpen(false)} />
         <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="검색 조건">
@@ -316,6 +319,6 @@ export default function CoursesClient({ initial = {} }: {
       </div>
 
       <CartBar />
-    </div>
+    </>
   );
 }
