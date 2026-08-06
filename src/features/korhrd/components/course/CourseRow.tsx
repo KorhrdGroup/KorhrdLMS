@@ -58,7 +58,10 @@ export default function CourseRow({
       </div>
 
       <div className="course-row__actions">
-        <Link className="btn btn--ghost btn--block" href={detail}>상세 정보</Link>
+        {/* data-detail-link 는 CSS가 거는 자리입니다 — responsive.css 가
+            560px 이하에서 이 속성으로 버튼을 감춥니다(썸네일·과정명으로 들어갑니다).
+            빼면 좁은 화면에서도 버튼이 남아 카드가 그만큼 길어집니다. */}
+        <Link className="btn btn--ghost btn--block" href={detail} data-detail-link>상세 정보</Link>
         <button className="btn btn--ghost btn--block" type="button" onClick={onSample}>강의 샘플</button>
         <button className="select-toggle" type="button" aria-pressed={selected} onClick={onToggleSelect}>
           과목 선택 <span className="select-toggle__box" aria-hidden="true" />
