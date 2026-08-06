@@ -31,9 +31,16 @@ export async function startCertificatePayment(
 ): Promise<StartPaymentResult> {
   const config = getPayAppConfig();
   if (!config) {
+    // 어느 값이 비었는지 알려줘야 배포 환경변수를 고칠 수 있습니다.
+    const missing = [
+      !(process.env.PAYAPP_USER_ID ?? process.env.PAYAPP_USERID)?.trim() && "PAYAPP_USER_ID",
+      !(process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_BASE_URL)?.trim() &&
+        "NEXT_PUBLIC_SITE_URL",
+    ].filter(Boolean);
+
     return {
       success: false,
-      message: "결제 설정이 아직 등록되지 않았습니다. 무통장입금 안내를 따라주세요.",
+      message: `결제 설정이 등록되지 않았습니다. (누락: ${missing.join(", ")}) 무통장입금 안내를 따라주세요.`,
     };
   }
 
@@ -145,6 +152,15 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   }
 
   // 위조 통보를 막는 유일한 장치입니다. 반드시 먼저 확인합니다.
+  // KEY/VALUE가 등록돼 있지 않으면 검증할 방법이 없으므로 아예 받지 않습니다
+  // (검증 없이 통과시키면 아무나 결제완료를 만들 수 있습니다).
+  if (!config.linkKey || !config.linkValue) {
+    return {
+      ok: false,
+      reason: "PAYAPP_LINK_KEY / PAYAPP_LINK_VALUE 가 등록되지 않아 통보를 검증할 수 없습니다.",
+    };
+  }
+
   if (feedback.linkkey !== config.linkKey || feedback.linkval !== config.linkValue) {
     return { ok: false, reason: "연동 키가 일치하지 않습니다." };
   }
