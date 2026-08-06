@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
@@ -19,6 +19,8 @@ import styles from './page.module.css';
  *  - 사이드바 개수는 하드코딩하지 않고 데이터에서 매번 다시 셉니다
  *  - 선택한 조건이 있는 그룹에만 '초기화' 버튼이 박스 오른쪽 위에 생깁니다
  *  - /courses?cat=상담 · ?purpose=취업 준비 · ?age=60대 이상 으로 들어오면 해당 필터가 켜집니다
+ *  - 980px 이하에서는 사이드바를 접고(.is-collapsed) 바텀시트(.fsheet)로 대체합니다.
+ *    상태는 계속 이 컴포넌트 한 곳에만 있고 시트는 그걸 비추기만 합니다.
  */
 type Group = 'cat' | 'purpose' | 'age' | 'gov';
 
@@ -37,6 +39,13 @@ const CAT_ORDER = [
 const PURPOSE_ORDER = ['취업 준비', '이직·전직', '부업·창업', '자기계발', '심리상담', '아동·교육'];
 const AGE_ORDER = ['20~30대', '40~50대', '60대 이상'];
 
+/** 사이드바와 바텀시트가 같은 목록을 쓰도록 한 곳에 모읍니다 */
+const FILTER_GROUPS: { group: Group; values: string[]; suffix?: string }[] = [
+  { group: 'cat', values: CAT_ORDER, suffix: ' 과정' },
+  { group: 'purpose', values: PURPOSE_ORDER },
+  { group: 'age', values: AGE_ORDER },
+];
+
 type Sort = 'popular' | 'new' | 'name';
 
 /** URL 초기값은 서버(page.tsx)에서 받습니다 — useSearchParams는 Suspense를 요구해
@@ -53,7 +62,31 @@ export default function CoursesClient({ initial = {} }: {
     gov: [],
   }));
   const [sort, setSort] = useState<Sort>('popular');
+  /** 바텀시트 열림 여부 — 980px 이하에서만 버튼이 보이므로 그때만 켜집니다 */
   const [filterOpen, setFilterOpen] = useState(false);
+  /** 시트 왼쪽 레일에서 고른 그룹 (FILTER_GROUPS 인덱스) */
+  const [sheetGroup, setSheetGroup] = useState(0);
+
+  /* 시트가 열린 동안은 뒤 목록이 밀려 내려가지 않게 잠그고, Esc로 닫습니다 */
+  useEffect(() => {
+    if (!filterOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setFilterOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [filterOpen]);
+
+  /* 데스크톱으로 넓히면 사이드바가 다시 나오므로 시트는 닫아 둡니다 */
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width:980px)');
+    const apply = () => { if (!mq.matches) setFilterOpen(false); };
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
 
   /** 사이드바 개수 — 항상 전체 데이터 기준입니다 (다른 필터의 영향을 받지 않습니다) */
   const countOf = (group: Group, value: string) =>
@@ -85,6 +118,17 @@ export default function CoursesClient({ initial = {} }: {
     if (sort === 'new') return [...hit].sort((a, b) => b.year - a.year || byName(a, b));
     return [...hit].sort((a, b) => (a.rank || 99) - (b.rank || 99) || byName(a, b));
   }, [picked, sort]);
+
+  const resetAll = () => setPicked({ cat: [], purpose: [], age: [], gov: [] });
+
+  /** 토글 버튼 라벨 — 원본 syncLabel(). 고른 게 없으면 기본 문구, 여럿이면 '첫째 외 N개' */
+  const chosenAll = FILTER_GROUPS.flatMap(({ group, values, suffix = '' }) =>
+    values.filter((v) => picked[group].includes(v)).map((v) => v + suffix),
+  );
+  const toggleLabel =
+    chosenAll.length === 0 ? '자격증 과정 전체'
+    : chosenAll.length === 1 ? chosenAll[0]
+    : `${chosenAll[0]} 외 ${chosenAll.length - 1}개`;
 
   const filterGroup = (group: Group, values: string[], suffix = '') => {
     const chosen = picked[group];
@@ -146,20 +190,22 @@ export default function CoursesClient({ initial = {} }: {
       </div>
 
       <div className="layout-side">
-        {/* 모바일 전용 — 사이드바를 열고 닫는 드롭다운 */}
+        {/* 모바일 전용 — 바텀시트를 여는 버튼. 데스크톱에서는 CSS가 감춥니다 */}
         <button
-          className="filter-toggle" type="button"
+          className="filter-toggle" type="button" data-filter-toggle
           aria-expanded={filterOpen} aria-controls="course-filters"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <span>자격증 과정 전체</span>
+          <span data-filter-toggle-label>{toggleLabel}</span>
           <span className="chev" aria-hidden="true">⌄</span>
         </button>
 
-        <aside id="course-filters" aria-label="검색 조건" hidden={!filterOpen ? undefined : undefined}>
-          {filterGroup('cat', CAT_ORDER, ' 과정')}
-          {filterGroup('purpose', PURPOSE_ORDER)}
-          {filterGroup('age', AGE_ORDER)}
+        {/* 980px 이하에서는 .is-collapsed 가 이 사이드바를 감추고 시트가 대신 뜹니다.
+            DOM에는 남겨둬야 필터 상태와 개수 계산이 한 곳에 유지됩니다.
+            접힘은 hidden 속성이 아니라 클래스로 둡니다 — hidden은 전역 리셋에서
+            !important라 데스크톱으로 넓혔을 때 되돌릴 수 없습니다 (course.css 16절). */}
+        <aside id="course-filters" className="is-collapsed" aria-label="검색 조건">
+          {FILTER_GROUPS.map(({ group, values, suffix }) => filterGroup(group, values, suffix))}
         </aside>
 
         <div>
@@ -191,6 +237,79 @@ export default function CoursesClient({ initial = {} }: {
                 />
               ))
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* 필터 바텀시트 — 사이드바를 비추기만 하고, 상태는 계속 위 picked 한 곳에 있습니다.
+          닫힘 상태는 display가 아니라 visibility라 열고 닫을 때 전환이 걸립니다. */}
+      <div className={`fsheet${filterOpen ? ' is-open' : ''}`}>
+        <div className="fsheet__dim" onClick={() => setFilterOpen(false)} />
+        <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="검색 조건">
+          <div className="fsheet__head">
+            <h2>자격증</h2>
+            <button
+              className="fsheet__close" type="button" aria-label="닫기"
+              onClick={() => setFilterOpen(false)}
+            >✕</button>
+          </div>
+
+          <div className="fsheet__body">
+            {/* aria-selected 는 CSS가 거는 자리라 그대로 둬야 합니다(course.css).
+                button에는 지원되지 않는 속성이어서 role만 tab으로 맞춥니다. */}
+            <div className="fsheet__groups" role="tablist">
+              {FILTER_GROUPS.map(({ group }, i) => (
+                <button
+                  key={group} className="fsheet__group" type="button" role="tab"
+                  id={`fsheet-tab-${group}`} aria-controls="fsheet-items"
+                  aria-selected={sheetGroup === i} onClick={() => setSheetGroup(i)}
+                >
+                  {GROUP_LABEL[group]}
+                </button>
+              ))}
+            </div>
+
+            <div
+              className="fsheet__items" id="fsheet-items" role="tabpanel"
+              aria-labelledby={`fsheet-tab-${FILTER_GROUPS[sheetGroup].group}`}
+            >
+              {(() => {
+                const { group, values, suffix = '' } = FILTER_GROUPS[sheetGroup];
+                const chosen = picked[group];
+                return (
+                  <>
+                    {/* '전체'는 그룹 안 선택을 모두 지웁니다 */}
+                    <button
+                      className="fsheet__item" type="button"
+                      aria-pressed={chosen.length === 0}
+                      onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
+                    >
+                      전체
+                    </button>
+                    {values.map((v) => (
+                      <button
+                        key={v} className="fsheet__item" type="button"
+                        aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
+                      >
+                        {v}{suffix} <span className="num">{countOf(group, v)}</span>
+                      </button>
+                    ))}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+
+          <div className="fsheet__foot">
+            <button className="btn btn--ghost btn--sm" type="button" onClick={resetAll}>
+              초기화
+              <svg className="btn__ico" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M19 12a7 7 0 1 1-2.05-4.95M19 4v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button className="btn btn--primary btn--sm" type="button" onClick={() => setFilterOpen(false)}>
+              선택하기
+            </button>
           </div>
         </div>
       </div>
