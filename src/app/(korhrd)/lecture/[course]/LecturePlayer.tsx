@@ -10,6 +10,7 @@ import {
 } from '@/features/classroom-lectures/actions/lecture-progress.actions';
 import type { ClassroomLectureDetail } from '@/features/classroom-lectures/types/classroom-lecture.types';
 import type { ClassroomMaterialItem } from '@/features/classroom-materials/types/classroom-material.types';
+import LectureFaq from '@/features/korhrd/components/classroom/LectureFaq';
 
 /** 진도 저장 주기(초). 너무 잦으면 서버 부담, 너무 뜸하면 이어보기가 부정확해집니다. */
 const SAVE_INTERVAL_SECONDS = 10;
@@ -30,15 +31,22 @@ const STATUS_LABEL: Record<string, string> = {
 export function LecturePlayer({
   detail,
   materials = [],
+  practiceHref,
 }: {
   detail: ClassroomLectureDetail;
   /** 관리자 자료실에 공개된 이 과정의 학습자료(교안·기출문제 등) */
   materials?: ClassroomMaterialItem[];
+  /** 기출문제 풀이 화면 주소. 등록된 기출문제가 없으면 없습니다 */
+  practiceHref?: string;
 }) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastSavedRef = useRef(0);
   const [percent, setPercent] = useState(detail.session.videoProgressPercent ?? 0);
+
+  /* 학습자료 3칸 중 앞 두 칸에 넣을 파일 — 제목에 '예시'가 있으면 예시 칸으로 */
+  const sample = materials.find((item) => item.title.includes('예시'));
+  const handout = materials.find((item) => item !== sample);
   const [toast, setToast] = useState<string | null>(null);
 
   const { session, sessions, courseCode, courseTitle, prevOrder, nextOrder } = detail;
@@ -150,12 +158,8 @@ export function LecturePlayer({
               <h2>{session.order}강. {session.title}</h2>
             </div>
 
-            <div className="lec-progress">
-              <span className="lec-progress__label">이 차시 시청률</span>
-              <span className="lec-progress__track"><i style={{ width: `${percent}%` }} /></span>
-              <span className="lec-progress__pct">{percent}%</span>
-            </div>
-
+            {/* 원본(lecture.html)에는 진도율 막대가 하나뿐입니다.
+                차시별 시청률은 화면에 없던 것이라 뺐습니다 — 재생 저장에는 계속 씁니다. */}
             <div className="lec-progress">
               <span className="lec-progress__label">강의 진도율</span>
               <span className="lec-progress__track"><i style={{ width: `${coursePercent}%` }} /></span>
@@ -170,6 +174,9 @@ export function LecturePlayer({
                 <Link className="btn btn--primary" href={`/lecture/${courseCode}/${nextOrder}`}>다음 강의</Link>
               ) : null}
             </p>
+
+            {/* 원본 lecture.html 과 같은 자리 — 진도율 아래 자주 묻는 질문 */}
+            <LectureFaq />
           </div>
 
           <aside className="lec-side" aria-label="학습 자료 및 강의 목차">
@@ -178,25 +185,45 @@ export function LecturePlayer({
               <button className="panel-toggle" type="button" aria-expanded="true" aria-controls="material">
                 학습자료<span className="chev" aria-hidden="true">⌄</span>
               </button>
+              {/* 원본은 교안파일 다운로드 · 교안파일 예시 · 기출문제 3칸 고정입니다.
+                  앞의 두 칸은 자료실에 올라온 파일과 연결하고, 기출문제는
+                  강의실 안에서 바로 풀도록 풀이 화면으로 잇습니다. */}
               <div className="material-grid panel-body" id="material">
-                {materials.length === 0 ? (
-                  <p className="mylec-mini__empty">등록된 학습자료가 없습니다.</p>
+                {handout?.fileUrl ? (
+                  <a href={handout.fileUrl} download={handout.fileName}>
+                    <span className="m-ico ph" aria-hidden="true" />
+                    교안파일<br />다운로드
+                  </a>
                 ) : (
-                  materials.map((item) =>
-                    item.fileUrl ? (
-                      <a key={item.id} href={item.fileUrl} download={item.fileName}>
-                        <span className="ph" aria-hidden="true" />
-                        <b>{item.title}</b>
-                        <span>{item.fileName}</span>
-                      </a>
-                    ) : (
-                      <span key={item.id} aria-disabled="true">
-                        <span className="ph" aria-hidden="true" />
-                        <b>{item.title}</b>
-                        <span>파일 준비중</span>
-                      </span>
-                    ),
-                  )
+                  <span aria-disabled="true">
+                    <span className="m-ico ph" aria-hidden="true" />
+                    교안파일<br />다운로드
+                  </span>
+                )}
+
+                {sample?.fileUrl ? (
+                  <a href={sample.fileUrl} download={sample.fileName}>
+                    <span className="m-ico ph" aria-hidden="true" />
+                    교안파일<br />예시
+                  </a>
+                ) : (
+                  <span aria-disabled="true">
+                    <span className="m-ico ph" aria-hidden="true" />
+                    교안파일<br />예시
+                  </span>
+                )}
+
+                {/* 기출문제는 내려받는 파일이 아니라 강의실 안에서 바로 풉니다 */}
+                {practiceHref ? (
+                  <Link href={practiceHref}>
+                    <span className="m-ico ph" aria-hidden="true" />
+                    기출문제
+                  </Link>
+                ) : (
+                  <span aria-disabled="true">
+                    <span className="m-ico ph" aria-hidden="true" />
+                    기출문제
+                  </span>
                 )}
               </div>
             </div>

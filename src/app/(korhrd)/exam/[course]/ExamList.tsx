@@ -13,7 +13,16 @@ const STATUS_BADGE: Record<string, { tone: string; label: string }> = {
 };
 
 /** 과정별 시험 목록 — 마크업은 korhrd 디자인, 응시 자격 판단은 기존 시험 서비스. */
-export function ExamList({ data }: { data: ClassroomExamList }) {
+export type PracticeSetSummary = { id: string; title: string; questionCount: number };
+
+export function ExamList({
+  data,
+  practiceSets = [],
+}: {
+  data: ClassroomExamList;
+  /** 기출문제(연습용). 채점 대상 시험과 섞이지 않도록 별도 블록으로 보여줍니다 */
+  practiceSets?: PracticeSetSummary[];
+}) {
   return (
     <div className="container">
       <section className="exam">
@@ -95,6 +104,35 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
           );
         })}
       </section>
+
+      {/* ===================== 기출문제 (연습용) ===================== */}
+      {practiceSets.length > 0 ? (
+        <section>
+          <h2 className="rv-title">기출문제 풀이</h2>
+          {practiceSets.map((set) => (
+            <article className="my-card" key={set.id}>
+              <div>
+                <div className="my-card__head">
+                  <h2>{set.title}</h2>
+                  <span className="badge badge--info">연습</span>
+                </div>
+                <p className="my-card__date">{set.questionCount}문항 · 성적에 반영되지 않습니다</p>
+                <p className="my-card__status my-card__status--info">
+                  문제를 풀고 바로 정답을 확인할 수 있습니다.
+                </p>
+              </div>
+              <div className="my-card__actions">
+                <Link
+                  className="btn btn--ghost btn--block"
+                  href={`/exam/${data.courseCode}/practice/${set.id}`}
+                >
+                  기출문제 풀기
+                </Link>
+              </div>
+            </article>
+          ))}
+        </section>
+      ) : null}
     </div>
   );
 }
