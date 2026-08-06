@@ -15,9 +15,12 @@ export default function GovMark({ ministry, tone = 'white' }: { ministry: string
   return (
     <span className="gov-mark">
       {hasLogo ? (
+        /* 폭·높이를 박지 않습니다 — 부처마다 로고 비율이 2.49~3.26으로 제각각이라
+           고정값을 주면 로드 전에 엉뚱한 폭으로 잡힙니다. 크기는 .gov-mark img 가
+           height:26px · width:auto 로 정합니다 (course.css). */
         <img
           src={`/ministry-logo/${encodeURIComponent(ministry)}${tone === 'white' ? '-white' : ''}.svg`}
-          alt={ministry} width={92} height={20}
+          alt={ministry} loading="lazy"
         />
       ) : (
         <span>{ministry}</span>

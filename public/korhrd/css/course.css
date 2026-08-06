@@ -21,8 +21,10 @@
    수강신청 목록(.course-row__thumb)과 같은 구조: 위쪽 딤 + 흰색 주무부처 로고 */
 .thumb{ position:relative; overflow:hidden; border-radius:var(--r-lg) var(--r-lg) 0 0 }
 .thumb .ph--thumb{ width:100% }
-/* 실제 썸네일 이미지 — 자리표시와 같은 비율(16:9.5)을 유지합니다 */
-.thumb img{ width:100%; aspect-ratio:16/9.5; object-fit:cover; display:block }
+/* 실제 썸네일 이미지 — 자리표시와 같은 비율(16:9.5)을 유지합니다.
+   자식 선택자여야 합니다. .thumb img 로 두면 안쪽 .gov-mark 의 주무부처 로고까지
+   16:9.5로 눌려 84.8px 로고가 43.8px로 찌그러집니다. */
+.thumb > img{ width:100%; aspect-ratio:16/9.5; object-fit:cover; display:block }
 .thumb::after{
   content:''; position:absolute; inset:0; pointer-events:none;
   background:linear-gradient(180deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 30%);
