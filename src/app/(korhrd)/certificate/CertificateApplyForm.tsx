@@ -8,6 +8,7 @@ import { submitCertificateApplicationAction } from '@/features/certificate-appli
 import { uploadCertificatePhotoFile } from '@/features/certificate-applications/lib/certificate-photo-upload.client';
 import type { CertificateApplicationPageData } from '@/features/certificate-applications/types/certificate-application.types';
 import PostcodeButton from '@/features/korhrd/components/form/PostcodeButton';
+import { todayInKst } from '@/lib/shared/kst-date';
 
 const won = (n: number) => `${n.toLocaleString('ko-KR')}원`;
 
@@ -15,7 +16,7 @@ const won = (n: number) => `${n.toLocaleString('ko-KR')}원`;
 function deadlineColor(deadline: string | null) {
   if (!deadline) return 'var(--muted)';
   const days = Math.ceil(
-    (new Date(`${deadline}T00:00:00`).getTime() - new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00').getTime()) /
+    (new Date(`${deadline}T00:00:00`).getTime() - new Date(`${todayInKst()}T00:00:00`).getTime()) /
       86_400_000,
   );
   return days <= 2 ? 'var(--red)' : 'var(--amber)';

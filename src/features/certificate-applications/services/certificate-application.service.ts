@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import { CERTIFICATE_DELIVERY_STATUS_LABELS } from "@/features/certificates/constants";
 import {
   CERTIFICATE_ISSUANCE_COST,
@@ -319,7 +320,7 @@ export async function submitCertificateApplication(
     return { success: false, code: "not_logged_in", message: "회원 정보를 확인할 수 없습니다." };
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
 
   // 선납결제 자동 연결: 학생이 미리 결제(관리자가 확인 후 등록한 선납결제)한 내역이
   // 있으면 최종결제금액에서 선납금만큼 차감하고, 신청 접수 후 해당 선납결제를

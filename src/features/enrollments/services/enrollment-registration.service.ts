@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
 
@@ -126,7 +127,7 @@ export async function createEnrollment(
     end_date: input.endDate,
     status: input.status,
     year: new Date(input.startDate).getFullYear(),
-    application_date: new Date().toISOString().slice(0, 10),
+    application_date: todayInKst(),
   };
 
   const { data, error } = await supabase
