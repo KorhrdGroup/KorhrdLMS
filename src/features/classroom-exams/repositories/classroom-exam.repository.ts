@@ -26,6 +26,9 @@ export async function findPublishedExamsByCourse(
     .select(EXAM_SELECT)
     .eq("course_id", courseId)
     .eq("is_published", true)
+    // 기출문제(exam_type='practice')는 채점 대상이 아니라 연습용이므로
+    // 응시할 시험 목록에 섞이면 안 됩니다.
+    .neq("exam_type", "practice")
     .is("deleted_at", null)
     .order("created_at", { ascending: true });
 

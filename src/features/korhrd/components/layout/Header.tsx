@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { logoutStudentAction } from '@/features/auth/actions/student-login.actions';
 import { useAuth } from '@/features/korhrd/lib/useAuth';
 import SearchOverlay from './SearchOverlay';
 
@@ -119,9 +120,12 @@ export default function Header() {
                     <Link className="util-link util-link--strong" href="/mylecture?tab=mypage">
                       {userName} 님
                     </Link>
-                    <Link className="util-link" href="/logout">
-                      로그아웃
-                    </Link>
+                    {/* 로그아웃은 폼 제출로 합니다. 서버 액션을 코드에서 호출하면
+                        액션 안의 redirect가 라우터를 타지 못해 세션이 남습니다.
+                        (같은 방식이 src/components/home/Hero.tsx 에서 이미 동작 중) */}
+                    <form action={logoutStudentAction} style={{ display: 'inline' }}>
+                      <button className="util-link" type="submit">로그아웃</button>
+                    </form>
                   </>
                 ) : (
                   <>

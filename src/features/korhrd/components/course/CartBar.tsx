@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { applyCartAction } from '@/features/korhrd/actions/cart-apply.actions';
-import EnrollDoneModal from '@/features/korhrd/components/course/EnrollDoneModal';
+import EnrollDoneModal, { type EnrollResult } from '@/features/korhrd/components/course/EnrollDoneModal';
 import { findCourse } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
 
@@ -21,7 +21,7 @@ export default function CartBar() {
   const { items, toggle, clear } = useCart();
   const [bump, setBump] = useState(false);
   /* 신청이 끝나면 원본과 같은 완료 모달을 띄웁니다(토스트 대신) */
-  const [done, setDone] = useState<string[]>([]);
+  const [done, setDone] = useState<EnrollResult | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const prevCount = useRef<number | null>(null);
@@ -40,20 +40,22 @@ export default function CartBar() {
         router.push('/login?redirect=/courses');
         return;
       }
-      if (result.applied.length > 0) {
-        // 원본은 신청 직후 목록에 머문 채 완료 모달을 띄웁니다.
+      // 새로 신청됐든 이미 신청돼 있었든 모달로 알려줍니다.
+      // (아무것도 안 뜨면 버튼이 고장 난 것처럼 보입니다)
+      if (result.applied.length > 0 || result.duplicated.length > 0) {
+        // 원본은 신청 직후 목록에 머문 채 모달을 띄웁니다.
         // (모달의 "나의 강의실로"를 눌러야 이동)
-        setDone(result.applied);
+        setDone({ applied: result.applied, duplicated: result.duplicated });
         clear();
         router.refresh();
         return;
       }
 
-      const parts: string[] = [];
-      if (result.duplicated.length) parts.push(`${result.duplicated.length}개는 이미 신청한 과목입니다`);
-      if (result.failed.length) parts.push(`${result.failed.length}개 실패`);
-      setToast(parts.join(' · ') || '신청할 과목이 없습니다.');
-      if (result.duplicated.length) clear();
+      setToast(
+        result.failed.length > 0
+          ? `${result.failed.length}개 과목을 신청하지 못했습니다. 잠시 후 다시 시도해주세요.`
+          : '신청할 과목이 없습니다.',
+      );
     });
   };
 
@@ -101,7 +103,7 @@ export default function CartBar() {
         </button>
       </div>
 
-      <EnrollDoneModal courses={done} onClose={() => setDone([])} />
+      <EnrollDoneModal result={done} onClose={() => setDone(null)} />
 
       {toast ? (
         <div
