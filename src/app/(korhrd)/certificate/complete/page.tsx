@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { getCertificateApplicationReceipt } from '@/features/certificate-applications/services/certificate-application-receipt.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
+import PayButton from './PayButton';
+
 export const metadata: Metadata = {
   title: '자격증 발급 신청 완료 — 한평생 직업훈련',
   robots: { index: false },
@@ -81,7 +83,12 @@ export default async function Page({ searchParams }: PageProps) {
           </ul>
 
           <div style={{ display: 'grid', gap: 8 }}>
-            <Link className="btn btn--primary btn--lg btn--block" href="/mylecture">
+            {/* 결제가 남아 있으면 결제가 첫 번째 할 일입니다 */}
+            {receipt.needsDeposit ? <PayButton applicationId={receipt.id} /> : null}
+            <Link
+              className={`btn btn--block ${receipt.needsDeposit ? 'btn--ghost' : 'btn--primary btn--lg'}`}
+              href="/mylecture"
+            >
               나의 강의실로 이동
             </Link>
             <Link className="btn btn--ghost btn--block" href="/certificate/status">

@@ -55,6 +55,10 @@ export type CertificateDetail = {
   paymentMethod: PaymentMethod | null;
   paymentInfo: string | null;
   paymentStatus: PaymentStatus;
+  /** PayApp 결제완료 통보를 받은 시각. 무통장입금 등 수기 확인 건은 null입니다. */
+  paidAt: string | null;
+  /** PayApp 결제요청번호(mul_no). 정산 대사할 때 PayApp 관리자와 대조하는 값입니다. */
+  payappMulNo: string | null;
   deliveryStatus: CertificateDeliveryStatus;
   memo: string | null;
   appliedAt: string;

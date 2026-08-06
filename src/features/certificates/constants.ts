@@ -86,6 +86,8 @@ export const CERTIFICATE_DETAIL_SELECT = `
   payment_method,
   payment_info,
   payment_status,
+  paid_at,
+  payapp_mul_no,
   delivery_status,
   memo,
   applied_at,

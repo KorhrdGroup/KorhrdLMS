@@ -27,6 +27,8 @@ type CertificateDetailRow = {
   actual_payment_amount: number;
   payment_method: PaymentMethod | null;
   payment_info: string | null;
+  paid_at: string | null;
+  payapp_mul_no: string | null;
   payment_status: PaymentStatus;
   delivery_status: CertificateDeliveryStatus;
   memo: string | null;
@@ -53,6 +55,8 @@ function mapCertificateDetail(row: CertificateDetailRow): CertificateDetail {
     actualPaymentAmount: row.actual_payment_amount,
     paymentMethod: row.payment_method,
     paymentInfo: row.payment_info,
+    paidAt: row.paid_at,
+    payappMulNo: row.payapp_mul_no,
     paymentStatus: row.payment_status,
     deliveryStatus: row.delivery_status,
     memo: row.memo,

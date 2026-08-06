@@ -229,6 +229,15 @@ export function CertificateDetailModal({
               value={formatPaymentInfo(paymentMethodLabel, detail.paymentInfo)}
               className="sm:col-span-2"
             />
+            {/* PayApp으로 결제된 건만 값이 있습니다. 무통장입금 등 수기 확인 건은 "—". */}
+            <DetailField
+              label="결제일시"
+              value={detail.paidAt ? formatDate(detail.paidAt) : "—"}
+            />
+            <DetailField
+              label="PayApp 결제번호"
+              value={detail.payappMulNo ?? "—"}
+            />
             <DetailField
               label="발급일"
               value={detail.issuedAt ? formatDate(detail.issuedAt) : "미발급"}
