@@ -6,7 +6,6 @@ import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
 import CartBar from '@/features/korhrd/components/course/CartBar';
-import styles from './page.module.css';
 
 /**
  * 수강신청 목록.
@@ -221,7 +220,9 @@ export default function CoursesClient({ initial = {} }: {
           </div>
 
           {/* 페이지 나눔 없이 전부 보여줍니다 */}
-          <div className={styles.list}>
+          {/* 행 사이 간격은 course.css 의 .course-row + .course-row (11px) 가 잡습니다.
+              여기에 flex gap 을 더 주면 두 값이 합쳐져 간격이 벌어집니다. */}
+          <div>
             {rows.length === 0 ? (
               <div className="empty-state">
                 <strong>조건에 맞는 과정이 없습니다</strong>
