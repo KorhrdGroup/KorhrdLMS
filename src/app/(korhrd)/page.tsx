@@ -118,8 +118,10 @@ export default async function HomePage() {
       <section className="section section--alt" aria-label="실시간 수강 현황 및 상담 안내">
         <div className="container">
           <div className="content live-grid">
-            {/* 실적이 몇 건뿐이면 티커가 어색해 보여, 최소 개수를 넘길 때만 보여줍니다 */}
-            {liveFeed.length >= 4 ? (
+            {/* 디자인상 히어로 오른쪽 칸을 채우는 블록이라 건수가 적어도 자리를 지킵니다.
+                (한때 4건 미만이면 통째로 감췄는데, 그러면 옆 칸만 남아 화면이 원본과
+                 달라졌습니다. LiveTicker는 1건이면 애니메이션 없이 그대로 둡니다) */}
+            {liveFeed.length > 0 ? (
               <div className="live-box">
                 <p className="live-box__title">수강생들의 한 걸음 <br />더 성장한 순간</p>
                 <LiveTicker rows={liveFeed} />
@@ -208,6 +210,19 @@ export default async function HomePage() {
           </div>
 
           {/* 과정 상세의 후기 카드(.drev__card)와 같은 구조 — 사진(1:1) + 제목·이름 / 본문 / 과정 태그 */}
+          {/* 아직 등록된 후기가 없을 때 제목만 남고 아래가 텅 비면 고장으로 보입니다.
+              디자인의 카드 자리를 안내 한 장으로 채웁니다. */}
+          {homeReviews.length === 0 ? (
+            <div className="content">
+              <div className="guide-box">
+                <strong>아직 등록된 합격후기가 없습니다</strong>
+                <ul>
+                  <li>합격하신 과정이 있다면 <Link href="/reviews/write">첫 후기</Link>를 남겨주세요.</li>
+                  <li>등록된 후기는 <Link href="/reviews">합격후기</Link>에서 함께 보실 수 있습니다.</li>
+                </ul>
+              </div>
+            </div>
+          ) : (
           <div className="content review-grid">
             {homeReviews.map((r) => (
               <article className="review" key={r.id}>
@@ -226,6 +241,7 @@ export default async function HomePage() {
               </article>
             ))}
           </div>
+          )}
         </div>
       </section>
 
