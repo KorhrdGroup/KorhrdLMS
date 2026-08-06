@@ -3,7 +3,12 @@ import {
   CERTIFICATE_APPLICATION_LIST_SELECT,
 } from "@/features/certificate-applications/constants";
 import { createClient } from "@/lib/supabase/server";
-import type { CertificateDeliveryStatus, Database, PaymentStatus } from "@/types/database.types";
+import type {
+  CertificateDeliveryStatus,
+  Database,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/types/database.types";
 
 /**
  * 학생 "자격증발급신청" 화면의 Supabase 접근을 캡슐화하는 repository입니다.
@@ -67,6 +72,8 @@ export async function listCertificateApplicationsByMember(memberId: string) {
     id: string;
     course_id: string | null;
     certificate_name: string;
+    actual_payment_amount: number;
+    payment_method: PaymentMethod | null;
     payment_status: PaymentStatus;
     delivery_status: CertificateDeliveryStatus;
     postal_code: string | null;

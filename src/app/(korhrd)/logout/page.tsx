@@ -1,26 +1,40 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { logoutStudentAction } from "@/features/auth/actions/student-login.actions";
 
 /**
  * 로그아웃 — 학생 세션 쿠키를 서버 액션으로 지웁니다.
  * (학생 인증은 Supabase가 아니라 httpOnly 쿠키라 클라이언트에서 지울 수 없습니다)
- * 액션이 홈으로 리다이렉트하므로 이 화면은 그 사이에만 잠깐 보입니다.
+ *
+ * ⚠ 서버 액션을 useEffect에서 그냥 호출하면 **로그아웃한 것처럼 보이지 않습니다.**
+ * 액션 안의 redirect()가 라우터를 거치지 않아 화면이 "로그아웃 중…"에 머물고
+ * 헤더도 로그인 상태 그대로 남습니다. startTransition 안에서 불러야 Next가
+ * 응답의 리다이렉트를 처리합니다.
  */
 export default function Page() {
   const [failed, setFailed] = useState(false);
+  const [, startTransition] = useTransition();
+  const started = useRef(false);
 
   useEffect(() => {
-    logoutStudentAction().catch((error) => {
-      // NEXT_REDIRECT는 정상 흐름(홈 이동)이므로 그대로 두고, 그 외만 실패로 봅니다.
-      if (!(error instanceof Error && error.message.includes("NEXT_REDIRECT"))) {
-        setFailed(true);
+    // 개발 모드에서 effect가 두 번 실행되는 것을 막습니다.
+    if (started.current) return;
+    started.current = true;
+
+    startTransition(async () => {
+      try {
+        await logoutStudentAction();
+      } catch (error) {
+        // NEXT_REDIRECT는 정상 흐름(홈 이동)이므로 그대로 두고, 그 외만 실패로 봅니다.
+        if (!(error instanceof Error && error.message.includes("NEXT_REDIRECT"))) {
+          setFailed(true);
+        }
       }
     });
-  }, []);
+  }, [startTransition]);
 
   return (
     <div className="container">

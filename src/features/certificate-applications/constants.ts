@@ -30,6 +30,8 @@ export const CERTIFICATE_APPLICATION_LIST_SELECT = `
   id,
   course_id,
   certificate_name,
+  actual_payment_amount,
+  payment_method,
   payment_status,
   delivery_status,
   postal_code,
