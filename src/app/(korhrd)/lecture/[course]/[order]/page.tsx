@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { getClassroomLectureDetail } from '@/features/classroom-lectures/services/classroom-lecture.service';
 import { getClassroomCourseMaterials } from '@/features/classroom-materials/services/classroom-material.service';
+import { listPracticeSets } from '@/features/classroom-exams/services/classroom-practice.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
 import { LecturePlayer } from '../LecturePlayer';
@@ -50,5 +51,15 @@ export default async function Page({ params }: PageProps) {
   // 학습자료(교안·기출문제)는 관리자 자료실에 공개된 것만 내려옵니다.
   const materialList = await getClassroomCourseMaterials(member.id, course);
 
-  return <LecturePlayer detail={detail} materials={materialList?.materials ?? []} />;
+  // 학습자료의 '기출문제' 칸은 강의실 안에서 바로 풀도록 풀이 화면으로 잇습니다.
+  const practice = await listPracticeSets(member.id, course);
+  const practiceId = practice?.sets[0]?.id;
+
+  return (
+    <LecturePlayer
+      detail={detail}
+      materials={materialList?.materials ?? []}
+      practiceHref={practiceId ? `/exam/${course}/practice/${practiceId}` : undefined}
+    />
+  );
 }

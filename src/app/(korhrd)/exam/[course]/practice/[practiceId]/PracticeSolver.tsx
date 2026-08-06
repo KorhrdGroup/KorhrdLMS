@@ -27,6 +27,7 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
   };
 
   const answeredCount = Object.keys(picked).length;
+  const revealedCount = Object.values(revealed).filter(Boolean).length;
   const gradedCount = set.questions.filter(
     (q) => revealed[q.id] && picked[q.id] === q.answer,
   ).length;
@@ -48,17 +49,22 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
         <dl className="exam-info">
           <div><dt>과정</dt><dd>{set.courseTitle}</dd></div>
           <div><dt>문항수</dt><dd>{set.questions.length}문항</dd></div>
-          <div><dt>채점</dt><dd>성적에 반영되지 않습니다</dd></div>
+          <div><dt>유형</dt><dd>연습용</dd></div>
         </dl>
 
+        {/* 연습이라 제한시간이 없습니다. 대신 푼 문항·맞힌 문항을 보여줍니다 */}
         <div className="exam-status">
           <p className="exam-status__count">
             푼 문항 <b>{answeredCount}</b> / <span>{set.questions.length}</span>
           </p>
           <p className="exam-status__count">
-            맞힌 문항 <b>{gradedCount}</b>
+            맞힌 문항 <b>{gradedCount}</b> / <span>{revealedCount}</span>
           </p>
         </div>
+
+        <p className="exam-submit__note" style={{ marginBottom: 16 }}>
+          기출문제는 성적에 반영되지 않습니다. 문항마다 <b>정답 보기</b>로 바로 확인하세요.
+        </p>
 
         <div className="q-list">
           {set.questions.map((question) => {
