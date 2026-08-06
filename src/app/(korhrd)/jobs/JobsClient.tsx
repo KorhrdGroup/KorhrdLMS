@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { JOB_GROUPS, jobsOfGroup } from '@/features/korhrd/data/jobs';
 import JobGroupCard from '@/features/korhrd/components/job/JobGroupCard';
 import JobCard from '@/features/korhrd/components/job/JobCard';
@@ -14,6 +14,29 @@ import styles from './page.module.css';
  * "무슨 자격증을 따야 하지?"가 아니라 "어떤 일을 하고 싶은가"에서 출발하는 화면입니다.
  * 직업군을 고르면 아래 목록만 갈아끼우고 페이지 이동은 하지 않습니다(주소만 갱신).
  */
+/** 취업 흐름 단계 — is-key 는 처음(직업 선택)과 끝(취업)만 흰 칸으로 강조합니다 */
+const FLOW_STEPS: { label: string; key?: true }[] = [
+  { label: '직업 선택', key: true },
+  { label: '필요한 자격증' },
+  { label: '강의 수강' },
+  { label: '시험 응시' },
+  { label: '자격증 발급' },
+  { label: '취업', key: true },
+];
+
+function FlowSteps() {
+  return (
+    <>
+      {FLOW_STEPS.map(({ label, key }, i) => (
+        <Fragment key={label}>
+          {i > 0 && <span className="job-flow__arrow" aria-hidden="true">→</span>}
+          <span className={key ? 'job-flow__step is-key' : 'job-flow__step'}>{label}</span>
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 export default function JobsClient({ initialGroup }: { initialGroup?: string }) {
   const [current, setCurrent] = useState(
     () => JOB_GROUPS.find((g) => g.key === initialGroup)?.key ?? JOB_GROUPS[0].key,
@@ -21,6 +44,18 @@ export default function JobsClient({ initialGroup }: { initialGroup?: string }) 
 
   const group = JOB_GROUPS.find((g) => g.key === current)!;
   const jobs = jobsOfGroup(current);
+
+  /* 980px 이하에서는 .job-flow 가 display:block 이 되어 여섯 단계가 줄바꿈됩니다.
+     원본과 같이 단계를 한 벌 더 복제한 트랙으로 감싸 한 줄로 굴립니다 —
+     사본이 없으면 -50% 지점에서 빈 구간이 생깁니다 (job.css @media 980). */
+  const [rolling, setRolling] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width:980px)');
+    const apply = () => setRolling(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
 
   const select = (key: string) => {
     setCurrent(key);
@@ -45,19 +80,17 @@ export default function JobsClient({ initialGroup }: { initialGroup?: string }) 
             직업을 고르면 하는 일 · 근무하는 곳 · 채용공고 · 필요한 과정까지 한 번에 안내해 드립니다.
           </p>
 
-          {/* 모바일에서도 한 줄로 두고 가로 스크롤합니다 (styles/job.css) */}
+          {/* 데스크톱은 한 줄에 다 들어가므로 단계를 그대로 두고,
+              980px 이하에서만 트랙으로 감싸 가로로 흘려보냅니다 */}
           <div className="job-flow" aria-label="취업까지의 흐름">
-            <span className="job-flow__step is-key">직업 선택</span>
-            <span className="job-flow__arrow" aria-hidden="true">→</span>
-            <span className="job-flow__step">필요한 자격증</span>
-            <span className="job-flow__arrow" aria-hidden="true">→</span>
-            <span className="job-flow__step">강의 수강</span>
-            <span className="job-flow__arrow" aria-hidden="true">→</span>
-            <span className="job-flow__step">시험 응시</span>
-            <span className="job-flow__arrow" aria-hidden="true">→</span>
-            <span className="job-flow__step">자격증 발급</span>
-            <span className="job-flow__arrow" aria-hidden="true">→</span>
-            <span className="job-flow__step is-key">취업</span>
+            {rolling ? (
+              <div className="job-flow__track is-rolling">
+                <span className="job-flow__seq"><FlowSteps /></span>
+                <span className="job-flow__seq" aria-hidden="true"><FlowSteps /></span>
+              </div>
+            ) : (
+              <FlowSteps />
+            )}
           </div>
         </div>
 
