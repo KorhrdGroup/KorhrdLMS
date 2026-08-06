@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { getCertificateApplicationReceipt } from '@/features/certificate-applications/services/certificate-application-receipt.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
-import PayButton from './PayButton';
+import PayButton from '@/features/payments/payapp/PayButton';
 
 export const metadata: Metadata = {
   title: '자격증 발급 신청 완료 — 한평생 직업훈련',
