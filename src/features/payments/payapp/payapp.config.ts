@@ -4,20 +4,24 @@
  * 값은 전부 환경변수입니다(.env.local / 배포 환경변수). 저장소는 공개라
  * 어떤 값도 코드에 적지 마세요.
  *
- *   PAYAPP_USER_ID     PayApp 가맹점 아이디
- *   PAYAPP_LINK_KEY    연동 KEY   — 결제결과 통보가 진짜인지 확인할 때 씁니다
- *   PAYAPP_LINK_VALUE  연동 VALUE — 위와 같음
- *   PAYAPP_SHOP_NAME   결제창에 보일 상호(선택)
- *   NEXT_PUBLIC_SITE_URL  https://... 배포 주소. 통보 URL을 만들 때 씁니다
+ *   PAYAPP_USER_ID        PayApp 가맹점 아이디 (PAYAPP_USERID 도 인식합니다)
+ *   NEXT_PUBLIC_SITE_URL  https://... 배포 주소 (NEXT_PUBLIC_BASE_URL 도 인식합니다)
+ *   PAYAPP_SHOP_NAME      결제창에 보일 상호(선택)
+ *   PAYAPP_LINK_KEY       연동 KEY   — 결제결과 통보 검증용
+ *   PAYAPP_LINK_VALUE     연동 VALUE — 위와 같음
  *
+ * 위 두 개(아이디·주소)만 있으면 **결제창은 열립니다.**
+ * KEY/VALUE는 결제 결과 통보를 받아들일 때만 쓰이므로, 없으면 결제는 되지만
+ * 결제완료 처리가 되지 않습니다(위조 통보를 막기 위해 fail-closed).
  * KEY/VALUE는 PayApp 관리자 > 환경설정 > 연동정보에서 확인합니다.
  */
 export const PAYAPP_API_URL = "https://api.payapp.kr/oapi/apiLoad.html";
 
 export type PayAppConfig = {
   userId: string;
-  linkKey: string;
-  linkValue: string;
+  /** 통보 검증용. 없으면 통보를 받아들이지 않습니다(결제창은 열립니다) */
+  linkKey: string | null;
+  linkValue: string | null;
   shopName: string;
   siteUrl: string;
   /** 아래 두 값이 모두 있을 때만 테스트 결제금액이 적용됩니다 */
@@ -31,12 +35,15 @@ export type PayAppConfig = {
  * (키를 넣기 전에도 신청 자체는 계속 되도록 하기 위함입니다).
  */
 export function getPayAppConfig(): PayAppConfig | null {
-  const userId = process.env.PAYAPP_USER_ID?.trim();
-  const linkKey = process.env.PAYAPP_LINK_KEY?.trim();
-  const linkValue = process.env.PAYAPP_LINK_VALUE?.trim();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  // 이름을 두 가지로 받는 이유: 운영 환경변수가 PAYAPP_USERID /
+  // NEXT_PUBLIC_BASE_URL 로 등록돼 있어, 어느 쪽으로 넣어도 동작하게 둡니다.
+  const userId = (process.env.PAYAPP_USER_ID ?? process.env.PAYAPP_USERID)?.trim();
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_BASE_URL)?.trim();
+  const linkKey = process.env.PAYAPP_LINK_KEY?.trim() || null;
+  const linkValue = process.env.PAYAPP_LINK_VALUE?.trim() || null;
 
-  if (!userId || !linkKey || !linkValue || !siteUrl) {
+  // 결제창을 열려면 가맹점 아이디와 돌아올 주소만 있으면 됩니다.
+  if (!userId || !siteUrl) {
     return null;
   }
 
