@@ -1,0 +1,20 @@
+# 파일별 담당자 — PR이 열리면 해당 담당자에게 자동으로 리뷰 요청이 갑니다.
+# (막는 장치가 아니라 "이 변경 봐주세요" 알림입니다)
+# 규칙은 아래로 갈수록 우선합니다. 자세한 경계는 docs/BRANCHING.md 참고.
+
+# 기본
+*                                       @KorhrdGroup
+
+# ---------- 화면 (디자인) ----------
+/src/app/(korhrd)/                      @jiuuucy
+/src/features/korhrd/                   @jiuuucy
+/src/features/course-detail/components/ @jiuuucy
+/public/korhrd/                         @jiuuucy
+/public/course-detail/                  @jiuuucy
+
+# ---------- 백엔드·DB·어드민 ----------
+# 화면 폴더 안이라도 아래는 데이터·인증이 걸려 있어 백엔드가 함께 봅니다.
+/src/app/admin/                         @KorhrdGroup
+/src/lib/                               @KorhrdGroup
+/supabase/                              @KorhrdGroup
+/src/types/database.types.ts            @KorhrdGroup

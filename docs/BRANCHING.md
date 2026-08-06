@@ -1,19 +1,27 @@
 # 브랜치 운영 — 디자인과 백엔드가 안 꼬이게
 
-## 브랜치 3개
+## 누가 어디서 작업하나
 
-| 브랜치 | 쓰임 | 배포 |
-|---|---|---|
-| `main` | 배포되는 코드. 여기서 직접 작업하지 않습니다 | 푸시하면 배포 |
-| `design` | 화면·마크업·CSS | 안 됨 |
-| `backend` | 서비스·DB·어드민 | 안 됨 |
-
-작업은 `design` / `backend`에서 하고, 끝나면 `main`으로 합칩니다.
+| 브랜치 | 담당 | 쓰임 | 배포 |
+|---|---|---|---|
+| `main` | KorhrdGroup | 배포되는 코드. 여기서 직접 작업하지 않습니다 | 푸시하면 배포 |
+| `design` | **@jiuuucy** | 화면·마크업·CSS | 안 됨 |
+| `backend` | KorhrdGroup | 서비스·DB·어드민 | 안 됨 |
 
 ```bash
 git switch design      # 화면 작업
 git switch backend     # 백엔드 작업
 ```
+
+처음 받는 사람은 이렇게 시작합니다.
+
+```bash
+git clone https://github.com/KorhrdGroup/KorhrdLMS.git
+cd KorhrdLMS && npm install
+git switch design
+```
+
+`.env.local`은 저장소에 없습니다. 따로 받아서 프로젝트 루트에 두세요.
 
 ## 파일 경계 — 이것만 지키면 충돌이 거의 안 납니다
 
@@ -60,20 +68,28 @@ supabase/migrations/**                  스키마 변경
 `src/types/database.types.ts`는 Supabase에서 생성한 파일입니다. 충돌이 나면
 고르지 말고 **다시 생성**해서 덮으세요.
 
-## 합치는 순서
+## 합치는 순서 — Pull Request로
+
+두 사람이 쓰므로 `main`에 바로 합치지 않고 PR로 올립니다. 무엇이 바뀌는지
+서로 보고 넘어가는 것이 목적입니다.
 
 ```bash
 # 1) 작업 브랜치에서 main의 최신을 먼저 받습니다 (충돌을 여기서 해결)
 git switch design
 git fetch origin
 git rebase origin/main
+git push --force-with-lease     # rebase 뒤에는 이 옵션으로만 밀어주세요
 
-# 2) main으로 합치고 배포
-git switch main
-git pull
-git merge design
-git push
+# 2) PR 올리기
+gh pr create --base main --head design --title "화면: ○○"
 ```
+
+PR이 열리면 `.github/CODEOWNERS`에 따라 담당자에게 자동으로 리뷰가 갑니다.
+합치는 것(merge)과 배포는 KorhrdGroup이 합니다.
+
+`--force-with-lease`를 쓰는 이유: rebase는 커밋을 다시 쓰기 때문에 그냥 push가
+거절됩니다. 그렇다고 `--force`를 쓰면 상대가 그 사이 올린 커밋을 지울 수 있습니다.
+`--force-with-lease`는 그런 경우 거절해 줍니다.
 
 **하루 한 번은 `rebase origin/main`을 하세요.** 오래 떨어져 있을수록 충돌이 커집니다.
 
