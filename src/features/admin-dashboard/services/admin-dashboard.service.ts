@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -58,7 +59,7 @@ function fullDate(value: string | null) {
 export async function getAdminDashboard(): Promise<AdminDashboardData> {
   const supabase = await createClient();
   const since30 = daysAgoIso(30);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
 
   const [
     totalMembers,

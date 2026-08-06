@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import type { EnrollmentStatus } from "@/types/database.types";
 
 import type { EnrollmentLearningStatus } from "@/features/enrollments/types/enrollment.types";
@@ -37,7 +38,7 @@ export function deriveLearningStatus(
     return "stopped";
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
   if (endDate < today) {
     return "ended";
   }
