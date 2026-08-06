@@ -68,8 +68,10 @@ export function CertificateApplyForm({
       });
 
       if (result.success) {
+        // push 뒤에 refresh()를 부르면 이동이 끝나기 전에 현재 페이지를 다시 불러와
+        // 트랜지션이 끝나지 않습니다(버튼이 "신청 중…"에서 멈춥니다).
+        // 완료 화면은 서버에서 매번 조회하므로 refresh가 필요 없습니다.
         router.push(`/certificate/complete?id=${result.applicationId}`);
-        router.refresh();
       } else {
         setError(result.message);
       }

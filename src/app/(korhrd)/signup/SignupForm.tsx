@@ -94,8 +94,9 @@ export function SignupForm() {
       );
 
       if (result.success) {
+        // push 뒤 refresh()는 이동이 끝나기 전에 현재 페이지를 다시 불러와
+        // 버튼이 "가입 중…"에서 멈춥니다. 자격증 신청에서 실제로 겪은 문제입니다.
         router.push('/signup/complete');
-        router.refresh();
       } else {
         setError(result.message);
       }
