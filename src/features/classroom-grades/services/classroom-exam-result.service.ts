@@ -9,6 +9,7 @@ import {
   PASS_SCORE_THRESHOLD,
 } from "@/features/grades/lib/grade-calculator";
 import { createClient } from "@/lib/supabase/server";
+import { todayInKst } from "@/lib/shared/kst-date";
 import type { ClassroomGradeData } from "@/features/classroom-grades/types/classroom-grade.types";
 
 /**
@@ -50,7 +51,7 @@ export type ClassroomExamResultData = {
 function calcRecommendedPercent(startDate: string, endDate: string): number {
   const start = new Date(`${startDate}T00:00:00`).getTime();
   const end = new Date(`${endDate}T00:00:00`).getTime();
-  const today = new Date(new Date().toISOString().slice(0, 10) + "T00:00:00").getTime();
+  const today = new Date(`${todayInKst()}T00:00:00`).getTime();
 
   if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) {
     return 0;

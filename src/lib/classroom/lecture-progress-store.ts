@@ -1,5 +1,6 @@
 "use client";
 
+import { todayInKst } from "@/lib/shared/kst-date";
 import { getCourseLectures, type Lecture } from "@/components/classroom/data/lecture-data";
 
 /**
@@ -47,7 +48,7 @@ function keyFor(slug: string, lectureId: string) {
 }
 
 function todayLabel(): string {
-  return new Date().toISOString().slice(0, 10);
+  return todayInKst();
 }
 
 function readStore(): Record<string, LectureProgressRecord> {

@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import { MOCK_USER_ID, MOCK_USER_NAME } from "@/lib/mock-auth";
 
 /**
@@ -82,7 +83,7 @@ export function getTicketById(id: string): SupportTicket | undefined {
 
 export function createTicket(input: { title: string; content: string }): SupportTicket {
   const tickets = readAll();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
 
   const ticket: SupportTicket = {
     id: `t${Date.now()}`,

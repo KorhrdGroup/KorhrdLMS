@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import {
   COURSE_OPTION_SELECT,
   MEMBER_REGISTRATION_OPTION_SELECT,
@@ -172,7 +173,7 @@ export async function createPendingApplicantRegistration(
     };
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
   const insertData: Database["public"]["Tables"]["enrollments"]["Insert"] = {
     member_id: input.memberId,
     course_id: input.courseId,

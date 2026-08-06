@@ -1,3 +1,4 @@
+import { todayInKst } from "@/lib/shared/kst-date";
 import { DEFAULT_EXAM_ELIGIBILITY_PROGRESS_RATE } from "@/features/classroom-exams/constants";
 import {
   allowSubmissionRetake,
@@ -63,7 +64,7 @@ function resolveExamStatus(
     return "locked";
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
   if (today < enrollmentPeriod.startDate) {
     return "upcoming";
   }
@@ -314,7 +315,7 @@ export async function submitClassroomExam(
     };
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayInKst();
   if (today < access.enrollmentStartDate || today > access.enrollmentEndDate) {
     return { success: false, message: "현재는 수강기간이 아니어서 시험에 응시할 수 없습니다." };
   }
