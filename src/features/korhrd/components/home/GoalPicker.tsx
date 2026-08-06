@@ -58,7 +58,7 @@ export default function GoalPicker() {
 
   return (
     <div className="content">
-      <PillRow label="목적">
+      <PillRow label="목적" group="goal">
         {PURPOSES.map((p) => (
           <button key={p} className="pill" type="button" aria-pressed={goal === p} onClick={() => setGoal(p)}>
             {p} <b>{goalCount[p]}</b>
@@ -66,7 +66,7 @@ export default function GoalPicker() {
         ))}
       </PillRow>
 
-      <PillRow label="연령대">
+      <PillRow label="연령대" group="age">
         {visibleAges.map((a) => (
           <button key={a} className="pill" type="button" aria-pressed={activeAge === a} onClick={() => setAge(a)}>
             {a}
@@ -76,7 +76,13 @@ export default function GoalPicker() {
 
       <div className="card-grid mt-5">
         {cards.length > 0
-          ? cards.map((c) => <CourseCard key={c.n} course={c} />)
+          ? cards.map((c) => (
+              <CourseCard
+                key={c.n} course={c}
+                /* 연령을 고른 상태면 뱃지도 그 연령으로 — 카드는 이미 그 조건으로 걸러진 것들입니다 */
+                ageLabel={activeAge === '전체' ? undefined : activeAge}
+              />
+            ))
           : <p className="empty-state">해당 조건의 과정이 없습니다.</p>}
       </div>
 

@@ -3,6 +3,7 @@ import { getMyLectureData } from '@/features/korhrd/lib/my-lecture-data';
 import { listCourseReviews } from '@/features/korhrd/services/course-review.service';
 import { getLiveFeed } from '@/features/korhrd/services/live-feed.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
+import { getPublishedNoticesForSite } from '@/features/notice-management/services/notice-student-view.service';
 import { JOB_GROUPS } from '@/features/korhrd/data/jobs';
 import TrustStrip from '@/features/korhrd/components/home/TrustStrip';
 import BannerCarousel from '@/features/korhrd/components/home/BannerCarousel';
@@ -27,13 +28,10 @@ const STEPS = [
   { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 7일', desc: '상장형·카드형 자격증으로 발급 가능합니다.' },
 ];
 
-const NOTICES = [
-  '2026 교육나눔지원 수강신청방법',
-  '한국실습지원센터 실습매칭서비스',
-  '창의학습지도사 신규런칭 이벤트!',
-  '방과후아동지도사 신규런칭 EVENT!',
-  '수강 및 출석관련공지',
-];
+/** 메인 공지 목록에 보여줄 최대 줄 수 — 이보다 적으면 적은 대로 둡니다.
+ *  CSS(.two-col .notice-list)가 align-content:space-between 이라
+ *  줄이 모자라면 남는 높이를 행 간격으로 나눠 가집니다. */
+const HOME_NOTICE_LIMIT = 5;
 
 const FAQS = [
   { q: '수강료가 정말 0원인가요? 추가 비용은요?', href: '/process#p-faq-4' },
@@ -54,6 +52,10 @@ export default async function HomePage() {
   // 실제 수강완료·발급완료 내역. 티커는 최소 몇 줄이 있어야 자연스러워
   // 아직 기록이 적으면 아예 감춥니다(LiveTicker 자리 자체를 비움).
   const liveFeed = await getLiveFeed();
+
+  /* 공지사항 — 어드민에 등록된 실제 공지입니다(고정 공지가 위, 그다음 최신순).
+     등록된 수가 적으면 그만큼만 나옵니다. */
+  const notices = (await getPublishedNoticesForSite()).slice(0, HOME_NOTICE_LIMIT);
 
   /* 로그인 상태면 히어로 오른쪽 박스에 실제 수강중인 강의를 최대 3개 보여줍니다 */
   const member = await getMockableStudentMember();
@@ -254,12 +256,24 @@ export default async function HomePage() {
                 <h2>공지사항</h2>
                 <Link className="section-head__more" href="/notice">더보기 →</Link>
               </div>
+              {/* 공지가 5건이 안 되면 남는 줄은 빈 칸으로 둡니다 — 칸 수를 고정해야
+                  공지가 늘고 줄어도 목록 높이가 들썩이지 않습니다.
+                  빈 줄도 <a>여야 합니다. 줄 높이(padding:14px 6px)가 .notice-list a 에
+                  걸려 있어 <li>만 두면 줄이 납작해집니다. */}
               <ul className="notice-list">
-                {NOTICES.map((n, i) => (
-                  <li key={n}>
-                    <Link href={`/notice/${i + 1}`}>{n}<span className="date">2026-03-16</span></Link>
-                  </li>
-                ))}
+                {Array.from({ length: HOME_NOTICE_LIMIT }, (_, i) => notices[i]).map((n, i) =>
+                  n ? (
+                    <li key={n.id}>
+                      <Link href={`/notice/${n.id}`}>
+                        {n.title}<span className="date">{n.date}</span>
+                      </Link>
+                    </li>
+                  ) : (
+                    <li key={`empty-${i}`} aria-hidden="true">
+                      <a>{' '}</a>
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
 
