@@ -15,6 +15,10 @@ import { KorhrdAuthProvider } from "@/features/korhrd/lib/auth-context";
  * 여기 한 곳에서만 정의합니다 — 바꾸면 화면이 깨집니다.
  */
 export const KORHRD_CSS_ORDER = [
+  // ua-headings 는 전달본 CSS가 아니라 우리가 덧댄 것입니다.
+  // Tailwind preflight가 지운 제목 기본 굵기를 되살리며, 퍼블리싱 CSS가
+  // 항상 이기도록 **맨 앞**에 실어야 합니다. 자세한 이유는 파일 안 주석 참고.
+  "ua-headings",
   "tokens", "base", "layout", "ui", "home", "course", "review",
   "detail", "account", "responsive", "classroom", "job", "appendix",
 ] as const;

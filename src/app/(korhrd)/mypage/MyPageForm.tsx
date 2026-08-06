@@ -6,6 +6,7 @@ import { useState, useTransition } from 'react';
 
 import { updateMyProfileAction } from '@/features/members/actions/member-profile.actions';
 import type { MemberProfile } from '@/features/members/services/member-profile.service';
+import PostcodeButton from '@/features/korhrd/components/form/PostcodeButton';
 
 /**
  * 회원정보 수정 폼.
@@ -92,10 +93,18 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
             우편번호 <span className="req" aria-hidden="true">*</span>
             <span className="sr-only">(필수)</span>
           </label>
-          <input
-            id="mp-zip" type="text" required inputMode="numeric" style={{ maxWidth: '140px' }}
-            value={postalCode} onChange={(event) => setPostalCode(event.target.value)}
-          />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              id="mp-zip" type="text" required inputMode="numeric" style={{ maxWidth: '140px' }}
+              value={postalCode} onChange={(event) => setPostalCode(event.target.value)}
+            />
+            <PostcodeButton
+              onSelect={({ postalCode: zip, address: addr }) => {
+                setPostalCode(zip);
+                setAddress(addr);
+              }}
+            />
+          </div>
         </div>
 
         <div className="field">

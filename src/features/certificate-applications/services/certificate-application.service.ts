@@ -19,6 +19,7 @@ import type {
 import { computeCompletionEligibility } from "@/features/completion-certificates/lib/completion-eligibility";
 import { PAYMENT_STATUS_LABELS } from "@/features/enrollments/constants";
 import { formatFullAddress } from "@/features/certificates/lib/certificate.utils";
+import { findSubmissionsForEnrollmentAcrossExams } from "@/features/classroom-exams/repositories/classroom-exam.repository";
 import {
   findAvailableCertificatePrepayment,
   markCertificatePrepaymentUsed,
@@ -116,6 +117,15 @@ async function getConfirmedEnrollmentsWithCourse(
  * 민간자격증 LMS 운영 방식에 따라 수강기간(end_date) 종료 여부는 신청 가능 조건에
  * 포함하지 않습니다(수강기간이 남아있어도 합격 기준만 충족하면 즉시 신청 가능).
  */
+/** 합격 후 자격증 발급을 신청할 수 있는 기간(일). 화면 안내문과 같은 값입니다. */
+const CERTIFICATE_APPLY_DEADLINE_DAYS = 7;
+
+const addDays = (iso: string, days: number) => {
+  const date = new Date(`${iso.slice(0, 10)}T00:00:00`);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+};
+
 export async function getCertificateApplicationPageData(
   memberId: string,
 ): Promise<CertificateApplicationPageData | null> {
@@ -153,12 +163,24 @@ export async function getCertificateApplicationPageData(
       enrollment.course.id,
     );
 
+    // 합격일 = 마지막 시험 응시일. 신청 기한은 그로부터 7일입니다
+    // (화면 안내문 "합격 후 7일 이내 신청"과 같은 규칙).
+    const submissions = await findSubmissionsForEnrollmentAcrossExams(supabase, enrollment.id);
+    const passedAt =
+      submissions
+        .map((submission) => submission.submitted_at)
+        .filter((at): at is string => Boolean(at))
+        .sort()
+        .at(-1)?.slice(0, 10) ?? null;
+
     eligibleCourses.push({
       enrollmentId: enrollment.id,
       courseId: enrollment.course.id,
       courseTitle: enrollment.course.name,
       alreadyApplied: Boolean(activeApplication),
       applicationId: activeApplication?.id ?? null,
+      passedAt,
+      applyDeadline: passedAt ? addDays(passedAt, CERTIFICATE_APPLY_DEADLINE_DAYS) : null,
       prepaymentAmount: Math.min(
         availablePrepayment?.amount ?? 0,
         CERTIFICATE_ISSUANCE_COST,
@@ -394,6 +416,10 @@ export async function getMyCertificateApplications(
     id: row.id,
     appliedAt: row.applied_at,
     certificateName: row.certificate_name,
+    amount: row.actual_payment_amount,
+    paymentMethodLabel:
+      CERTIFICATE_PAYMENT_METHOD_OPTIONS.find((option) => option.value === row.payment_method)
+        ?.label ?? null,
     paymentStatus: row.payment_status,
     paymentStatusLabel: PAYMENT_STATUS_LABELS[row.payment_status] ?? row.payment_status,
     deliveryStatus: row.delivery_status,

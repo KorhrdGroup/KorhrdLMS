@@ -18,6 +18,10 @@ export type EligibleCertificateCourse = {
   alreadyApplied: boolean;
   /** alreadyApplied가 true일 때, 신청 내역 조회로 바로 이동할 수 있도록 함께 내려줍니다. */
   applicationId: string | null;
+  /** 합격일(마지막 시험 응시일). 응시 기록이 없으면 null입니다. */
+  passedAt: string | null;
+  /** 발급 신청 기한 = 합격일 + 7일. 화면에서 빨강/주황으로 남은 기간을 알립니다. */
+  applyDeadline: string | null;
   /**
    * 이 과정으로 자격증발급신청 시 자동 반영될 선납결제 금액(원)입니다. 사용 가능한
    * 선납결제가 없으면 0입니다 — `certificate-prepayments` 기능의
@@ -69,6 +73,10 @@ export type MyCertificateApplicationItem = {
   id: string;
   appliedAt: string;
   certificateName: string;
+  /** 실제 청구 금액(선납 반영 후) */
+  amount: number;
+  /** "카드 결제" 처럼 사람이 읽는 결제수단. 미선택이면 null */
+  paymentMethodLabel: string | null;
   paymentStatus: PaymentStatus;
   paymentStatusLabel: string;
   deliveryStatus: CertificateDeliveryStatus;
