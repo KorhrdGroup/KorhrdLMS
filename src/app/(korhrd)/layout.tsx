@@ -7,6 +7,8 @@ import {
   KorhrdStyleLinks,
 } from "@/features/korhrd/components/layout/KorhrdShell";
 import { KorhrdAuthProvider } from "@/features/korhrd/lib/auth-context";
+import { CourseThumbProvider } from "@/features/korhrd/lib/course-thumb-context";
+import { getCourseThumbnailMap } from "@/features/korhrd/lib/course-thumbnails";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
 
 /**
@@ -26,7 +28,11 @@ const FONT_STACK = KORHRD_FONT_STACK;
 export default async function KorhrdLayout({ children }: { children: React.ReactNode }) {
   // 학생 세션은 httpOnly 쿠키라 서버에서 읽어 Context로 내려줍니다.
   // (Supabase Auth가 아닙니다 — 헤더가 로그인 상태를 못 알아보던 원인)
-  const member = await getMockableStudentMember();
+  // 과정 썸네일은 어드민에서 바꾸면 바로 반영돼야 해서 스냅샷 대신 DB 값을 씁니다.
+  const [member, courseThumbs] = await Promise.all([
+    getMockableStudentMember(),
+    getCourseThumbnailMap(),
+  ]);
   const auth = {
     isLoggedIn: member !== null,
     userName: member?.name ?? "회원",
@@ -37,11 +43,13 @@ export default async function KorhrdLayout({ children }: { children: React.React
       <KorhrdStyleLinks />
       <a className="skip-link" href="#main">본문 바로가기</a>
       <KorhrdAuthProvider value={auth}>
-        <BodyAuthFlag isLoggedIn={auth.isLoggedIn} />
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
-        <TabBar />
+        <CourseThumbProvider value={courseThumbs}>
+          <BodyAuthFlag isLoggedIn={auth.isLoggedIn} />
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
+          <TabBar />
+        </CourseThumbProvider>
       </KorhrdAuthProvider>
     </div>
   );
