@@ -26,10 +26,13 @@ export default function CartBar() {
   const [isPending, startTransition] = useTransition();
   const prevCount = useRef<number | null>(null);
 
+  const [toastOn, setToastOn] = useState(false);
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => setToast(null), 4000);
-    return () => clearTimeout(t);
+    /* 다음 프레임에 켜야 .toast 의 opacity 전환이 재생됩니다 (원본 showToast 와 같은 방식) */
+    const raf = requestAnimationFrame(() => setToastOn(true));
+    const t = setTimeout(() => { setToast(null); setToastOn(false); }, 4000);
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
   }, [toast]);
 
   /** 담긴 과목을 실제 수강신청으로 넣습니다. 비로그인이면 로그인으로 보냅니다. */
@@ -81,8 +84,8 @@ export default function CartBar() {
         <div className="cart-bar__chips">
           {items.map((name) => (
             <span className="cart-chip" key={name}>
-              {name}
-              <button type="button" aria-label={`${name} 선택 해제`} onClick={() => toggle(name)}>×</button>
+              {name}{' '}
+              <button type="button" aria-label={`${name} 선택 해제`} onClick={() => toggle(name)}>✕</button>
             </span>
           ))}
         </div>
@@ -93,8 +96,11 @@ export default function CartBar() {
           <strong>0원</strong>
         </p>
 
+        {/* data-enroll 은 CSS가 거는 자리입니다 — course.css 가 이 속성으로 버튼 크기를
+            잡고, responsive.css 는 560px 이하에서 grid-area:cta 로 전폭 배치합니다.
+            빼면 좁은 화면에서 버튼이 그리드 칸을 못 받아 반쪽으로 남습니다. */}
         <button
-          className="btn btn--primary" type="button" disabled={isPending}
+          className="btn btn--primary" type="button" data-enroll="cart" disabled={isPending}
           onClick={apply}
         >
           {isPending ? '신청 중…' : '선택과목 수강신청'}
@@ -103,17 +109,10 @@ export default function CartBar() {
 
       <EnrollDoneModal courses={done} onClose={() => setDone([])} />
 
+      {/* 안내 토스트 — 모양은 course.css 의 .toast 가 담당합니다.
+          인라인 스타일로 흉내 내면 전달본과 색·모서리·전환이 어긋납니다. */}
       {toast ? (
-        <div
-          role="status"
-          style={{
-            position: 'fixed', bottom: 96, left: '50%', transform: 'translateX(-50%)',
-            zIndex: 100, background: '#333', color: '#fff', borderRadius: 8,
-            padding: '12px 20px', fontSize: 14, whiteSpace: 'nowrap',
-          }}
-        >
-          {toast}
-        </div>
+        <div className={`toast${toastOn ? ' is-on' : ''}`} role="status">{toast}</div>
       ) : null}
     </div>
   );

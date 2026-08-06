@@ -20,12 +20,18 @@
     클래스 규칙(.page-head h1 등)이 항상 이깁니다.
   · 이 파일은 korhrd 레이아웃에서만 <link>로 달리므로 어드민 화면에는
     영향이 없습니다.
+  · **margin은 되살리지 않습니다.** 전달본 base.css 가 `*{ margin:0 }` 으로
+    이미 리셋해 두었는데, 그건 전체 선택자(0,0,0)라 요소 선택자(0,0,1)인
+    여기보다 명시도가 낮습니다. 순서를 맨 앞에 둬도 이 파일이 이겨서,
+    margin을 적으면 리셋이 뚫리고 제목마다 UA 여백이 되살아납니다.
+    (수강신청 목록의 .course-row__head 가 29px → 59px 로 늘었습니다)
+    Tailwind preflight 가 지우는 건 font-size·font-weight 뿐이라 그 둘만 되살립니다.
 */
-h1 { font-size: 2em;    font-weight: bold; margin: 0.67em 0 }
-h2 { font-size: 1.5em;  font-weight: bold; margin: 0.83em 0 }
-h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0 }
-h4 { font-size: 1em;    font-weight: bold; margin: 1.33em 0 }
-h5 { font-size: 0.83em; font-weight: bold; margin: 1.67em 0 }
-h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0 }
+h1 { font-size: 2em;    font-weight: bold }
+h2 { font-size: 1.5em;  font-weight: bold }
+h3 { font-size: 1.17em; font-weight: bold }
+h4 { font-size: 1em;    font-weight: bold }
+h5 { font-size: 0.83em; font-weight: bold }
+h6 { font-size: 0.67em; font-weight: bold }
 
 b, strong { font-weight: bolder }

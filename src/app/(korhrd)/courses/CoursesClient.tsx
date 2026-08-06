@@ -6,7 +6,6 @@ import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
 import CartBar from '@/features/korhrd/components/course/CartBar';
-import styles from './page.module.css';
 
 /**
  * 수강신청 목록.
@@ -161,6 +160,7 @@ export default function CoursesClient({ initial = {} }: {
   };
 
   return (
+    <>
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
         <ol>
@@ -221,7 +221,9 @@ export default function CoursesClient({ initial = {} }: {
           </div>
 
           {/* 페이지 나눔 없이 전부 보여줍니다 */}
-          <div className={styles.list}>
+          {/* 행 사이 간격은 course.css 의 .course-row + .course-row (11px) 가 잡습니다.
+              여기에 flex gap 을 더 주면 두 값이 합쳐져 간격이 벌어집니다. */}
+          <div>
             {rows.length === 0 ? (
               <div className="empty-state">
                 <strong>조건에 맞는 과정이 없습니다</strong>
@@ -240,9 +242,11 @@ export default function CoursesClient({ initial = {} }: {
           </div>
         </div>
       </div>
+    </div>
 
-      {/* 필터 바텀시트 — 사이드바를 비추기만 하고, 상태는 계속 위 picked 한 곳에 있습니다.
-          닫힘 상태는 display가 아니라 visibility라 열고 닫을 때 전환이 걸립니다. */}
+      {/* 시트와 장바구니 바는 .container 밖에 둡니다 — 원본(courses.html)도 <main> 밖에
+          있습니다. 안에 넣으면 컨테이너의 max-width·좌우 여백을 같이 받아, 화면 폭을
+          꽉 채워야 할 장바구니 바가 안쪽으로 밀립니다. */}
       <div className={`fsheet${filterOpen ? ' is-open' : ''}`}>
         <div className="fsheet__dim" onClick={() => setFilterOpen(false)} />
         <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="검색 조건">
@@ -315,6 +319,6 @@ export default function CoursesClient({ initial = {} }: {
       </div>
 
       <CartBar />
-    </div>
+    </>
   );
 }
