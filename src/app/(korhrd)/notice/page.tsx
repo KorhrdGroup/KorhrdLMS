@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { getPublishedNoticesForSite } from "@/features/notice-management/services/notice-student-view.service";
 
+import { NoticeFilter } from "./NoticeFilter";
 import { NoticePagination } from "./NoticePagination";
 
 export const metadata: Metadata = {
@@ -39,13 +40,14 @@ export default async function Page({ searchParams }: PageProps) {
         </ol>
       </nav>
 
+      {/* 원본 notice.html 은 제목만 둡니다 — 설명 문구는 넣지 않습니다 */}
       <div className="page-head">
         <h1>공지사항</h1>
-        <p>수강·시험·자격증 발급 관련 소식을 알려드립니다.</p>
       </div>
 
       <div className="toolbar">
         <p className="toolbar__result">전체 <b>{notices.length}</b>건</p>
+        <NoticeFilter />
       </div>
 
       {/* 번호 칸 클래스는 반드시 .no 입니다 — CSS(account.css)가 `.board .no`에
