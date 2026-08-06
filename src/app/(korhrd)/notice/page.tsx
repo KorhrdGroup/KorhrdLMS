@@ -48,13 +48,15 @@ export default async function Page({ searchParams }: PageProps) {
         <p className="toolbar__result">전체 <b>{notices.length}</b>건</p>
       </div>
 
+      {/* 번호 칸 클래스는 반드시 .no 입니다 — CSS(account.css)가 `.board .no`에
+          걸려 있어 다른 이름을 쓰면 칸 폭(40px)·정렬이 사라집니다 */}
       <ul className="board">
         {slice.map((notice) => (
           <li key={notice.id}>
             {notice.pinned ? (
               <span className="badge badge--best">공지</span>
             ) : (
-              <span className="board__no">{notice.no}</span>
+              <span className="no">{notice.no}</span>
             )}
             <Link className="tit" href={`/notice/${notice.id}`}>{notice.title}</Link>
             <span className="date">

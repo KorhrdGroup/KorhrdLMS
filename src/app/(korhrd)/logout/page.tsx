@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useEffect, useState } from "react";
 
 import { logoutStudentAction } from "@/features/auth/actions/student-login.actions";
@@ -29,8 +30,8 @@ export default function Page() {
               {failed ? "로그아웃에 실패했습니다. 다시 시도해주세요." : "로그아웃 중입니다…"}
             </p>
             <div style={{ display: 'grid', gap: '8px' }}>
-              <a className="btn btn--primary btn--lg btn--block" href="/">홈으로 이동</a>
-              <a className="btn btn--ghost btn--block" href="/login">다시 로그인</a>
+              <Link className="btn btn--primary btn--lg btn--block" href="/">홈으로 이동</Link>
+              <Link className="btn btn--ghost btn--block" href="/login">다시 로그인</Link>
             </div>
           </div>
         </div>

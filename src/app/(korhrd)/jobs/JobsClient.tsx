@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { JOB_GROUPS, jobsOfGroup } from '@/features/korhrd/data/jobs';
 import JobGroupCard from '@/features/korhrd/components/job/JobGroupCard';
@@ -32,7 +33,7 @@ export default function JobsClient({ initialGroup }: { initialGroup?: string }) 
       <section className="jobguide">
         <nav className="breadcrumb" aria-label="현재 위치">
           <ol>
-            <li><a href="/">홈</a></li>
+            <li><Link href="/">홈</Link></li>
             <li aria-current="page">취업 길찾기</li>
           </ol>
         </nav>

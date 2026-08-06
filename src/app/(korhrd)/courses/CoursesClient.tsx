@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
@@ -119,7 +120,7 @@ export default function CoursesClient({ initial = {} }: {
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
         <ol>
-          <li><a href="/">홈</a></li>
+          <li><Link href="/">홈</Link></li>
           <li aria-current="page">수강신청</li>
         </ol>
       </nav>

@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { getCourseReview } from '@/features/korhrd/services/course-review.service';
+import {
+  getCourseReview,
+  listCourseReviews,
+} from '@/features/korhrd/services/course-review.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
+
+import ReviewHelpful from './ReviewHelpful';
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -19,6 +24,12 @@ export default async function Page({ params }: PageProps) {
   const member = await getMockableStudentMember();
   const review = await getCourseReview(id, member?.id);
   if (!review) notFound();
+
+  // 이전/다음 글은 목록과 같은 정렬(최신순)을 따릅니다.
+  const list = await listCourseReviews({ viewerId: member?.id });
+  const index = list.findIndex((r) => r.id === id);
+  const prev = index > 0 ? list[index - 1] : null;
+  const next = index >= 0 && index < list.length - 1 ? list[index + 1] : null;
 
   return (
     <div className="container">
@@ -37,6 +48,15 @@ export default async function Page({ params }: PageProps) {
             <span>작성 <b>{review.author} 수강생</b></span>
             <span>등록일 <b><time dateTime={review.date}>{review.date}</time></b></span>
           </p>
+          {/* 작성자 블록 — 사진이 없으면 자리표시(.ph)가 그대로 보입니다 */}
+          <div className="article__profile">
+            <span className="ph" aria-hidden="true" />
+            <div>
+              <b>{review.author} 수강생</b>
+              <span>{[review.course, ...review.alsoCourses].join(' · ')} 취득</span>
+            </div>
+          </div>
+
           <p className="article__tags">
             <span>{review.course}</span>
             {review.alsoCourses.map((course) => <span key={course}>{course}</span>)}
@@ -51,14 +71,38 @@ export default async function Page({ params }: PageProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={review.photo} alt="자격증 사진" style={{ maxWidth: 360, borderRadius: 8 }} />
         ) : null}
-      </article>
 
-      <p className="rv-cta" style={{ display: 'flex', gap: 8 }}>
-        <Link className="btn btn--ghost" href="/reviews">목록으로</Link>
-        {review.mine ? (
-          <Link className="btn btn--primary" href={`/reviews/write?id=${review.id}`}>수정하기</Link>
+        <ReviewHelpful
+          reviewId={review.id}
+          count={review.helpful}
+          active={review.helpfulByMe}
+        />
+
+        {/* 이전/다음 글 — 원본 review-detail.html 과 같은 구조입니다 */}
+        {prev || next ? (
+          <nav className="article__nav" aria-label="이전 다음 글">
+            {prev ? (
+              <Link href={`/reviews/${prev.id}`}>
+                <span className="article__nav-label">이전 글</span>
+                <span className="article__nav-tit">{prev.title}</span>
+              </Link>
+            ) : null}
+            {next ? (
+              <Link href={`/reviews/${next.id}`}>
+                <span className="article__nav-label">다음 글</span>
+                <span className="article__nav-tit">{next.title}</span>
+              </Link>
+            ) : null}
+          </nav>
         ) : null}
-      </p>
+
+        <p className="article__actions">
+          <Link className="btn btn--primary" href="/reviews">목록으로</Link>
+          {review.mine ? (
+            <Link className="btn btn--ghost" href={`/reviews/write?id=${review.id}`}>수정하기</Link>
+          ) : null}
+        </p>
+      </article>
     </div>
   );
 }

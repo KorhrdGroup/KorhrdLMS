@@ -7,6 +7,8 @@
  *   - 상호작용(탭·아코디언·필터 등)은 components/ 의 공용 컴포넌트로 교체
  *   - class 이름은 그대로 두세요. styles/*.css 가 그 이름에 걸려 있습니다.
  */
+
+import Link from 'next/link';
 export default function Page() {
   return (
     <>
@@ -14,7 +16,7 @@ export default function Page() {
 
           <nav className="breadcrumb" aria-label="현재 위치">
             <ol>
-              <li><a href="/">홈</a></li>
+              <li><Link href="/">홈</Link></li>
               <li aria-current="page">취득 절차</li>
             </ol>
           </nav>
@@ -219,7 +221,7 @@ export default function Page() {
         <section className="cta-band">
           <h2>절차를 확인하셨다면, 이제 과정을 골라보세요</h2>
           <p>70여 개 정식 등록 민간자격 과정을 수강료 0원으로 시작할 수 있습니다.</p>
-          <a className="btn btn--white btn--lg" href="/courses">자격증 과정 보러 가기</a>
+          <Link className="btn btn--white btn--lg" href="/courses">자격증 과정 보러 가기</Link>
         </section>
     </>
   );

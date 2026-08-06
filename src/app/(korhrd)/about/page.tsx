@@ -7,11 +7,13 @@
  *   - 상호작용(탭·아코디언·필터 등)은 components/ 의 공용 컴포넌트로 교체
  *   - class 이름은 그대로 두세요. styles/*.css 가 그 이름에 걸려 있습니다.
  */
+
+import Link from 'next/link';
 export default function Page() {
   return (
     <>
       <div className="container">
-          <nav className="breadcrumb" aria-label="현재 위치"><ol><li><a href="/">홈</a></li><li aria-current="page">교육원 소개</li></ol></nav>
+          <nav className="breadcrumb" aria-label="현재 위치"><ol><li><Link href="/">홈</Link></li><li aria-current="page">교육원 소개</li></ol></nav>
           <div className="page-head"><h1>교육원 소개</h1></div>
         </div>
 

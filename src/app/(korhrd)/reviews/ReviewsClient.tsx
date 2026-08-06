@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { CourseReviewItem } from '@/features/korhrd/services/course-review.service';
 import ReviewRow from '@/features/korhrd/components/review/ReviewRow';
@@ -40,7 +41,7 @@ export default function ReviewsClient({ reviews: REVIEWS }: { reviews: CourseRev
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
         <ol>
-          <li><a href="/">홈</a></li>
+          <li><Link href="/">홈</Link></li>
           <li aria-current="page">합격후기</li>
         </ol>
       </nav>

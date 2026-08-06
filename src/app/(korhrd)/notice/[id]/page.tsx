@@ -16,8 +16,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const notices = await getPublishedNoticesForSite();
-  const notice = notices.find((n) => n.id === id);
+  const index = notices.findIndex((n) => n.id === id);
+  const notice = notices[index];
   if (!notice) notFound();
+
+  // 목록 정렬(고정공지 우선 → 최신순)을 그대로 따라 앞뒤 글을 집습니다.
+  const prev = index > 0 ? notices[index - 1] : null;
+  const next = index < notices.length - 1 ? notices[index + 1] : null;
 
   return (
     <div className="container">
@@ -44,18 +49,35 @@ export default async function Page({ params }: PageProps) {
         </div>
 
         {notice.attachment ? (
-          <div className="article__files">
-            <a href={notice.attachment.fileUrl} download>
-              {notice.attachment.fileName}
-              <span style={{ color: "var(--muted)" }}> ({notice.attachment.fileSizeLabel})</span>
+          <p className="article__actions">
+            <a className="btn btn--ghost" href={notice.attachment.fileUrl} download>
+              첨부파일 {notice.attachment.fileName} ({notice.attachment.fileSizeLabel})
             </a>
-          </div>
+          </p>
         ) : null}
-      </article>
 
-      <div className="text-center mt-6">
-        <Link className="btn btn--ghost" href="/notice">목록으로</Link>
-      </div>
+        {/* 이전/다음 글 — 원본 notice-detail.html 과 같은 구조입니다 */}
+        {prev || next ? (
+          <nav className="article__nav" aria-label="이전 다음 글">
+            {prev ? (
+              <Link href={`/notice/${prev.id}`}>
+                <span className="article__nav-label">이전 글</span>
+                <span className="article__nav-tit">{prev.title}</span>
+              </Link>
+            ) : null}
+            {next ? (
+              <Link href={`/notice/${next.id}`}>
+                <span className="article__nav-label">다음 글</span>
+                <span className="article__nav-tit">{next.title}</span>
+              </Link>
+            ) : null}
+          </nav>
+        ) : null}
+
+        <p className="article__actions">
+          <Link className="btn btn--primary" href="/notice">목록으로</Link>
+        </p>
+      </article>
     </div>
   );
 }
