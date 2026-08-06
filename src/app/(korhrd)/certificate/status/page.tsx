@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { getMyCertificateApplications } from '@/features/certificate-applications/services/certificate-application.service';
 import type { MyCertificateApplicationItem } from '@/features/certificate-applications/types/certificate-application.types';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
+import PayButton from '@/features/payments/payapp/PayButton';
 
 export const metadata: Metadata = { title: '발급 신청 현황 — 한평생 직업훈련' };
 
@@ -53,6 +54,13 @@ function badgeOf(item: MyCertificateApplicationItem) {
     return { tone: 'learning', label: '발급 준비중' };
   }
   return { tone: 'expired', label: '입금 대기' };
+}
+
+/** 아직 받아야 할 돈이 남은 신청인지 — 결제 버튼을 띄울지 정합니다. */
+function needsPayment(item: MyCertificateApplicationItem) {
+  if (item.deliveryStatus === 'canceled') return false;
+  if (item.paymentStatus === 'paid' || item.paymentStatus === 'prepaid') return false;
+  return item.amount > 0;
 }
 
 /** 카드 하단 안내 문구 — 상태별로 지금 무엇을 하면 되는지 알려줍니다. */
@@ -161,6 +169,14 @@ export default async function Page() {
                     <p className={`my-card__status my-card__status--${message.tone}`}>{message.text}</p>
 
                     <p className="my-card__date">배송지 {item.fullAddress}</p>
+
+                    {/* 결제가 남아 있으면 여기서 바로 결제할 수 있어야 합니다.
+                        (신청 직후 완료 화면을 벗어나면 결제할 길이 없었습니다) */}
+                    {needsPayment(item) ? (
+                      <p className="rv-cta" style={{ marginTop: 12 }}>
+                        <PayButton applicationId={item.id} />
+                      </p>
+                    ) : null}
                   </article>
                 );
               })
