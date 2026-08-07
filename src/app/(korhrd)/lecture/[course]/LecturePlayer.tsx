@@ -42,6 +42,8 @@ export function LecturePlayer({
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastSavedRef = useRef(0);
+  const tocListRef = useRef<HTMLUListElement>(null);
+  const currentItemRef = useRef<HTMLLIElement>(null);
   const [percent, setPercent] = useState(detail.session.videoProgressPercent ?? 0);
 
   /* 학습자료 앞 두 칸에 넣을 파일.
@@ -61,6 +63,27 @@ export function LecturePlayer({
     const t = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(t);
   }, [toast]);
+
+  /* 목차는 560px에서 잘리고 안쪽만 스크롤됩니다. 다음 강의로 넘어가면 목록이
+     맨 위(1강)부터 보여 지금 듣는 차시를 매번 찾아 내려야 했습니다.
+     현재 차시가 목록 가운데쯤 오도록 컨테이너만 스크롤합니다 —
+     scrollIntoView 를 쓰면 페이지 전체가 같이 움직입니다.
+
+     offsetTop 은 위치 기준(offsetParent)이 .toc__list 가 아니라 바깥 카드라
+     머리말 높이만큼 더 내려가 현재 차시가 화면 위로 밀려났습니다.
+     두 요소의 화면 좌표 차이로 재면 기준과 무관하게 맞습니다. */
+  useEffect(() => {
+    const list = tocListRef.current;
+    const item = currentItemRef.current;
+    if (!list || !item) return;
+
+    const delta =
+      item.getBoundingClientRect().top -
+      list.getBoundingClientRect().top -
+      (list.clientHeight - item.clientHeight) / 2;
+
+    list.scrollTop = Math.max(0, list.scrollTop + delta);
+  }, [session.order]);
 
   const save = useCallback(
     async (currentTime: number, duration: number) => {
@@ -258,10 +281,11 @@ export function LecturePlayer({
                 <b>강의목차 <span>총 {sessions.length}강</span></b>
                 <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
               </div>
-              <ul className="toc__list" id="toc">
+              <ul className="toc__list" id="toc" ref={tocListRef}>
                 {sessions.map((item) => (
                   <li
                     key={item.id}
+                    ref={item.order === session.order ? currentItemRef : undefined}
                     className={`toc__item${item.order === session.order ? ' is-current' : ''}`}
                   >
                     <Link href={`/lecture/${courseCode}/${item.order}`}>
