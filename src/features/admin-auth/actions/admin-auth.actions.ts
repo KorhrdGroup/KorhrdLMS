@@ -7,7 +7,7 @@ import {
   ADMIN_SESSION_MARKER_COOKIE,
   ADMIN_SESSION_MAX_AGE_SECONDS,
 } from "@/features/admin-auth/constants";
-import { createClient } from "@/lib/supabase/server";
+import { createAuthClient, createClient } from "@/lib/supabase/server";
 
 /** 로그아웃 시 접속기록의 logged_out_at을 채우기 위한 현재 접속기록 id 쿠키 */
 const ADMIN_ACCESS_LOG_COOKIE = "admin_access_log_id";
@@ -109,7 +109,7 @@ export async function loginAdminAction(input: { email: string; password: string 
     };
   }
 
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -145,7 +145,7 @@ export async function logoutAdminAction() {
   const cookieStore = await cookies();
   cookieStore.delete(ADMIN_SESSION_MARKER_COOKIE);
 
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
   await supabase.auth.signOut();
   redirect("/admin/login");
 }
