@@ -16,12 +16,14 @@ export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
   const redirectParam = params.redirect;
   const redirectTo = Array.isArray(redirectParam) ? redirectParam[0] : redirectParam;
+  // 비밀번호 재설정을 마치면 /login?reset=1 로 바로 넘어옵니다.
+  const passwordReset = params.reset === "1";
 
   return (
     <div className="container">
       <div className="auth-wrap">
         <div className="page-head text-center"><h1>로그인</h1></div>
-        <LoginForm redirectTo={redirectTo} />
+        <LoginForm redirectTo={redirectTo} passwordReset={passwordReset} />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+import { startExamRetakeAction } from '@/features/classroom-exams/actions/classroom-exam.actions';
 import { getClassroomExamResult } from '@/features/classroom-grades/services/classroom-exam-result.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
@@ -50,6 +51,7 @@ export default async function Page({ params }: PageProps) {
   const { progress, weights } = data;
   const passed = summary.isPassed;
   const examTaken = summary.examPercent !== null;
+  const submittedExams = data.grade.exams.filter((exam) => exam.submitted);
 
   return (
     <div className="container">
@@ -215,8 +217,19 @@ export default async function Page({ params }: PageProps) {
           )}
         </div>
 
+        {/* 버튼은 한 줄(.result-cta)에 모읍니다 — 블록을 나누면 간격 없이 붙어 보입니다.
+            재응시는 제출한 시험만 나오고, 다시 제출하면 이 점수를 덮어씁니다. */}
         <div className="result-cta">
           <Link className="btn btn--ghost btn--lg" href="/mylecture">이전으로</Link>
+          {submittedExams.map((exam) => (
+            <form action={startExamRetakeAction} key={exam.id}>
+              <input type="hidden" name="courseCode" value={data.courseCode} />
+              <input type="hidden" name="examId" value={exam.id} />
+              <button className="btn btn--ghost btn--lg" type="submit">
+                {submittedExams.length > 1 ? `${exam.title} 재응시` : '재응시하기'}
+              </button>
+            </form>
+          ))}
           {passed ? (
             <Link className="btn btn--primary btn--lg" href="/certificate">자격증 신청 바로가기</Link>
           ) : (

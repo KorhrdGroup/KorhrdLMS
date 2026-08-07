@@ -12,17 +12,13 @@ const STATUS_BADGE: Record<string, { tone: string; label: string }> = {
   closed: { tone: 'expired', label: '기간 종료' },
 };
 
-/** 과정별 시험 목록 — 마크업은 korhrd 디자인, 응시 자격 판단은 기존 시험 서비스. */
-export type PracticeSetSummary = { id: string; title: string; questionCount: number };
-
-export function ExamList({
-  data,
-  practiceSets = [],
-}: {
-  data: ClassroomExamList;
-  /** 기출문제(연습용). 채점 대상 시험과 섞이지 않도록 별도 블록으로 보여줍니다 */
-  practiceSets?: PracticeSetSummary[];
-}) {
+/**
+ * 과정별 시험 목록 — 마크업은 korhrd 디자인, 응시 자격 판단은 기존 시험 서비스.
+ *
+ * 기출문제(연습용)는 여기에 두지 않습니다. 채점 대상 시험과 헷갈리기 쉬워
+ * 강의실 화면(학습자료 > 기출문제)에서만 풀도록 모았습니다.
+ */
+export function ExamList({ data }: { data: ClassroomExamList }) {
   return (
     <div className="container">
       <section className="exam">
@@ -90,9 +86,10 @@ export function ExamList({
                     시험 응시하기
                   </Link>
                 ) : exam.status === 'submitted' ? (
+                  /* 제출한 시험은 점수만 있는 간이 화면 대신 성적 확인으로 보냅니다 */
                   <Link
                     className="btn btn--ghost btn--block"
-                    href={`/exam/${data.courseCode}/${exam.id}`}
+                    href={`/exam/${data.courseCode}/result`}
                   >
                     결과 보기
                   </Link>
@@ -104,35 +101,6 @@ export function ExamList({
           );
         })}
       </section>
-
-      {/* ===================== 기출문제 (연습용) ===================== */}
-      {practiceSets.length > 0 ? (
-        <section>
-          <h2 className="rv-title">기출문제 풀이</h2>
-          {practiceSets.map((set) => (
-            <article className="my-card" key={set.id}>
-              <div>
-                <div className="my-card__head">
-                  <h2>{set.title}</h2>
-                  <span className="badge badge--info">연습</span>
-                </div>
-                <p className="my-card__date">{set.questionCount}문항 · 성적에 반영되지 않습니다</p>
-                <p className="my-card__status my-card__status--info">
-                  문제를 풀고 바로 정답을 확인할 수 있습니다.
-                </p>
-              </div>
-              <div className="my-card__actions">
-                <Link
-                  className="btn btn--ghost btn--block"
-                  href={`/exam/${data.courseCode}/practice/${set.id}`}
-                >
-                  기출문제 풀기
-                </Link>
-              </div>
-            </article>
-          ))}
-        </section>
-      ) : null}
     </div>
   );
 }

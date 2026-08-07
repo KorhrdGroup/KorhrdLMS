@@ -66,7 +66,9 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
           <ol>
             <li><Link href="/">홈</Link></li>
             <li><Link href="/mylecture">나의 강의실</Link></li>
-            <li><Link href={`/exam/${set.courseCode}`}>시험</Link></li>
+            {/* 기출문제는 시험 목록이 아니라 강의실(학습자료)에서 들어옵니다.
+                왔던 길로 돌아가도록 시험 대신 강의실을 겁니다. */}
+            <li><Link href={`/lecture/${set.courseCode}`}>강의실</Link></li>
             <li aria-current="page">기출문제 풀이</li>
           </ol>
         </nav>
@@ -182,6 +184,12 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
               <button className="btn btn--primary btn--lg" type="button" onClick={revealAll}>
                 정답 모두 보기
               </button>
+            </p>
+            {/* 다 풀고 나서 나갈 곳 — 들어온 곳(강의실)으로 돌려보냅니다 */}
+            <p className="rv-cta" style={{ marginTop: 12 }}>
+              <Link className="btn btn--ghost btn--block" href={`/lecture/${set.courseCode}`}>
+                ← 강의실로 돌아가기
+              </Link>
             </p>
           </div>
         </div>

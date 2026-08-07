@@ -10,7 +10,14 @@ import { SAVED_LOGIN_ID_KEY } from "@/lib/student/session";
  * 로그인 폼 — 마크업은 korhrd 디자인(login.html), 동작은 기존 Supabase 액션.
  * 데모용 hidden login=1 파라미터는 실제 인증으로 대체하며 제거했습니다.
  */
-export function LoginForm({ redirectTo }: { redirectTo?: string }) {
+export function LoginForm({
+  redirectTo,
+  passwordReset = false,
+}: {
+  redirectTo?: string;
+  /** 비밀번호 찾기에서 재설정을 마치고 바로 넘어온 경우 */
+  passwordReset?: boolean;
+}) {
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [saveId, setSaveId] = useState(false);
@@ -61,7 +68,12 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
         </div>
       ) : null}
 
-      {redirectTo ? (
+      {passwordReset ? (
+        <p className="login-notice">
+          비밀번호가 변경되었습니다.<br />
+          새 비밀번호로 로그인해주세요.
+        </p>
+      ) : redirectTo ? (
         <p className="login-notice">
           로그인이 필요한 페이지입니다.<br />
           로그인하시면 원래 보시려던 화면으로 이동합니다.
