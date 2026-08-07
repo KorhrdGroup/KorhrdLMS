@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useCourseThumb } from '@/features/korhrd/lib/course-thumb-context';
 import type { Course } from '@/features/korhrd/lib/types';
 import GovMark from './GovMark';
 
@@ -21,14 +22,16 @@ export default function CourseRow({
   onSample: () => void;
 }) {
   const detail = `/courses/${encodeURIComponent(course.n)}`;
+  const thumb = useCourseThumb(course);
 
   return (
     <article className="course-row">
       <Link className="course-row__thumb" href={detail} aria-label={`${course.n} 상세보기`}>
-        {/* 썸네일은 어드민 과정관리에서 올린 이미지(courses.thumbnail_url)입니다. */}
-        {course.thumb ? (
+        {/* 썸네일은 어드민 과정관리에서 올린 이미지(courses.thumbnail_url)입니다.
+            레이아웃이 DB에서 읽어 내려준 최신 값을 먼저 씁니다. */}
+        {thumb ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={course.thumb} alt="" loading="lazy" />
+          <img src={thumb} alt="" loading="lazy" />
         ) : (
           <div className="ph ph--thumb-sq">이미지<small>320 × 240</small></div>
         )}

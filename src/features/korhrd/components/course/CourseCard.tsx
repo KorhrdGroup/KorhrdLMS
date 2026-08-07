@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useCourseThumb } from '@/features/korhrd/lib/course-thumb-context';
 import type { Course } from '@/features/korhrd/lib/types';
 import GovMark from './GovMark';
 
@@ -11,15 +14,18 @@ import GovMark from './GovMark';
  * 연령을 안 골랐으면(전체) 대표 연령을 그대로 보여줍니다.
  */
 export default function CourseCard({ course, ageLabel }: { course: Course; ageLabel?: string }) {
+  const thumb = useCourseThumb(course);
+
   return (
     <article className="course-card">
       <Link href={`/courses/${encodeURIComponent(course.n)}`}>
         <div className="thumb">
           {/* 썸네일은 어드민 과정관리에서 올린 이미지(courses.thumbnail_url)입니다.
+              레이아웃이 DB에서 읽어 내려준 최신 값을 먼저 쓰고,
               아직 없는 과정은 기존 자리표시를 그대로 보여줍니다. */}
-          {course.thumb ? (
+          {thumb ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={course.thumb} alt="" loading="lazy" />
+            <img src={thumb} alt="" loading="lazy" />
           ) : (
             <div className="ph ph--thumb">이미지 영역<small>480 × 285</small></div>
           )}

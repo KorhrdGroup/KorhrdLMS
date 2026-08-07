@@ -63,7 +63,13 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith(".json")).sort()) {
     (q) => q.answer !== null && q.answer <= q.choices.length && q.choices.length >= 2 && q.question.trim(),
   );
 
-  const course = MANUAL[label] ? byCode.get(MANUAL[label]) : byNorm.get(norm(label));
+  // 파일명이 과정코드면(CRS-KH-0044.json) 이름 대조 없이 바로 붙입니다 —
+  // 원본 파일명이 DB 과정명과 안 맞는 경우가 많아 코드로 지정하는 쪽이 확실합니다.
+  const course = /^CRS-[A-Z]+-\d+$/.test(label)
+    ? byCode.get(label)
+    : MANUAL[label]
+      ? byCode.get(MANUAL[label])
+      : byNorm.get(norm(label));
 
   if (!course) {
     report.push({ label, status: "과정매칭실패", total: data.questions.length, usable: usable.length });
