@@ -28,6 +28,7 @@ import {
   getClassroomCourseProgressRate,
   resolveClassroomAccess,
 } from "@/features/classroom-lectures/services/classroom-lecture.service";
+import { isCorrectAnswer } from "@/features/exams/lib/answer-key";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -267,14 +268,9 @@ function gradeQuestion(question: ExamQuestionRow, submittedAnswer: string | unde
     return 0;
   }
 
-  if (question.question_type === "multiple_choice") {
-    return submittedAnswer === question.answer ? question.score : 0;
-  }
-
-  if (question.question_type === "ox") {
-    return submittedAnswer.trim().toUpperCase() === question.answer.trim().toUpperCase()
-      ? question.score
-      : 0;
+  // 복수정답("2,4")은 정답 집합이 정확히 같을 때만 인정합니다(부분점수 없음).
+  if (question.question_type === "multiple_choice" || question.question_type === "ox") {
+    return isCorrectAnswer(question.answer, submittedAnswer) ? question.score : 0;
   }
 
   return 0;

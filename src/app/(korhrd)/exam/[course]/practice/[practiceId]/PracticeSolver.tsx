@@ -4,6 +4,13 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import type { PracticeSet } from '@/features/classroom-exams/services/classroom-practice.service';
+import {
+  formatAnswerKey,
+  isAnswerChoice,
+  isCorrectAnswer,
+  isMultipleAnswer,
+  parseAnswerKey,
+} from '@/features/exams/lib/answer-key';
 
 /**
  * 기출문제 풀이.
@@ -13,6 +20,10 @@ import type { PracticeSet } from '@/features/classroom-exams/services/classroom-
  * 다른 점은 두 가지입니다.
  *  · 제출·채점이 없습니다(성적에 반영되지 않습니다). 그래서 타이머도 없습니다.
  *  · 문항마다 "정답 보기"가 있어 눌러서 정답과 내 선택의 정오를 바로 확인합니다.
+ *
+ * 복수정답 문항(정답이 "2,4" 처럼 들어 있는 문항)은 라디오 대신 체크박스로 받습니다.
+ * 원본 정답표에 복수정답 칸이 있는 과정이 있어서입니다(자기주도학습지도사 등).
+ * 채점은 부분점수 없이 정답 집합이 정확히 같을 때만 맞힌 것으로 봅니다.
  */
 export default function PracticeSolver({ set }: { set: PracticeSet }) {
   const [picked, setPicked] = useState<Record<string, string>>({});
@@ -29,8 +40,24 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
   const answeredCount = Object.keys(picked).length;
   const revealedCount = Object.values(revealed).filter(Boolean).length;
   const gradedCount = set.questions.filter(
-    (q) => revealed[q.id] && picked[q.id] === q.answer,
+    (q) => revealed[q.id] && isCorrectAnswer(q.answer, picked[q.id]),
   ).length;
+
+  /** 복수정답 문항에서 보기 하나를 켜고 끕니다 */
+  const toggleChoice = (questionId: string, choiceId: string) => {
+    setPicked((prev) => {
+      const current = parseAnswerKey(prev[questionId] ?? '');
+      const next = current.includes(choiceId)
+        ? current.filter((v) => v !== choiceId)
+        : [...current, choiceId].sort();
+      const value = next.join(',');
+      if (!value) {
+        // 다 끄면 "푼 문항" 수에서도 빠져야 해서 키 자체를 지웁니다
+        return Object.fromEntries(Object.entries(prev).filter(([key]) => key !== questionId));
+      }
+      return { ...prev, [questionId]: value };
+    });
+  };
 
   return (
     <div className="container">
@@ -70,7 +97,9 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
           {set.questions.map((question) => {
             const mine = picked[question.id];
             const open = revealed[question.id];
-            const correct = mine === question.answer;
+            const correct = isCorrectAnswer(question.answer, mine);
+            const multiple = isMultipleAnswer(question.answer);
+            const mineChoices = parseAnswerKey(mine ?? '');
 
             return (
               <fieldset className="q-card" key={question.id}>
@@ -79,31 +108,39 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
                   <span style={{ whiteSpace: 'pre-line' }}>{question.question}</span>
                 </legend>
 
+                {multiple ? (
+                  <p className="exam-submit__note" style={{ marginBottom: 8 }}>
+                    정답이 여러 개인 문항입니다 — 해당하는 보기를 모두 고르세요.
+                  </p>
+                ) : null}
+
                 <div className="q-options is-single">
                   {question.choices.map((choice) => {
                     /* 정답을 열면 정답은 초록, 내가 고른 오답은 빨강으로 표시합니다 */
                     const tone = !open
                       ? undefined
-                      : choice.id === question.answer
+                      : isAnswerChoice(question.answer, choice.id)
                         ? 'var(--green)'
-                        : choice.id === mine
+                        : mineChoices.includes(choice.id)
                           ? 'var(--red)'
                           : undefined;
 
                     return (
                       <label className="q-option" key={choice.id} style={tone ? { color: tone } : undefined}>
                         <input
-                          type="radio"
+                          type={multiple ? 'checkbox' : 'radio'}
                           name={question.id}
                           value={choice.id}
-                          checked={mine === choice.id}
+                          checked={mineChoices.includes(choice.id)}
                           onChange={() =>
-                            setPicked((prev) => ({ ...prev, [question.id]: choice.id }))
+                            multiple
+                              ? toggleChoice(question.id, choice.id)
+                              : setPicked((prev) => ({ ...prev, [question.id]: choice.id }))
                           }
                         />
                         <span className="radio" aria-hidden="true" />
                         <span>{choice.text}</span>
-                        {open && choice.id === question.answer ? <b> (정답)</b> : null}
+                        {open && isAnswerChoice(question.answer, choice.id) ? <b> (정답)</b> : null}
                       </label>
                     );
                   })}
@@ -117,8 +154,8 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
                       {mine
                         ? correct
                           ? '정답입니다.'
-                          : `오답입니다. 정답은 ${question.answer}번입니다.`
-                        : `정답은 ${question.answer}번입니다.`}
+                          : `오답입니다. 정답은 ${formatAnswerKey(question.answer)}번입니다.`
+                        : `정답은 ${formatAnswerKey(question.answer)}번입니다.`}
                     </span>
                   ) : (
                     <button
