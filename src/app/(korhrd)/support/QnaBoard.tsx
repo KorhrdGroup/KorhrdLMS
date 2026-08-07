@@ -177,20 +177,25 @@ export function QnaBoard({
                         {' '}{item.title}
                         <span className="arrow" aria-hidden="true">⌄</span>
                       </button>
+                      {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid) */}
                       <div className="faq__a" id={`qna-${item.id}`} hidden={open !== item.id}>
-                        <p style={{ whiteSpace: 'pre-line' }}>{item.content}</p>
-                        <p className="my-card__date">문의일 {item.createdAt.slice(0, 10)}</p>
-                        {item.adminReply ? (
-                          <>
-                            <hr />
-                            <p style={{ whiteSpace: 'pre-line' }}><b>답변</b><br />{item.adminReply}</p>
-                            {item.repliedAt ? (
-                              <p className="my-card__date">답변일 {item.repliedAt.slice(0, 10)}</p>
-                            ) : null}
-                          </>
-                        ) : (
-                          <p className="my-card__status my-card__status--info">답변을 준비 중입니다.</p>
-                        )}
+                        <div className="faq__a-inner">
+                          <div className="faq__a-pad">
+                            <p style={{ whiteSpace: 'pre-line' }}>{item.content}</p>
+                            <p className="my-card__date">문의일 {item.createdAt.slice(0, 10)}</p>
+                            {item.adminReply ? (
+                              <>
+                                <hr />
+                                <p style={{ whiteSpace: 'pre-line' }}><b>답변</b><br />{item.adminReply}</p>
+                                {item.repliedAt ? (
+                                  <p className="my-card__date">답변일 {item.repliedAt.slice(0, 10)}</p>
+                                ) : null}
+                              </>
+                            ) : (
+                              <p className="my-card__status my-card__status--info">답변을 준비 중입니다.</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
