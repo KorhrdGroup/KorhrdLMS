@@ -22,62 +22,41 @@ export function ExamTaking({ exam }: { exam: ClassroomExamTaking }) {
   const [remain, setRemain] = useState(exam.durationMinutes * 60);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState(exam.submittedResult);
+  // 제출이 끝나면 성적 확인 화면으로 넘어갑니다. 이동이 끝날 때까지 폼을 잠그는 용도입니다.
+  const [submitted, setSubmitted] = useState(false);
 
   const answered = useMemo(() => Object.keys(answers).length, [answers]);
 
   const submit = useMemo(
     () => (auto: boolean) => {
-      if (isPending || result) return;
+      if (isPending || submitted) return;
       if (!auto && answered < exam.questions.length) {
         if (!window.confirm(`아직 ${exam.questions.length - answered}문항이 남았습니다. 제출할까요?`)) return;
       }
       startTransition(async () => {
         const res = await submitClassroomExamAction(exam.courseCode, exam.examId, answers);
         if (res.success) {
-          setResult(res.result);
-          router.refresh();
+          setSubmitted(true);
+          // 채점 결과는 성적 확인 화면에서 보여줍니다(진도·등급까지 함께 나옵니다).
+          router.push(`/exam/${exam.courseCode}/result`);
         } else {
           setError(res.message);
         }
       });
     },
-    [answers, answered, exam, isPending, result, router],
+    [answers, answered, exam, isPending, submitted, router],
   );
 
   /* 남은 시간 — 0이 되면 자동 제출 */
   useEffect(() => {
-    if (result) return;
+    if (submitted) return;
     if (remain <= 0) {
       submit(true);
       return;
     }
     const timer = setTimeout(() => setRemain((v) => v - 1), 1000);
     return () => clearTimeout(timer);
-  }, [remain, result, submit]);
-
-  if (result) {
-    return (
-      <div className="container">
-        <section className="exam">
-          <div className="exam__head"><h1>{exam.title} · 결과</h1></div>
-          <div className="result">
-            <p className="result__score">
-              {result.score}점 <span>/ {result.totalScore}점</span>
-            </p>
-            <p className={`badge badge--${result.isPassed ? 'pass' : 'fail'}`}>
-              {result.isPassed === null ? '채점 대기' : result.isPassed ? '합격' : '불합격'}
-            </p>
-            <p className="result__meta">제출일 {result.submittedAt.slice(0, 10)}</p>
-          </div>
-          <p className="rv-cta" style={{ display: 'flex', gap: 8 }}>
-            <Link className="btn btn--ghost" href={`/exam/${exam.courseCode}`}>시험 목록</Link>
-            <Link className="btn btn--primary" href="/mylecture">나의 강의실</Link>
-          </p>
-        </section>
-      </div>
-    );
-  }
+  }, [remain, submitted, submit]);
 
   return (
     <div className="container">
@@ -151,8 +130,11 @@ export function ExamTaking({ exam }: { exam: ClassroomExamTaking }) {
             <p className="exam-submit__note">
               제출 후에는 답안을 수정할 수 없습니다. 남은 시간이 끝나면 자동 제출됩니다.
             </p>
-            <button className="btn btn--primary btn--lg" type="submit" disabled={isPending}>
-              {isPending ? '제출 중…' : '답안 제출하기'}
+            <button
+              className="btn btn--primary btn--lg" type="submit"
+              disabled={isPending || submitted}
+            >
+              {isPending || submitted ? '제출 중…' : '답안 제출하기'}
             </button>
           </div>
         </form>

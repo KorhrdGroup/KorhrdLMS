@@ -382,6 +382,51 @@ export type AllowExamRetakeResult =
   | { success: false; message: string };
 
 /**
+ * 학생이 성적 확인 화면에서 스스로 재응시를 시작합니다.
+ *
+ * 관리자 허용(`allowExamRetake`)과 같은 플래그를 쓰지만, 여기서는 **본인 수강
+ * 과정인지 서버에서 다시 확인한 뒤** 자기 응시 기록만 열어줍니다.
+ * 재제출하면 `upsertSubmission`이 이 플래그를 다시 내리고 점수를 덮어씁니다
+ * (이력은 남지 않고 최신 점수만 유지됩니다).
+ */
+export async function startExamRetake(
+  memberId: string,
+  courseCode: string,
+  examId: string,
+): Promise<AllowExamRetakeResult> {
+  const supabase = await createClient();
+  const access = await resolveClassroomAccess(supabase, memberId, courseCode);
+
+  if (!access) {
+    return { success: false, message: "수강 중인 과정을 찾을 수 없습니다." };
+  }
+
+  const exam = await findPublishedExamById(supabase, access.course.id, examId);
+  if (!exam) {
+    return { success: false, message: "존재하지 않는 시험입니다." };
+  }
+
+  const submission = await findSubmission(supabase, access.enrollmentId, examId);
+  if (!submission) {
+    return { success: false, message: "응시 기록이 없습니다." };
+  }
+
+  if (submission.retake_allowed) {
+    return { success: true };
+  }
+
+  try {
+    await allowSubmissionRetake(supabase, submission.id);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "재응시 처리에 실패했습니다.",
+    };
+  }
+}
+
+/**
  * 평가관리(/admin/exams/results)에서 사용합니다. 관리자가 학생의 특정 시험
  * 응시 기록을 재시험 가능 상태로 변경합니다.
  */
