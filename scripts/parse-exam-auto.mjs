@@ -23,6 +23,11 @@ export function usableCount(parsed) {
   ).length;
 }
 
+/** 정답을 빼고 지문·보기만 성한 문항 수 — 정답이 없는 원본에서 파서를 고를 때 씁니다 */
+export function structuredCount(parsed) {
+  return parsed.questions.filter((q) => q.question?.trim() && q.choices.length >= 2).length;
+}
+
 export function parseBest(pdfPath) {
   const oneColumn = pdfToText(pdfPath, 1);
   const candidates = [
@@ -41,7 +46,13 @@ export function parseBest(pdfPath) {
     }
   }
 
-  return candidates.reduce((best, c) => (usableCount(c.parsed) > usableCount(best.parsed) ? c : best));
+  // 원본에 정답 표기가 아예 없는 과정이 있습니다(정답표를 따로 받아 입힙니다).
+  // 그럴 땐 어느 파서든 등록가능 수가 0~1이라 판별이 안 되므로,
+  // 지문·보기가 성한 문항 수로 고릅니다. 정답을 나중에 입히면 그대로 쓸 수 있습니다.
+  const noAnswers = Math.max(...candidates.map((c) => usableCount(c.parsed))) <= 1;
+  const score = (c) => (noAnswers ? structuredCount(c.parsed) : usableCount(c.parsed));
+
+  return candidates.reduce((best, c) => (score(c) > score(best) ? c : best));
 }
 
 /* ---------- CLI ---------- */

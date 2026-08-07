@@ -1,6 +1,7 @@
 import type { ExamQuestionViewItem } from "@/features/exams/types/exam-question-view.types";
 import { formatDate } from "@/lib/shared/format-date";
 import type { ExamQuestionType } from "@/types/database.types";
+import { formatAnswerKey } from "@/features/exams/lib/answer-key";
 
 type ChoiceFields = Pick<
   ExamQuestionViewItem,
@@ -60,7 +61,8 @@ export function formatQuestionAnswerDisplay(
   answer: string,
 ): string {
   if (questionType === "multiple_choice") {
-    return `${answer.trim()}번`;
+    // 복수정답은 "2,4" 로 저장돼 있습니다 → "2, 4번"
+    return `${formatAnswerKey(answer)}번`;
   }
 
   return answer.trim();

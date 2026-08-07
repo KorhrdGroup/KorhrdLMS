@@ -59,9 +59,15 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith(".json")).sort()) {
   const label = basename(file, ".json");
   const data = JSON.parse(readFileSync(`${DIR}/${file}`, "utf8"));
 
-  const usable = data.questions.filter(
-    (q) => q.answer !== null && q.answer <= q.choices.length && q.choices.length >= 2 && q.question.trim(),
-  );
+  const usable = data.questions.filter((q) => {
+    if (q.answer === null || q.answer === undefined) return false;
+    // 보기가 그림인 문항은 글자가 비어 있습니다 — 화면에 못 띄우므로 뺍니다
+    if (q.choices.length < 2 || q.choices.some((c) => !String(c).trim())) return false;
+    if (!q.question.trim()) return false;
+    // 복수정답은 "2,4" 처럼 쉼표로 이어 붙입니다(exam_questions.answer 규칙).
+    const keys = String(q.answer).split(",").map((v) => v.trim()).filter(Boolean);
+    return keys.length > 0 && keys.every((key) => Number(key) >= 1 && Number(key) <= q.choices.length);
+  });
 
   // 파일명이 과정코드면(CRS-KH-0044.json) 이름 대조 없이 바로 붙입니다 —
   // 원본 파일명이 DB 과정명과 안 맞는 경우가 많아 코드로 지정하는 쪽이 확실합니다.
@@ -129,7 +135,11 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith(".json")).sort()) {
     choice3: q.choices[2] ?? null,
     choice4: q.choices[3] ?? null,
     choice5: q.choices[4] ?? null,
-    answer: String(q.answer),
+    answer: String(q.answer)
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean)
+      .join(","),
     score: 0,
     sort_order: i + 1,
   }));
