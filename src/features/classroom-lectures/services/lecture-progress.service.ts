@@ -3,10 +3,8 @@ import {
   countCompletedByEnrollment,
   findProgressBySession,
   findProgressBySessionIds,
-  insertProgress,
   markEnrollmentLearningCompleted,
   updateProgressPosition,
-  updateProgressStatus,
   upsertCompletedProgress,
   upsertInProgressPercent,
 } from "@/features/classroom-lectures/repositories/lecture-progress.repository";
@@ -21,26 +19,29 @@ export async function getSessionStatusMap(
 }
 
 /**
- * 학생이 강의 상세 화면에 입장할 때 호출합니다. 이미 "완료"된 차시는 상태를
- * 낮추지 않고, 기록이 없거나 "미수강"인 경우에만 "학습중"으로 변경합니다.
+ * 학생이 강의 상세 화면에 입장할 때 호출합니다.
+ *
+ * **입장만으로 그 차시를 수강(완료) 처리합니다.** 진도율은 완료한 차시 수로
+ * 계산하므로(`getCourseProgressRate`), 입장하면 바로 진도율에 반영됩니다.
+ * 예전에는 "학습중"까지만 올리고 영상을 95% 이상 봐야 완료가 됐는데,
+ * 재생이 막히는 환경에서 진도가 전혀 오르지 않는 문제가 있었습니다.
+ *
+ * 이미 완료된 차시는 그대로 두고(완료 시각을 덮어쓰지 않습니다), 시청 위치·
+ * 진행률은 재생 중 `saveVideoProgress` 가 계속 갱신합니다.
  */
 export async function ensureSessionInProgress(
   enrollmentId: string,
   sessionId: string,
+  totalPublishedSessionCount = 0,
 ): Promise<LectureAttendanceStatus> {
   const existing = await findProgressBySession(enrollmentId, sessionId);
 
-  if (!existing) {
-    await insertProgress(enrollmentId, sessionId, "in_progress");
-    return "in_progress";
+  if (existing?.attendance_status === "completed") {
+    return "completed";
   }
 
-  if (existing.attendance_status === "not_started") {
-    await updateProgressStatus(enrollmentId, sessionId, "in_progress");
-    return "in_progress";
-  }
-
-  return existing.attendance_status;
+  await completeSession(enrollmentId, sessionId, totalPublishedSessionCount);
+  return "completed";
 }
 
 /**
