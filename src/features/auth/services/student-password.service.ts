@@ -30,7 +30,11 @@ export async function changeMyPassword(
     return { success: false, message: "로그인이 필요합니다." };
   }
 
-  if (!input.currentPassword) {
+  // 소셜(네이버·카카오)로 가입한 회원은 비밀번호가 없습니다. 그런 경우에는
+  // "변경"이 아니라 "설정"이라 현재 비밀번호를 묻지 않습니다.
+  const hasPassword = await memberHasPassword(memberId);
+
+  if (hasPassword && !input.currentPassword) {
     return {
       success: false,
       message: "현재 비밀번호를 입력해주세요.",
@@ -56,7 +60,7 @@ export async function changeMyPassword(
     };
   }
 
-  if (newPassword === input.currentPassword) {
+  if (hasPassword && newPassword === input.currentPassword) {
     return {
       success: false,
       message: "현재 비밀번호와 다른 비밀번호로 설정해주세요.",
@@ -65,25 +69,28 @@ export async function changeMyPassword(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("members")
-    .select("password_hash")
-    .eq("id", memberId)
-    .is("deleted_at", null)
-    .maybeSingle();
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (hasPassword) {
+    const { data, error } = await supabase
+      .from("members")
+      .select("password_hash")
+      .eq("id", memberId)
+      .is("deleted_at", null)
+      .maybeSingle();
 
-  const storedHash = (data as { password_hash: string | null } | null)?.password_hash;
+    if (error) {
+      throw new Error(error.message);
+    }
 
-  if (!storedHash || !verifyPassword(input.currentPassword, storedHash)) {
-    return {
-      success: false,
-      message: "현재 비밀번호가 올바르지 않습니다.",
-      field: "currentPassword",
-    };
+    const storedHash = (data as { password_hash: string | null } | null)?.password_hash;
+
+    if (!storedHash || !verifyPassword(input.currentPassword, storedHash)) {
+      return {
+        success: false,
+        message: "현재 비밀번호가 올바르지 않습니다.",
+        field: "currentPassword",
+      };
+    }
   }
 
   const { data: updated, error: updateError } = await supabase
@@ -102,4 +109,25 @@ export async function changeMyPassword(
   }
 
   return { success: true };
+}
+
+/**
+ * 이 회원이 비밀번호를 가지고 있는지.
+ *
+ * 소셜(네이버·카카오)로 가입하면 `password_hash` 가 비어 있습니다. 그런 회원에게
+ * 현재 비밀번호를 물으면 영영 설정할 수 없으므로, 화면과 서버가 같은 기준으로
+ * "변경"과 "설정"을 갈라야 합니다.
+ */
+export async function memberHasPassword(memberId: string): Promise<boolean> {
+  if (!memberId.trim()) return false;
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("members")
+    .select("password_hash")
+    .eq("id", memberId)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  return Boolean((data as { password_hash: string | null } | null)?.password_hash);
 }

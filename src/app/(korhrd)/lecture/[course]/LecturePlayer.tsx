@@ -216,8 +216,10 @@ export function LecturePlayer({
                   새 탭 미리보기. 자료실에 '예시' 파일이 따로 올라와 있으면
                   미리보기는 그 파일을 씁니다. 기출문제만 파일이 아니라 풀이 화면입니다. */}
               <div className="material-grid panel-body" id="material">
+                {/* R2 는 다른 출처라 <a download> 가 무시되고 현재 창에서 열립니다.
+                    같은 출처인 API 를 거쳐 attachment 로 받아야 내려받아집니다. */}
                 {handout?.fileUrl ? (
-                  <a href={handout.fileUrl} download={handout.fileName}>
+                  <a href={`/api/materials/${handout.id}/download`}>
                     <span className="m-ico" aria-hidden="true">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="/korhrd/img/material/handout-download.svg" alt="" width={34} height={34} />

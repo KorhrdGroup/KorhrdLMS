@@ -123,6 +123,16 @@ export function LoginForm({
           </button>
         </div>
 
+        {/* 네이버 로그인 — 서버 라우트가 네이버 인증 화면으로 보냅니다.
+            버튼 색은 네이버 가이드(#03C75A) 고정입니다. */}
+        <a
+          className="btn btn--lg btn--block mt-3"
+          href={`/api/auth/naver/start${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
+          style={{ background: "#03C75A", color: "#fff" }}
+        >
+          네이버로 로그인
+        </a>
+
         <p className="login-links">
           <Link href="/signup">회원가입</Link>
           <span aria-hidden="true">|</span>
