@@ -1546,10 +1546,12 @@ export type Database = {
           joined_at: string
           last_login_at: string | null
           login_id: string
+          kakao_id: string | null
           major_name: string | null
           manager_name: string | null
           memo: string | null
           name: string
+          naver_id: string | null
           occupation: string | null
           password_hash: string | null
           phone: string | null
@@ -1578,10 +1580,12 @@ export type Database = {
           joined_at?: string
           last_login_at?: string | null
           login_id: string
+          kakao_id?: string | null
           major_name?: string | null
           manager_name?: string | null
           memo?: string | null
           name: string
+          naver_id?: string | null
           occupation?: string | null
           password_hash?: string | null
           phone?: string | null
@@ -1610,10 +1614,12 @@ export type Database = {
           joined_at?: string
           last_login_at?: string | null
           login_id?: string
+          kakao_id?: string | null
           major_name?: string | null
           manager_name?: string | null
           memo?: string | null
           name?: string
+          naver_id?: string | null
           occupation?: string | null
           password_hash?: string | null
           phone?: string | null

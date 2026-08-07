@@ -37,7 +37,11 @@ export default async function Page({ searchParams }: PageProps) {
   const myReviews = allReviews.filter((review) => review.mine);
 
   return (
+    // 탭 상태는 처음 한 번만 초기화됩니다. 이 화면에 있는 채로 헤더의 "○○ 님"
+    // (=/mylecture?tab=mypage)을 누르면 주소만 바뀌고 탭은 그대로였습니다.
+    // key 를 tab 으로 두면 주소가 바뀔 때 다시 그려져 해당 탭이 열립니다.
     <MyLectureClient
+      key={tab ?? 'active'}
       initialTab={tab}
       active={data.active}
       ended={data.ended}

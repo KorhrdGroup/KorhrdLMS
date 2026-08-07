@@ -11,8 +11,11 @@ import { changeMyPasswordAction } from '@/features/auth/actions/student-password
  * 프로토타입 원본: korhrd-site/password-change.html — class 이름은 그대로 둡니다.
  *
  * 현재 비밀번호 확인·해싱은 전부 서버(액션)에서 합니다. 여기서는 값만 넘깁니다.
+ *
+ * 소셜(네이버·카카오)로 가입한 회원은 비밀번호가 없습니다. 그때는 '변경'이 아니라
+ * '설정'이라 현재 비밀번호 칸을 아예 보여주지 않습니다(서버도 같은 기준으로 봅니다).
  */
-export default function PasswordChangeForm() {
+export default function PasswordChangeForm({ hasPassword }: { hasPassword: boolean }) {
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -49,6 +52,7 @@ export default function PasswordChangeForm() {
   return (
     <div className="form-card mt-5">
       <form className="form" style={{ maxWidth: 'none' }} onSubmit={handleSubmit}>
+        {hasPassword ? (
         <div className="field">
           <label htmlFor="pw-now">
             현재 비밀번호 <span className="req" aria-hidden="true">*</span>
@@ -60,6 +64,12 @@ export default function PasswordChangeForm() {
             value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)}
           />
         </div>
+        ) : (
+          <p className="my-card__status my-card__status--info">
+            소셜 로그인으로 가입하셔서 아직 비밀번호가 없습니다. 아래에서 새로 설정하시면
+            아이디로도 로그인하실 수 있습니다.
+          </p>
+        )}
 
         <div className="field">
           <label htmlFor="pw-new">
@@ -89,12 +99,12 @@ export default function PasswordChangeForm() {
         {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
         {done ? (
           <p className="my-card__status my-card__status--pass">
-            비밀번호를 변경했습니다. 다음 로그인부터 새 비밀번호를 사용해주세요.
+            {hasPassword ? '비밀번호를 변경했습니다.' : '비밀번호를 설정했습니다.'} 다음 로그인부터 새 비밀번호를 사용해주세요.
           </p>
         ) : null}
 
         <button className="btn btn--primary btn--lg btn--block mt-2" type="submit" disabled={isPending}>
-          {isPending ? '변경 중…' : '비밀번호 변경'}
+          {isPending ? '저장 중…' : hasPassword ? '비밀번호 변경' : '비밀번호 설정'}
         </button>
         <Link className="btn btn--ghost btn--block" href="/mylecture?tab=mypage">취소</Link>
       </form>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+import { memberHasPassword } from '@/features/auth/services/student-password.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
 import PasswordChangeForm from './PasswordChangeForm';
@@ -25,6 +26,9 @@ export default async function Page() {
     redirect('/login?redirect=/mypage/password');
   }
 
+  // 소셜로 가입한 회원은 비밀번호가 없어 '변경'이 아니라 '설정' 화면이 됩니다.
+  const hasPassword = await memberHasPassword(member.id);
+
   return (
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
@@ -40,7 +44,7 @@ export default async function Page() {
           <h1>비밀번호 변경</h1>
         </div>
 
-        <PasswordChangeForm />
+        <PasswordChangeForm hasPassword={hasPassword} />
 
         <div className="guide-box">
           <strong>비밀번호 안내</strong>
