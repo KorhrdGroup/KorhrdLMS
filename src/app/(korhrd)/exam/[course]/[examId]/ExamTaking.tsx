@@ -69,15 +69,15 @@ export function ExamTaking({ exam }: { exam: ClassroomExamTaking }) {
           </ol>
         </nav>
 
-        <div className="exam__head"><h1>{exam.title}</h1></div>
+        {/* 시안(exam.html)과 같은 제목·정보 구성입니다. 총점·합격기준은 시안대로
+            하단 안내 문구로 내렸습니다. */}
+        <div className="exam__head"><h1>{exam.courseTitle} 시험 · {exam.title}</h1></div>
 
         <dl className="exam-info">
+          <div><dt>시험명</dt><dd>{exam.title}</dd></div>
+          <div><dt>응시기간</dt><dd>{exam.periodLabel}</dd></div>
           <div><dt>문항수</dt><dd>{exam.questions.length}문항</dd></div>
           <div><dt>시험시간</dt><dd>{exam.durationMinutes}분</dd></div>
-          <div><dt>총점</dt><dd>{exam.totalScore}점</dd></div>
-          {exam.passScore !== null ? (
-            <div><dt>합격기준</dt><dd>{exam.passScore}점</dd></div>
-          ) : null}
         </dl>
 
         <div className="exam-status">
@@ -97,7 +97,12 @@ export function ExamTaking({ exam }: { exam: ClassroomExamTaking }) {
           }}
         >
           {exam.questions.map((question) => (
-            <fieldset className="q-card" key={question.id}>
+            /* 답을 고른 문항은 번호 배지가 남색→파랑, 카드 테두리도 파랗게 바뀝니다.
+               (classroom.css 의 .q-card.is-answered 규칙) 어디까지 풀었는지 한눈에 보입니다. */
+            <fieldset
+              className={`q-card${answers[question.id] ? ' is-answered' : ''}`}
+              key={question.id}
+            >
               <legend className="q-card__q">
                 <span className="q-card__num">{question.order}</span>
                 <span>{question.question}</span>
@@ -126,16 +131,21 @@ export function ExamTaking({ exam }: { exam: ClassroomExamTaking }) {
             <p className="my-card__status my-card__status--fail">{error}</p>
           ) : null}
 
+          {/* 시안은 버튼이 먼저, 안내 문구가 아래입니다 */}
           <div className="exam-submit">
-            <p className="exam-submit__note">
-              제출 후에는 답안을 수정할 수 없습니다. 남은 시간이 끝나면 자동 제출됩니다.
-            </p>
             <button
               className="btn btn--primary btn--lg" type="submit"
               disabled={isPending || submitted}
             >
-              {isPending || submitted ? '제출 중…' : '답안 제출하기'}
+              {isPending || submitted ? '제출 중…' : '시험 제출하기'}
             </button>
+            <p className="exam-submit__note">
+              제출 후에는 답안을 수정할 수 없습니다.
+              {exam.passScore !== null
+                ? ` 합격 기준은 ${exam.totalScore}점 만점에 ${exam.passScore}점 이상입니다.`
+                : ''}
+              {' '}남은 시간이 끝나면 자동 제출됩니다.
+            </p>
           </div>
         </form>
       </section>

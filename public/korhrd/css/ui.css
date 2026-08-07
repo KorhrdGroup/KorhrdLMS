@@ -12,6 +12,9 @@
   border-radius:var(--r-md); font-weight:700; white-space:nowrap;
   padding:10px 18px; font-size:var(--fs-sm); border:1.5px solid transparent;
   transition:background-color .15s, border-color .15s, color .15s;
+  /* <button>은 기본 커서가 화살표라 눌리는 버튼으로 안 보입니다.
+     <a class="btn">만 손가락 커서가 나와 두 버튼이 다르게 느껴졌습니다. */
+  cursor:pointer;
 }
 .btn--primary{ background:var(--navy); color:#fff }
 .btn--primary:hover{ background:#002a54 }
