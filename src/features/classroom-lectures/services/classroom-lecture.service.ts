@@ -215,7 +215,13 @@ export async function getClassroomLectureDetail(
     return null;
   }
 
-  const status = await ensureSessionInProgress(access.enrollmentId, target.id);
+  // 입장만으로 그 차시를 수강 처리합니다. 전체 차시 수를 함께 넘겨야
+  // 마지막 차시를 열었을 때 과정 전체 학습완료까지 함께 표시됩니다.
+  const status = await ensureSessionInProgress(
+    access.enrollmentId,
+    target.id,
+    sessions.length,
+  );
   const progress = await findProgressBySession(access.enrollmentId, target.id);
   const prev = sessions.find((session) => session.order === order - 1);
   const next = sessions.find((session) => session.order === order + 1);
