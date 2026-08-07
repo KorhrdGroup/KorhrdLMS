@@ -78,7 +78,12 @@ export default function SupportFaq() {
               {f.q}
               <span className="arrow" aria-hidden="true">⌄</span>
             </button>
-            <div className="faq__a" id={f.id} hidden={open !== f.id}>{f.a}</div>
+            {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid) */}
+            <div className="faq__a" id={f.id} hidden={open !== f.id}>
+              <div className="faq__a-inner">
+                <div className="faq__a-pad">{f.a}</div>
+              </div>
+            </div>
           </div>
         ))}
       </div>

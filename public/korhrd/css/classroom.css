@@ -69,13 +69,18 @@
 
 /* 학습자료 3분할 */
 .material-grid{ display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line) }
-.material-grid a{
+/* 자료가 없는 칸은 <a> 대신 <span aria-disabled>로 그립니다. a에만 규칙을 걸면
+   그 칸만 모양이 무너져 3칸이 어긋나므로 자식 전체를 대상으로 합니다. */
+.material-grid > *{
   display:flex; flex-direction:column; align-items:center; gap:var(--s-3); text-align:center;
   padding:20px 12px; font-size:var(--fs-sm); font-weight:600; color:var(--muted); line-height:1.4;
 }
-.material-grid a + a{ border-left:1px solid var(--line) }
+.material-grid > * + *{ border-left:1px solid var(--line) }
 .material-grid a:hover{ background:#FAFBFD }
 .material-grid a:first-child{ color:var(--navy); font-weight:700 }
+/* 자료가 없으면 눌리지 않는다는 걸 색으로 알립니다 */
+.material-grid [aria-disabled="true"]{ color:var(--disabled); cursor:not-allowed }
+.material-grid [aria-disabled="true"] .m-ico{ opacity:.45 }
 .material-grid .m-ico{
   width:52px; height:52px; border-radius:var(--r-md); background:var(--blue-soft);
   display:flex; align-items:center; justify-content:center;
@@ -132,7 +137,7 @@
 @media (max-width:560px){
   .classroom__title h1{ font-size:var(--fs-xl) }
   .material-grid{ grid-template-columns:1fr }
-  .material-grid a + a{ border-left:0; border-top:1px solid var(--line) }
+  .material-grid > * + *{ border-left:0; border-top:1px solid var(--line) }
   .lec-progress{ flex-wrap:wrap; gap:var(--s-5)}
 }
 
