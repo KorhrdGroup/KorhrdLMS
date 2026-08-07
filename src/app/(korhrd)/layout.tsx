@@ -39,7 +39,12 @@ export default async function KorhrdLayout({ children }: { children: React.React
   };
 
   return (
-    <div style={{ fontFamily: FONT_STACK }}>
+    /* display:contents — 이 래퍼는 폰트만 물려주고 레이아웃에서는 사라집니다.
+       전달본 base.css 가 body{display:flex;flex-direction:column;min-height:100vh}
+       + main{flex:1 0 auto} 로 sticky footer 를 만드는데, 그러려면 header·main·
+       footer 가 body 의 **직계**여야 합니다. 래퍼가 박스를 만들면 그 체인이 끊겨
+       내용이 짧은 화면에서 푸터가 위로 딸려 올라옵니다. */
+    <div style={{ fontFamily: FONT_STACK, display: "contents" }}>
       <KorhrdStyleLinks />
       <a className="skip-link" href="#main">본문 바로가기</a>
       <KorhrdAuthProvider value={auth}>

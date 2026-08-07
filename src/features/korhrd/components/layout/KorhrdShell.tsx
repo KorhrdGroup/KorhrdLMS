@@ -46,7 +46,9 @@ export function KorhrdStyleLinks() {
  */
 export function KorhrdShell({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ fontFamily: KORHRD_FONT_STACK }}>
+    /* display:contents 인 이유는 (korhrd)/layout.tsx 주석 참고 —
+       전달본의 sticky footer 가 body 직계 자식일 때만 동작합니다. */
+    <div style={{ fontFamily: KORHRD_FONT_STACK, display: "contents" }}>
       <KorhrdStyleLinks />
       <a className="skip-link" href="#main">본문 바로가기</a>
       <KorhrdAuthProvider value={{ isLoggedIn: false, userName: "회원" }}>
