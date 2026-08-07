@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+import { startExamRetakeAction } from '@/features/classroom-exams/actions/classroom-exam.actions';
 import { getClassroomExamResult } from '@/features/classroom-grades/services/classroom-exam-result.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
@@ -50,6 +51,7 @@ export default async function Page({ params }: PageProps) {
   const { progress, weights } = data;
   const passed = summary.isPassed;
   const examTaken = summary.examPercent !== null;
+  const submittedExams = data.grade.exams.filter((exam) => exam.submitted);
 
   return (
     <div className="container">
@@ -167,13 +169,15 @@ export default async function Page({ params }: PageProps) {
           <div className="result-section__head"><h2>학습평가</h2></div>
           <div className="table-scroll">
             <table className="result-table">
+              {/* 출석성적 칸은 뺐습니다 — 성적은 수료시험 점수만으로 냅니다.
+                  진도율은 시험 응시 자격(60%)으로만 쓰입니다. */}
               <thead>
                 <tr>
                   <th rowSpan={2} className="row-label">평가요소</th>
-                  <th>수료시험</th><th>출석성적</th><th>계</th><th>점수</th><th>등급</th>
+                  <th>수료시험</th><th>계</th><th>점수</th><th>등급</th>
                 </tr>
                 <tr>
-                  <th>{weights.exam}%</th><th>{weights.attendance}%</th><th>100%</th>
+                  <th>{weights.exam}%</th><th>100%</th>
                   <th>{weights.passScore}점</th><th>D</th>
                 </tr>
               </thead>
@@ -181,7 +185,6 @@ export default async function Page({ params }: PageProps) {
                 <tr>
                   <th className="row-label">현재성적 (%)</th>
                   <td className="is-highlight">{summary.examScore}</td>
-                  <td>{summary.attendanceScore}</td>
                   <td>{summary.totalScore}</td>
                   <td>{summary.totalScore}점</td>
                   <td className="is-grade">{summary.grade}</td>
@@ -196,15 +199,14 @@ export default async function Page({ params }: PageProps) {
           {passed ? (
             <>
               <strong>{data.memberName} 학우님은 {data.courseTitle} 시험에 합격하셨습니다.</strong>
-              <p>출석 점수 + 시험 점수 합계가 {weights.passScore}점 이상이라 자격증 발급 신청이 가능합니다.</p>
+              <p>수료시험 {summary.totalScore}점으로 합격 기준({weights.passScore}점)을 넘어 자격증 발급 신청이 가능합니다.</p>
             </>
           ) : examTaken ? (
             <>
               <strong>{data.memberName} 학우님은 아직 합격 기준에 도달하지 않았습니다.</strong>
               <p>
-                진도율 {weights.passScore}% 이상, 시험 {weights.passScore}점 이상, 총점{' '}
-                {weights.passScore}점 이상을 모두 충족해야 합격입니다.
-                (현재 진도율 {summary.progressRate}% · 시험 {summary.examScoreLabel} · 총점 {summary.totalScore}점)
+                수료시험 100점 만점에 {weights.passScore}점 이상이면 합격입니다.
+                (현재 {summary.totalScore}점)
               </p>
             </>
           ) : (
@@ -215,8 +217,19 @@ export default async function Page({ params }: PageProps) {
           )}
         </div>
 
+        {/* 버튼은 한 줄(.result-cta)에 모읍니다 — 블록을 나누면 간격 없이 붙어 보입니다.
+            재응시는 제출한 시험만 나오고, 다시 제출하면 이 점수를 덮어씁니다. */}
         <div className="result-cta">
           <Link className="btn btn--ghost btn--lg" href="/mylecture">이전으로</Link>
+          {submittedExams.map((exam) => (
+            <form action={startExamRetakeAction} key={exam.id}>
+              <input type="hidden" name="courseCode" value={data.courseCode} />
+              <input type="hidden" name="examId" value={exam.id} />
+              <button className="btn btn--ghost btn--lg" type="submit">
+                {submittedExams.length > 1 ? `${exam.title} 재응시` : '재응시하기'}
+              </button>
+            </form>
+          ))}
           {passed ? (
             <Link className="btn btn--primary btn--lg" href="/certificate">자격증 신청 바로가기</Link>
           ) : (

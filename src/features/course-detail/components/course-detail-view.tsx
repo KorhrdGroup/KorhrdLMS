@@ -6,6 +6,7 @@ import {
   SHARED_FAQ,
   ministryLogo,
 } from "@/features/course-detail/constants";
+import { findJobByCourseName } from "@/features/korhrd/data/jobs";
 
 /**
  * 퍼블리싱 산출물(`course-detail-page/index.html`)의 마크업을 그대로 옮긴 화면입니다.
@@ -67,6 +68,8 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
   const heroLogo = ministryLogo(course.ministry, "white");
   const certLogo = ministryLogo(course.ministry, "black");
   const curriculum = interleave(course.lecturePlan);
+  // 취업 길찾기(직업 39개)에 이 과정과 연결된 직업이 있는지. 없으면 버튼을 숨깁니다.
+  const linkedJob = findJobByCourseName(course.title);
 
   // 루트 레이아웃이 body에 Noto Sans KR(font-sans)을 깔지만, 이 페이지는 퍼블리싱
   // 산출물과 동일하게 보여야 하므로 style.css의 Pretendard 스택을 래퍼로 강제합니다.
@@ -215,7 +218,16 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img className="dintro__ico" src={ASSET("icon-career.png")} alt="" aria-hidden="true" />
                   진로 및 전망
-                  <a className="dintro__guide" href="/jobs">취업 길찾기 <span aria-hidden="true">→</span></a>
+                  {/* 취업 길찾기에 연결된 직업이 있는 과정에만 버튼을 답니다.
+                      없는 과정에서 누르면 관계없는 화면으로 가게 됩니다. */}
+                  {linkedJob ? (
+                    <a
+                      className="dintro__guide"
+                      href={`/jobs/${encodeURIComponent(linkedJob.name)}`}
+                    >
+                      취업 길찾기 <span aria-hidden="true">→</span>
+                    </a>
+                  ) : null}
                 </p>
                 <ul>
                   {course.career.bullets.map((bullet, index) => (

@@ -7,6 +7,7 @@ import type {
 } from "@/features/exams/types/exam-question-item-form.types";
 import { createClient } from "@/lib/supabase/server";
 import type { Database, ExamQuestionType } from "@/types/database.types";
+import { parseAnswerKey } from "@/features/exams/lib/answer-key";
 
 function normalize(value: string) {
   return value.trim();
@@ -71,10 +72,14 @@ export function validateExamQuestionItemInput(
       };
     }
 
-    if (!["1", "2", "3", "4", "5"].includes(normalize(input.answer))) {
+    // 복수정답은 쉼표로 이어 붙입니다("2,4"). 정답표에 복수정답 칸이 있는 과정이 있습니다.
+    // 다만 채점되는 시험의 응시 화면은 아직 단일선택(라디오)이라, 복수정답은
+    // 기출문제(연습용)에서만 제대로 풀립니다.
+    const keys = parseAnswerKey(input.answer);
+    if (keys.length === 0 || keys.some((key) => !["1", "2", "3", "4", "5"].includes(key))) {
       return {
         success: false,
-        message: "정답은 1~5 중 하나를 입력해주세요.",
+        message: "정답은 1~5 중에서 입력해주세요. 복수정답은 쉼표로 구분합니다(예: 2,4).",
         field: "answer",
       };
     }

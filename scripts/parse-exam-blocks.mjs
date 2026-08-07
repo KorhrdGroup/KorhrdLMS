@@ -22,7 +22,7 @@
  * (그냥 뽑으면 두 단이 한 줄에 섞여 나옵니다).
  */
 import { execFileSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -42,11 +42,15 @@ const circleIndex = (ch) => {
   return -1;
 };
 
+/** "3" → 2, "C" → 2 (0부터) */
+const markerIndex = (token) =>
+  /^[A-E]$/.test(token) ? token.charCodeAt(0) - 65 : Number(token) - 1;
+
 /** 줄에서 보기 표식을 찾습니다 → [{ index, text }] (index는 0부터) */
-function splitChoiceLine(line) {
+function splitChoiceLine(line, family) {
   const out = [];
   // 원문자: 표식 앞에서 자릅니다
-  if ([...line].some((ch) => circleIndex(ch) !== -1)) {
+  if (family !== "letter" && [...line].some((ch) => circleIndex(ch) !== -1)) {
     const parts = line.split(new RegExp(`(?=[${ALL_CIRCLES.join("")}])`));
     for (const part of parts) {
       const trimmed = part.trim();
@@ -56,21 +60,27 @@ function splitChoiceLine(line) {
     }
     return out;
   }
-  // "1) ..." · "(1) ..." · "1. ..." — 줄 처음과 공백 뒤에서만 표식으로 봅니다
-  const re = /(?:^|\s)[(（]?([1-5])[).．]\s*/g;
+  // "1) ..." · "(1) ..." · "1. ..." · "A) ..."(스캔본 OCR 결과에 나옵니다)
+  // — 줄 처음과 공백 뒤에서만 표식으로 봅니다
+  if (family === "circle") return out; // 원문자 원본에서 "1." 은 문항 번호입니다
+  const token = family === "letter" ? "[A-E]" : family === "digit" ? "[1-5]" : "[1-5]|[A-E]";
+  const re = new RegExp(`(?:^|\\s)[(（]?(${token})[).．]\\s*`, "g");
   const hits = [...line.matchAll(re)];
   if (hits.length === 0) return out;
   hits.forEach((hit, i) => {
     const start = hit.index + hit[0].length;
     const end = i + 1 < hits.length ? hits[i + 1].index : line.length;
-    out.push({ index: Number(hit[1]) - 1, text: line.slice(start, end).trim() });
+    out.push({ index: markerIndex(hit[1]), text: line.slice(start, end).trim() });
   });
   return out;
 }
 
-const startsChoice = (line, wanted) => {
-  const hit = splitChoiceLine(line)[0];
-  return hit !== undefined && hit.index === wanted && line.trim().search(/\S/) === 0;
+const startsChoice = (line, wanted, family) => {
+  const t = line.trim();
+  const hit = splitChoiceLine(t, family)[0];
+  if (hit === undefined || hit.index !== wanted) return false;
+  // 표식이 줄 맨 앞에 있어야 보기입니다 — 지문 속 "만드는( ① )에서" 는 보기가 아닙니다
+  return circleIndex(t[0]) !== -1 || /^[(（]?([1-5]|[A-E])[).．]\s/.test(t);
 };
 
 /**
@@ -99,62 +109,156 @@ function splitStemAndChoicesFrom(lines, from) {
 }
 
 function splitStemAndChoices(lines) {
-  for (let start = 0; start < lines.length; start += 1) {
-    if (!startsChoice(lines[start], 0)) continue;
+  // 보기를 "①" 이나 "A)" 로 다는 원본에서는 문항 번호 "1." 을 보기로 오해하면 안 됩니다.
+  // 블록에 그런 보기가 하나라도 있으면 그 블록의 보기 표식을 그쪽으로 고정합니다.
+  const family = lines.some((l) => circleIndex(l.trim()[0]) !== -1)
+    ? "circle"
+    : lines.some((l) => /^\s*[(（]?[A-E][).．]\s/.test(l))
+      ? "letter"
+      : undefined;
 
-    const choices = [];
+  for (let start = 0; start < lines.length; start += 1) {
+    if (!startsChoice(lines[start], 0, family)) continue;
+
+    // 보기를 번호 자리에 꽂아 둡니다. "1) ...  3) ..." / "2) ...  4) ..." 처럼
+    // 세로로 읽는 2단 배치가 있어서, 도착 순서대로 쌓으면 짝이 어긋납니다.
+    const slots = [];
+    const filled = () => slots.filter((v) => v !== undefined).length;
+    const lastSlot = () => {
+      for (let k = slots.length - 1; k >= 0; k -= 1) if (slots[k] !== undefined) return k;
+      return -1;
+    };
+    const appendToLast = (text) => {
+      const k = lastSlot();
+      if (k >= 0) slots[k] += ` ${text}`;
+    };
+
     const indentOf = (line) => line.length - line.trimStart().length;
     let markerIndent = indentOf(lines[start]);
     let ok = true;
+    let endAt = lines.length;
     for (let i = start; i < lines.length; i += 1) {
-      const hits = splitChoiceLine(lines[i]);
+      endAt = i + 1;
+      const hits = splitChoiceLine(lines[i], family);
       if (hits.length === 0) {
-        if (choices.length === 0) { ok = false; break; }
+        if (filled() === 0) { ok = false; break; }
+        // 정답 표식이 나오면 그 문항의 보기는 거기서 끝입니다
+        if (lines[i].startsWith(ANSWER_MARK)) { endAt = i; break; }
+        // "2. 다음 중 ..." 처럼 다음 문항이 시작되면 보기 묶음은 여기서 끝입니다
+        if (/^\d{1,3}\s*[.．)]\s+\S/.test(lines[i].trim()) && filled() >= 2) { endAt = i; break; }
+        // 물음표로 끝나는 줄은 보기가 아니라 다음 문항의 지문입니다
+        if (filled() >= 2 && /[?？]\s*$|(고르시오|무엇인가|것은)\s*[.．]?\s*$/.test(lines[i].trim())) {
+          endAt = i;
+          break;
+        }
         // 들여쓰기가 더 깊으면 앞 보기의 줄바꿈입니다.
         // 같은 깊이면 원본에서 ②③④ 표식이 빠진 보기입니다(실제로 그런 원본이 있습니다).
-        if (indentOf(lines[i]) > markerIndent && choices.length < 5) {
-          choices[choices.length - 1] += ` ${lines[i].trim()}`;
-        } else if (choices.length < 5) {
-          choices.push(lines[i].trim());
+        if (indentOf(lines[i]) > markerIndent || filled() >= 5) {
+          appendToLast(lines[i].trim());
         } else {
-          choices[choices.length - 1] += ` ${lines[i].trim()}`;
+          let next = 0;
+          while (slots[next] !== undefined) next += 1;
+          slots[next] = lines[i].trim();
         }
         continue;
       }
       markerIndent = indentOf(lines[i]);
+      let done = false;
       for (const hit of hits) {
-        if (hit.index === choices.length) {
-          choices.push(hit.text);
+        // 다시 1번 표식이 **줄 맨 앞에** 나오면 같은 블록 안의 "다음 문항"입니다.
+        if (hit === hits[0] && hit.index === 0 && filled() >= 2) {
+          endAt = i;
+          done = true;
+          break;
+        }
+        // 빈 자리면 그 번호에 꽂습니다(2단 배치라 순서가 뒤섞여 와도 됩니다).
+        // 이미 찬 자리면 표식이 아니라 본문입니다("④ 주요증상 ①부주의 ②충동성").
+        if (hit.index <= 4 && slots[hit.index] === undefined) {
+          slots[hit.index] = hit.text;
           continue;
         }
-        // 원본 오타로 보기 안에 표식이 또 나오는 경우가 있습니다("④ ① 피부에 남는...").
-        // 순번이 안 맞으면 표식이 아니라 본문으로 봅니다.
-        if (choices.length > 0) {
-          choices[choices.length - 1] += ` ${hit.text}`;
-          continue;
-        }
+        if (filled() > 0) { appendToLast(hit.text); continue; }
         ok = false;
         break;
       }
-      if (!ok) break;
+      if (done || !ok) break;
     }
+
+    // 1번부터 끊기지 않고 이어지는 데까지만 보기로 씁니다
+    const choices = [];
+    for (let k = 0; slots[k] !== undefined; k += 1) choices.push(slots[k]);
+
     // 보기 하나만 있어도 문항으로 잡습니다 — 쪽이 넘어가면 ①만 남고 ②③④가 다음 쪽으로 갑니다.
     // 이어붙이지 못한 1개짜리는 마지막에 걸러냅니다.
     if (ok && choices.length >= 1) {
-      return { stem: lines.slice(0, start), choices: choices.map((c) => c.replace(/\s+/g, " ").trim()) };
+      return {
+        stem: lines.slice(0, start),
+        choices: choices.map((c) => c.replace(/\s+/g, " ").trim()),
+        end: endAt,
+      };
     }
   }
   return null;
 }
 
-const HEADER = /^(예\s*상\s*문\s*제|기\s*출\s*문\s*제|시험\s*예상\s*문제|자료\s*\d+\s*[_-]|정\s*답\s*표)/;
+const HEADER = /^(예\s*상\s*문\s*제|기\s*출\s*문\s*제|확\s*인\s*문\s*제|memo\s|시험\s*예상\s*문제|자료\s*\d+\s*[_-]|정\s*답\s*표)/;
+/** "[4점] 난이도 상" 처럼 문항 사이에 끼는 배점·난이도 표기 */
+const SCORE_TAG = /^\[?\s*\d+\s*점\s*\]?\s*(난이도\s*\S*)?$|^난이도\s*\S*$/;
 const isNoise = (line) => {
   const t = line.trim();
   if (t === "") return true;
+  if (SCORE_TAG.test(t.replace(/\s+/g, " "))) return true;
   if (/^[\d\s.·-]+$/.test(t)) return true; // 쪽번호·정답표 줄
   if (HEADER.test(t.replace(/\s+/g, " "))) return true;
   return false;
 };
+
+/**
+ * "정답: C 해설: ..." 처럼 정답 뒤에 해설이 이어지고, 해설이 여러 줄로 흐르는 원본이 있습니다
+ * (스캔본 OCR 결과가 특히 그렇습니다 — 빈 줄이 없어 해설 줄이 보기로 딸려 들어갑니다).
+ * 해설은 정답 표기만 남기고 다음 문항/보기가 시작될 때까지 통째로 버립니다.
+ */
+function stripExplanations(lines) {
+  const out = [];
+  const isBoundary = (t) =>
+    /^\d{1,3}\s*[.．)]\s+\S/.test(t) || /^문\s*제\s*\d/.test(t) || splitChoiceLine(t)[0]?.index === 0;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const t = lines[i].trim();
+    const at = t.search(/(해설|풀이)\s*[)）:：.．]/);
+    if (at === -1) {
+      out.push(lines[i]);
+      continue;
+    }
+
+    // 해설이 끝나는 지점(다음 문항/보기/빈 줄)까지 걷어냅니다
+    let end = i + 1;
+    while (end < lines.length) {
+      const next = lines[end].trim();
+      if (next === "" || isBoundary(next)) break;
+      // 해설 바로 뒤에 빈 줄 없이 다음 문항 지문이 붙는 원본이 있습니다(메이크업코디네이터).
+      // 물음표로 끝나고 그 다음 줄이 1번 보기면 지문으로 보고 여기서 끊습니다.
+      const after = lines[end + 1]?.trim() ?? "";
+      if (/[?？]\s*$/.test(next) && splitChoiceLine(after)[0]?.index === 0) break;
+      end += 1;
+    }
+
+    // 버리기 전에 해설 끝에 붙은 정답을 건져냅니다(세차관리사 등)
+    //  · "☞ 2"  · 해설 다음 줄에 숫자만 덩그러니 있는 형태
+    const region = lines.slice(i, end);
+    const dropped = region.join(" ");
+    const arrow =
+      dropped.match(/☞\s*([1-5])/) ??
+      region[region.length - 1]?.trim().match(/^([1-5])$/) ??
+      null;
+
+    const head = lines[i].slice(0, lines[i].search(/(해설|풀이)\s*[)）:：.．]/)).trimEnd();
+    if (head.replace(/▶/g, "").trim()) out.push(head);
+    if (arrow) out.push(`${ANSWER_MARK}${arrow[1]}`);
+    i = end - 1;
+  }
+  return out;
+}
 
 /** "해설) ..." 뒤는 문제와 무관하므로 잘라냅니다 */
 const cutExplanation = (lines) => {
@@ -162,16 +266,28 @@ const cutExplanation = (lines) => {
   return at === -1 ? lines : lines.slice(0, at);
 };
 
-const ANSWER_LINE = /정\s*답\s*[:：]?\s*[(（]?\s*([1-5])/;
-/** "정답:③" 처럼 원문자로 적힌 정답도 받습니다 */
-function statedAnswer(line) {
+/** 정답 줄을 자리만 남겨 표시해 두는 표식 — 본문에 나올 수 없는 문자입니다 */
+const ANSWER_MARK = "\u0000정답:";
+const ANSWER_LINE = /정\s*답\s*[:：]?\s*[(（]?\s*([1-5]|[A-E])(?![A-Za-z])/;
+/**
+ * 정답 줄에서 값을 뽑습니다 → [2] 또는 [4, 1, 1, 3]
+ *
+ * "정답:③" 처럼 원문자로 적기도 하고, "정답 : 4, 1, 1, 3" 처럼
+ * **여러 문항 정답을 한 줄에 몰아 적는** 원본도 있습니다(방과후지도사).
+ * 그런 줄은 바로 앞 문항들에 순서대로 나눠 붙입니다.
+ */
+function statedAnswers(line) {
   if (!/정\s*답/.test(line)) return null;
-  const digit = line.match(ANSWER_LINE);
-  if (digit) return Number(digit[1]);
-  const rest = line.slice(line.search(/정\s*답/));
+  const rest = line.slice(line.search(/정\s*답/)).replace(/^정\s*답\s*[:：]?/, "");
+
+  const many = rest.match(/^\s*([1-5])(\s*,\s*[1-5])+\s*$/);
+  if (many) return rest.split(",").map((v) => Number(v.trim()));
+
+  const token = line.match(ANSWER_LINE);
+  if (token) return [markerIndex(token[1]) + 1];
   for (const ch of rest) {
     const idx = circleIndex(ch);
-    if (idx !== -1) return idx + 1;
+    if (idx !== -1) return [idx + 1];
   }
   return null;
 }
@@ -202,6 +318,17 @@ function takeAnswerFromStem(stem) {
     answer = Number(bare[1]);
     text = text.slice(0, bare.index + 1).trim();
   }
+  // "O . X 퀴즈 ( 2 ) 꽉잡아 하비 게임은..." 처럼 지문 중간에 박힌 정답 표기.
+  // 지문 안에 그런 괄호가 딱 하나일 때만 정답으로 봅니다(본문 속 "(3)" 오인 방지).
+  if (answer === null) {
+    const all = [...text.matchAll(/[(（]\s*([1-5])\s*[)）]/g)];
+    if (all.length === 1) {
+      answer = Number(all[0][1]);
+      text = (text.slice(0, all[0].index) + " " + text.slice(all[0].index + all[0][0].length))
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+  }
   const inline = text.match(ANSWER_LINE);
   if (inline && answer === null) {
     answer = Number(inline[1]);
@@ -231,7 +358,9 @@ function readAnswerTable(lines) {
 
 export function parseExamBlocks(text) {
   const warnings = [];
-  const rawLines = text.split("\n").map((l) => l.replace(/\f/g, "").replace(/ /g, " ").trimEnd());
+  const rawLines = stripExplanations(
+    text.split("\n").map((l) => l.replace(/\f/g, "").replace(/ /g, " ").trimEnd()),
+  );
   const answerTable = readAnswerTable(rawLines);
 
   /* 빈 줄로 블록 나누기 */
@@ -248,62 +377,96 @@ export function parseExamBlocks(text) {
   if (cur.length) blocks.push(cur);
 
   // 첫 줄은 대개 문서 제목("환경관리전문가")이라 1번 지문 앞에 붙습니다 — 떼어냅니다
-  const docTitle = (rawLines.find((l) => l.trim() !== "") ?? "").trim();
+  // 물음표로 끝나면 제목이 아니라 1번 문항 지문입니다(메이크업코디네이터가 그렇습니다)
+  const firstLine = (rawLines.find((l) => l.trim() !== "") ?? "").trim();
+  const docTitle = /[?？]\s*$/.test(firstLine) ? "" : firstLine;
 
   const questions = [];
   let stemBuf = [];
 
   for (const block of blocks) {
-    // "정답: 2" 줄은 보기 줄바꿈으로 오해되기 쉬워 먼저 걷어냅니다.
-    // 블록 안(보기 바로 밑)에 있기도 하고 다음 블록으로 떨어져 있기도 합니다.
-    const stated = [];
+    // "정답: 2" 줄은 보기 줄바꿈으로 오해되기 쉬워 표식(ANSWER_MARK)으로 바꿔 둡니다.
+    // 걷어내 버리면 안 됩니다 — 한 블록에 문항이 여러 개면 어느 문항의 정답인지
+    // 순서를 잃어버려 통째로 한 칸씩 밀립니다(실제로 그렇게 나왔습니다).
     const lines = cutExplanation(block)
-      .filter((l) => {
-        const found = statedAnswer(l);
-        if (found !== null) { stated.push(found); return false; }
-        return true;
+      .map((l) => {
+        const found = statedAnswers(l);
+        return found === null ? l : `${ANSWER_MARK}${found.join(",")}`;
       })
       // 쪽바닥 머리글(과정명)도 군더더기입니다 — 보기가 쪽을 넘어갈 때 사이에 끼어듭니다
-      .filter((l) => !isNoise(l) && l.trim() !== docTitle);
+      .filter((l) => l.startsWith(ANSWER_MARK) || (!isNoise(l) && l.trim() !== docTitle));
 
-    const applyStated = () => {
-      if (stated.length && questions.length) questions[questions.length - 1].answer ??= stated[0];
+    /** 맨 앞에 남은 정답 표식을 떼어 돌려줍니다(직전 문항들 몫입니다) */
+    const takeLeadingMark = (rows) => {
+      let values = null;
+      let i = 0;
+      while (i < rows.length && rows[i].startsWith(ANSWER_MARK)) {
+        values ??= rows[i].slice(ANSWER_MARK.length).split(",").map(Number);
+        i += 1;
+      }
+      return { values, rows: rows.slice(i) };
     };
 
-    if (lines.length === 0) {
-      applyStated();
-      continue;
-    }
+    /** 값이 여러 개면 바로 앞 문항들에 순서대로 나눠 붙입니다 */
+    const assign = (values) => {
+      if (!values) return;
+      const targets = questions.slice(-values.length);
+      if (targets.length !== values.length) return;
+      targets.forEach((q, i) => { q.answer ??= values[i]; });
+    };
+
+    const head = takeLeadingMark(lines);
+    assign(head.values);
+    let rest = head.rows;
+    if (rest.length === 0) continue;
 
     // 보기가 쪽을 넘어가면 "③④"만 있는 블록이 따로 떨어집니다 — 앞 문항에 이어 붙입니다
     const prev = questions[questions.length - 1];
-    if (prev && stemBuf.length === 0 && startsChoice(lines[0], prev.choices.length)) {
-      const carry = splitStemAndChoicesFrom(lines, prev.choices.length);
+    if (prev && stemBuf.length === 0 && startsChoice(rest[0], prev.choices.length)) {
+      const carry = splitStemAndChoicesFrom(rest, prev.choices.length);
       if (carry) {
         prev.choices.push(...carry);
-        if (stated.length) prev.answer ??= stated[0];
         continue;
       }
     }
 
-    const split = splitStemAndChoices(lines);
+    // 스캔본 OCR 결과는 빈 줄이 없어 한 블록에 문항이 여러 개 들어 있습니다.
+    let split = splitStemAndChoices(rest);
     if (!split) {
-      applyStated();
-      stemBuf.push(...lines);
+      stemBuf.push(...rest.filter((l) => !l.startsWith(ANSWER_MARK)));
       continue;
     }
 
-    const stemLines = [...stemBuf, ...split.stem];
-    stemBuf = [];
-    // 문항 번호가 붙어 있으면 떼어냅니다("1.ESG 경영의..." → "ESG 경영의...")
-    const joined = stemLines
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .replace(new RegExp(`^${docTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`), "")
-      .replace(/^\d{1,3}\s*[.．)]\s*/, "")
-      .trim();
-    const { text: question, answer } = takeAnswerFromStem(joined);
-    questions.push({ question, choices: split.choices, answer: answer ?? stated[0] ?? null });
+    let first = true;
+    while (split) {
+      const stemLines = first ? [...stemBuf, ...split.stem] : split.stem;
+      if (first) stemBuf = [];
+      first = false;
+
+      // 문항 번호가 붙어 있으면 떼어냅니다("1.ESG 경영의..." → "ESG 경영의...")
+      const joined = stemLines
+        .filter((l) => !l.startsWith(ANSWER_MARK))
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .replace(new RegExp(`^${docTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`), "")
+        .replace(/^문\s*제\s*\d{1,3}\s*[.．)]?\s*/, "")
+        .replace(/^\d{1,3}\s*[.．)]\s*/, "")
+        .trim();
+      const { text: question, answer } = takeAnswerFromStem(joined);
+
+      const after = takeLeadingMark(rest.slice(split.end));
+      questions.push({ question, choices: split.choices, answer });
+      assign(after.values);
+
+      // 한 줄도 못 줄이면 무한루프입니다 — 반드시 앞으로 나아가게 합니다
+      const consumed = rest.length - after.rows.length;
+      rest = consumed > 0 ? after.rows : rest.slice(1);
+      split = rest.length > 0 ? splitStemAndChoices(rest) : null;
+    }
+
+    // 블록 끝에 남은 줄은 다음 문항의 지문입니다(보기가 다음 블록에 있는 경우).
+    // 여기서 버리면 지문 없는 문항이 됩니다.
+    stemBuf.push(...rest.filter((l) => !l.startsWith(ANSWER_MARK)));
   }
 
   /* 보기가 2개도 안 되는 건 문항으로 못 씁니다(쪽 넘김을 못 이어붙인 잔해) */
@@ -338,6 +501,9 @@ export function parseExamBlocks(text) {
 
 /** 2단 조판은 왼쪽·오른쪽을 따로 뽑아 이어 붙입니다 */
 export function pdfToText(pdfPath, columns = 1) {
+  // 스캔본은 scripts/ocr-pdf.swift 로 뽑아둔 .txt 를 그대로 받습니다
+  if (/\.txt$/i.test(pdfPath)) return readFileSync(pdfPath, "utf8");
+
   const run = (args) =>
     execFileSync("pdftotext", [...args, "-layout", pdfPath, "-"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   if (columns < 2) return run([]);

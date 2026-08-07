@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { getClassroomCourseExams } from '@/features/classroom-exams/services/classroom-exam.service';
-import { listPracticeSets } from '@/features/classroom-exams/services/classroom-practice.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
 import { ExamList } from './ExamList';
@@ -18,10 +17,7 @@ export default async function Page({ params }: PageProps) {
     redirect(`/login?redirect=/exam/${course}`);
   }
 
-  const [data, practice] = await Promise.all([
-    getClassroomCourseExams(member.id, course),
-    listPracticeSets(member.id, course),
-  ]);
+  const data = await getClassroomCourseExams(member.id, course);
   if (!data) {
     return (
       <div className="container">
@@ -35,5 +31,5 @@ export default async function Page({ params }: PageProps) {
     );
   }
 
-  return <ExamList data={data} practiceSets={practice?.sets ?? []} />;
+  return <ExamList data={data} />;
 }

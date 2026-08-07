@@ -31,5 +31,11 @@ export default async function Page({ params }: PageProps) {
     );
   }
 
+  // 이미 제출한 시험이면 간이 결과 대신 성적 확인 화면으로 보냅니다.
+  // (재응시가 허용된 기록은 submittedResult가 비어 있어 다시 응시 화면이 열립니다)
+  if (result.exam.submittedResult) {
+    redirect(`/exam/${course}/result`);
+  }
+
   return <ExamTaking exam={result.exam} />;
 }

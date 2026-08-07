@@ -1055,3 +1055,27 @@ export function jobsOfGroup(key: string): Job[] {
 export function findJob(name: string): Job | undefined {
   return JOBS.find((x) => x.name === name);
 }
+
+/**
+ * 과정명 비교용 정규화.
+ *
+ * 이 파일의 course 값은 프로토타입 표기(급수 포함, 띄어쓰기 있음)이고 DB의
+ * `courses.name` 은 급수를 떼거나 붙여 쓰는 등 표기가 제각각입니다.
+ * (예: "심리상담사 1급" ↔ "심리상담사", "병원코디네이터 1급" ↔ "병원코디네이터1급")
+ * 공백을 지우고 끝의 급수 표기만 떼면 39개 직업이 모두 맞아떨어집니다.
+ */
+function normalizeCourseName(name: string): string {
+  return name.replace(/\s+/g, "").replace(/[1-3]급$/, "");
+}
+
+/**
+ * 과정명으로 그 과정과 연결된 직업 찾기.
+ *
+ * 과정 상세페이지에서 "취업 길찾기" 버튼을 띄울지 판단하는 데 씁니다 —
+ * 길찾기에 없는 과정에서 누르면 관계없는 목록으로 보내게 되므로,
+ * 연결된 직업이 있을 때만 버튼을 보여줍니다.
+ */
+export function findJobByCourseName(courseName: string): Job | undefined {
+  const target = normalizeCourseName(courseName);
+  return JOBS.find((x) => normalizeCourseName(x.course) === target);
+}

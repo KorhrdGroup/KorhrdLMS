@@ -65,6 +65,10 @@ export type ClassroomExamSubmittedResult = {
 export type ClassroomExamTaking = {
   examId: string;
   courseCode: string;
+  /** 화면 제목("○○ 시험 · 수료시험")에 씁니다 */
+  courseTitle: string;
+  /** 응시기간 = 수강기간(시험별 기간을 따로 두지 않습니다) */
+  periodLabel: string;
   title: string;
   examKind: ExamKind;
   durationMinutes: number;
