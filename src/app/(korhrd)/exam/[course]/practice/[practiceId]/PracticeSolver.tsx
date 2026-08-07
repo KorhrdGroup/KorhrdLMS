@@ -104,7 +104,8 @@ export default function PracticeSolver({ set }: { set: PracticeSet }) {
             const mineChoices = parseAnswerKey(mine ?? '');
 
             return (
-              <fieldset className="q-card" key={question.id}>
+              /* 시험 화면과 같게 — 답을 고른 문항은 번호 배지·테두리가 파랗게 바뀝니다 */
+              <fieldset className={`q-card${mine ? ' is-answered' : ''}`} key={question.id}>
                 <legend className="q-card__q">
                   <span className="q-card__num">{question.order}</span>
                   <span style={{ whiteSpace: 'pre-line' }}>{question.question}</span>

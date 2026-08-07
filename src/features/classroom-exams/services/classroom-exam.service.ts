@@ -247,6 +247,8 @@ export async function getClassroomExamTaking(
     exam: {
       examId: exam.id,
       courseCode: access.course.code,
+      courseTitle: access.course.name,
+      periodLabel: `${access.enrollmentStartDate} ~ ${access.enrollmentEndDate}`,
       title: exam.name,
       examKind: exam.exam_kind,
       durationMinutes: exam.exam_duration_minutes,

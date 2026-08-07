@@ -19,6 +19,12 @@ const STATUS_BADGE: Record<string, { tone: string; label: string }> = {
  * 강의실 화면(학습자료 > 기출문제)에서만 풀도록 모았습니다.
  */
 export function ExamList({ data }: { data: ClassroomExamList }) {
+  // 시안(exam.html)은 시험 1개 기준이라 제목이 "과정 시험 · 시험명", 정보가
+  // 시험명·응시기간·문항수·시험시간 4칸입니다. 우리도 과정당 시험이 하나뿐이라
+  // 그 형태를 그대로 쓰고, 시험이 없거나 둘 이상인 예외에서만 기존 3칸으로 돌아갑니다.
+  const only = data.exams.length === 1 ? data.exams[0] : null;
+  const period = `${data.enrollmentStartDate} ~ ${data.enrollmentEndDate}`;
+
   return (
     <div className="container">
       <section className="exam">
@@ -31,14 +37,23 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
         </nav>
 
         <div className="exam__head">
-          <h1>{data.courseTitle} · 시험</h1>
+          <h1>{only ? `${data.courseTitle} 시험 · ${only.title}` : `${data.courseTitle} · 시험`}</h1>
         </div>
 
-        <dl className="exam-info">
-          <div><dt>응시기간</dt><dd>{data.enrollmentStartDate} ~ {data.enrollmentEndDate}</dd></div>
-          <div><dt>진도율</dt><dd>{Math.round(data.progressRate)}%</dd></div>
-          <div><dt>응시 조건</dt><dd>진도율 {data.eligibilityThreshold}% 이상</dd></div>
-        </dl>
+        {only ? (
+          <dl className="exam-info">
+            <div><dt>시험명</dt><dd>{only.title}</dd></div>
+            <div><dt>응시기간</dt><dd>{period}</dd></div>
+            <div><dt>문항수</dt><dd>{only.questionCount}문항</dd></div>
+            <div><dt>시험시간</dt><dd>{only.durationMinutes}분</dd></div>
+          </dl>
+        ) : (
+          <dl className="exam-info">
+            <div><dt>응시기간</dt><dd>{period}</dd></div>
+            <div><dt>진도율</dt><dd>{Math.round(data.progressRate)}%</dd></div>
+            <div><dt>응시 조건</dt><dd>진도율 {data.eligibilityThreshold}% 이상</dd></div>
+          </dl>
+        )}
 
         {!data.eligible ? (
           <div className="guide-box">
