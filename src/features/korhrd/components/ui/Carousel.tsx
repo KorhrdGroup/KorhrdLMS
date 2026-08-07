@@ -13,7 +13,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
  */
 export default function Carousel({
   className = '', dotsClassName = 'carousel-dots',
-  label, dotsLabel = '목록 이동', autoMs = 0, children,
+  label, dotsLabel = '목록 이동', autoMs = 0, pageBy = 'width', children,
 }: {
   className?: string;
   /** 점 목록의 클래스. 과정 상세 '추천 대상'은 .dwho__dots 로 조금 작습니다 */
@@ -23,6 +23,17 @@ export default function Carousel({
   /** 점 목록의 aria-label (원본 initJobCarousel 은 '직업군 목록 이동') */
   dotsLabel?: string;
   autoMs?: number;
+  /**
+   * 점 개수를 세는 방식 — 원본이 화면마다 다릅니다.
+   *
+   *  'width' : 트랙 폭 ÷ 화면 폭 (원본 initJobCarousel · 취업 길찾기)
+   *  'cards' : 칸 개수 ÷ 한 화면에 들어가는 칸 수 (원본 buildCarousel · 메인)
+   *
+   * 메인에서 'width' 를 쓰면 안 됩니다. 트랙이 화면의 2.008배라 점이 3개
+   * 생기는데 끝까지 밀어도 round(1170/1160)=1 이라 마지막 점은 켜지지
+   * 않습니다. 원본은 칸 수로 세어 2개만 만듭니다.
+   */
+  pageBy?: 'width' | 'cards';
   children: ReactNode;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -36,9 +47,25 @@ export default function Carousel({
     // 0으로 나누면 pages가 Infinity가 되어 Array.from이 터집니다.
     const width = el.clientWidth;
     if (width <= 0) return;
-    setPages(Math.max(1, Math.min(50, Math.ceil((el.scrollWidth - 1) / width))));
+
+    let count: number;
+    if (pageBy === 'cards') {
+      /* 원본 buildCarousel — 한 화면에 몇 칸이 들어가는지로 셉니다.
+         칸 사이 간격은 CSS(gap)에서 읽습니다. 원본은 16을 고정으로 썼지만
+         트랙마다 gap 이 달라 실제 값을 씁니다. */
+      const first = el.firstElementChild as HTMLElement | null;
+      const cardW = first?.offsetWidth ?? 0;
+      if (cardW <= 0) return;
+      const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+      const per = Math.max(1, Math.round(width / (cardW + gap)));
+      count = Math.ceil(el.children.length / per);
+    } else {
+      count = Math.ceil((el.scrollWidth - 1) / width);
+    }
+
+    setPages(Math.max(1, Math.min(50, count)));
     setPage(Math.round(el.scrollLeft / width));
-  }, []);
+  }, [pageBy]);
 
   useEffect(() => {
     measure();
