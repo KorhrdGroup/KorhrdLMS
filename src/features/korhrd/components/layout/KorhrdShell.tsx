@@ -21,6 +21,9 @@ export const KORHRD_CSS_ORDER = [
   "ua-headings",
   "tokens", "base", "layout", "ui", "home", "course", "review",
   "detail", "account", "responsive", "classroom", "job", "appendix",
+  // overrides 도 전달본이 아닙니다. 전달본 이후에 정해진 디자인 변경만 모아
+  // **맨 뒤**에서 덮습니다. 전달본 13개 파일을 고치지 않으려는 것입니다.
+  "overrides",
 ] as const;
 
 export const KORHRD_FONT_STACK =
