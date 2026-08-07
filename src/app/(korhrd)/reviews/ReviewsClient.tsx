@@ -5,7 +5,6 @@ import { useMemo, useState } from 'react';
 import type { CourseReviewItem } from '@/features/korhrd/services/course-review.service';
 import ReviewRow from '@/features/korhrd/components/review/ReviewRow';
 import Pagination from '@/features/korhrd/components/ui/Pagination';
-import styles from './page.module.css';
 
 /**
  * 합격후기 목록.
@@ -90,7 +89,9 @@ export default function ReviewsClient({ reviews: REVIEWS }: { reviews: CourseRev
         </div>
       </div>
 
-      <section aria-label="합격 후기 목록" className={styles.list}>
+      {/* 카드 사이 간격은 review.css 의 .review-row + .review-row (10px) 가 잡습니다.
+          여기에 flex gap 을 더 주면 두 값이 합쳐져 간격이 벌어집니다. */}
+      <section aria-label="합격 후기 목록">
         {shown.map((r) => <ReviewRow key={r.id} review={r} />)}
         <Pagination current={current} total={totalPages} onChange={setPage} />
       </section>
