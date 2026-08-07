@@ -8,12 +8,14 @@ import type { EnrollmentLearningStatus } from "@/features/enrollments/types/enro
  * 민간자격증 LMS는 과제 기능을 사용하지 않으므로 과제 점수는 성적 계산에
  * 반영하지 않습니다(과제 관련 게이팅 없음).
  *
- * 수료 조건: 진도율(출석률) 60% 이상 + 시험 점수 60점 이상.
+ * **수료 조건: 수료시험 100점 만점에 60점 이상.**
+ * 예전에는 시험 60% + 출석 40%를 섞어 총점을 냈지만, 시험 점수가 곧 성적이 되도록
+ * 바꿨습니다(20문항 × 5점 = 100점). 진도율은 성적에 섞이지 않고 **시험을 볼 수 있는
+ * 자격**(60% 이상)으로만 씁니다 — 그 판정은 classroom-exam.service 가 합니다.
  */
-export const ATTENDANCE_WEIGHT_PERCENT = 40;
-export const EXAM_WEIGHT_PERCENT = 60;
+export const ATTENDANCE_WEIGHT_PERCENT = 0;
+export const EXAM_WEIGHT_PERCENT = 100;
 export const PASS_SCORE_THRESHOLD = 60;
-export const PASS_ATTENDANCE_THRESHOLD = 60;
 
 export type GradeLetter = "A" | "B" | "C" | "D" | "F";
 
@@ -41,20 +43,12 @@ export type GradeCalculationResult = {
 };
 
 export function calculateGrade(input: GradeCalculationInput): GradeCalculationResult {
-  const attendanceScore = Math.round(
-    (input.attendanceRate / 100) * ATTENDANCE_WEIGHT_PERCENT,
-  );
-  const examScore =
-    input.examPercent != null
-      ? Math.round((input.examPercent / 100) * EXAM_WEIGHT_PERCENT)
-      : 0;
-  const totalScore = attendanceScore + examScore;
+  // 출석(진도율)은 성적에 섞지 않습니다. 화면 표에서 자리를 지키느라 0으로 둡니다.
+  const attendanceScore = 0;
+  const examScore = input.examPercent ?? 0;
+  const totalScore = examScore;
   const grade = scoreToGrade(totalScore);
-
-  const isPassed =
-    totalScore >= PASS_SCORE_THRESHOLD &&
-    input.attendanceRate >= PASS_ATTENDANCE_THRESHOLD &&
-    (input.examPercent ?? 0) >= PASS_SCORE_THRESHOLD;
+  const isPassed = totalScore >= PASS_SCORE_THRESHOLD;
 
   return { attendanceScore, examScore, totalScore, grade, isPassed };
 }
