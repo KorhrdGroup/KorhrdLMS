@@ -12,11 +12,16 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
  * 트랙 스타일(칸 폭·스냅)은 CSS에서 정합니다. 예: .job-groups--carousel
  */
 export default function Carousel({
-  className = '', dotsClassName = 'carousel-dots', autoMs = 0, children,
+  className = '', dotsClassName = 'carousel-dots',
+  label, dotsLabel = '목록 이동', autoMs = 0, children,
 }: {
   className?: string;
   /** 점 목록의 클래스. 과정 상세 '추천 대상'은 .dwho__dots 로 조금 작습니다 */
   dotsClassName?: string;
+  /** 트랙의 aria-label (원본 jobs.html 은 '직업군 선택') */
+  label?: string;
+  /** 점 목록의 aria-label (원본 initJobCarousel 은 '직업군 목록 이동') */
+  dotsLabel?: string;
   autoMs?: number;
   children: ReactNode;
 }) {
@@ -70,10 +75,10 @@ export default function Carousel({
 
   return (
     <>
-      <div className={className} ref={trackRef}>{children}</div>
-      <div className={dotsClassName} aria-label="목록 이동" hidden={pages <= 1}>
+      <div className={className} ref={trackRef} aria-label={label}>{children}</div>
+      <div className={dotsClassName} aria-label={dotsLabel} hidden={pages <= 1}>
         {Array.from({ length: pages }, (_, i) => (
-          <button key={i} type="button" aria-label={`${i + 1}번째 목록`}
+          <button key={i} type="button" aria-label={`${i + 1}번째 목록 보기`}
                   aria-current={i === page} onClick={() => goTo(i)} />
         ))}
       </div>

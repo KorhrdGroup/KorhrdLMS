@@ -5,6 +5,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { JOB_GROUPS, jobsOfGroup } from '@/features/korhrd/data/jobs';
 import JobGroupCard from '@/features/korhrd/components/job/JobGroupCard';
 import JobCard from '@/features/korhrd/components/job/JobCard';
+import Carousel from '@/features/korhrd/components/ui/Carousel';
 import styles from './page.module.css';
 
 /**
@@ -95,11 +96,14 @@ export default function JobsClient({ initialGroup }: { initialGroup?: string }) 
         </div>
 
         <h2 className="sr-only">직업군 선택</h2>
-        <div className="job-groups" aria-label="직업군 선택">
+        {/* 980px 이하에서 .job-groups 가 가로 스크롤로 바뀝니다(job.css @media 980).
+            스크롤바는 감춰져 있어 dot 이 없으면 뒤쪽 직업군이 있는 줄 모르고 지나칩니다.
+            데스크톱은 5열 그리드라 넘칠 게 없어 dot 이 저절로 숨겨집니다. */}
+        <Carousel className="job-groups" label="직업군 선택" dotsLabel="직업군 목록 이동">
           {JOB_GROUPS.map((g) => (
             <JobGroupCard key={g.key} group={g} active={g.key === current} onSelect={() => select(g.key)} />
           ))}
-        </div>
+        </Carousel>
 
         <div className="job-result-head">
           <h2>{group.name} 분야에서 할 수 있는 일</h2>

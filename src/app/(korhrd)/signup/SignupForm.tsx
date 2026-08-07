@@ -189,10 +189,12 @@ export function SignupForm() {
 
             <div className="field">
               <label htmlFor="birth">
-                생년월일 <span className="hint">— 자격증에 표기됩니다</span>
+                생년월일 <span className="req" aria-hidden="true">*</span>
+                <span className="sr-only">(필수)</span>{' '}
+                <span className="hint">— 자격증에 표기됩니다</span>
               </label>
               <input
-                id="birth" type="text" inputMode="numeric" maxLength={8}
+                id="birth" type="text" required inputMode="numeric" maxLength={8}
                 placeholder="예) 19750320" value={birth}
                 onChange={(event) => setBirth(event.target.value)}
               />

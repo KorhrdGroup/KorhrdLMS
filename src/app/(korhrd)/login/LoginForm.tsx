@@ -12,9 +12,11 @@ import { SAVED_LOGIN_ID_KEY } from "@/lib/student/session";
  */
 export function LoginForm({
   redirectTo,
+  reason,
   passwordReset = false,
 }: {
   redirectTo?: string;
+  reason?: string | null;
   /** 비밀번호 찾기에서 재설정을 마치고 바로 넘어온 경우 */
   passwordReset?: boolean;
 }) {
@@ -68,6 +70,9 @@ export function LoginForm({
         </div>
       ) : null}
 
+      {/* 원본 login.html 은 어느 화면 때문에 왔는지를 굵게 밝혀 줍니다.
+          화면 이름은 page.tsx 가 redirect 주소로 정해 내려보냅니다.
+          비밀번호를 막 바꾸고 넘어온 경우에는 그 안내가 우선입니다. */}
       {passwordReset ? (
         <p className="login-notice">
           비밀번호가 변경되었습니다.<br />
@@ -75,7 +80,7 @@ export function LoginForm({
         </p>
       ) : redirectTo ? (
         <p className="login-notice">
-          로그인이 필요한 페이지입니다.<br />
+          <b>{reason ?? '이 화면'}</b>은 로그인 후 이용하실 수 있습니다.<br />
           로그인하시면 원래 보시려던 화면으로 이동합니다.
         </p>
       ) : null}
