@@ -120,7 +120,19 @@ function splitStemAndChoices(lines) {
   for (let start = 0; start < lines.length; start += 1) {
     if (!startsChoice(lines[start], 0, family)) continue;
 
-    const choices = [];
+    // 보기를 번호 자리에 꽂아 둡니다. "1) ...  3) ..." / "2) ...  4) ..." 처럼
+    // 세로로 읽는 2단 배치가 있어서, 도착 순서대로 쌓으면 짝이 어긋납니다.
+    const slots = [];
+    const filled = () => slots.filter((v) => v !== undefined).length;
+    const lastSlot = () => {
+      for (let k = slots.length - 1; k >= 0; k -= 1) if (slots[k] !== undefined) return k;
+      return -1;
+    };
+    const appendToLast = (text) => {
+      const k = lastSlot();
+      if (k >= 0) slots[k] += ` ${text}`;
+    };
+
     const indentOf = (line) => line.length - line.trimStart().length;
     let markerIndent = indentOf(lines[start]);
     let ok = true;
@@ -129,51 +141,53 @@ function splitStemAndChoices(lines) {
       endAt = i + 1;
       const hits = splitChoiceLine(lines[i], family);
       if (hits.length === 0) {
-        if (choices.length === 0) { ok = false; break; }
+        if (filled() === 0) { ok = false; break; }
         // 정답 표식이 나오면 그 문항의 보기는 거기서 끝입니다
         if (lines[i].startsWith(ANSWER_MARK)) { endAt = i; break; }
         // "2. 다음 중 ..." 처럼 다음 문항이 시작되면 보기 묶음은 여기서 끝입니다
-        if (/^\d{1,3}\s*[.．)]\s+\S/.test(lines[i].trim()) && choices.length >= 2) {
+        if (/^\d{1,3}\s*[.．)]\s+\S/.test(lines[i].trim()) && filled() >= 2) { endAt = i; break; }
+        // 물음표로 끝나는 줄은 보기가 아니라 다음 문항의 지문입니다
+        if (filled() >= 2 && /[?？]\s*$|(고르시오|무엇인가|것은)\s*[.．]?\s*$/.test(lines[i].trim())) {
           endAt = i;
           break;
         }
         // 들여쓰기가 더 깊으면 앞 보기의 줄바꿈입니다.
         // 같은 깊이면 원본에서 ②③④ 표식이 빠진 보기입니다(실제로 그런 원본이 있습니다).
-        if (indentOf(lines[i]) > markerIndent && choices.length < 5) {
-          choices[choices.length - 1] += ` ${lines[i].trim()}`;
-        } else if (choices.length < 5) {
-          choices.push(lines[i].trim());
+        if (indentOf(lines[i]) > markerIndent || filled() >= 5) {
+          appendToLast(lines[i].trim());
         } else {
-          choices[choices.length - 1] += ` ${lines[i].trim()}`;
+          let next = 0;
+          while (slots[next] !== undefined) next += 1;
+          slots[next] = lines[i].trim();
         }
         continue;
       }
       markerIndent = indentOf(lines[i]);
       let done = false;
       for (const hit of hits) {
-        if (hit.index === choices.length) {
-          choices.push(hit.text);
-          continue;
-        }
-        // 원본 오타로 보기 안에 표식이 또 나오는 경우가 있습니다("④ ① 피부에 남는...").
-        // 순번이 안 맞으면 표식이 아니라 본문으로 봅니다.
-        // 다시 1번 표식이 나오면 같은 블록 안의 "다음 문항"입니다(스캔본 OCR 결과).
-        if (hit.index === 0 && choices.length >= 2) {
+        // 다시 1번 표식이 **줄 맨 앞에** 나오면 같은 블록 안의 "다음 문항"입니다.
+        if (hit === hits[0] && hit.index === 0 && filled() >= 2) {
           endAt = i;
           done = true;
           break;
         }
-        // 원본 오타로 보기 안에 표식이 또 나오는 경우가 있습니다("④ ① 피부에 남는...").
-        // 순번이 안 맞으면 표식이 아니라 본문으로 봅니다.
-        if (choices.length > 0) {
-          choices[choices.length - 1] += ` ${hit.text}`;
+        // 빈 자리면 그 번호에 꽂습니다(2단 배치라 순서가 뒤섞여 와도 됩니다).
+        // 이미 찬 자리면 표식이 아니라 본문입니다("④ 주요증상 ①부주의 ②충동성").
+        if (hit.index <= 4 && slots[hit.index] === undefined) {
+          slots[hit.index] = hit.text;
           continue;
         }
+        if (filled() > 0) { appendToLast(hit.text); continue; }
         ok = false;
         break;
       }
       if (done || !ok) break;
     }
+
+    // 1번부터 끊기지 않고 이어지는 데까지만 보기로 씁니다
+    const choices = [];
+    for (let k = 0; slots[k] !== undefined; k += 1) choices.push(slots[k]);
+
     // 보기 하나만 있어도 문항으로 잡습니다 — 쪽이 넘어가면 ①만 남고 ②③④가 다음 쪽으로 갑니다.
     // 이어붙이지 못한 1개짜리는 마지막에 걸러냅니다.
     if (ok && choices.length >= 1) {
@@ -222,6 +236,10 @@ function stripExplanations(lines) {
     while (end < lines.length) {
       const next = lines[end].trim();
       if (next === "" || isBoundary(next)) break;
+      // 해설 바로 뒤에 빈 줄 없이 다음 문항 지문이 붙는 원본이 있습니다(메이크업코디네이터).
+      // 물음표로 끝나고 그 다음 줄이 1번 보기면 지문으로 보고 여기서 끊습니다.
+      const after = lines[end + 1]?.trim() ?? "";
+      if (/[?？]\s*$/.test(next) && splitChoiceLine(after)[0]?.index === 0) break;
       end += 1;
     }
 
@@ -359,7 +377,9 @@ export function parseExamBlocks(text) {
   if (cur.length) blocks.push(cur);
 
   // 첫 줄은 대개 문서 제목("환경관리전문가")이라 1번 지문 앞에 붙습니다 — 떼어냅니다
-  const docTitle = (rawLines.find((l) => l.trim() !== "") ?? "").trim();
+  // 물음표로 끝나면 제목이 아니라 1번 문항 지문입니다(메이크업코디네이터가 그렇습니다)
+  const firstLine = (rawLines.find((l) => l.trim() !== "") ?? "").trim();
+  const docTitle = /[?？]\s*$/.test(firstLine) ? "" : firstLine;
 
   const questions = [];
   let stemBuf = [];
@@ -443,6 +463,10 @@ export function parseExamBlocks(text) {
       rest = consumed > 0 ? after.rows : rest.slice(1);
       split = rest.length > 0 ? splitStemAndChoices(rest) : null;
     }
+
+    // 블록 끝에 남은 줄은 다음 문항의 지문입니다(보기가 다음 블록에 있는 경우).
+    // 여기서 버리면 지문 없는 문항이 됩니다.
+    stemBuf.push(...rest.filter((l) => !l.startsWith(ANSWER_MARK)));
   }
 
   /* 보기가 2개도 안 되는 건 문항으로 못 씁니다(쪽 넘김을 못 이어붙인 잔해) */
