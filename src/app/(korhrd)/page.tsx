@@ -96,7 +96,9 @@ export default async function HomePage() {
             <Link className="section-head__more" href="/jobs">더보기 →</Link>
           </div>
           <div className="content">
-            <Carousel className="job-groups job-groups--carousel">
+            {/* 메인은 칸 수로 점을 셉니다 — 원본 buildCarousel 과 같은 방식입니다.
+                폭 비율로 세면 점이 하나 더 생기고 그 점은 켜지지 않습니다. */}
+            <Carousel className="job-groups job-groups--carousel" pageBy="cards">
               {JOB_GROUPS.map((g) => (
                 <JobGroupCard key={g.key} group={g} href={`/jobs?g=${g.key}`} />
               ))}
