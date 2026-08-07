@@ -44,9 +44,12 @@ export function LecturePlayer({
   const lastSavedRef = useRef(0);
   const [percent, setPercent] = useState(detail.session.videoProgressPercent ?? 0);
 
-  /* 학습자료 3칸 중 앞 두 칸에 넣을 파일 — 제목에 '예시'가 있으면 예시 칸으로 */
+  /* 학습자료 앞 두 칸에 넣을 파일.
+     교안은 같은 파일을 "내려받기 / 새 탭 미리보기" 두 방식으로 엽니다.
+     자료실에 '예시' 파일이 따로 있으면 미리보기는 그 파일을 씁니다. */
   const sample = materials.find((item) => item.title.includes('예시'));
-  const handout = materials.find((item) => item !== sample);
+  const handout = materials.find((item) => item !== sample) ?? sample;
+  const preview = sample ?? handout;
   const [toast, setToast] = useState<string | null>(null);
 
   const { session, sessions, courseCode, courseTitle, prevOrder, nextOrder } = detail;
@@ -185,54 +188,77 @@ export function LecturePlayer({
               <button className="panel-toggle" type="button" aria-expanded="true" aria-controls="material">
                 학습자료<span className="chev" aria-hidden="true">⌄</span>
               </button>
-              {/* 원본은 교안파일 다운로드 · 교안파일 예시 · 기출문제 3칸 고정입니다.
-                  앞의 두 칸은 자료실에 올라온 파일과 연결하고, 기출문제는
-                  강의실 안에서 바로 풀도록 풀이 화면으로 잇습니다. */}
+              {/* 교안파일 다운로드 · 교안파일 미리보기 · 기출문제 3칸 고정입니다.
+                  같은 교안 파일을 두 방식으로 엽니다 — 내려받기(download)와
+                  새 탭 미리보기. 자료실에 '예시' 파일이 따로 올라와 있으면
+                  미리보기는 그 파일을 씁니다. 기출문제만 파일이 아니라 풀이 화면입니다. */}
               <div className="material-grid panel-body" id="material">
                 {handout?.fileUrl ? (
                   <a href={handout.fileUrl} download={handout.fileName}>
-                    <span className="m-ico ph" aria-hidden="true" />
+                    <span className="m-ico" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/korhrd/img/material/handout-download.svg" alt="" width={34} height={34} />
+                    </span>
                     교안파일<br />다운로드
                   </a>
                 ) : (
                   <span aria-disabled="true">
-                    <span className="m-ico ph" aria-hidden="true" />
+                    <span className="m-ico" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/korhrd/img/material/handout-download.svg" alt="" width={34} height={34} />
+                    </span>
                     교안파일<br />다운로드
                   </span>
                 )}
 
-                {sample?.fileUrl ? (
-                  <a href={sample.fileUrl} download={sample.fileName}>
-                    <span className="m-ico ph" aria-hidden="true" />
-                    교안파일<br />예시
+                {preview?.fileUrl ? (
+                  <a href={preview.fileUrl} target="_blank" rel="noreferrer">
+                    <span className="m-ico" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/korhrd/img/material/handout-preview.svg" alt="" width={34} height={34} />
+                    </span>
+                    교안파일<br />미리보기
                   </a>
                 ) : (
                   <span aria-disabled="true">
-                    <span className="m-ico ph" aria-hidden="true" />
-                    교안파일<br />예시
+                    <span className="m-ico" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/korhrd/img/material/handout-preview.svg" alt="" width={34} height={34} />
+                    </span>
+                    교안파일<br />미리보기
                   </span>
                 )}
 
                 {/* 기출문제는 내려받는 파일이 아니라 강의실 안에서 바로 풉니다 */}
                 {practiceHref ? (
                   <Link href={practiceHref}>
-                    <span className="m-ico ph" aria-hidden="true" />
+                    <span className="m-ico" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/korhrd/img/material/practice.svg" alt="" width={34} height={34} />
+                    </span>
                     기출문제
                   </Link>
                 ) : (
                   <span aria-disabled="true">
-                    <span className="m-ico ph" aria-hidden="true" />
+                    <span className="m-ico" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/korhrd/img/material/practice.svg" alt="" width={34} height={34} />
+                    </span>
                     기출문제
                   </span>
                 )}
               </div>
             </div>
 
+            {/* 시안(lecture.html)과 같은 구조입니다. 목록은 .toc__list 여야
+                max-height:560px + 안쪽 스크롤이 걸립니다 — panel-body 로 두면
+                차시가 많은 과정에서 20강이 그대로 늘어져 옆 화면을 밀어냅니다. */}
             <div className="panel-card">
-              <button className="panel-toggle" type="button" aria-expanded="true" aria-controls="toc">
-                강의목차 ({completedCount}/{sessions.length})<span className="chev" aria-hidden="true">⌄</span>
-              </button>
-              <ul className="toc panel-body" id="toc">
+              <div className="toc__head">
+                <b>강의목차 <span>총 {sessions.length}강</span></b>
+                <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
+              </div>
+              <ul className="toc__list" id="toc">
                 {sessions.map((item) => (
                   <li
                     key={item.id}
