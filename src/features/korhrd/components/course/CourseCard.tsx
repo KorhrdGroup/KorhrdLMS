@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCourseThumb } from '@/features/korhrd/lib/course-thumb-context';
 import type { Course } from '@/features/korhrd/lib/types';
@@ -22,10 +23,16 @@ export default function CourseCard({ course, ageLabel }: { course: Course; ageLa
         <div className="thumb">
           {/* 썸네일은 어드민 과정관리에서 올린 이미지(courses.thumbnail_url)입니다.
               레이아웃이 DB에서 읽어 내려준 최신 값을 먼저 쓰고,
-              아직 없는 과정은 기존 자리표시를 그대로 보여줍니다. */}
+              아직 없는 과정은 기존 자리표시를 그대로 보여줍니다.
+
+              width/height 는 비율(16:9.5)만 알려주는 값입니다. 실제 크기는
+              CSS(.thumb > img)가 정하고, fill 은 쓰지 않습니다 —
+              position:absolute 가 붙으면 .thumb 높이가 무너집니다. */}
           {thumb ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={thumb} alt="" loading="lazy" />
+            <Image
+              src={thumb} alt="" width={480} height={285}
+              sizes="(max-width:560px) 70vw, (max-width:980px) 40vw, 280px"
+            />
           ) : (
             <div className="ph ph--thumb">이미지 영역<small>480 × 285</small></div>
           )}

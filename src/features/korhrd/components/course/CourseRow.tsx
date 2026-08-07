@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCourseThumb } from '@/features/korhrd/lib/course-thumb-context';
 import type { Course } from '@/features/korhrd/lib/types';
@@ -28,10 +29,17 @@ export default function CourseRow({
     <article className="course-row">
       <Link className="course-row__thumb" href={detail} aria-label={`${course.n} 상세보기`}>
         {/* 썸네일은 어드민 과정관리에서 올린 이미지(courses.thumbnail_url)입니다.
-            레이아웃이 DB에서 읽어 내려준 최신 값을 먼저 씁니다. */}
+            레이아웃이 DB에서 읽어 내려준 최신 값을 먼저 씁니다.
+
+            next/image 로 내보내면 원본(5MB 안팎)이 화면 폭에 맞게 줄고 WebP 로 바뀝니다.
+            width/height 는 비율만 알려주는 값이라 실제 크기는 CSS가 정합니다
+            (.course-row__thumb img — width·height 100%). fill 은 쓰지 않습니다.
+            position:absolute 가 붙어 칸 높이가 무너집니다. */}
         {thumb ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={thumb} alt="" loading="lazy" />
+          <Image
+            src={thumb} alt="" width={320} height={240}
+            sizes="(max-width:560px) 80vw, (max-width:980px) 40vw, 280px"
+          />
         ) : (
           <div className="ph ph--thumb-sq">이미지<small>320 × 240</small></div>
         )}

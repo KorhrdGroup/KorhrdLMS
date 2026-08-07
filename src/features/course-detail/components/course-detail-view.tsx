@@ -1,8 +1,11 @@
+import Image from "next/image";
+
 import type { CourseDetailData } from "@/components/course-detail/types";
 import { CourseDetailInteractions } from "@/features/course-detail/components/course-detail-interactions";
 import {
   ASSET,
   ENROLL_EVENT_DEADLINE,
+  HERO_IMAGE_FALLBACK,
   SHARED_FAQ,
   ministryLogo,
 } from "@/features/course-detail/constants";
@@ -103,8 +106,15 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
       <main id="main">
         {/* ============================ HERO ============================ */}
         <section className="dhero">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="dhero__bg" src={course.description.image} alt="" aria-hidden="true" />
+          {/* 히어로 배경은 과정 썸네일(원본 3~5MB)을 그대로 씁니다. next/image 로
+              화면 폭에 맞게 줄여 내보냅니다. 여기서는 fill 이 맞습니다 —
+              .dhero__bg 가 이미 position:absolute·inset:0·object-fit:cover 이고
+              .dhero 가 position:relative 라 fill 이 그 규칙과 그대로 맞물립니다. */}
+          <Image
+            /* image 는 선택 필드라 비어 있으면 서비스와 같은 기본 이미지를 씁니다 */
+            className="dhero__bg" src={course.description.image ?? HERO_IMAGE_FALLBACK} alt="" aria-hidden
+            fill sizes="100vw" priority
+          />
           <div className="container dhero__in">
             <p className="dhero__gov">
               {heroLogo ? (
@@ -405,8 +415,11 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
 
             <h2 className="dsec__title mt-7">교수 소개</h2>
             <div className="card dprof">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="dprof__img" src={course.professor.photo} alt={course.professor.name} />
+              {/* .dprof__img 가 150x150 고정이라 그 크기를 그대로 넘깁니다 */}
+              <Image
+                className="dprof__img" src={course.professor.photo} alt={course.professor.name}
+                width={150} height={150}
+              />
               <div>
                 <p className="dprof__name">{course.professor.name}</p>
                 <ul className="dprof__list">
