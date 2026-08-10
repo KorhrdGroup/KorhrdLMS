@@ -33,7 +33,7 @@ export default function Faq({
             </button>
             {/* .faq__a 는 grid(0fr↔1fr 아코디언)이고 여백은 .faq__a-pad 가 담당합니다.
                 내용을 바로 넣으면 여백이 사라지고 자식 요소마다 줄이 끊깁니다. */}
-            <div className="faq__a" id={id} hidden={open !== i}>
+            <div className="faq__a" id={id}>
               <div className="faq__a-inner">
                 <div className="faq__a-pad">{it.a}</div>
               </div>

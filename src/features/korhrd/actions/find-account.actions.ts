@@ -33,11 +33,17 @@ async function findMemberByNamePhone(name: string, phone: string) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("members")
-    .select("id, login_id, phone, created_at")
+    .select("id, login_id, phone, created_at, naver_id, kakao_id, password_hash")
     .eq("name", name)
     .is("deleted_at", null);
 
   return (data ?? []).find((row) => digitsOnly(row.phone ?? "") === phone) ?? null;
+}
+
+function socialProviderLabel(member: { naver_id?: string | null; kakao_id?: string | null }) {
+  if (member.kakao_id) return "카카오";
+  if (member.naver_id) return "네이버";
+  return null;
 }
 
 // ───────────────────────── 아이디 찾기 ─────────────────────────
@@ -71,7 +77,7 @@ export async function verifyFindIdCodeAction(input: {
 }
 
 export type FindIdResult =
-  | { success: true; loginId: string; joinedAt: string }
+  | { success: true; loginId: string; joinedAt: string; socialProvider?: string | null }
   | { success: false; message: string };
 
 /** 문자 인증을 마친 사람에게만 아이디 전체를 보여줍니다(마스킹 없음). */
@@ -93,6 +99,7 @@ export async function completeFindIdAction(input: {
     success: true,
     loginId: member.login_id,
     joinedAt: member.created_at?.slice(0, 10) ?? "",
+    socialProvider: socialProviderLabel(member),
   };
 }
 
@@ -103,7 +110,7 @@ async function findMemberForReset(loginId: string, name: string, phone: string) 
   const supabase = await createClient();
   const { data } = await supabase
     .from("members")
-    .select("id, name, phone")
+    .select("id, name, phone, naver_id, kakao_id")
     .eq("login_id", loginId)
     .is("deleted_at", null)
     .maybeSingle();
@@ -126,8 +133,17 @@ export async function requestPasswordResetCodeAction(input: {
     return { success: false, message: "아이디·이름·휴대폰 번호를 모두 입력해주세요." };
   }
 
-  if (!(await findMemberForReset(loginId, name, phone))) {
+  const resetMember = await findMemberForReset(loginId, name, phone);
+  if (!resetMember) {
     return { success: false, message: NOT_FOUND };
+  }
+
+  const provider = socialProviderLabel(resetMember);
+  if (provider) {
+    return {
+      success: false,
+      message: `${provider} 로그인으로 가입된 계정입니다. ${provider} 로그인을 이용해주세요.`,
+    };
   }
 
   return sendVerificationCode(phone, "reset_password");

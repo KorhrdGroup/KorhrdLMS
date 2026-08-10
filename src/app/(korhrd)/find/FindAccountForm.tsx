@@ -39,7 +39,7 @@ export function FindAccountForm() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const [foundId, setFoundId] = useState<{ loginId: string; joinedAt: string } | null>(null);
+  const [foundId, setFoundId] = useState<{ loginId: string; joinedAt: string; socialProvider?: string | null } | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -111,7 +111,7 @@ export function FindAccountForm() {
 
       const found = await completeFindIdAction({ token: verified.token, name });
       if (found.success) {
-        setFoundId({ loginId: found.loginId, joinedAt: found.joinedAt });
+        setFoundId({ loginId: found.loginId, joinedAt: found.joinedAt, socialProvider: found.socialProvider });
         setStep('result');
       } else {
         setMessage({ ok: false, text: found.message });
@@ -267,6 +267,11 @@ export function FindAccountForm() {
               <p className="my-card__status my-card__status--pass">
                 회원님의 아이디는 <b>{foundId.loginId}</b> 입니다. (가입일 {foundId.joinedAt})
               </p>
+              {foundId.socialProvider ? (
+                <p className="my-card__status my-card__status--fail">
+                  {foundId.socialProvider} 로그인으로 가입된 계정입니다. {foundId.socialProvider} 로그인을 이용해주세요.
+                </p>
+              ) : null}
               <Link className="btn btn--primary btn--lg btn--block" href="/login">
                 로그인하러 가기
               </Link>

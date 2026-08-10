@@ -143,6 +143,30 @@ export async function createMember(
     };
   }
 
+  const supabase = await createClient();
+
+  const phoneDigits = (input.phone ?? "").replace(/\D/g, "");
+  if (phoneDigits) {
+    const { data: rows } = await supabase
+      .from("members")
+      .select("id, phone, naver_id, kakao_id")
+      .is("deleted_at", null);
+
+    const dup = (rows ?? []).find(
+      (r) => (r.phone ?? "").replace(/\D/g, "") === phoneDigits,
+    );
+    if (dup) {
+      const isSocial = !!(dup.naver_id || dup.kakao_id);
+      return {
+        success: false,
+        message: isSocial
+          ? "이미 소셜 로그인으로 가입된 휴대폰 번호입니다. 소셜 로그인을 이용해주세요."
+          : "이미 가입된 휴대폰 번호입니다. 아이디 찾기를 이용해주세요.",
+        field: "phone",
+      };
+    }
+  }
+
   const insertData: Database["public"]["Tables"]["members"]["Insert"] = {
     login_id: loginId,
     name: normalize(input.name),
@@ -168,7 +192,6 @@ export async function createMember(
     status: "active",
   };
 
-  const supabase = await createClient();
   const { data, error } = await supabase
     .from("members")
     .insert(insertData)

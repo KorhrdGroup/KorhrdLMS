@@ -83,14 +83,19 @@ export default async function JobDetailPage({ params }: Params) {
             <section className="jobd-block">
               <h2>채용공고는 여기에서 확인하세요</h2>
               <div className="jobd-sites">
-                {sites.map((s) => (
-                  <span className="jobd-site" key={s}>
-                    <span className="ph" aria-hidden="true" />{s}
-                  </span>
-                ))}
+                {sites.map((s) =>
+                  s.url ? (
+                    <a className="jobd-site" key={s.name} href={s.url} target="_blank" rel="noopener noreferrer">
+                      <span className="ph" aria-hidden="true" />{s.name}
+                    </a>
+                  ) : (
+                    <span className="jobd-site" key={s.name}>
+                      <span className="ph" aria-hidden="true" />{s.name}
+                    </span>
+                  )
+                )}
               </div>
-              {/* TODO: 서비스 오픈 시 실제 채용 사이트 링크로 교체 */}
-              <p className="jobd-note">※ 외부 채용 사이트로, 실제 링크는 서비스 오픈 시 연결됩니다.</p>
+              <p className="jobd-note">※ 외부 채용 사이트로 연결됩니다.</p>
             </section>
           </div>
 

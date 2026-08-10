@@ -22,56 +22,58 @@ export const JOB_GROUPS: JobGroup[] = [
   ];
 
 /** 직업군별 채용공고 사이트 */
-export const JOB_SITES: Record<string, string[]> = {
+export type JobSite = { name: string; url?: string };
+
+export const JOB_SITES: Record<string, JobSite[]> = {
     "welfare": [
-      "복지넷",
-      "워크넷",
-      "지역 복지관 홈페이지"
+      { name: "복지넷", url: "https://www.bokji.net/job/off/01.bokji" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "지역 복지관 홈페이지" }
     ],
     "education": [
-      "에듀넷",
-      "워크넷",
-      "지역 교육청·학교 채용"
+      { name: "에듀넷", url: "https://www.edunet.net" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "지역 교육청·학교 채용" }
     ],
     "counsel": [
-      "워크넷",
-      "한국심리학회",
-      "지역 상담센터"
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "한국심리학회", url: "https://www.koreanpsychology.or.kr" },
+      { name: "지역 상담센터" }
     ],
     "medical": [
-      "메디잡",
-      "워크넷",
-      "병원 채용 홈페이지"
+      { name: "메디잡", url: "https://www.medijob.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "병원 채용 홈페이지" }
     ],
     "pet": [
-      "워크넷",
-      "반려동물 관련 커뮤니티",
-      "동물병원 채용"
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "반려동물 관련 커뮤니티" },
+      { name: "동물병원 채용" }
     ],
     "beauty": [
-      "뷰티잡",
-      "워크넷",
-      "지역 매장 채용"
+      { name: "뷰티잡", url: "https://www.beautyjob.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "지역 매장 채용" }
     ],
     "office": [
-      "사람인",
-      "잡코리아",
-      "워크넷"
+      { name: "사람인", url: "https://www.saramin.co.kr" },
+      { name: "잡코리아", url: "https://www.jobkorea.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" }
     ],
     "esg": [
-      "워크넷",
-      "환경부 채용",
-      "지자체 환경 일자리"
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "환경부 채용" },
+      { name: "지자체 환경 일자리" }
     ],
     "it": [
-      "원티드",
-      "점핏",
-      "워크넷"
+      { name: "원티드", url: "https://www.wanted.co.kr" },
+      { name: "점핏", url: "https://www.jumpit.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" }
     ],
     "hobby": [
-      "워크넷",
-      "지역 문화센터",
-      "소상공인 창업 지원"
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do" },
+      { name: "지역 문화센터" },
+      { name: "소상공인 창업 지원" }
     ]
   };
 
