@@ -72,7 +72,10 @@ export default async function Page({ params }: PageProps) {
         {/* 결과 요약 */}
         <div className="result-summary">
           <div className="result-summary__left">
-            <span className="result-summary__badge">
+            {/* 합격이 아니면 is-fail — 전달본 classroom.css 가 이 클래스로
+                초록(--green-soft/--green)을 빨강(--red-soft/--red)으로 바꿉니다.
+                원본 main.js 도 badge.classList.toggle('is-fail', !passed) 로 붙입니다. */}
+            <span className={passed ? 'result-summary__badge' : 'result-summary__badge is-fail'}>
               {passed ? '✓ 합격' : examTaken ? '불합격' : '미응시'}
             </span>
             <span className="result-summary__course">
@@ -194,7 +197,9 @@ export default async function Page({ params }: PageProps) {
         </div>
 
         {/* 합격·불합격 메시지 */}
-        <div className="result-msg">
+        {/* 메시지 블록도 같이 빨강으로 — 원본 main.js 의
+            msg.classList.toggle('is-fail', !passed) 와 같습니다 */}
+        <div className={passed ? 'result-msg' : 'result-msg is-fail'}>
           {passed ? (
             <>
               <strong>{data.memberName} 학우님은 {data.courseTitle} 시험에 합격하셨습니다.</strong>
