@@ -12,6 +12,7 @@ import GoalPicker from '@/features/korhrd/components/home/GoalPicker';
 import LiveTicker from '@/features/korhrd/components/home/LiveTicker';
 import GovMarquee from '@/features/korhrd/components/home/GovMarquee';
 import Carousel from '@/features/korhrd/components/ui/Carousel';
+import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
 import JobGroupCard from '@/features/korhrd/components/job/JobGroupCard';
 import styles from './page.module.css';
 
@@ -325,6 +326,8 @@ export default async function HomePage() {
           </a>
         </div>
       </section>
+
+      <FloatingBanner />
     </>
   );
 }

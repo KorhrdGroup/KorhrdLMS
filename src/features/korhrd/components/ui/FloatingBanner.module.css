@@ -1,0 +1,61 @@
+/*
+ * 화면 오른쪽 끝에 붙는 띠 배너 — Figma floating_banner (334:9614)
+ *
+ * 데스크톱에서만 띄웁니다. 좁은 화면에서는 본문 위를 덮어 읽기를 방해합니다.
+ * 기준은 --container(1200px) — 뷰포트가 본문 폭보다 넓을 때만 나옵니다.
+ */
+.banner {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .banner {
+    position: fixed;
+    top: calc(var(--header-h) + var(--s-6));
+    right: 0;
+    z-index: 30;   /* 헤더(50)보다 아래, 본문 위 */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 시안은 바깥 24 / 안쪽 8 인데 바깥 그룹에 자식이 하나뿐이라
+       실제로 보이는 간격은 안쪽 8px 입니다. 한 겹으로 폈습니다. */
+    gap: var(--s-3);
+
+    padding: var(--s-7);
+    background: var(--blue-soft);
+    /* 오른쪽 끝에 붙으므로 왼쪽 모서리만 둥글게 (시안 10px) */
+    border-radius: 10px 0 0 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .08);
+  }
+}
+
+.image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.text {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 진행 막대 — 흰 알약 안에 남색 막대 (시안 bar_update_effect) */
+.bar {
+  width: 100%;
+  padding: var(--s-1);
+  background: var(--surface);
+  border-radius: var(--r-full);
+}
+.bar > span {
+  display: block;
+  width: 53px;
+  height: 13px;
+  background: var(--navy);
+  border-radius: var(--r-full);
+}
