@@ -8,7 +8,7 @@ import { AdminHeader } from "@/components/admin/layout/admin-header";
 import { useAdminLayout } from "@/components/admin/layout/admin-layout-provider";
 import { AdminSidebar } from "@/components/admin/layout/admin-sidebar";
 import { AdminSubNav } from "@/components/admin/layout/admin-subnav";
-import { getNavGroupsForRole, resolveActiveAdminNav } from "@/lib/admin/navigation";
+import { getNavGroupsForRole, isFullAccessRole, resolveActiveAdminNav } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
 
 type AdminShellProps = {
@@ -27,7 +27,7 @@ export function AdminShell({ children }: AdminShellProps) {
     const defaultHref = navGroups[0].children[0]?.href ?? "/admin";
 
     if (pathname === "/admin") {
-      if (defaultHref !== "/admin") {
+      if (!isFullAccessRole(adminUser.role)) {
         router.replace(defaultHref);
       }
       return;
