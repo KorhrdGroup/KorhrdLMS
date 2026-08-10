@@ -169,21 +169,20 @@ export default async function Page({ params }: PageProps) {
           <div className="result-section__head"><h2>학습평가</h2></div>
           <div className="table-scroll">
             <table className="result-table">
-              {/* 출석성적 칸은 뺐습니다 — 성적은 수료시험 점수만으로 냅니다.
-                  진도율은 시험 응시 자격(60%)으로만 쓰입니다. */}
               <thead>
                 <tr>
                   <th rowSpan={2} className="row-label">평가요소</th>
-                  <th>수료시험</th><th>계</th><th>점수</th><th>등급</th>
+                  <th>출석</th><th>수료시험</th><th>계</th><th>점수</th><th>등급</th>
                 </tr>
                 <tr>
-                  <th>{weights.exam}%</th><th>100%</th>
+                  <th>{weights.attendance}%</th><th>{weights.exam}%</th><th>100%</th>
                   <th>{weights.passScore}점</th><th>D</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <th className="row-label">현재성적 (%)</th>
+                  <td>{summary.attendanceScore}</td>
                   <td className="is-highlight">{summary.examScore}</td>
                   <td>{summary.totalScore}</td>
                   <td>{summary.totalScore}점</td>
@@ -199,14 +198,14 @@ export default async function Page({ params }: PageProps) {
           {passed ? (
             <>
               <strong>{data.memberName} 학우님은 {data.courseTitle} 시험에 합격하셨습니다.</strong>
-              <p>수료시험 {summary.totalScore}점으로 합격 기준({weights.passScore}점)을 넘어 자격증 발급 신청이 가능합니다.</p>
+              <p>출석 {summary.attendanceScore}점 + 시험 {summary.examScore}점 = 총점 {summary.totalScore}점으로 합격 기준({weights.passScore}점)을 넘어 자격증 발급 신청이 가능합니다.</p>
             </>
           ) : examTaken ? (
             <>
               <strong>{data.memberName} 학우님은 아직 합격 기준에 도달하지 않았습니다.</strong>
               <p>
-                수료시험 100점 만점에 {weights.passScore}점 이상이면 합격입니다.
-                (현재 {summary.totalScore}점)
+                출석({weights.attendance}%) + 시험({weights.exam}%) 합산 {weights.passScore}점 이상이면 합격입니다.
+                (현재 출석 {summary.attendanceScore}점 + 시험 {summary.examScore}점 = {summary.totalScore}점)
               </p>
             </>
           ) : (
