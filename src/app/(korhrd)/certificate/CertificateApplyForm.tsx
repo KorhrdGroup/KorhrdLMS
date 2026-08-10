@@ -43,15 +43,20 @@ function DateWithCentury({ date }: { date: string }) {
 export function CertificateApplyForm({
   data,
   initialCourseId,
+  initialCourseTitle,
 }: {
   data: CertificateApplicationPageData;
   initialCourseId?: string;
+  /** ?course=<과목명> 으로 넘어온 과정. 목록에 없으면 기본 선택을 그대로 둡니다 */
+  initialCourseTitle?: string;
 }) {
   const router = useRouter();
   const selectable = data.eligibleCourses.filter((course) => !course.alreadyApplied);
 
   const [checked, setChecked] = useState<string[]>(() => {
-    const preset = selectable.find((course) => course.courseId === initialCourseId);
+    const preset =
+      selectable.find((course) => course.courseId === initialCourseId) ??
+      selectable.find((course) => course.courseTitle === initialCourseTitle);
     return preset ? [preset.courseId] : selectable.slice(0, 1).map((course) => course.courseId);
   });
 
@@ -234,7 +239,8 @@ export function CertificateApplyForm({
                 </thead>
                 <tbody>
                   {data.eligibleCourses.map((course) => (
-                    <tr key={course.courseId}>
+                    /* 선택된 행은 배경으로도 표시합니다 — .issue-table tr.is-picked td */
+                    <tr key={course.courseId} className={checked.includes(course.courseId) ? 'is-picked' : undefined}>
                       <td>
                         <input
                           type="checkbox"

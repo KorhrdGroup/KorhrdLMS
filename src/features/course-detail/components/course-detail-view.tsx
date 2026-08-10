@@ -9,6 +9,7 @@ import {
   SHARED_FAQ,
   ministryLogo,
 } from "@/features/course-detail/constants";
+import EnrollNowButton from "@/features/korhrd/components/course/EnrollNowButton";
 import { findJobByCourseName } from "@/features/korhrd/data/jobs";
 
 /**
@@ -374,8 +375,14 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
           <section className="dsec dsec--deep" aria-labelledby="sample-title">
             <div className="container">
               <h2 className="dsec__title dsec__title--on-navy" id="sample-title">자격증 발급 예시</h2>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="dsample__img" src={ASSET("sample-certs.png")} alt="상장형 자격증과 카드형 자격증 견본 예시" />
+              {/* 원본 1800×1014. CSS 가 width:100%/max-width:920px 로 잡으므로
+                  실제로 필요한 폭은 920px 뿐입니다 — sizes 를 그에 맞춰 둡니다. */}
+              <Image
+                className="dsample__img" src={ASSET("sample-certs.png")}
+                alt="상장형 자격증과 카드형 자격증 견본 예시"
+                width={1800} height={1014}
+                sizes="(max-width: 960px) 100vw, 920px"
+              />
               <p className="dsample__note">{course.certificateNote}</p>
             </div>
           </section>
@@ -386,8 +393,13 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                 이력서에 기재하고 <em>취업 경쟁력 UP</em>
               </h2>
               <div className="dresume__stage">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="dresume__shot" src={ASSET("resume-banner.png")} alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시" />
+                {/* 원본 1600×825. CSS 최대 폭이 1120px 입니다. */}
+                <Image
+                  className="dresume__shot" src={ASSET("resume-banner.png")}
+                  alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시"
+                  width={1600} height={825}
+                  sizes="(max-width: 1160px) 100vw, 1120px"
+                />
                 <span className="dresume__base" aria-hidden="true" />
               </div>
             </div>
@@ -478,9 +490,9 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
             <img className="detail-cta__alarm" src={ASSET("alarm-clock.png")} alt="" aria-hidden="true" />
             무료수강 이벤트
           </p>
-          {/* 수강신청 화면은 ?select= 를 읽습니다(app/enrollment/page.tsx).
-              ?course= 로 보내면 과정이 안 골라진 빈 목록이 뜹니다. */}
-          <a className="btn btn--cta" href={`/enrollment?select=${course.slug}`}>{course.ctaLabel}</a>
+          {/* 신청할 과정이 이 화면 하나로 정해져 있으므로 목록으로 보내지 않고
+              여기서 바로 신청하고 완료 모달을 띄웁니다 (course.slug = 과정코드) */}
+          <EnrollNowButton className="btn btn--cta" code={course.slug}>{course.ctaLabel}</EnrollNowButton>
         </div>
         <div className="detail-cta__bottom">
           <p className="timer" data-countdown={ENROLL_EVENT_DEADLINE}>

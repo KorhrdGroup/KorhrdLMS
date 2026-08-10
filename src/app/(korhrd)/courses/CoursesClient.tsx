@@ -320,7 +320,8 @@ export default function CoursesClient({ initial = {} }: {
       </div>
 
       <CartBar />
-      <FloatingBanner />
+      {/* 이미 수강신청 화면이라 갈 곳이 없습니다 — 링크로 두면 고른 과목만 지웁니다 */}
+      <FloatingBanner href={null} />
     </>
   );
 }

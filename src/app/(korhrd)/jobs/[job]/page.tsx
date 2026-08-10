@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { JOBS, JOB_GROUPS, JOB_SITES, findJob } from '@/features/korhrd/data/jobs';
 import { findCourse } from '@/features/korhrd/data/courses';
+import EnrollNowButton from '@/features/korhrd/components/course/EnrollNowButton';
 import styles from './page.module.css';
 
 /**
@@ -110,9 +111,10 @@ export default async function JobDetailPage({ params }: Params) {
                 btn--block(width:100%)을 빼고 각 버튼이 반씩 나눠 갖게 합니다. */}
             <div className={styles.actions}>
               {course?.code ? (
-                <Link className="btn btn--primary" href={`/enrollment?select=${course.code}`}>
+                /* 과정이 하나로 정해져 있으므로 목록을 거치지 않고 바로 신청합니다 */
+                <EnrollNowButton className="btn btn--primary" code={course.code}>
                   바로 수강신청
-                </Link>
+                </EnrollNowButton>
               ) : null}
               <Link className="btn btn--ghost" href={`/courses/${encodeURIComponent(job.course)}`}>
                 과정 상세보기

@@ -231,7 +231,12 @@ export default async function Page({ params }: PageProps) {
             </form>
           ))}
           {passed ? (
-            <Link className="btn btn--primary btn--lg" href="/certificate">자격증 신청 바로가기</Link>
+            <Link
+              className="btn btn--primary btn--lg"
+              href={`/certificate?course=${encodeURIComponent(data.courseTitle)}`}
+            >
+              자격증 신청 바로가기
+            </Link>
           ) : (
             <Link className="btn btn--primary btn--lg" href={`/exam/${data.courseCode}`}>시험 목록으로</Link>
           )}
