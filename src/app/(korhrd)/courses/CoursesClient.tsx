@@ -66,6 +66,9 @@ export default function CoursesClient({ initial = {} }: {
   const [filterOpen, setFilterOpen] = useState(false);
   /** 시트 왼쪽 레일에서 고른 그룹 (FILTER_GROUPS 인덱스) */
   const [sheetGroup, setSheetGroup] = useState(0);
+  /** 사이드바에서 펼쳐 둔 조건 묶음. 처음에는 전부 펼칩니다 */
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const isOpen = (group: Group) => openGroups[group] ?? true;
 
   /* 시트가 열린 동안은 뒤 목록이 밀려 내려가지 않게 잠그고, Esc로 닫습니다 */
   useEffect(() => {
@@ -133,8 +136,16 @@ export default function CoursesClient({ initial = {} }: {
   const filterGroup = (group: Group, values: string[], suffix = '') => {
     const chosen = picked[group];
     return (
-      <div className="filter-group" key={group}>
-        <p className="filter-group__title">{GROUP_LABEL[group]}</p>
+      <div className={`filter-group${isOpen(group) ? '' : ' is-folded'}`} key={group}>
+        {/* 제목을 눌러 접었다 폅니다. 화살표는 전달본 공통 셰브론(.chev)입니다 */}
+        <button
+          className="filter-group__title panel-toggle" type="button"
+          aria-expanded={isOpen(group)} aria-controls={`filter-items-${group}`}
+          onClick={() => setOpenGroups((p) => ({ ...p, [group]: !isOpen(group) }))}
+        >
+          {GROUP_LABEL[group]}
+          <span className="chev" aria-hidden="true">⌄</span>
+        </button>
         {chosen.length > 0 && (
           <button
             className="filter-group__reset" type="button"
@@ -148,14 +159,16 @@ export default function CoursesClient({ initial = {} }: {
             초기화
           </button>
         )}
-        {values.map((v) => (
-          <button
-            key={v} className="filter-item" type="button"
-            aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
-          >
-            {v}{suffix} <span className="num">{countOf(group, v)}</span>
-          </button>
-        ))}
+        <div id={`filter-items-${group}`} hidden={!isOpen(group)}>
+          {values.map((v) => (
+            <button
+              key={v} className="filter-item" type="button"
+              aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
+            >
+              {v}{suffix} <span className="num">{countOf(group, v)}</span>
+            </button>
+          ))}
+        </div>
       </div>
     );
   };

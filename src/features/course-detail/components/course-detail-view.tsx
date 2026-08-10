@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import type { CourseDetailData } from "@/components/course-detail/types";
 import { CourseDetailInteractions } from "@/features/course-detail/components/course-detail-interactions";
+import { DetailNav } from "@/features/course-detail/components/detail-nav";
 import {
   ASSET,
   ENROLL_EVENT_DEADLINE,
@@ -93,14 +94,8 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={ASSET("logo.svg")} alt="한평생 직업훈련" width={147} height={18} />
           </a>
-          <nav className="gnb" id="gnb" aria-label="주 메뉴">
-            <a href="/jobs">취업 길찾기</a>
-            <a href="/courses" aria-current="page">수강신청</a>
-            <a href="/mylecture">나의 강의실</a>
-            <a href="/certificate">자격증 발급신청</a>
-            <a href="/reviews">합격후기</a>
-            <a href="/notice">공지사항</a>
-          </nav>
+          {/* 햄버거 + 메뉴 — 980px 이하에서 메뉴가 숨고 버튼으로 여닫습니다 */}
+          <DetailNav />
         </div>
       </header>
 

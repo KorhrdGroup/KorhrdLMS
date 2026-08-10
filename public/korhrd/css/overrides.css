@@ -93,12 +93,45 @@ input[type="checkbox"]:checked,
 }
 .agree--plain input { margin-top: 0 }
 
-/* 수강신청 목록 — 강의 정보표 아래를 2px 띄웁니다 (2026-08-10, 디자인 요청)
-   전달본은 .course-row .spec-table 이 height:100% + space-between 이라 마지막 줄
-   '주무부처'의 아랫선이 왼쪽 썸네일 아랫선과 정확히 같은 높이에 떨어집니다(실측 0px).
-   딱 맞으면 표가 사진보다 조금 흘러내려 보여, 살짝 안쪽으로 들여 균형을 맞춥니다.
-   박스 높이는 height:100% 로 고정돼 있어 글자 줄만 2px 올라가고 정렬은 그대로입니다. */
-.course-row .spec-table { padding-bottom: 2px }
+/* 수강신청 목록 — 강의 정보표를 아래·왼쪽으로 2px 들입니다 (2026-08-10, 디자인 요청)
+   전달본은 이 표가 위 제목 블록과 왼쪽 선이 정확히 같고(실측 592.5px 동일),
+   마지막 줄 '주무부처'의 아랫선도 왼쪽 썸네일 아랫선과 정확히 같습니다(실측 0px).
+   양쪽 다 딱 맞으면 표가 사진·제목보다 조금 흘러 보여, 살짝 안쪽으로 들여
+   균형을 맞춥니다.
+   박스는 grid-area 와 height:100% 로 자리가 고정돼 있어 글자 줄만 움직이고
+   표 자체의 정렬은 그대로입니다. */
+.course-row .spec-table { padding-bottom: 2px; padding-left: 2px }
+
+/* 수강신청 사이드바 — 조건 묶음 접기 + 스크롤 고정 (2026-08-10, 디자인 요청)
+
+   접기: 제목(.filter-group__title)을 버튼으로 바꿔 눌러 여닫습니다. 화살표는
+   전달본 공통 셰브론(.panel-toggle .chev)을 그대로 써서 FAQ·푸터와 같은
+   모양·회전을 씁니다. 제목의 글꼴·색은 전달본 값을 그대로 두고 배치만 폅니다.
+
+   고정: 사이드바가 본문보다 짧아도 목록이 길어 한참 스크롤해야 했습니다.
+   조건이 다 펼쳐지면 사이드바가 화면보다 길어지므로(실측 1027px > 900px)
+   max-height 로 묶고 안쪽에서 스크롤되게 합니다. 그러지 않으면 아랫부분을
+   영영 볼 수 없습니다. 980px 이하에서는 전달본이 사이드바를 감추고
+   바텀시트를 쓰므로 이 규칙은 그때 의미가 없습니다. */
+#course-filters {
+  position: sticky;
+  top: calc(var(--header-h) + var(--s-4));
+  max-height: calc(100vh - var(--header-h) - var(--s-7));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.filter-group__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  width: 100%;
+  text-align: left;
+}
+
+/* 접힌 묶음은 제목만 남습니다 — 펼쳤을 때의 아래 여백(8px)을 지웁니다 */
+.filter-group.is-folded .filter-group__title { margin-bottom: 0 }
 
 /* 로그인 상태에서 상단 메뉴가 두 줄로 깨지는 것 (2026-08-10)
    전달본 responsive.css 는 "이 폭부터 상단 메뉴가 두 줄로 깨지므로" 1100px 에서
