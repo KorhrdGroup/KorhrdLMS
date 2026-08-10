@@ -128,7 +128,7 @@ export function CertificateApplyForm({
     });
   };
 
-  if (data.eligibleCourses.length === 0) {
+  if (selectable.length === 0) {
     return (
       <div className="container">
         <nav className="breadcrumb" aria-label="현재 위치">
