@@ -34,3 +34,17 @@
 .back a:hover {
   color: var(--ink-2);
 }
+
+/*
+ * 신청 버튼 두 개 — 나란히 반씩 나눠 갖습니다.
+ * 사이드바가 320px 라 좁아, 글자가 길어지면 두 줄로 접히게 두었습니다.
+ */
+.actions {
+  display: flex;
+  gap: var(--s-3);
+}
+.actions > * {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+}
