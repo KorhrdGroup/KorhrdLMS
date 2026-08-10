@@ -2,15 +2,14 @@ import { redirect } from "next/navigation";
 
 import { AdminLayoutProvider } from "@/components/admin/layout/admin-layout-provider";
 import { AdminShell } from "@/components/admin/layout/admin-shell";
-import { createAuthClient } from "@/lib/supabase/server";
+import type { AdminRole } from "@/lib/admin/navigation";
+import { createAuthClient, createClient } from "@/lib/supabase/server";
 
 export default async function AdminAppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // proxy에서 1차로 걸러지지만, 렌더 단계에서도 세션을 재확인합니다(이중 방어).
-  // 세션을 봐야 하므로 쿠키를 읽는 인증 전용 클라이언트를 씁니다.
   const supabase = await createAuthClient();
   const {
     data: { user },
@@ -20,9 +19,25 @@ export default async function AdminAppLayout({
     redirect("/admin/login");
   }
 
+  let role: AdminRole = "admin";
+  try {
+    const db = await createClient();
+    const { data: adminRow } = await db
+      .from("admin_users")
+      .select("admin_type")
+      .eq("login_id", user.email ?? "")
+      .maybeSingle();
+    if (adminRow?.admin_type) {
+      role = adminRow.admin_type as AdminRole;
+    }
+  } catch {
+    // DB 조회 실패 시 기본 admin 역할 유지
+  }
+
   const adminUser = {
     name: (user.user_metadata?.name as string | undefined) ?? "관리자",
     email: user.email ?? "",
+    role,
   };
 
   return (
