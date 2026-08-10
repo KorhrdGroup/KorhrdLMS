@@ -58,8 +58,27 @@
 }
 .bar > span {
   display: block;
-  width: 40px;
+  width: 40px;   /* 움직임을 끈 환경에서 보이는 기본값 */
   height: 10px;
   background: var(--navy);
   border-radius: var(--r-full);
+  animation: fill 2.4s ease-in-out infinite;
+}
+
+/* 0 → 100% 를 반복하며 '갱신 중'이라는 느낌을 줍니다.
+   끝에서 잠깐 머문 뒤 처음으로 돌아갑니다.
+   transform:scaleX 대신 width 를 움직입니다 — scaleX 는 알약 끝의
+   둥근 모서리까지 같이 눌려 찌그러져 보입니다. */
+@keyframes fill {
+  0%   { width: 0 }
+  70%  { width: 100% }
+  100% { width: 100% }
+}
+
+/* 움직임을 줄이는 설정에서는 채워진 채로 멈춥니다 (전달본 CSS와 같은 방식) */
+@media (prefers-reduced-motion: reduce) {
+  .bar > span {
+    animation: none;
+    width: 100%;
+  }
 }
