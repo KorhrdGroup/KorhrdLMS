@@ -23,7 +23,6 @@ export function SignupForm() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [birth, setBirth] = useState('');
   const [email, setEmail] = useState('');
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
@@ -44,12 +43,6 @@ export function SignupForm() {
     });
   };
 
-  /** 생년월일 8자리(19750320) → 저장 형식(1975-03-20) */
-  const toBirthDate = (value: string) => {
-    const d = value.replace(/\D/g, '');
-    return d.length === 8 ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}` : '';
-  };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
@@ -58,11 +51,6 @@ export function SignupForm() {
       setError('아이디 중복확인을 완료해주세요.');
       return;
     }
-    if (birth && !toBirthDate(birth)) {
-      setError('생년월일은 8자리 숫자로 입력해주세요. (예: 19750320)');
-      return;
-    }
-
     startTransition(async () => {
       const result = await createMemberAction(
         {
@@ -72,7 +60,8 @@ export function SignupForm() {
           passwordConfirm,
           email,
           phone,
-          birthDate: toBirthDate(birth),
+          // 생년월일은 가입 단계에서 받지 않습니다(자격증 신청 때 확인).
+          birthDate: '',
           // 아래는 가입 단계에서 받지 않는 어드민 전용 항목입니다.
           residentRegistrationNumber: '',
           calendarType: 'solar',
@@ -184,19 +173,6 @@ export function SignupForm() {
                 id="phone" type="tel" required autoComplete="tel" inputMode="numeric"
                 placeholder="010-1234-5678" value={phone}
                 onChange={(event) => setPhone(event.target.value)}
-              />
-            </div>
-
-            <div className="field">
-              <label htmlFor="birth">
-                생년월일 <span className="req" aria-hidden="true">*</span>
-                <span className="sr-only">(필수)</span>{' '}
-                <span className="hint">— 자격증에 표기됩니다</span>
-              </label>
-              <input
-                id="birth" type="text" required inputMode="numeric" maxLength={8}
-                placeholder="예) 19750320" value={birth}
-                onChange={(event) => setBirth(event.target.value)}
               />
             </div>
 

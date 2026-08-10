@@ -49,6 +49,8 @@ export type CertificateApplicationPageData = {
 export type SubmitCertificateApplicationInput = {
   courseId: string;
   deliveryName: string;
+  /** "1975-03-20". 자격증에 인쇄되므로 신청서에서 직접 받습니다. */
+  birthDate: string;
   phone: string;
   postalCode: string;
   address: string;
