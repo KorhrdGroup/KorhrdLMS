@@ -53,6 +53,10 @@ export default async function Page({ params }: PageProps) {
   const examTaken = summary.examPercent !== null;
   const submittedExams = data.grade.exams.filter((exam) => exam.submitted);
 
+  /* 합격했으면 재응시 버튼을 내놓지 않습니다 — 다시 보면 이 점수를 덮어써
+     합격이 풀릴 수 있습니다 */
+  const retakeExams = passed ? [] : submittedExams;
+
   /* 합격 초록(전달본 기본) · 불합격 빨강 · 미응시 회색 — 배지와 메시지가 같은 색을 씁니다 */
   const verdictClass = passed ? '' : examTaken ? ' is-fail' : ' is-none';
 
@@ -225,10 +229,12 @@ export default async function Page({ params }: PageProps) {
         </div>
 
         {/* 버튼은 한 줄(.result-cta)에 모읍니다 — 블록을 나누면 간격 없이 붙어 보입니다.
-            재응시는 제출한 시험만 나오고, 다시 제출하면 이 점수를 덮어씁니다. */}
+            재응시는 아직 합격하지 못한 경우에만 내놓습니다. 합격한 뒤에 다시 보면
+            이 점수를 덮어써 합격이 풀릴 수 있어, 할 이유가 없는 버튼입니다.
+            (제출한 시험만 나오고, 다시 제출하면 이 점수를 덮어씁니다) */}
         <div className="result-cta">
           <Link className="btn btn--ghost btn--lg" href="/mylecture">이전으로</Link>
-          {submittedExams.map((exam) => (
+          {retakeExams.map((exam) => (
             <form action={startExamRetakeAction} key={exam.id}>
               <input type="hidden" name="courseCode" value={data.courseCode} />
               <input type="hidden" name="examId" value={exam.id} />

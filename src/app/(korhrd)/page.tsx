@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { getMyLectureData } from '@/features/korhrd/lib/my-lecture-data';
 import { listCourseReviews } from '@/features/korhrd/services/course-review.service';
@@ -14,6 +15,7 @@ import GovMarquee from '@/features/korhrd/components/home/GovMarquee';
 import Carousel from '@/features/korhrd/components/ui/Carousel';
 import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
 import ScrollTopButton from '@/features/korhrd/components/ui/ScrollTopButton';
+import { REVIEW_CERT } from '@/features/korhrd/components/review/ReviewRow';
 import JobGroupCard from '@/features/korhrd/components/job/JobGroupCard';
 import styles from './page.module.css';
 
@@ -233,7 +235,12 @@ export default async function HomePage() {
             {homeReviews.map((r) => (
               <article className="review" key={r.id}>
                 <div className="review__top">
-                  <span className="ph review__ava" aria-hidden="true">자격증<small>사진</small></span>
+                  {/* 자격증 예시 이미지 — 합격후기 목록과 같은 파일 (2026-08-10, 디자인 요청) */}
+                  <Image
+                    className="ph review__ava" src={REVIEW_CERT} alt=""
+                    width={72} height={72}
+                    style={{ objectFit: 'contain', background: '#fff' }}
+                  />
                   <div>
                     <h3>{r.title}</h3>
                     <p className="review__who">{r.author} 수강생</p>

@@ -1,9 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import type { Review } from '@/features/korhrd/lib/types';
 import HelpfulButton from './HelpfulButton';
+
+/** 합격후기에 공통으로 쓰는 자격증 예시 이미지 (목록·상세 같은 파일) */
+export const REVIEW_CERT = '/review-cert.png';
 
 /**
  * 합격후기 목록의 후기 카드 (Figma card_review 249:12331).
@@ -19,12 +23,13 @@ export default function ReviewRow({ review }: { review: Review }) {
   return (
     <article className="review-row">
       <div className="review-row__top">
-        {/* 사진이 없으면 자리표시가 숨겨집니다 */}
-        {review.photo ? (
-          <img className="ph ph--cert-lg" src={review.photo} alt="" />
-        ) : (
-          <span className="ph ph--cert-lg" aria-hidden="true">자격증 사진<small>1 : 1</small></span>
-        )}
+        {/* 후기 사진은 자격증 예시 이미지 한 장으로 통일합니다 (2026-08-10, 디자인 요청).
+            자리는 .ph--cert-lg 가 잡은 140x140 정사각인데 자격증은 세로가 길어,
+            잘리지 않도록 contain 으로 넣습니다(REVIEW_CERT). */}
+        <Image
+          className="ph ph--cert-lg" src={REVIEW_CERT} alt=""
+          width={140} height={140} style={{ objectFit: 'contain', background: '#fff' }}
+        />
         <div>
           <h2><Link href={`/reviews/${review.id}`}>{review.title}</Link></h2>
           <p className="review-row__meta">

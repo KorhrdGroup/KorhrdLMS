@@ -102,6 +102,16 @@ input[type="checkbox"]:checked,
    표 자체의 정렬은 그대로입니다. */
 .course-row .spec-table { padding-bottom: 2px; padding-left: 2px }
 
+/* 기출문제 풀이 — 정보 칸을 항목 수에 맞춥니다 (2026-08-10, 디자인 요청)
+   전달본 .exam-info 는 4칸 고정(repeat(4,1fr))입니다. 수료시험은 시험명·응시기간·
+   문항수·시험시간 넷이라 딱 맞는데, 기출문제 풀이는 과정·문항수·유형 셋이라
+   네 번째 칸이 빈 채로 남아 오른쪽이 휑했습니다.
+   세 번째 칸이 마지막이면 3칸으로 나눠 양옆을 맞춥니다.
+   좁은 화면(≤980px)의 2칸 규칙은 전달본 것을 그대로 둡니다. */
+@media (min-width: 981px) {
+  .exam-info:has(> div:nth-child(3):last-child) { grid-template-columns: repeat(3, 1fr) }
+}
+
 /* 시험성적 — 미응시는 회색 (2026-08-10, 디자인 요청)
    전달본은 합격(초록)·불합격(.is-fail 빨강) 둘로만 나눕니다. 미응시는 나쁜
    결과가 아니라 아직 아무것도 하지 않은 상태라 빨강으로 겁줄 이유가 없습니다.

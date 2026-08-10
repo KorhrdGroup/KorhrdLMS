@@ -12,6 +12,7 @@ import {
 } from "@/features/course-detail/constants";
 import EnrollNowButton from "@/features/korhrd/components/course/EnrollNowButton";
 import { findJobByCourseName } from "@/features/korhrd/data/jobs";
+import { REVIEW_CERT } from "@/features/korhrd/components/review/ReviewRow";
 
 /**
  * 퍼블리싱 산출물(`course-detail-page/index.html`)의 마크업을 그대로 옮긴 화면입니다.
@@ -324,7 +325,12 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                 REVIEWS.map((review) => (
                   <li className="drev__card" key={`${pass}-${review.title}`} aria-hidden={pass === 1}>
                     <div className="drev__top">
-                      <span className="ph drev__ava" aria-hidden="true" />
+                      {/* 자격증 예시 이미지 — 합격후기 목록과 같은 파일 (2026-08-10, 디자인 요청) */}
+                      <Image
+                        className="ph drev__ava" src={REVIEW_CERT} alt=""
+                        width={72} height={72}
+                        style={{ objectFit: "contain", background: "#fff" }}
+                      />
                       <div>
                         <p className="drev__tit">{review.title}</p>
                         <p className="drev__who">{review.who} 수강생</p>

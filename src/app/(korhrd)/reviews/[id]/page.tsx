@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -7,6 +8,8 @@ import {
   listCourseReviews,
 } from '@/features/korhrd/services/course-review.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
+
+import { REVIEW_CERT } from '@/features/korhrd/components/review/ReviewRow';
 
 import ReviewHelpful from './ReviewHelpful';
 
@@ -67,10 +70,12 @@ export default async function Page({ params }: PageProps) {
           {review.body}
         </div>
 
-        {review.photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={review.photo} alt="자격증 사진" style={{ maxWidth: 360, borderRadius: 8 }} />
-        ) : null}
+        {/* 목록과 같은 자격증 예시 이미지 (2026-08-10, 디자인 요청) */}
+        <Image
+          src={REVIEW_CERT} alt="자격증 예시"
+          width={360} height={509} sizes="360px"
+          style={{ maxWidth: 360, height: 'auto', borderRadius: 8 }}
+        />
 
         <ReviewHelpful
           reviewId={review.id}
