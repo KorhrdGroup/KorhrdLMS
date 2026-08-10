@@ -478,7 +478,9 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
             <img className="detail-cta__alarm" src={ASSET("alarm-clock.png")} alt="" aria-hidden="true" />
             무료수강 이벤트
           </p>
-          <a className="btn btn--cta" href={`/enrollment?course=${course.slug}`}>{course.ctaLabel}</a>
+          {/* 수강신청 화면은 ?select= 를 읽습니다(app/enrollment/page.tsx).
+              ?course= 로 보내면 과정이 안 골라진 빈 목록이 뜹니다. */}
+          <a className="btn btn--cta" href={`/enrollment?select=${course.slug}`}>{course.ctaLabel}</a>
         </div>
         <div className="detail-cta__bottom">
           <p className="timer" data-countdown={ENROLL_EVENT_DEADLINE}>
