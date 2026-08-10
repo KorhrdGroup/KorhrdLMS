@@ -64,6 +64,7 @@ export function CertificateApplyForm({
   const [addressDetail, setAddressDetail] = useState(data.profile.addressDetail ?? '');
   const [memo, setMemo] = useState('');
   const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank_transfer'>('card');
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -279,13 +280,28 @@ export function CertificateApplyForm({
             {/* ========================== 증명사진 ========================== */}
             <div className="card mt-3">
               <h2 className="card__title">증명사진 첨부</h2>
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <span className="ph ph--cert" aria-hidden="true">사진<small>3 × 4cm</small></span>
+              <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                <div style={{ width: '80px', flexShrink: 0, textAlign: 'center' }}>
+                  {photoPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={photoPreview} alt="증명사진 미리보기"
+                      style={{ width: '80px', height: '107px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }}
+                    />
+                  ) : (
+                    <span className="ph ph--cert" aria-hidden="true">사진<small>3 × 4cm</small></span>
+                  )}
+                </div>
                 <div className="field" style={{ flex: 1, minWidth: '220px' }}>
                   <label htmlFor="photo">증명사진 파일 <span className="hint">(선택 · JPG/PNG, 5MB 이하)</span></label>
                   <input
                     id="photo" type="file" accept="image/png,image/jpeg"
-                    onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0] ?? null;
+                      setPhoto(file);
+                      if (photoPreview) URL.revokeObjectURL(photoPreview);
+                      setPhotoPreview(file ? URL.createObjectURL(file) : null);
+                    }}
                   />
                   <p style={{ fontSize: '11.5px', color: 'var(--faint)', marginTop: '7px' }}>
                     미첨부시 사진 없이 자격증만 발급됩니다.
