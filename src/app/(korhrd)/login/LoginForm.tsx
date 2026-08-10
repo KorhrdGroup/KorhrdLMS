@@ -26,6 +26,9 @@ export function LoginForm({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  /* 소셜 로그인 후에도 원래 보려던 화면으로 돌아가도록 함께 넘깁니다 */
+  const socialRedirect = redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : "";
+
   useEffect(() => {
     const saved = window.localStorage.getItem(SAVED_LOGIN_ID_KEY);
     if (saved) {
@@ -126,14 +129,21 @@ export function LoginForm({
           </button>
         </div>
 
-        {/* 네이버 로그인 — 서버 라우트가 네이버 인증 화면으로 보냅니다.
-            버튼 색은 네이버 가이드(#03C75A) 고정입니다. */}
+        {/* 소셜 로그인 — 서버 라우트가 각 인증 화면으로 보냅니다.
+            버튼 색은 각 사의 브랜드 가이드 색(네이버 #03C75A, 카카오 #FEE500) 고정입니다. */}
         <a
           className="btn btn--lg btn--block mt-3"
-          href={`/api/auth/naver/start${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
+          href={`/api/auth/naver/start${socialRedirect}`}
           style={{ background: "#03C75A", color: "#fff" }}
         >
           네이버로 로그인
+        </a>
+        <a
+          className="btn btn--lg btn--block mt-2"
+          href={`/api/auth/kakao/start${socialRedirect}`}
+          style={{ background: "#FEE500", color: "#191600" }}
+        >
+          카카오로 로그인
         </a>
 
         <p className="login-links">
