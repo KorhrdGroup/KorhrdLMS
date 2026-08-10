@@ -132,21 +132,24 @@ export function LoginForm({
         </div>
 
         {/* 소셜 로그인 — 서버 라우트가 각 인증 화면으로 보냅니다.
-            버튼 색은 각 사의 브랜드 가이드 색(네이버 #03C75A, 카카오 #FEE500) 고정입니다. */}
+            버튼 모양·문구·로고는 각 사의 공식 디자인 가이드를 그대로 따릅니다.
+            색·문구를 임의로 바꾸면 심사에서 걸립니다(모듈 CSS 주석 참고). */}
         <div className={styles.social}>
           <a
-            className="btn btn--lg"
+            className={`${styles.button} ${styles.naver}`}
             href={`/api/auth/naver/start${socialRedirect}`}
-            style={{ background: "#03C75A", color: "#fff" }}
           >
-            네이버로 로그인
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/social/naver-n-white.svg" alt="" width={18} height={18} aria-hidden="true" />
+            네이버 로그인
           </a>
           <a
-            className="btn btn--lg"
+            className={`${styles.button} ${styles.kakao}`}
             href={`/api/auth/kakao/start${socialRedirect}`}
-            style={{ background: "#FEE500", color: "#191600" }}
           >
-            카카오로 로그인
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/social/kakao-bubble.svg" alt="" width={18} height={18} aria-hidden="true" />
+            카카오 로그인
           </a>
         </div>
 
