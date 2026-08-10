@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -8,8 +7,6 @@ import {
   listCourseReviews,
 } from '@/features/korhrd/services/course-review.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
-
-import { REVIEW_CERT } from '@/features/korhrd/components/review/ReviewRow';
 
 import ReviewHelpful from './ReviewHelpful';
 
@@ -70,12 +67,14 @@ export default async function Page({ params }: PageProps) {
           {review.body}
         </div>
 
-        {/* 목록과 같은 자격증 예시 이미지 (2026-08-10, 디자인 요청) */}
-        <Image
-          src={REVIEW_CERT} alt="자격증 예시"
-          width={360} height={509} sizes="360px"
-          style={{ maxWidth: 360, height: 'auto', borderRadius: 8 }}
-        />
+        {/* 상세에는 자격증 예시 이미지를 넣지 않습니다 (2026-08-10, 디자인 요청).
+            본문 아래 큰 이미지가 들어가면 글보다 예시 사진이 더 커 보입니다.
+            수강생이 직접 올린 사진이 있으면 그것만 보여줍니다. */}
+        {review.photo ? (
+          // 업로드 사진은 버킷이 정해져 있지 않아 next/image(remotePatterns) 대상이 아닙니다
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={review.photo} alt="자격증 사진" style={{ maxWidth: 360, borderRadius: 8 }} />
+        ) : null}
 
         <ReviewHelpful
           reviewId={review.id}
