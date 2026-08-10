@@ -196,6 +196,36 @@ export function resolveActiveAdminNav(pathname: string) {
   return best;
 }
 
+export type AdminRole =
+  | "super_admin"
+  | "admin"
+  | "instructor"
+  | "counselor"
+  | "certificate_manager";
+
+const ALLOWED_MODULES_BY_ROLE: Record<AdminRole, AdminModule[] | "all"> = {
+  super_admin: "all",
+  admin: "all",
+  instructor: ["courses", "evaluation"],
+  counselor: ["members", "boards"],
+  certificate_manager: ["licenses"],
+};
+
+export function getNavGroupsForRole(role: AdminRole): AdminNavGroup[] {
+  const allowed = ALLOWED_MODULES_BY_ROLE[role];
+  if (allowed === "all") return adminNavGroups;
+  return adminNavGroups.filter((g) => allowed.includes(g.module));
+}
+
+export function isModuleAllowed(role: AdminRole, module: AdminModule): boolean {
+  const allowed = ALLOWED_MODULES_BY_ROLE[role];
+  return allowed === "all" || allowed.includes(module);
+}
+
+export function isFullAccessRole(role: AdminRole): boolean {
+  return ALLOWED_MODULES_BY_ROLE[role] === "all";
+}
+
 export type AdminWidgetItem = {
   title: string;
   date?: string;

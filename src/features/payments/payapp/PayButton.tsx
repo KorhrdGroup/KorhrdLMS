@@ -19,7 +19,15 @@ export default function PayButton({ applicationId }: { applicationId: string }) 
     startTransition(async () => {
       const result = await startCertificatePaymentAction(applicationId);
       if (result.success) {
-        window.location.href = result.payUrl;
+        const w = 500;
+        const h = 700;
+        const left = (screen.width - w) / 2;
+        const top = (screen.height - h) / 2;
+        window.open(
+          result.payUrl,
+          'payapp_payment',
+          `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+        );
       } else {
         setError(result.message);
       }

@@ -11,9 +11,12 @@ import {
 
 import { logoutAdminAction } from "@/features/admin-auth/actions/admin-auth.actions";
 
+import type { AdminRole } from "@/lib/admin/navigation";
+
 export type AdminUser = {
   name: string;
   email: string;
+  role: AdminRole;
 };
 
 type AdminLayoutContextValue = {
@@ -36,7 +39,7 @@ type AdminLayoutProviderProps = {
 
 export function AdminLayoutProvider({
   children,
-  adminUser = { name: "김관리", email: "admin@hanpyeong.kr" },
+  adminUser = { name: "김관리", email: "admin@hanpyeong.kr", role: "admin" as AdminRole },
 }: AdminLayoutProviderProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);

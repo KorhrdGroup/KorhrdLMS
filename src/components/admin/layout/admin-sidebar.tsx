@@ -7,7 +7,7 @@ import { ChevronsLeft, ChevronsRight, LayoutDashboard } from "lucide-react";
 import { BrandLogo } from "@/components/admin/brand-logo";
 import { useAdminLayout } from "@/components/admin/layout/admin-layout-provider";
 import { AdminButton } from "@/components/admin/ui/admin-button";
-import { adminNavGroups, resolveActiveAdminNav } from "@/lib/admin/navigation";
+import { getNavGroupsForRole, isFullAccessRole, resolveActiveAdminNav } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
 
 type AdminSidebarProps = {
@@ -31,8 +31,9 @@ export function AdminSidebar({
   onNavigate,
 }: AdminSidebarProps) {
   const pathname = usePathname();
-  const { sidebarCollapsed, toggleSidebar } = useAdminLayout();
+  const { sidebarCollapsed, toggleSidebar, adminUser } = useAdminLayout();
   const isCollapsed = forceExpanded ? false : sidebarCollapsed;
+  const navGroups = getNavGroupsForRole(adminUser.role);
   const activeNav = resolveActiveAdminNav(pathname);
   const isDashboardActive = pathname === "/admin";
 
@@ -75,18 +76,21 @@ export function AdminSidebar({
       </div>
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
-        <SidebarLink
-          href="/admin"
-          label="대시보드"
-          icon={LayoutDashboard}
-          active={isDashboardActive}
-          collapsed={isCollapsed}
-          onNavigate={onNavigate}
-        />
+        {isFullAccessRole(adminUser.role) ? (
+          <>
+            <SidebarLink
+              href="/admin"
+              label="대시보드"
+              icon={LayoutDashboard}
+              active={isDashboardActive}
+              collapsed={isCollapsed}
+              onNavigate={onNavigate}
+            />
+            <div className={cn("my-1.5 border-t border-[#F3F4F6]", isCollapsed && "mx-1")} />
+          </>
+        ) : null}
 
-        <div className={cn("my-1.5 border-t border-[#F3F4F6]", isCollapsed && "mx-1")} />
-
-        {adminNavGroups.map((group) => (
+        {navGroups.map((group) => (
           <SidebarLink
             key={group.label}
             href={group.children[0]?.href ?? "/admin"}

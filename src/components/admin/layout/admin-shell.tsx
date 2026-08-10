@@ -1,10 +1,14 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import { AdminContent } from "@/components/admin/layout/admin-content";
 import { AdminHeader } from "@/components/admin/layout/admin-header";
 import { useAdminLayout } from "@/components/admin/layout/admin-layout-provider";
 import { AdminSidebar } from "@/components/admin/layout/admin-sidebar";
 import { AdminSubNav } from "@/components/admin/layout/admin-subnav";
+import { getNavGroupsForRole, resolveActiveAdminNav } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
 
 type AdminShellProps = {
@@ -12,7 +16,28 @@ type AdminShellProps = {
 };
 
 export function AdminShell({ children }: AdminShellProps) {
-  const { mobileSidebarOpen, setMobileSidebarOpen } = useAdminLayout();
+  const { mobileSidebarOpen, setMobileSidebarOpen, adminUser } = useAdminLayout();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const navGroups = getNavGroupsForRole(adminUser.role);
+    if (navGroups.length === 0) return;
+
+    const defaultHref = navGroups[0].children[0]?.href ?? "/admin";
+
+    if (pathname === "/admin") {
+      if (defaultHref !== "/admin") {
+        router.replace(defaultHref);
+      }
+      return;
+    }
+
+    const active = resolveActiveAdminNav(pathname);
+    if (active && !navGroups.some((g) => g.module === active.group.module)) {
+      router.replace(defaultHref);
+    }
+  }, [pathname, adminUser.role, router]);
 
   return (
     <div className="flex h-svh overflow-hidden bg-[#F5F5F5]">
