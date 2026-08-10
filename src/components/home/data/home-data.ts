@@ -27,15 +27,6 @@ import {
 
 export type HomeNavItem = { label: string; href: string };
 
-export type HeroSlide = {
-  id: string;
-  image: string;
-  alt: string;
-  kicker: string;
-  title: [string, string];
-  ministry: string;
-};
-
 export type QuickMenuItem = {
   id: string;
   label: string;
@@ -81,48 +72,6 @@ export const HOME_NAV_ITEMS: HomeNavItem[] = [
   { label: "학습강의실", href: "/classroom" },
 ];
 
-export const HERO_SLIDES: HeroSlide[] = [
-  {
-    id: "1",
-    image: "/images/home/desk_frame2.png",
-    alt: "심리상담사 1급 자격",
-    kicker: "꾸준히 선택받는 자격증 1순위",
-    title: ["심리상담사", "1급 자격"],
-    ministry: "보건복지부",
-  },
-  {
-    id: "2",
-    image: "/images/home/desk_frame1.png",
-    alt: "생활지원사 1급 자격",
-    kicker: "가장 빠르게 취업하는 방법",
-    title: ["생활지원사", "1급 자격"],
-    ministry: "보건복지부",
-  },
-  {
-    id: "3",
-    image: "/images/home/desk_frame4.png",
-    alt: "방과후 돌봄지도사",
-    kicker: "아이와 함께 성장하는 시간",
-    title: ["방과후", "돌봄지도사"],
-    ministry: "교육부",
-  },
-  {
-    id: "4",
-    image: "/images/home/desk_frame5.png",
-    alt: "바리스타 1급 자격",
-    kicker: "나만의 커리어를 완성하다",
-    title: ["바리스타", "1급 자격"],
-    ministry: "교육부",
-  },
-  {
-    id: "5",
-    image: "/images/home/desk_frame3.png",
-    alt: "병원동행매니저 1급",
-    kicker: "믿을 수 있는 국가지정 자격증",
-    title: ["병원동행", "매니저 1급"],
-    ministry: "보건복지부",
-  },
-];
 
 export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   { id: "q1", label: "1:1 상담", icon: Headset, href: "/support/qna" },

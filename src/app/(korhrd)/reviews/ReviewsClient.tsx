@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { CourseReviewItem } from '@/features/korhrd/services/course-review.service';
@@ -60,7 +61,12 @@ export default function ReviewsClient({ reviews: REVIEWS }: { reviews: CourseRev
               여러분의 노력은 반드시 결과로 이어집니다.
             </p>
           </div>
-          <img className="review-hero__graphic" src="/review-hero-graphic.png" alt="" aria-hidden="true" />
+          {/* 원본 1000×500. CSS 가 230px 로 고정합니다(좁은 화면에서는 숨김) */}
+          <Image
+            className="review-hero__graphic" src="/review-hero-graphic.png"
+            alt="" aria-hidden="true"
+            width={1000} height={500} sizes="230px"
+          />
         </div>
 
         <div className="review-hero__event">
