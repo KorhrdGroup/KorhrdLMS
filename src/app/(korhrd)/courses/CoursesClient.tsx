@@ -144,21 +144,10 @@ export default function CoursesClient({ initial = {} }: {
           onClick={() => setOpenGroups((p) => ({ ...p, [group]: !isOpen(group) }))}
         >
           {GROUP_LABEL[group]}
+          {/* 접었을 때도 몇 개 고랐는지 보이게 합니다 — 펼치지 않으면 알 수 없었습니다 */}
+          {chosen.length > 0 && <span className="filter-group__count">{chosen.length}</span>}
           <span className="chev" aria-hidden="true">⌄</span>
         </button>
-        {chosen.length > 0 && (
-          <button
-            className="filter-group__reset" type="button"
-            aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
-            onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
-          >
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            초기화
-          </button>
-        )}
         <div id={`filter-items-${group}`} hidden={!isOpen(group)}>
           {values.map((v) => (
             <button
@@ -168,6 +157,21 @@ export default function CoursesClient({ initial = {} }: {
               {v}{suffix} <span className="num">{countOf(group, v)}</span>
             </button>
           ))}
+          {/* 초기화는 목록 아래에 둡니다. 오른쪽 위에 있으면 접기 화살표를 가려
+              아코디언으로 안 보였습니다. 접힌 동안에는 개수 배지가 대신 알립니다. */}
+          {chosen.length > 0 && (
+            <button
+              className="filter-group__reset" type="button"
+              aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
+              onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
+            >
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              초기화
+            </button>
+          )}
         </div>
       </div>
     );
