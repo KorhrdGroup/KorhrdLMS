@@ -134,6 +134,9 @@ export default async function Page() {
                 const badge = badgeOf(item);
                 const message = messageOf(item);
                 const states = stepStates(item);
+                // 미니 바가 가리키는 단계 — 진행중인 칸, 다 끝났으면 마지막 칸입니다
+                const allDone = states.every((state) => state === 'done');
+                const stepNo = allDone ? STEPS.length : states.indexOf('current') + 1;
 
                 return (
                   <article className="my-card my-card--stack" key={item.id}>
@@ -164,6 +167,18 @@ export default async function Page() {
                           </li>,
                         ])}
                       </ol>
+
+                      {/* 좁은 화면(≤560px)에서는 위 4단계 표시가 숨고 이 미니 바가 대신 나옵니다 */}
+                      <div className={allDone ? 'issue-steps__mini is-done' : 'issue-steps__mini'}>
+                        <p className="issue-steps__now">
+                          <b>{stepNo}단계</b>
+                          <span className="txt">{STEPS[stepNo - 1]}</span>
+                          <span className="of">전체 {STEPS.length}단계</span>
+                        </p>
+                        <span className="issue-steps__track" aria-hidden="true">
+                          <i style={{ width: `${(stepNo / STEPS.length) * 100}%` }} />
+                        </span>
+                      </div>
                     </div>
 
                     <p className={`my-card__status my-card__status--${message.tone}`}>{message.text}</p>
