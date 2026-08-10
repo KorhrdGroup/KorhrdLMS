@@ -16,8 +16,10 @@
 .social {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-3);          /* 버튼 사이 8px — 취업 길찾기 .actions 와 같은 값 */
-  margin-top: var(--s-5);   /* 로그인 버튼과의 간격 — .mt-3 이 쓰는 값(12px) */
+  /* 버튼 세 개(로그인·네이버·카카오)의 상하좌우 간격을 8px 하나로 맞춥니다.
+     .form 의 grid gap 이 12px 이라 로그인 버튼 아래만 넓어 보였습니다. */
+  gap: var(--s-3);          /* 네이버 ↔ 카카오 */
+  margin-top: var(--s-3);   /* 로그인 ↔ 소셜 줄 */
 }
 
 /* 두 버튼이 반씩 나눠 갖습니다.
