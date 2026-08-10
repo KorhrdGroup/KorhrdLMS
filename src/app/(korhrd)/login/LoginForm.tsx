@@ -6,6 +6,8 @@ import { useEffect, useState, useTransition } from "react";
 import { loginStudentAction } from "@/features/auth/actions/student-login.actions";
 import { SAVED_LOGIN_ID_KEY } from "@/lib/student/session";
 
+import styles from "./LoginForm.module.css";
+
 /**
  * 로그인 폼 — 마크업은 korhrd 디자인(login.html), 동작은 기존 Supabase 액션.
  * 데모용 hidden login=1 파라미터는 실제 인증으로 대체하며 제거했습니다.
@@ -131,20 +133,22 @@ export function LoginForm({
 
         {/* 소셜 로그인 — 서버 라우트가 각 인증 화면으로 보냅니다.
             버튼 색은 각 사의 브랜드 가이드 색(네이버 #03C75A, 카카오 #FEE500) 고정입니다. */}
-        <a
-          className="btn btn--lg btn--block mt-3"
-          href={`/api/auth/naver/start${socialRedirect}`}
-          style={{ background: "#03C75A", color: "#fff" }}
-        >
-          네이버로 로그인
-        </a>
-        <a
-          className="btn btn--lg btn--block mt-3"
-          href={`/api/auth/kakao/start${socialRedirect}`}
-          style={{ background: "#FEE500", color: "#191600" }}
-        >
-          카카오로 로그인
-        </a>
+        <div className={styles.social}>
+          <a
+            className="btn btn--lg"
+            href={`/api/auth/naver/start${socialRedirect}`}
+            style={{ background: "#03C75A", color: "#fff" }}
+          >
+            네이버로 로그인
+          </a>
+          <a
+            className="btn btn--lg"
+            href={`/api/auth/kakao/start${socialRedirect}`}
+            style={{ background: "#FEE500", color: "#191600" }}
+          >
+            카카오로 로그인
+          </a>
+        </div>
 
         <p className="login-links">
           <Link href="/signup">회원가입</Link>
