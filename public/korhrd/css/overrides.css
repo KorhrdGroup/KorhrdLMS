@@ -102,6 +102,18 @@ input[type="checkbox"]:checked,
    표 자체의 정렬은 그대로입니다. */
 .course-row .spec-table { padding-bottom: 2px; padding-left: 2px }
 
+/* 본문과 푸터 사이 여백이 사라진 것 (2026-08-10)
+   전달본 base.css 는 `main > .container:last-child{ padding-bottom:var(--s-10) }`
+   로 본문 끝과 푸터 사이에 48px 을 둡니다. 수강신청은 React 로 옮기며 컨테이너
+   뒤에 필터 시트·장바구니 바·플로팅 버튼이 같은 main 안으로 들어가면서
+   :last-child 가 깨져 간격이 0 이 됐습니다(원본 실측 48px → LMS 0px).
+   그 뒤 요소들은 sticky·fixed 라 흐름에서 자리를 차지하지 않아 화면상으로는
+   여전히 컨테이너가 마지막입니다. 전달본과 같은 값을 그대로 줍니다.
+   (공지·합격후기·나의 강의실처럼 컨테이너로 끝나는 화면은 원래대로 걸립니다.
+    취득 절차·고객센터처럼 풀블리드 띠로 끝나는 화면은 전달본이 일부러
+    제외한 것이라 그대로 둡니다.) */
+main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
+
 /* 수강신청 사이드바 — 조건 묶음 접기 + 스크롤 고정 (2026-08-10, 디자인 요청)
 
    접기: 제목(.filter-group__title)을 버튼으로 바꿔 눌러 여닫습니다. 화살표는
