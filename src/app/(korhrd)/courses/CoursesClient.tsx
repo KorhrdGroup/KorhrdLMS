@@ -7,6 +7,7 @@ import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
 import CartBar from '@/features/korhrd/components/course/CartBar';
 import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
+import ScrollTopButton from '@/features/korhrd/components/ui/ScrollTopButton';
 
 /**
  * 수강신청 목록.
@@ -25,9 +26,9 @@ import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
 type Group = 'cat' | 'purpose' | 'age' | 'gov';
 
 const GROUP_LABEL: Record<Group, string> = {
-  cat: '과정별',
+  cat: '과정',
   purpose: '목적',
-  age: '연령대',
+  age: '연령',
   gov: '주무부처',
 };
 
@@ -66,6 +67,9 @@ export default function CoursesClient({ initial = {} }: {
   const [filterOpen, setFilterOpen] = useState(false);
   /** 시트 왼쪽 레일에서 고른 그룹 (FILTER_GROUPS 인덱스) */
   const [sheetGroup, setSheetGroup] = useState(0);
+  /** 사이드바에서 펼쳐 둔 조건 묶음. 처음에는 전부 펼칩니다 */
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const isOpen = (group: Group) => openGroups[group] ?? true;
 
   /* 시트가 열린 동안은 뒤 목록이 밀려 내려가지 않게 잠그고, Esc로 닫습니다 */
   useEffect(() => {
@@ -133,29 +137,43 @@ export default function CoursesClient({ initial = {} }: {
   const filterGroup = (group: Group, values: string[], suffix = '') => {
     const chosen = picked[group];
     return (
-      <div className="filter-group" key={group}>
-        <p className="filter-group__title">{GROUP_LABEL[group]}</p>
-        {chosen.length > 0 && (
-          <button
-            className="filter-group__reset" type="button"
-            aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
-            onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
-          >
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            초기화
-          </button>
-        )}
-        {values.map((v) => (
-          <button
-            key={v} className="filter-item" type="button"
-            aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
-          >
-            {v}{suffix} <span className="num">{countOf(group, v)}</span>
-          </button>
-        ))}
+      <div className={`filter-group${isOpen(group) ? '' : ' is-folded'}`} key={group}>
+        {/* 제목을 눌러 접었다 폅니다. 화살표는 전달본 공통 셰브론(.chev)입니다 */}
+        <button
+          className="filter-group__title" type="button"
+          aria-expanded={isOpen(group)} aria-controls={`filter-items-${group}`}
+          onClick={() => setOpenGroups((p) => ({ ...p, [group]: !isOpen(group) }))}
+        >
+          {GROUP_LABEL[group]}
+          {/* 접었을 때도 몇 개 고랐는지 보이게 합니다 — 펼치지 않으면 알 수 없었습니다 */}
+          {chosen.length > 0 && <span className="filter-group__count">{chosen.length}</span>}
+          <span className="chev" aria-hidden="true">⌄</span>
+        </button>
+        <div id={`filter-items-${group}`} hidden={!isOpen(group)}>
+          {values.map((v) => (
+            <button
+              key={v} className="filter-item" type="button"
+              aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
+            >
+              {v}{suffix} <span className="num">{countOf(group, v)}</span>
+            </button>
+          ))}
+          {/* 초기화는 목록 아래에 둡니다. 오른쪽 위에 있으면 접기 화살표를 가려
+              아코디언으로 안 보였습니다. 접힌 동안에는 개수 배지가 대신 알립니다. */}
+          {chosen.length > 0 && (
+            <button
+              className="filter-group__reset" type="button"
+              aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
+              onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
+            >
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              초기화
+            </button>
+          )}
+        </div>
       </div>
     );
   };
@@ -322,6 +340,7 @@ export default function CoursesClient({ initial = {} }: {
       <CartBar />
       {/* 이미 수강신청 화면이라 갈 곳이 없습니다 — 링크로 두면 고른 과목만 지웁니다 */}
       <FloatingBanner href={null} />
+      <ScrollTopButton />
     </>
   );
 }

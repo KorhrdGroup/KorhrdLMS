@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import type { CourseDetailData } from "@/components/course-detail/types";
 import { CourseDetailInteractions } from "@/features/course-detail/components/course-detail-interactions";
+import Header from "@/features/korhrd/components/layout/Header";
 import {
   ASSET,
   ENROLL_EVENT_DEADLINE,
@@ -87,22 +88,12 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
 
       <a className="skip-link" href="#main">본문 바로가기</a>
 
-      <header className="header">
-        <div className="header__in">
-          <a className="logo" href="/">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ASSET("logo.svg")} alt="한평생 직업훈련" width={147} height={18} />
-          </a>
-          <nav className="gnb" id="gnb" aria-label="주 메뉴">
-            <a href="/jobs">취업 길찾기</a>
-            <a href="/courses" aria-current="page">수강신청</a>
-            <a href="/mylecture">나의 강의실</a>
-            <a href="/certificate">자격증 발급신청</a>
-            <a href="/reviews">합격후기</a>
-            <a href="/notice">공지사항</a>
-          </nav>
-        </div>
-      </header>
+      {/* 다른 화면과 같은 헤더를 그대로 씁니다 — 이 번들에도 .header/.gnb/
+          .header__util/.search-trigger/.search-overlay 클래스가 모두 있어
+          그대로 입혀집니다. 직접 만들었던 헤더에는 햄버거·검색·로그인이
+          빠져 있었고 스크롤 고정도 되지 않았습니다.
+          이 번들에만 없던 규칙은 css/overrides.css 에서 맞춥니다. */}
+      <Header />
 
       <main id="main">
         {/* ============================ HERO ============================ */}

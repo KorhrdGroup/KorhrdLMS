@@ -1,0 +1,56 @@
+/*
+ * '맨 위로' 버튼 — Figma button_top (334:9610)
+ * 확정 디자인(전달본 CSS)에 없는 요소라 전달본은 건드리지 않고 여기서만 잡습니다.
+ * 취업 길찾기 상세·로그인 소셜 버튼과 같은 방식(화면 옆 CSS 모듈)입니다.
+ */
+.top {
+  position: fixed;
+  right: var(--s-7);                    /* 20px — .container 좌우 여백과 같은 값 */
+  /* 아래에 겹치는 것 위로 올라옵니다. 수강신청 장바구니 바(약 80px)를 피한 값입니다. */
+  bottom: calc(var(--s-7) + 80px);
+  z-index: 45;                          /* 장바구니 바(40)보다 위, 헤더(60)보다 아래 */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+
+  width: 54px;
+  height: 54px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--muted);
+
+  /* 한 화면 넘게 내려가기 전에는 없는 것처럼 둡니다 */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.top.shown {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.top:hover { background: var(--surface-alt) }
+
+/* 모바일·태블릿에서는 하단 고정 탭바(--header-h)가 있어 그만큼 더 올립니다 */
+@media (max-width: 980px) {
+  .top {
+    right: var(--s-6);
+    bottom: calc(var(--header-h) + env(safe-area-inset-bottom) + 80px + var(--s-4));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top { transition: none }
+}
