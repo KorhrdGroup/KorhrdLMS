@@ -53,6 +53,9 @@ export default async function Page({ params }: PageProps) {
   const examTaken = summary.examPercent !== null;
   const submittedExams = data.grade.exams.filter((exam) => exam.submitted);
 
+  /* 합격 초록(전달본 기본) · 불합격 빨강 · 미응시 회색 — 배지와 메시지가 같은 색을 씁니다 */
+  const verdictClass = passed ? '' : examTaken ? ' is-fail' : ' is-none';
+
   return (
     <div className="container">
       <section className="result">
@@ -72,10 +75,11 @@ export default async function Page({ params }: PageProps) {
         {/* 결과 요약 */}
         <div className="result-summary">
           <div className="result-summary__left">
-            {/* 합격이 아니면 is-fail — 전달본 classroom.css 가 이 클래스로
-                초록(--green-soft/--green)을 빨강(--red-soft/--red)으로 바꿉니다.
-                원본 main.js 도 badge.classList.toggle('is-fail', !passed) 로 붙입니다. */}
-            <span className={passed ? 'result-summary__badge' : 'result-summary__badge is-fail'}>
+            {/* 합격 초록(전달본 기본) · 불합격 빨강(전달본 is-fail) ·
+                미응시 회색(is-none). 미응시는 나쁜 결과가 아니라 아직 아무것도
+                하지 않은 상태라 빨강으로 겁줄 이유가 없습니다.
+                (원본 main.js 는 합격/불합격 둘로만 나눠 미응시도 빨강이었습니다) */}
+            <span className={`result-summary__badge${verdictClass}`}>
               {passed ? '✓ 합격' : examTaken ? '불합격' : '미응시'}
             </span>
             <span className="result-summary__course">
@@ -196,10 +200,9 @@ export default async function Page({ params }: PageProps) {
           </div>
         </div>
 
-        {/* 합격·불합격 메시지 */}
-        {/* 메시지 블록도 같이 빨강으로 — 원본 main.js 의
-            msg.classList.toggle('is-fail', !passed) 와 같습니다 */}
-        <div className={passed ? 'result-msg' : 'result-msg is-fail'}>
+        {/* 합격·불합격 메시지 — 배지와 같은 색을 씁니다
+            (원본 main.js 도 msg.classList.toggle('is-fail', ...) 로 함께 바꿉니다) */}
+        <div className={`result-msg${verdictClass}`}>
           {passed ? (
             <>
               <strong>{data.memberName} 학우님은 {data.courseTitle} 시험에 합격하셨습니다.</strong>

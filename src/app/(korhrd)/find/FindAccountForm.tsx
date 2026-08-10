@@ -152,10 +152,12 @@ export function FindAccountForm() {
       <div className="auth-wrap">
         <div className="page-head text-center"><h1>아이디 · 비밀번호 찾기</h1></div>
 
-        {/* 시안대로 가운데 정렬 — .pill-row 기본값은 왼쪽 정렬입니다 */}
+        {/* 시안대로 가운데 정렬 — .pill-row 기본값은 왼쪽 정렬입니다.
+            아래 여백도 원본 find.html 의 인라인 값(margin-bottom:18px)입니다.
+            빠져 있어서 아래 입력 박스와 붙어 보였습니다. */}
         <div
           className="pill-row" role="tablist" aria-label="찾기 유형"
-          style={{ justifyContent: 'center' }}
+          style={{ justifyContent: 'center', marginBottom: 18 }}
         >
           <button
             className="pill" type="button" role="tab"

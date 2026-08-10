@@ -102,6 +102,14 @@ input[type="checkbox"]:checked,
    표 자체의 정렬은 그대로입니다. */
 .course-row .spec-table { padding-bottom: 2px; padding-left: 2px }
 
+/* 시험성적 — 미응시는 회색 (2026-08-10, 디자인 요청)
+   전달본은 합격(초록)·불합격(.is-fail 빨강) 둘로만 나눕니다. 미응시는 나쁜
+   결과가 아니라 아직 아무것도 하지 않은 상태라 빨강으로 겁줄 이유가 없습니다.
+   합격/불합격과 같은 짜임(연한 배경 + 진한 글자)으로 무채색 한 쌍을 씁니다. */
+.result-summary__badge.is-none { background: var(--surface-alt); color: var(--muted) }
+.result-msg.is-none { background: var(--surface-alt) }
+.result-msg.is-none p { color: var(--muted) }
+
 /* 본문과 푸터 사이 여백이 사라진 것 (2026-08-10)
    전달본 base.css 는 `main > .container:last-child{ padding-bottom:var(--s-10) }`
    로 본문 끝과 푸터 사이에 48px 을 둡니다. 수강신청은 React 로 옮기며 컨테이너
