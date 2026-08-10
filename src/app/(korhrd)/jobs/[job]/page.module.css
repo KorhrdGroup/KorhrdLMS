@@ -14,3 +14,23 @@
     position: static;
   }
 }
+
+/*
+ * '다른 직업 보기' — 신청 버튼 두 개와 구분되는 되돌아가기 링크입니다.
+ * 버튼으로 두면 세 덩어리가 같은 무게로 쌓여 무엇이 주 동작인지 흐려집니다.
+ * 선 하나로 끊고 가운데 정렬한 글자 링크로 둡니다.
+ */
+.back {
+  margin-top: var(--s-5);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.back a {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--muted);
+}
+.back a:hover {
+  color: var(--ink-2);
+}

@@ -105,12 +105,25 @@ export default async function JobDetailPage({ params }: Params) {
               <li><span className="n">3</span>자격증 발급</li>
               <li><span className="n">4</span>{group.name} 취업</li>
             </ul>
-            <Link className="btn btn--primary btn--block" href={`/courses/${encodeURIComponent(job.course)}`}>
+            {/* 바로 신청 / 과정 먼저 보기 — 두 갈래를 같은 무게로 두지 않고
+                신청을 남색(주 동작), 과정 확인을 흰색(보조)으로 둡니다. */}
+            {course?.code ? (
+              <Link className="btn btn--primary btn--block" href={`/enrollment?select=${course.code}`}>
+                바로 수강신청하기
+              </Link>
+            ) : null}
+            <Link
+              className={`btn btn--ghost btn--block${course?.code ? ' mt-2' : ''}`}
+              href={`/courses/${encodeURIComponent(job.course)}`}
+            >
               과정 보고 수강신청 →
             </Link>
-            <Link className="btn btn--ghost btn--block mt-2" href={`/jobs?g=${job.g}`}>
-              다른 직업 보기
-            </Link>
+
+            {/* 뒤로가기는 신청 동작이 아니라 목록으로 돌아가는 길입니다.
+                버튼 두 개와 같은 덩어리로 보이지 않게 선을 긋고 글자 링크로 뺐습니다. */}
+            <p className={styles.back}>
+              <Link href={`/jobs?g=${job.g}`}>← 다른 직업 보기</Link>
+            </p>
           </aside>
         </div>
       </section>
