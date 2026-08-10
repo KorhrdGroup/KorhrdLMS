@@ -58,7 +58,7 @@ export default function ProcessFaq() {
               {item.q}
               <span className="arrow" aria-hidden="true">⌄</span>
             </button>
-            <div className="faq__a" id={item.id} hidden={!isOpen}>
+            <div className="faq__a" id={item.id}>
               <div className="faq__a-inner">
                 <div className="faq__a-pad">{item.a}</div>
               </div>

@@ -103,7 +103,7 @@ export default function LectureFaq() {
             </button>
             {/* .faq__a 는 grid(0fr↔1fr 아코디언)라 내용을 바로 넣으면 <b> 같은 요소가
                 각각 한 행씩 차지해 줄이 끊깁니다. 여백도 .faq__a-pad 가 담당합니다. */}
-            <div className="faq__a" id={`lec-faq-${index}`} hidden={open !== index}>
+            <div className="faq__a" id={`lec-faq-${index}`}>
               <div className="faq__a-inner">
                 <div className="faq__a-pad">{item.a}</div>
               </div>
