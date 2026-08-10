@@ -139,7 +139,7 @@ export function LoginForm({
           네이버로 로그인
         </a>
         <a
-          className="btn btn--lg btn--block mt-2"
+          className="btn btn--lg btn--block mt-3"
           href={`/api/auth/kakao/start${socialRedirect}`}
           style={{ background: "#FEE500", color: "#191600" }}
         >
