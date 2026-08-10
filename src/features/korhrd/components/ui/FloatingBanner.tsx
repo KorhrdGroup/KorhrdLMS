@@ -17,7 +17,7 @@ export default function FloatingBanner() {
     <aside className={styles.banner} aria-label="2026년 최신강의 업데이트 안내">
       <Image
         className={styles.image} src="/floating-trophy.png" alt=""
-        width={60} height={60}
+        width={44} height={44}
       />
       <p className={styles.text}>
         2026년<br />최신강의<br />업데이트 중!
