@@ -1,0 +1,84 @@
+/*
+ * 화면 오른쪽 끝에 붙는 띠 배너 — Figma floating_banner (334:9614)
+ *
+ * 데스크톱에서만 띄웁니다. 좁은 화면에서는 본문 위를 덮어 읽기를 방해합니다.
+ * 기준은 --container(1200px) — 뷰포트가 본문 폭보다 넓을 때만 나옵니다.
+ */
+.banner {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .banner {
+    position: fixed;
+    /* 헤더(64) + 메인의 신뢰 띠배너(44) 아래로 내립니다. 띠배너는 메인에만
+       있지만 두 화면에서 같은 높이에 뜨도록 한 값을 씁니다. */
+    top: calc(var(--header-h) + 44px + var(--s-7));
+    right: 0;
+    z-index: 30;   /* 헤더(50)보다 아래, 본문 위 */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 시안은 바깥 24 / 안쪽 8 인데 바깥 그룹에 자식이 하나뿐이라
+       실제로 보이는 간격은 안쪽 8px 입니다. 한 겹으로 폈습니다. */
+    gap: var(--s-3);
+
+    padding: var(--s-6);
+    background: var(--blue-soft);
+    /* 오른쪽 끝에 붙으므로 왼쪽 모서리만 둥글게 (시안 10px) */
+    border-radius: 10px 0 0 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .08);
+  }
+}
+
+/* 시안은 이미지 60 · 글자 18px 인데 사이트 본문 눈금(--fs-sm 14px)에 맞춰
+   한 단계 줄였습니다. 화면 가장자리에 붙는 보조 안내라 본문보다 크면 튑니다. */
+.image {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+}
+
+.text {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 진행 막대 — 흰 알약 안에 남색 막대 (시안 bar_update_effect) */
+.bar {
+  width: 100%;
+  padding: var(--s-1);
+  background: var(--surface);
+  border-radius: var(--r-full);
+}
+.bar > span {
+  display: block;
+  width: 40px;   /* 움직임을 끈 환경에서 보이는 기본값 */
+  height: 10px;
+  background: var(--navy);
+  border-radius: var(--r-full);
+  animation: fill 2.4s ease-in-out infinite;
+}
+
+/* 0 → 100% 를 반복하며 '갱신 중'이라는 느낌을 줍니다.
+   끝에서 잠깐 머문 뒤 처음으로 돌아갑니다.
+   transform:scaleX 대신 width 를 움직입니다 — scaleX 는 알약 끝의
+   둥근 모서리까지 같이 눌려 찌그러져 보입니다. */
+@keyframes fill {
+  0%   { width: 0 }
+  70%  { width: 100% }
+  100% { width: 100% }
+}
+
+/* 움직임을 줄이는 설정에서는 채워진 채로 멈춥니다 (전달본 CSS와 같은 방식) */
+@media (prefers-reduced-motion: reduce) {
+  .bar > span {
+    animation: none;
+    width: 100%;
+  }
+}

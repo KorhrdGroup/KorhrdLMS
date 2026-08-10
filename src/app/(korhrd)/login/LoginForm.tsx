@@ -110,7 +110,10 @@ export function LoginForm({
             />
           </div>
 
-          <p className="agree">
+          {/* agree--plain: 회색 박스를 빼고 체크박스·글자를 세로 가운데로 맞춥니다.
+              .agree 는 회원가입 전체동의·고객센터 개인정보 동의에서도 쓰는데
+              거기는 회색 박스가 그대로여야 해서, 이 줄에만 붙입니다. */}
+          <p className="agree agree--plain">
             <input
               id="keep" name="keep" type="checkbox" checked={saveId}
               onChange={(event) => setSaveId(event.target.checked)}

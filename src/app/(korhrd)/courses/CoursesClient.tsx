@@ -6,6 +6,7 @@ import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
 import CartBar from '@/features/korhrd/components/course/CartBar';
+import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
 
 /**
  * 수강신청 목록.
@@ -319,6 +320,7 @@ export default function CoursesClient({ initial = {} }: {
       </div>
 
       <CartBar />
+      <FloatingBanner />
     </>
   );
 }

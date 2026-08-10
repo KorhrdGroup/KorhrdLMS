@@ -31,10 +31,15 @@
      .filter-item::before      16px · 1.5px        (수강신청 사이드바)
      .fsheet__item::before     18px · 1.5px        (수강신청 필터 시트)
 
-   크기·테두리 두께·체크 아이콘을 Figma 값(24px·1px·16px)으로 맞추고,
-   색은 시안의 raw hex(#D9D9D9 / #007BFF) 대신 사이트 토큰(--line / --blue)을
-   씁니다. 팔레트 일관성을 지키기 위한 것으로, 전달본이 이미 내린 판단과
-   같은 방향입니다(account.css 주석 참고).
+   모양(테두리 1px · radius 4 · 가운데 체크)은 시안을 따르되 두 가지는
+   사이트에 맞춰 조정했습니다.
+
+     크기  시안 24px → 18px (체크 12px). 14px 본문 옆에 놓이는 자리가
+           대부분이고 사이드바 필터처럼 촘촘한 목록도 있어 줄였습니다.
+           체크 아이콘은 시안 비율(2/3)을 그대로 유지합니다.
+     색    시안의 raw hex(#D9D9D9 / #007BFF) 대신 사이트 토큰(--line / --blue).
+           팔레트 일관성을 위한 것으로, 전달본이 이미 내린 판단과 같은
+           방향입니다(account.css 주석 참고).
    ========================================================================== */
 :root {
   /* 체크 아이콘 — account.css 가 쓰던 것과 같은 SVG 입니다 */
@@ -47,23 +52,43 @@ input[type="checkbox"],
 .select-toggle__box,
 .filter-item::before,
 .fsheet__item::before {
-  width: 24px; height: 24px;
+  width: 18px; height: 18px;
   border: 1px solid var(--line); border-radius: var(--r-sm);
-  background: var(--surface) var(--cb-check-off) center / 16px no-repeat;
+  background: var(--surface) var(--cb-check-off) center / 12px no-repeat;
   transition: background-color .15s, border-color .15s;
 }
 
-/* --- 선택 --- */
+/* --- 선택 ---
+   여기서도 background 단축 속성을 씁니다. 전달본의 선택 규칙들이 단축 속성
+   (예: .select-toggle[aria-pressed="true"] .select-toggle__box{ background:… })
+   이라 size·position 을 초기값으로 되돌립니다. 색과 이미지만 덮으면 그 초기값이
+   남아 체크가 좌상단(0% 0%)에 원본 크기로 찍힙니다. */
 input[type="checkbox"]:checked,
 .select-toggle[aria-pressed="true"] .select-toggle__box,
 .filter-item[aria-pressed="true"]::before,
 .fsheet__item[aria-pressed="true"]::before {
   border-color: var(--line);
-  background-color: var(--blue);
-  background-image: var(--cb-check-on);
+  background: var(--blue) var(--cb-check-on) center / 12px no-repeat;
 }
 
 /* 전달본이 ::after 로 찍던 ✓ 는 이제 배경 아이콘이 대신합니다 */
 .select-toggle[aria-pressed="true"] .select-toggle__box::after { content: none }
-/* 필터는 마우스를 올리면 테두리만 진해집니다 — 전달본 동작 유지 */
-.filter-item:hover::before { border-color: var(--faint) }
+
+/* 호버해도 체크박스는 그대로 (2026-08-07, 디자인 요청)
+   전달본은 수강신청 사이드바 필터에서만 마우스를 올리면 테두리가 진해집니다
+   (.filter-item:hover::before{ border-color:var(--faint) }).
+   체크박스는 어디서나 같아 보이도록 기본 테두리색을 유지합니다.
+   행 배경이 밝아지는 것(.filter-item:hover)은 목록 항목의 신호라 남겨둡니다. */
+.filter-item:hover::before { border-color: var(--line) }
+
+/* 로그인 '아이디 저장' 줄 (2026-08-07, 디자인 요청)
+   전달본 .agree 는 회색 박스(--surface-sunken)에 여러 줄 약관을 담는 자리라
+   align-items:flex-start + input margin-top:3px 로 되어 있습니다. 한 줄짜리
+   '아이디 저장'에는 박스가 과하고, 그 두 값 때문에 체크박스가 글자보다
+   1px 내려가 보입니다. 이 줄에만 붙는 agree--plain 으로 떼어냅니다.
+   (회원가입 전체동의·고객센터 개인정보 동의는 회색 박스를 그대로 씁니다) */
+.agree--plain {
+  background: none; padding: 0;
+  align-items: center;
+}
+.agree--plain input { margin-top: 0 }
