@@ -7,6 +7,7 @@ import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
 import CartBar from '@/features/korhrd/components/course/CartBar';
 import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
+import ScrollTopButton from '@/features/korhrd/components/ui/ScrollTopButton';
 
 /**
  * 수강신청 목록.
@@ -339,6 +340,7 @@ export default function CoursesClient({ initial = {} }: {
       <CartBar />
       {/* 이미 수강신청 화면이라 갈 곳이 없습니다 — 링크로 두면 고른 과목만 지웁니다 */}
       <FloatingBanner href={null} />
+      <ScrollTopButton />
     </>
   );
 }
