@@ -18,9 +18,17 @@
 .header {
   position: sticky;
   top: 0;
-  transition: box-shadow .2s ease, transform .25s ease;
+  transition: transform .25s ease;
 }
-.header.is-stuck { box-shadow: 0 10px 24px rgba(0, 0, 0, .06) }
+
+/* 그림자 없음 (2026-08-10, 디자인 요청)
+   다른 화면은 스크롤하면 헤더에 그림자를 넣어 떠 있는 걸 알립니다(.is-stuck).
+   이 화면은 헤더 바로 아래에 탭바가 붙어 있어 그 그림자가 둘 사이에 끼어
+   경계가 두 겹으로 보입니다. 탭바가 이미 border-bottom 으로 아래를 긋고
+   있으므로 헤더 그림자는 넣지 않습니다.
+   (탭바가 아직 안 붙은 구간에서도 그림자가 없지만, 그 구간은 어두운 히어로
+    이미지 위라 원래 보이지 않습니다) */
+.header.is-stuck { box-shadow: none }
 
 /* 이 번들에는 .header__nav 규칙이 없어 메뉴와 검색·로그인이 세로로 쌓여
    헤더가 74px 이 됐습니다. korhrd layout.css 와 같이 상자를 만들지 않게 합니다
@@ -28,10 +36,22 @@
 .header__nav { display: contents }
 
 /* 이 번들에는 --header-h 가 없습니다(korhrd 번들에만 있습니다).
-   .header__in 의 min-height 를 그대로 씁니다 — 560px 이하에서 56px 로 줄어듭니다. */
-.dtabs { top: 64px }
+   .header__in 의 min-height 를 그대로 씁니다 — 560px 이하에서 56px 로 줄어듭니다.
+   헤더가 오르내릴 때 탭바도 같은 속도로 따라 움직입니다(헤더 transform 과 같은 .25s). */
+.dtabs {
+  top: 64px;
+  transition: top .25s ease;
+}
+
 @media (max-width: 560px) {
   .dtabs { top: 56px }
+
+  /* 헤더가 숨은 동안에는 탭바가 그 자리를 대신 차지해 화면 맨 위에 붙습니다.
+     그러지 않으면 헤더가 빠진 56px 만큼 빈 띠가 남아 탭바가 떠 보입니다.
+     헤더가 다시 내려오면 탭바도 그만큼 밀려 내려옵니다.
+     .is-hidden 으로 실제 헤더가 숨는 건 이 폭에서뿐이라 여기에만 둡니다
+     (넓은 화면에서는 클래스가 붙어도 헤더가 그대로 보입니다). */
+  .header.is-hidden ~ #main .dtabs { top: 0 }
 }
 
 /* 태블릿·모바일 헤더 (korhrd responsive.css 1100px 블록과 같은 내용)
