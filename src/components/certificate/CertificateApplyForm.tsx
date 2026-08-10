@@ -43,11 +43,6 @@ function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
 }
 
-function formatBirthDate(birthDate: string | null) {
-  if (!birthDate) return "미등록";
-  return birthDate;
-}
-
 /** "010-1234-5678" 형태의 저장된 연락처를 3분할 입력 상태로 분리합니다. */
 function splitPhone(phone: string | null): [string, string, string] {
   if (!phone) return ["010", "", ""];
@@ -79,6 +74,8 @@ export function CertificateApplyForm({
   const [courseId, setCourseId] = useState(firstSelectable?.courseId ?? "");
   const [sameAsMemberInfo, setSameAsMemberInfo] = useState(true);
   const [deliveryName, setDeliveryName] = useState(profile.name);
+  // 자격증에 인쇄되는 값입니다. 회원가입에서 받지 않아 비어 있을 수 있어 여기서 받습니다.
+  const [birthDate, setBirthDate] = useState(profile.birthDate ?? "");
   const [phonePrefix, setPhonePrefix] = useState(initialPrefix);
   const [phoneMiddle, setPhoneMiddle] = useState(initialMiddle);
   const [phoneLast, setPhoneLast] = useState(initialLast);
@@ -166,6 +163,7 @@ export function CertificateApplyForm({
       const result = await submitCertificateApplicationAction({
         courseId,
         deliveryName,
+        birthDate,
         phone,
         postalCode,
         address,
@@ -324,8 +322,15 @@ export function CertificateApplyForm({
                     </p>
                   </td>
                   <td className={cn("py-3 px-3 align-top font-medium", figmaClass.textPrimary)}>{profile.name}</td>
-                  <td className={cn("py-3 px-3 align-top", figmaClass.textSub)}>
-                    {formatBirthDate(profile.birthDate)}
+                  <td className="py-3 px-3 align-top">
+                    <input
+                      id="birthDate"
+                      type="date"
+                      value={birthDate}
+                      max={new Date().toISOString().slice(0, 10)}
+                      onChange={(event) => setBirthDate(event.target.value)}
+                      className={cn(signupInputClassName, "min-w-[150px]")}
+                    />
                   </td>
                   <td className="py-3 pl-3 align-top">
                     <div className="flex items-center gap-2">

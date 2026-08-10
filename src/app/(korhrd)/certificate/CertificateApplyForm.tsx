@@ -56,6 +56,8 @@ export function CertificateApplyForm({
   });
 
   const [deliveryName, setDeliveryName] = useState(data.profile.name ?? '');
+  // 자격증에 인쇄되는 값입니다. 회원가입에서 받지 않아 비어 있을 수 있어 여기서 받습니다.
+  const [birthDate, setBirthDate] = useState(data.profile.birthDate ?? '');
   const [phone, setPhone] = useState(data.profile.phone ?? '');
   const [postalCode, setPostalCode] = useState(data.profile.postalCode ?? '');
   const [address, setAddress] = useState(data.profile.address ?? '');
@@ -102,6 +104,7 @@ export function CertificateApplyForm({
         const result = await submitCertificateApplicationAction({
           courseId,
           deliveryName,
+          birthDate,
           phone,
           postalCode,
           address,
@@ -300,6 +303,19 @@ export function CertificateApplyForm({
                   <input
                     id="rname" type="text" required autoComplete="name"
                     value={deliveryName} onChange={(event) => setDeliveryName(event.target.value)}
+                  />
+                </div>
+
+                <div className="field">
+                  <label htmlFor="rbirth">
+                    생년월일 <span className="req" aria-hidden="true">*</span>
+                    <span className="sr-only">(필수)</span>
+                    <span className="hint">— 자격증에 표기됩니다</span>
+                  </label>
+                  <input
+                    id="rbirth" type="date" required autoComplete="bday"
+                    max={new Date().toISOString().slice(0, 10)}
+                    value={birthDate} onChange={(event) => setBirthDate(event.target.value)}
                   />
                 </div>
                 <div className="field">

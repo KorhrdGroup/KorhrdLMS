@@ -20,6 +20,8 @@ type Tab = 'active' | 'ended' | 'review' | 'mypage';
 export type MyLectureMember = {
   id: string;
   name: string;
+  /** "1975-03-20". 자격증에 표기되며 없을 수 있습니다 */
+  birthDate: string;
   phone: string;
   email: string;
   address: string;
@@ -223,6 +225,14 @@ export default function MyLectureClient({
                 <tbody>
                   <tr><th scope="row">아이디</th><td>{MEMBER.id}</td></tr>
                   <tr><th scope="row">이름</th><td>{MEMBER.name}</td></tr>
+                  {/* 회원가입에서 받지 않아 비어 있을 수 있습니다. 자격증에 표기되는 값이라
+                      비어 있으면 채우도록 안내합니다. */}
+                  <tr>
+                    <th scope="row">생년월일</th>
+                    <td className="tabular">
+                      {MEMBER.birthDate || <span className="hint">미등록 — 정보 수정에서 입력해주세요</span>}
+                    </td>
+                  </tr>
                   <tr><th scope="row">휴대폰</th><td className="tabular">{MEMBER.phone}</td></tr>
                   <tr><th scope="row">이메일</th><td>{MEMBER.email}</td></tr>
                   <tr><th scope="row">주소</th><td>{MEMBER.address}</td></tr>

@@ -256,6 +256,25 @@ export async function submitCertificateApplication(
     };
   }
 
+  // 자격증에 인쇄되는 값이라 신청 단계에서 반드시 받습니다.
+  if (!normalize(input.birthDate)) {
+    return {
+      success: false,
+      code: "validation_error",
+      message: "생년월일을 입력해주세요.",
+      field: "birthDate",
+    };
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalize(input.birthDate))) {
+    return {
+      success: false,
+      code: "validation_error",
+      message: "생년월일을 올바르게 선택해주세요.",
+      field: "birthDate",
+    };
+  }
+
   if (!normalize(input.phone)) {
     return {
       success: false,
@@ -350,7 +369,7 @@ export async function submitCertificateApplication(
     certificate_name: `${target.courseTitle} 자격증`,
     member_login_id: memberResult.loginId,
     applicant_name: memberResult.profile.name,
-    birth_date: memberResult.profile.birthDate,
+    birth_date: normalize(input.birthDate),
     phone: emptyToNull(input.phone),
     postal_code: emptyToNull(input.postalCode),
     address: emptyToNull(input.address),
@@ -367,6 +386,15 @@ export async function submitCertificateApplication(
 
   try {
     const applicationId = await insertCertificateApplication(insertData);
+
+    // 신청서에 적은 생년월일을 회원정보에도 남깁니다. 회원가입에서는 받지 않아
+    // 비어 있는 회원이 많은데, 다음 신청 때 다시 적지 않아도 되게 합니다.
+    if (normalize(input.birthDate) !== (memberResult.profile.birthDate ?? "")) {
+      await supabase
+        .from("members")
+        .update({ birth_date: normalize(input.birthDate) })
+        .eq("id", memberId);
+    }
 
     if (availablePrepayment) {
       // 신청 접수 후 곧바로 사용 처리합니다. 동시 요청으로 이미 다른 신청에 먼저

@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: PageProps) {
   const supabase = await createClient();
   const { data: row } = await supabase
     .from('members')
-    .select('login_id, name, phone, email, address, address_detail, created_at')
+    .select('login_id, name, birth_date, phone, email, address, address_detail, created_at')
     .eq('id', session.id)
     .maybeSingle();
 
@@ -52,6 +52,7 @@ export default async function Page({ searchParams }: PageProps) {
       member={{
         id: row?.login_id ?? session.loginId,
         name: row?.name ?? session.name,
+        birthDate: row?.birth_date ?? '',
         phone: row?.phone ?? '-',
         email: row?.email ?? '-',
         address: [row?.address, row?.address_detail].filter(Boolean).join(' ') || '-',

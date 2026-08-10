@@ -17,6 +17,7 @@ import PostcodeButton from '@/features/korhrd/components/form/PostcodeButton';
 export default function MyPageForm({ profile }: { profile: MemberProfile }) {
   const router = useRouter();
   const [name, setName] = useState(profile.name);
+  const [birthDate, setBirthDate] = useState(profile.birthDate);
   const [phone, setPhone] = useState(profile.phone);
   const [email, setEmail] = useState(profile.email);
   const [postalCode, setPostalCode] = useState(profile.postalCode);
@@ -34,7 +35,7 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
 
     startTransition(async () => {
       const result = await updateMyProfileAction({
-        name, phone, email, postalCode, address, addressDetail,
+        name, birthDate, phone, email, postalCode, address, addressDetail,
       });
 
       if (result.success) {
@@ -65,6 +66,17 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
           <input
             id="mp-name" type="text" required autoComplete="name"
             value={name} onChange={(event) => setName(event.target.value)}
+          />
+        </div>
+
+        {/* 회원가입에서는 받지 않습니다. 자격증에 인쇄되는 값이라 여기서 채웁니다. */}
+        <div className="field">
+          <label htmlFor="mp-birth">
+            생년월일 <span className="hint">— 자격증에 표기됩니다</span>
+          </label>
+          <input
+            id="mp-birth" type="date" autoComplete="bday" max={new Date().toISOString().slice(0, 10)}
+            value={birthDate} onChange={(event) => setBirthDate(event.target.value)}
           />
         </div>
 
