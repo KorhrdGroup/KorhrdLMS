@@ -162,6 +162,7 @@ export function LecturePlayer({
                   ref={videoRef}
                   src={session.videoUrl}
                   controls
+                  autoPlay
                   playsInline
                   controlsList="nodownload"
                   onContextMenu={(event) => event.preventDefault()}
