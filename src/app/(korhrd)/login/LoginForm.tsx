@@ -6,6 +6,8 @@ import { useEffect, useState, useTransition } from "react";
 import { loginStudentAction } from "@/features/auth/actions/student-login.actions";
 import { SAVED_LOGIN_ID_KEY } from "@/lib/student/session";
 
+import styles from "./LoginForm.module.css";
+
 /**
  * 로그인 폼 — 마크업은 korhrd 디자인(login.html), 동작은 기존 Supabase 액션.
  * 데모용 hidden login=1 파라미터는 실제 인증으로 대체하며 제거했습니다.
@@ -130,21 +132,26 @@ export function LoginForm({
         </div>
 
         {/* 소셜 로그인 — 서버 라우트가 각 인증 화면으로 보냅니다.
-            버튼 색은 각 사의 브랜드 가이드 색(네이버 #03C75A, 카카오 #FEE500) 고정입니다. */}
-        <a
-          className="btn btn--lg btn--block mt-3"
-          href={`/api/auth/naver/start${socialRedirect}`}
-          style={{ background: "#03C75A", color: "#fff" }}
-        >
-          네이버로 로그인
-        </a>
-        <a
-          className="btn btn--lg btn--block mt-2"
-          href={`/api/auth/kakao/start${socialRedirect}`}
-          style={{ background: "#FEE500", color: "#191600" }}
-        >
-          카카오로 로그인
-        </a>
+            버튼 모양·문구·로고는 각 사의 공식 디자인 가이드를 그대로 따릅니다.
+            색·문구를 임의로 바꾸면 심사에서 걸립니다(모듈 CSS 주석 참고). */}
+        <div className={styles.social}>
+          <a
+            className={`btn btn--lg ${styles.button} ${styles.naver}`}
+            href={`/api/auth/naver/start${socialRedirect}`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/social/naver-n-white.svg" alt="" width={18} height={18} aria-hidden="true" />
+            네이버 로그인
+          </a>
+          <a
+            className={`btn btn--lg ${styles.button} ${styles.kakao}`}
+            href={`/api/auth/kakao/start${socialRedirect}`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/social/kakao-bubble.svg" alt="" width={18} height={18} aria-hidden="true" />
+            카카오 로그인
+          </a>
+        </div>
 
         <p className="login-links">
           <Link href="/signup">회원가입</Link>

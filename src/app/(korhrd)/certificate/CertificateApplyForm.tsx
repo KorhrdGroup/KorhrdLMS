@@ -331,7 +331,9 @@ export function CertificateApplyForm({
                 <div className="field">
                   <label htmlFor="rbirth">
                     생년월일 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
+                    {/* 원본 join.html 과 같이 (필수) 와 안내 사이에 한 칸 둡니다 —
+                        붙이면 별표 뒤에 "*—" 로 붙어 보입니다 */}
+                    <span className="sr-only">(필수)</span>{' '}
                     <span className="hint">— 자격증에 표기됩니다</span>
                   </label>
                   <input
