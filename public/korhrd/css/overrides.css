@@ -93,6 +93,13 @@ input[type="checkbox"]:checked,
 }
 .agree--plain input { margin-top: 0 }
 
+/* 수강신청 목록 — 강의 정보표 아래를 2px 띄웁니다 (2026-08-10, 디자인 요청)
+   전달본은 .course-row .spec-table 이 height:100% + space-between 이라 마지막 줄
+   '주무부처'의 아랫선이 왼쪽 썸네일 아랫선과 정확히 같은 높이에 떨어집니다(실측 0px).
+   딱 맞으면 표가 사진보다 조금 흘러내려 보여, 살짝 안쪽으로 들여 균형을 맞춥니다.
+   박스 높이는 height:100% 로 고정돼 있어 글자 줄만 2px 올라가고 정렬은 그대로입니다. */
+.course-row .spec-table { padding-bottom: 2px }
+
 /* 로그인 상태에서 상단 메뉴가 두 줄로 깨지는 것 (2026-08-10)
    전달본 responsive.css 는 "이 폭부터 상단 메뉴가 두 줄로 깨지므로" 1100px 에서
    햄버거로 바꿉니다. 그 기준은 **비로그인 헤더**(회원가입 | 로그인) 기준입니다.
