@@ -75,7 +75,12 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
         {enrollment.status === 'issued' ? (
           <Link className="btn btn--primary btn--block" href="/certificate/status">발급 내역 보기</Link>
         ) : s.canIssue ? (
-          <Link className="btn btn--primary btn--block" href="/certificate">자격증 발급 신청</Link>
+          <Link
+            className="btn btn--primary btn--block"
+            href={`/certificate?course=${encodeURIComponent(enrollment.course)}`}
+          >
+            자격증 발급 신청
+          </Link>
         ) : s.canExtend ? (
           <button className="btn btn--primary btn--block" type="button" onClick={() => onExtend?.(enrollment.course)}>
             기간 연장

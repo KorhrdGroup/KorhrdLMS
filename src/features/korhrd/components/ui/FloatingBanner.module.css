@@ -1,14 +1,21 @@
 /*
- * 화면 오른쪽 끝에 붙는 띠 배너 — Figma floating_banner (334:9614)
+ * 화면 오른쪽 끝에 붙는 플로팅 배너 — Figma floating_banner (334:9614)
  *
- * 데스크톱에서만 띄웁니다. 좁은 화면에서는 본문 위를 덮어 읽기를 방해합니다.
- * 기준은 --container(1200px) — 뷰포트가 본문 폭보다 넓을 때만 나옵니다.
+ * 본문 옆 여백이 배너를 담을 만큼 넓을 때만 띄웁니다. 그보다 좁으면
+ * 본문 위를 덮어 읽기를 방해합니다.
+ *
+ * 기준 계산 — 본문(.container)은 1200px 이고 좌우 여백은 (뷰포트-1200)/2 로
+ * 나뉩니다. 배너 폭이 약 100px 이므로 겹치지 않으려면
+ *   (뷰포트 - 1200) / 2 >= 100  →  뷰포트 >= 1400px
+ * 딱 맞으면 본문에 닿아 보이므로 한 칸 띄운 1440px 을 기준으로 씁니다
+ * (본문 상자에서 20px, 카드 가장자리에서 40px 떨어집니다).
+ * 1200px 이던 때에는 1280px 화면에서 본문을 67px 파고들었습니다.
  */
 .banner {
   display: none;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1440px) {
   .banner {
     position: fixed;
     /* 헤더(64) + 메인의 신뢰 띠배너(44) 아래로 내립니다. 띠배너는 메인에만
@@ -17,18 +24,37 @@
     right: 0;
     z-index: 30;   /* 헤더(50)보다 아래, 본문 위 */
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* 시안은 바깥 24 / 안쪽 8 인데 바깥 그룹에 자식이 하나뿐이라
-       실제로 보이는 간격은 안쪽 8px 입니다. 한 겹으로 폈습니다. */
-    gap: var(--s-3);
-
-    padding: var(--s-6);
+    display: block;
     background: var(--blue-soft);
     /* 오른쪽 끝에 붙으므로 왼쪽 모서리만 둥글게 (시안 10px) */
     border-radius: 10px 0 0 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .08);
+  }
+}
+
+/* 안쪽 배치는 이 칸이 맡습니다 (링크일 때도, 아닐 때도) */
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 시안은 바깥 24 / 안쪽 8 인데 바깥 그룹에 자식이 하나뿐이라
+     실제로 보이는 간격은 안쪽 8px 입니다. 한 겹으로 폈습니다. */
+  gap: var(--s-3);
+
+  padding: var(--s-6);
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 누를 수 있다는 것만 알려주면 됩니다 — 가장자리 안내라 크게 움직이면 튑니다.
+   초점 테두리는 base.css 의 전역 :focus-visible 규칙을 그대로 씁니다. */
+.link:hover {
+  background: var(--blue-line);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .link {
+    transition: background-color .15s ease;
   }
 }
 
