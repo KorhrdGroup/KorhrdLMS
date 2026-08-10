@@ -25,9 +25,9 @@ import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
 type Group = 'cat' | 'purpose' | 'age' | 'gov';
 
 const GROUP_LABEL: Record<Group, string> = {
-  cat: '과정별',
+  cat: '과정',
   purpose: '목적',
-  age: '연령대',
+  age: '연령',
   gov: '주무부처',
 };
 
@@ -139,7 +139,7 @@ export default function CoursesClient({ initial = {} }: {
       <div className={`filter-group${isOpen(group) ? '' : ' is-folded'}`} key={group}>
         {/* 제목을 눌러 접었다 폅니다. 화살표는 전달본 공통 셰브론(.chev)입니다 */}
         <button
-          className="filter-group__title panel-toggle" type="button"
+          className="filter-group__title" type="button"
           aria-expanded={isOpen(group)} aria-controls={`filter-items-${group}`}
           onClick={() => setOpenGroups((p) => ({ ...p, [group]: !isOpen(group) }))}
         >

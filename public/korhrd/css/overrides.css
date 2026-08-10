@@ -130,8 +130,27 @@ input[type="checkbox"]:checked,
   text-align: left;
 }
 
+/* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev)과 같은 그림입니다.
+   그 규칙들에 선택자를 얹을 수 없어 같은 값으로 씁니다. 크기만 22 → 16px 로
+   줄였습니다 — 12px 짜리 제목 옆이라 22px 은 글자보다 커 보입니다.
+   (.panel-toggle 을 붙이면 classroom.css 가 16px 글자 + 16/18px 패딩까지 끌고 와
+    제목이 66px 이 됩니다. 그래서 클래스를 쓰지 않고 여기서 화살표만 그립니다) */
+.filter-group__title .chev {
+  flex-shrink: 0; width: 16px; height: 16px; font-size: 0;
+  background-color: var(--faint);
+  -webkit-mask: var(--chev) center / 13px no-repeat;
+  mask: var(--chev) center / 13px no-repeat;
+  transition: transform .18s;
+}
+.filter-group__title[aria-expanded="true"] .chev { transform: rotate(180deg) }
+
 /* 접힌 묶음은 제목만 남습니다 — 펼쳤을 때의 아래 여백(8px)을 지웁니다 */
 .filter-group.is-folded .filter-group__title { margin-bottom: 0 }
+
+/* 높이 줄이기 — 조건이 20개라 전달본 값(항목 40px)이면 사이드바가 화면을 넘칩니다.
+   글자 크기는 그대로 두고 위아래 여백만 좁힙니다. */
+.filter-group { padding: 12px }
+.filter-item { padding: 6px 10px }
 
 /* 로그인 상태에서 상단 메뉴가 두 줄로 깨지는 것 (2026-08-10)
    전달본 responsive.css 는 "이 폭부터 상단 메뉴가 두 줄로 깨지므로" 1100px 에서

@@ -1,0 +1,79 @@
+/*
+  과정 상세 전용 보정 — style.css **뒤에** 실립니다.
+
+  왜 별도 파일인가
+  ----------------
+  style.css 는 퍼블리싱 산출물이라 확정 디자인 원본과 같아야 합니다(AGENTS 규칙).
+  건드리지 않고 이후에 정해진 것만 여기 모읍니다. korhrd 쪽 overrides.css 와 같은 방식입니다.
+
+  여기 있는 내용은 새 디자인이 아니라 **다른 화면과 같게 맞추는 것**입니다.
+  값은 전부 korhrd 번들(layout.css · responsive.css)에서 그대로 가져왔습니다.
+*/
+
+/* 헤더 상단 고정 (2026-08-10, 디자인 요청)
+   이 번들만 .header{position:relative} 라 상세페이지에서는 헤더가 그냥 스크롤돼
+   사라졌습니다. 나머지 화면(korhrd layout.css)은 sticky 입니다.
+   같은 값으로 맞춥니다. 아래 탭바(.dtabs)는 원래 top:0 에 붙던 것을 헤더 높이만큼
+   내려 헤더와 겹치지 않게 합니다. */
+.header {
+  position: sticky;
+  top: 0;
+  transition: box-shadow .2s ease, transform .25s ease;
+}
+.header.is-stuck { box-shadow: 0 10px 24px rgba(0, 0, 0, .06) }
+
+/* 이 번들에는 .header__nav 규칙이 없어 메뉴와 검색·로그인이 세로로 쌓여
+   헤더가 74px 이 됐습니다. korhrd layout.css 와 같이 상자를 만들지 않게 합니다
+   (넓은 화면에서는 .gnb·.header__util 이 헤더의 직계처럼 배치돼야 합니다). */
+.header__nav { display: contents }
+
+/* 이 번들에는 --header-h 가 없습니다(korhrd 번들에만 있습니다).
+   .header__in 의 min-height 를 그대로 씁니다 — 560px 이하에서 56px 로 줄어듭니다. */
+.dtabs { top: 64px }
+@media (max-width: 560px) {
+  .dtabs { top: 56px }
+}
+
+/* 태블릿·모바일 헤더 (korhrd responsive.css 1100px 블록과 같은 내용)
+   이 번들은 햄버거를 로고 바로 옆(왼쪽)에 두고 .gnb 만 여닫습니다.
+   다른 화면은 햄버거가 항상 오른쪽 끝이고, 메뉴·검색·로그인이 한 패널로 묶입니다.
+   공용 Header 컴포넌트를 그대로 쓰므로 그 규칙을 여기에도 옮깁니다. */
+@media (max-width: 1100px) {
+  .nav-toggle { display: block; margin-left: auto; order: 9 }
+
+  .header__nav {
+    display: none; position: absolute; top: 100%; left: 0; right: 0;
+    padding: 8px; background: var(--surface);
+    border-bottom: 1px solid var(--line); box-shadow: 0 10px 24px rgba(0, 0, 0, .06);
+  }
+  .header__nav.is-open { display: block }
+
+  /* style.css 는 .gnb 자체를 절대배치로 띄웠는데, 이제 패널이 그 역할을 합니다 */
+  .gnb {
+    display: flex; position: static; flex-direction: column; gap: 0;
+    padding: 0; background: none;
+  }
+  .gnb a { padding: 12px 14px; border-radius: var(--r-md) }
+
+  .header__util {
+    margin-left: 0; flex-direction: column; align-items: stretch; gap: 8px;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line);
+  }
+  .search-trigger { min-width: 0; width: 100%; padding: 12px 14px; justify-content: flex-start }
+  .search-trigger .txt { display: block }
+  .header__auth { display: flex; gap: 8px }
+  .header__auth .util-link {
+    flex: 1; padding: 12px 14px; border-radius: var(--r-md);
+    background: var(--surface-sunken); text-align: center; font-weight: 700;
+  }
+  .header__auth .util-link--login,
+  .header__auth .util-link--strong { background: var(--navy); color: #fff }
+  .header__auth .util-link--join { background: var(--blue-soft); color: var(--ink-2) }
+  /* style.css 가 좁은 폭에서 두 번째 링크를 감추는데, 패널 안에서는 다 보여야 합니다 */
+  .header__util .util-link + .util-link { display: block }
+}
+
+/* 모바일 — 내릴 때 감추고 올릴 때 보입니다 (korhrd responsive.css 560px 블록) */
+@media (max-width: 560px) {
+  .header.is-hidden { transform: translateY(-100%) }
+}
