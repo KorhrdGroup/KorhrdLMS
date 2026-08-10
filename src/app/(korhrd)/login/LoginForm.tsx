@@ -136,7 +136,7 @@ export function LoginForm({
             색·문구를 임의로 바꾸면 심사에서 걸립니다(모듈 CSS 주석 참고). */}
         <div className={styles.social}>
           <a
-            className={`${styles.button} ${styles.naver}`}
+            className={`btn btn--lg ${styles.button} ${styles.naver}`}
             href={`/api/auth/naver/start${socialRedirect}`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -144,7 +144,7 @@ export function LoginForm({
             네이버 로그인
           </a>
           <a
-            className={`${styles.button} ${styles.kakao}`}
+            className={`btn btn--lg ${styles.button} ${styles.kakao}`}
             href={`/api/auth/kakao/start${socialRedirect}`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
