@@ -222,6 +222,10 @@ export function isModuleAllowed(role: AdminRole, module: AdminModule): boolean {
   return allowed === "all" || allowed.includes(module);
 }
 
+export function isFullAccessRole(role: AdminRole): boolean {
+  return ALLOWED_MODULES_BY_ROLE[role] === "all";
+}
+
 export type AdminWidgetItem = {
   title: string;
   date?: string;

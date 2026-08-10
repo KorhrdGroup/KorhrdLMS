@@ -7,7 +7,7 @@ import { ChevronsLeft, ChevronsRight, LayoutDashboard } from "lucide-react";
 import { BrandLogo } from "@/components/admin/brand-logo";
 import { useAdminLayout } from "@/components/admin/layout/admin-layout-provider";
 import { AdminButton } from "@/components/admin/ui/admin-button";
-import { getNavGroupsForRole, resolveActiveAdminNav } from "@/lib/admin/navigation";
+import { getNavGroupsForRole, isFullAccessRole, resolveActiveAdminNav } from "@/lib/admin/navigation";
 import { cn } from "@/lib/utils";
 
 type AdminSidebarProps = {
@@ -76,16 +76,19 @@ export function AdminSidebar({
       </div>
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
-        <SidebarLink
-          href="/admin"
-          label="대시보드"
-          icon={LayoutDashboard}
-          active={isDashboardActive}
-          collapsed={isCollapsed}
-          onNavigate={onNavigate}
-        />
-
-        <div className={cn("my-1.5 border-t border-[#F3F4F6]", isCollapsed && "mx-1")} />
+        {isFullAccessRole(adminUser.role) ? (
+          <>
+            <SidebarLink
+              href="/admin"
+              label="대시보드"
+              icon={LayoutDashboard}
+              active={isDashboardActive}
+              collapsed={isCollapsed}
+              onNavigate={onNavigate}
+            />
+            <div className={cn("my-1.5 border-t border-[#F3F4F6]", isCollapsed && "mx-1")} />
+          </>
+        ) : null}
 
         {navGroups.map((group) => (
           <SidebarLink
