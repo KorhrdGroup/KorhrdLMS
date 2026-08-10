@@ -92,3 +92,9 @@ input[type="checkbox"]:checked,
   align-items: center;
 }
 .agree--plain input { margin-top: 0 }
+
+/* FAQ 아이템 테두리 (2026-08-10, 디자인 요청)
+   과정 상세(page--flat)에서는 .faq__item 에 border 가 걸리지만,
+   취득절차·강의실 같은 일반 페이지에서는 page--flat 이 없어 테두리가
+   빠집니다. 모든 FAQ 에 일관되게 테두리를 줍니다. */
+.faq__item { border: 1px solid var(--line) }
