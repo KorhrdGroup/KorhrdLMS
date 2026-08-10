@@ -74,9 +74,9 @@ export function getFeedbackUrl(config: PayAppConfig) {
   return `${config.siteUrl}/api/payapp/feedback`;
 }
 
-/** 결제 후 사용자가 돌아올 주소. */
-export function getReturnUrl(config: PayAppConfig, applicationId: string) {
-  return `${config.siteUrl}/certificate/complete?id=${applicationId}`;
+/** 결제 후 사용자가 돌아올 주소. 팝업에서 열리므로 부모 창을 이동시키고 닫는 페이지로 보냅니다. */
+export function getReturnUrl(config: PayAppConfig, _applicationId: string) {
+  return `${config.siteUrl}/certificate/payment-done`;
 }
 
 /**
