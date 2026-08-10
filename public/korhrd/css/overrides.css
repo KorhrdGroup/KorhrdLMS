@@ -73,5 +73,22 @@ input[type="checkbox"]:checked,
 
 /* 전달본이 ::after 로 찍던 ✓ 는 이제 배경 아이콘이 대신합니다 */
 .select-toggle[aria-pressed="true"] .select-toggle__box::after { content: none }
-/* 필터는 마우스를 올리면 테두리만 진해집니다 — 전달본 동작 유지 */
-.filter-item:hover::before { border-color: var(--faint) }
+
+/* 호버해도 체크박스는 그대로 (2026-08-07, 디자인 요청)
+   전달본은 수강신청 사이드바 필터에서만 마우스를 올리면 테두리가 진해집니다
+   (.filter-item:hover::before{ border-color:var(--faint) }).
+   체크박스는 어디서나 같아 보이도록 기본 테두리색을 유지합니다.
+   행 배경이 밝아지는 것(.filter-item:hover)은 목록 항목의 신호라 남겨둡니다. */
+.filter-item:hover::before { border-color: var(--line) }
+
+/* 로그인 '아이디 저장' 줄 (2026-08-07, 디자인 요청)
+   전달본 .agree 는 회색 박스(--surface-sunken)에 여러 줄 약관을 담는 자리라
+   align-items:flex-start + input margin-top:3px 로 되어 있습니다. 한 줄짜리
+   '아이디 저장'에는 박스가 과하고, 그 두 값 때문에 체크박스가 글자보다
+   1px 내려가 보입니다. 이 줄에만 붙는 agree--plain 으로 떼어냅니다.
+   (회원가입 전체동의·고객센터 개인정보 동의는 회색 박스를 그대로 씁니다) */
+.agree--plain {
+  background: none; padding: 0;
+  align-items: center;
+}
+.agree--plain input { margin-top: 0 }
