@@ -98,3 +98,6 @@ input[type="checkbox"]:checked,
    취득절차·강의실 같은 일반 페이지에서는 page--flat 이 없어 테두리가
    빠집니다. 모든 FAQ 에 일관되게 테두리를 줍니다. */
 .faq__item { border: 1px solid var(--line) }
+
+/* 강의실 자주 묻는 질문 — 이전/다음 강의 버튼과 간격 (2026-08-10, 디자인 요청) */
+.lec-qna { margin-top: 20px }
