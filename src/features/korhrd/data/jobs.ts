@@ -49,7 +49,7 @@ export const JOB_SITES: Record<string, JobSite[]> = {
       { name: "지역 상담센터" }
     ],
     "medical": [
-      { name: "메디잡", logo: "medijob.png", url: "https://www.medijob.co.kr" },
+      { name: "메디잡", logo: "medijob.png", url: "https://www.medijob.cc" },
       { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "병원 채용 홈페이지" }
     ],
@@ -59,7 +59,7 @@ export const JOB_SITES: Record<string, JobSite[]> = {
       { name: "동물병원 채용" }
     ],
     "beauty": [
-      { name: "뷰티잡", logo: "beautyjob.png", url: "https://www.beautyjob.co.kr" },
+      { name: "뷰티잡", logo: "beautyjob.png", url: "https://www.beautyjob.kr" },
       { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "지역 매장 채용" }
     ],
