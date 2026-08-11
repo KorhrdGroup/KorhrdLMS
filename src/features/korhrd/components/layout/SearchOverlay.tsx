@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
 
-/* 인기 자격증 — 하드코딩 대신 과정 데이터의 인기 순위(rank, 1이 1위)를 그대로 씁니다.
-   메인 "인기" 배지와 같은 기준이라 두 화면이 어긋나지 않습니다. */
-const POPULAR = [...COURSES]
+/* 인기 자격증 초기값(하드코딩) — 과정 데이터의 인기 순위(rank, 1이 1위).
+   실제 순위는 /api/popular-courses(수강신청 수 집계)가 내려주고,
+   초반처럼 신청 데이터가 10개를 못 채우면 이 목록으로 나머지를 채웁니다.
+   (추후 검색횟수 기반으로 바꿀 때는 API 집계만 갈아끼우면 됩니다.) */
+const POPULAR_FALLBACK = [...COURSES]
   .filter((c) => c.rank > 0)
   .sort((a, b) => a.rank - b.rank)
   .slice(0, 10)
@@ -38,6 +40,7 @@ function saveRecent(list: string[]) {
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState('');
   const [recent, setRecent] = useState<string[]>([]);
+  const [popular, setPopular] = useState<string[]>(POPULAR_FALLBACK);
   const inputRef = useRef<HTMLInputElement>(null);
 
   /** 검색어를 최근 목록 맨 앞에 저장합니다(중복은 앞으로 끌어올림). */
@@ -63,6 +66,14 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
     if (!open) return;
     setQ('');
     setRecent(loadRecent());
+    // 실제 수강신청 수 순위를 얹습니다 — 부족한 자리는 하드코딩으로 채우고, 실패해도 하드코딩 그대로.
+    fetch('/api/popular-courses')
+      .then((res) => (res.ok ? res.json() : { names: [] }))
+      .then(({ names }: { names: string[] }) => {
+        if (!Array.isArray(names) || names.length === 0) return;
+        setPopular([...new Set([...names, ...POPULAR_FALLBACK])].slice(0, 10));
+      })
+      .catch(() => {});
     inputRef.current?.focus();
     document.body.classList.add('is-locked');
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -124,7 +135,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                 <div>
                   <h2>인기 자격증 <em>TOP 10</em></h2>
                   <ol className="rank-list">
-                    {POPULAR.map((name, i) => (
+                    {popular.map((name, i) => (
                       <li key={name}>
                         <span className="no">{i + 1}</span>
                         <Link href={`/courses/${encodeURIComponent(name)}`}>{name}</Link>
