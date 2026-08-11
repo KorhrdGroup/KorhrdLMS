@@ -633,12 +633,13 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   .classroom__grid .rv-cta .toc-open b { font-size: var(--fs-sm); font-weight: 700 }
   .classroom__grid .rv-cta .toc-open b span { color: var(--blue); margin-left: 3px }
   .classroom__grid .rv-cta .toc-open .toc__badge { flex: none }
+  /* 셰브론을 오른쪽 끝으로 밀지 않습니다 — 세 조각이 한 덩어리로 가운데
+     오도록 두면 좌우 여백이 같아집니다(.btn 이 이미 justify-content:center). */
   .classroom__grid .rv-cta .toc-open .chev {
-    flex: none; width: 16px; height: 16px; margin-left: auto;
+    flex: none; width: 16px; height: 16px;
     background-color: var(--faint);
     -webkit-mask: var(--chev) center / contain no-repeat;
     mask: var(--chev) center / contain no-repeat;
-    transform: rotate(180deg);
   }
   .classroom__grid .rv-cta .toc-open::before,
   .classroom__grid .rv-cta .toc-open::after { content: none }
@@ -656,9 +657,9 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   }
 }
 
-/* 모바일은 셋을 다 담을 폭이 안 나옵니다(375px 기준 335px).
-   양옆 글자를 접고 화살표만 남깁니다 — 이름은 aria-label 이 들고 있습니다. */
+/* 모바일(375px 기준 335px)은 셋을 다 담기에 빠듯합니다. 완료 배지만 뺍니다
+   (2026-08-11, 디자인 요청) — 진도는 바로 아래 진도율 막대에도 있고, 시트를
+   열면 머리말에 그대로 나옵니다. 강의목차·총 N강·화살표는 남습니다. */
 @media (max-width: 560px) {
-  .classroom__grid .rv-cta .lec-nav .btn__label { display: none }
-  .classroom__grid .rv-cta .lec-nav { padding: 8px 10px }
+  .classroom__grid .rv-cta .toc-open .toc__badge { display: none }
 }
