@@ -1758,6 +1758,9 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           id: string
+          image_file_name: string | null
+          image_file_url: string | null
+          image_storage_path: string | null
           is_pinned: boolean
           is_published: boolean
           title: string
@@ -1774,6 +1777,9 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           id?: string
+          image_file_name?: string | null
+          image_file_url?: string | null
+          image_storage_path?: string | null
           is_pinned?: boolean
           is_published?: boolean
           title: string
@@ -1790,6 +1796,9 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           id?: string
+          image_file_name?: string | null
+          image_file_url?: string | null
+          image_storage_path?: string | null
           is_pinned?: boolean
           is_published?: boolean
           title?: string

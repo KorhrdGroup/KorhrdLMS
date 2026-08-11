@@ -13,6 +13,9 @@ type NoticeAttachmentPickerProps = {
   existingFileName?: string;
   onChange: (attachment: NoticeAttachmentInput) => void;
   className?: string;
+  /** 파일 선택 제한(예: "image/*"). 본문 이미지 필드에서 씁니다. */
+  accept?: string;
+  placeholder?: string;
 };
 
 /**
@@ -24,6 +27,8 @@ export function NoticeAttachmentPicker({
   existingFileName,
   onChange,
   className,
+  accept,
+  placeholder,
 }: NoticeAttachmentPickerProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +70,7 @@ export function NoticeAttachmentPicker({
           <FileUp className="size-4 shrink-0 text-[#9CA3AF]" />
         )}
         <span className="flex-1 truncate">
-          {isUploading ? "업로드 중..." : displayName || "첨부파일 선택 (선택)"}
+          {isUploading ? "업로드 중..." : displayName || placeholder || "첨부파일 선택 (선택)"}
         </span>
         {value?.fileSizeLabel ? (
           <span className="shrink-0 text-xs text-[#9CA3AF]">{value.fileSizeLabel}</span>
@@ -73,6 +78,7 @@ export function NoticeAttachmentPicker({
         <input
           type="file"
           className="hidden"
+          accept={accept}
           disabled={isUploading}
           onChange={(event) => handleSelect(event.target.files?.[0] ?? null)}
         />

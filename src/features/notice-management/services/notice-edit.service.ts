@@ -25,6 +25,7 @@ export async function getNoticeForEdit(noticeId: string): Promise<GetNoticeForEd
       title: notice.title,
       content: notice.content,
       attachment: notice.attachment,
+      image: notice.image,
       isPinned: notice.isPinned,
       isPublished: notice.isPublished,
       authorName: notice.authorName,
@@ -52,6 +53,7 @@ export async function updateNotice(
     title: parsed.title,
     content: parsed.content,
     attachment: parsed.attachment ?? existing.attachment,
+    image: parsed.image ?? existing.image,
     isPinned: parsed.isPinned,
     isPublished: parsed.isPublished,
   });

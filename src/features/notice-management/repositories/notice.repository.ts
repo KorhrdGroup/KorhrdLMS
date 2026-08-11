@@ -10,7 +10,7 @@ import type { Database } from "@/types/database.types";
  */
 
 const NOTICE_SELECT =
-  "id, title, content, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, created_at, updated_at" as const;
+  "id, title, content, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, image_file_name, image_file_url, image_storage_path, created_at, updated_at" as const;
 
 type NoticeRow = {
   id: string;
@@ -24,6 +24,9 @@ type NoticeRow = {
   attachment_file_size_label: string | null;
   attachment_file_url: string | null;
   attachment_storage_path: string | null;
+  image_file_name: string | null;
+  image_file_url: string | null;
+  image_storage_path: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -43,6 +46,14 @@ function toNotice(row: NoticeRow): Notice {
           fileSizeLabel: row.attachment_file_size_label ?? "",
           fileUrl: row.attachment_file_url,
           storagePath: row.attachment_storage_path,
+        }
+      : null,
+    image: row.image_file_name
+      ? {
+          fileName: row.image_file_name,
+          fileSizeLabel: "",
+          fileUrl: row.image_file_url,
+          storagePath: row.image_storage_path,
         }
       : null,
     createdAt: row.created_at,
@@ -129,6 +140,9 @@ export async function createNoticeRecord(
       attachment_file_size_label: input.attachment?.fileSizeLabel ?? null,
       attachment_file_url: input.attachment?.fileUrl ?? null,
       attachment_storage_path: input.attachment?.storagePath ?? null,
+      image_file_name: input.image?.fileName ?? null,
+      image_file_url: input.image?.fileUrl ?? null,
+      image_storage_path: input.image?.storagePath ?? null,
     })
     .select(NOTICE_SELECT)
     .single();
@@ -155,6 +169,11 @@ export async function updateNoticeRecord(
     payload.attachment_file_size_label = patch.attachment?.fileSizeLabel ?? null;
     payload.attachment_file_url = patch.attachment?.fileUrl ?? null;
     payload.attachment_storage_path = patch.attachment?.storagePath ?? null;
+  }
+  if (patch.image !== undefined) {
+    payload.image_file_name = patch.image?.fileName ?? null;
+    payload.image_file_url = patch.image?.fileUrl ?? null;
+    payload.image_storage_path = patch.image?.storagePath ?? null;
   }
 
   const supabase = await createClient();

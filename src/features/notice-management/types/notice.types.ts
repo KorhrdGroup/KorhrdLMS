@@ -39,6 +39,8 @@ export type Notice = {
   isPublished: boolean;
   viewCount: number;
   attachment: NoticeAttachmentInput | null;
+  /** 본문 이미지(있으면 학생 화면 본문에 그대로 렌더링). 첨부파일과 별개입니다. */
+  image: NoticeAttachmentInput | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -68,6 +70,8 @@ export type NoticeRegistrationInput = {
   title: string;
   content: string;
   attachment: NoticeAttachmentInput | null;
+  /** 본문 이미지(렌더링용). 첨부파일(다운로드용)과 구분됩니다. */
+  image: NoticeAttachmentInput | null;
   isPinned: boolean;
   isPublished: boolean;
 };

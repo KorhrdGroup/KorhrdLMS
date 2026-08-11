@@ -21,6 +21,8 @@ export type SiteNoticeListItem = {
   body: string;
   /** 첨부파일(있을 때만). 학생 화면에서 다운로드 링크로 노출합니다. */
   attachment: { fileName: string; fileSizeLabel: string; fileUrl: string } | null;
+  /** 본문 이미지(있을 때만). 본문 아래에 그대로 렌더링합니다. */
+  imageUrl: string | null;
 };
 
 export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]> {
@@ -48,6 +50,7 @@ export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]
             fileUrl: notice.attachment.fileUrl,
           }
         : null,
+    imageUrl: notice.image?.fileUrl ?? null,
   }));
 }
 

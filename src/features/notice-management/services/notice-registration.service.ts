@@ -13,6 +13,7 @@ export type ParsedNoticeInput = {
   title: string;
   content: string;
   attachment: NoticeRegistrationInput["attachment"];
+  image: NoticeRegistrationInput["image"];
   isPinned: boolean;
   isPublished: boolean;
 };
@@ -32,6 +33,7 @@ export function validateNoticeInput(
     title: normalize(input.title),
     content: normalize(input.content),
     attachment: input.attachment,
+    image: input.image,
     isPinned: input.isPinned,
     isPublished: input.isPublished,
   };
@@ -52,6 +54,7 @@ export async function createNotice(
     title: parsed.title,
     content: parsed.content,
     attachment: parsed.attachment,
+    image: parsed.image,
     isPinned: parsed.isPinned,
     isPublished: parsed.isPublished,
     authorName: DEFAULT_AUTHOR_NAME,

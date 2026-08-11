@@ -18,6 +18,7 @@ const INITIAL_FORM: NoticeRegistrationInput = {
   title: "",
   content: "",
   attachment: null,
+  image: null,
   isPinned: false,
   isPublished: false,
 };
@@ -162,7 +163,23 @@ export function NoticeRegistrationModal({
         </EnrollmentFormField>
 
         <EnrollmentFormField
-          label="첨부파일"
+          label="본문 이미지"
+          htmlFor="notice-image"
+          error={fieldErrors.image}
+        >
+          <NoticeAttachmentPicker
+            value={form.image}
+            accept="image/*"
+            placeholder="이미지 선택 (선택)"
+            onChange={(image) => updateField("image", image)}
+          />
+          <p className="text-xs text-[#9CA3AF]">
+            학생 공지 상세 본문에 이미지가 그대로 표시됩니다.
+          </p>
+        </EnrollmentFormField>
+
+        <EnrollmentFormField
+          label="첨부파일 (다운로드용)"
           htmlFor="notice-attachment"
           error={fieldErrors.attachment}
         >
@@ -171,7 +188,7 @@ export function NoticeRegistrationModal({
             onChange={(attachment) => updateField("attachment", attachment)}
           />
           <p className="text-xs text-[#9CA3AF]">
-            실제 업로드/저장은 아직 연결되지 않았습니다 (Mock). 파일명·용량만 저장됩니다.
+            학생 화면에 다운로드 버튼으로 노출됩니다.
           </p>
         </EnrollmentFormField>
 

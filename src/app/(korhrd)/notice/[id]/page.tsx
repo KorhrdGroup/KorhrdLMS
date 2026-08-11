@@ -24,10 +24,6 @@ export default async function Page({ params }: PageProps) {
   const prev = index > 0 ? notices[index - 1] : null;
   const next = index < notices.length - 1 ? notices[index + 1] : null;
 
-  // 이미지 첨부는 본문처럼 바로 보여주고, 다운로드 버튼은 그대로 둡니다.
-  const isImageAttachment =
-    notice.attachment != null &&
-    /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(notice.attachment.fileName);
 
   return (
     <div className="container">
@@ -53,12 +49,13 @@ export default async function Page({ params }: PageProps) {
           {notice.body}
         </div>
 
-        {notice.attachment && isImageAttachment ? (
+        {/* 본문 이미지 — 어드민 "본문 이미지" 필드. 첨부파일(다운로드)과 별개입니다. */}
+        {notice.imageUrl ? (
           <div className="article__body">
-            {/* R2 등 외부 저장소 주소라 next/image 대신 img 를 씁니다 */}
+            {/* 외부 저장소(Supabase Storage) 주소라 next/image 대신 img 를 씁니다 */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={notice.attachment.fileUrl}
+              src={notice.imageUrl}
               alt={notice.title}
               style={{ maxWidth: "100%", height: "auto" }}
             />

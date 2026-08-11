@@ -32,6 +32,7 @@ function createFormFromDetail(detail: NoticeEditDetail): NoticeEditInput {
     title: detail.title,
     content: detail.content,
     attachment: null,
+    image: null,
     isPinned: detail.isPinned,
     isPublished: detail.isPublished,
   };
@@ -45,6 +46,7 @@ export function NoticeEditModal({
 }: NoticeEditModalProps) {
   const [form, setForm] = useState<NoticeEditInput | null>(null);
   const [existingFileName, setExistingFileName] = useState("");
+  const [existingImageName, setExistingImageName] = useState("");
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof NoticeEditInput, string>>
   >({});
@@ -72,6 +74,7 @@ export function NoticeEditModal({
 
         setForm(createFormFromDetail(result.notice));
         setExistingFileName(result.notice.attachment?.fileName ?? "");
+        setExistingImageName(result.notice.image?.fileName ?? "");
       } catch (error) {
         setFormError(
           error instanceof Error ? error.message : "공지 정보를 불러오지 못했습니다.",
@@ -85,6 +88,7 @@ export function NoticeEditModal({
     if (!nextOpen) {
       setForm(null);
       setExistingFileName("");
+      setExistingImageName("");
       setFieldErrors({});
       setFormError(null);
     }
@@ -206,7 +210,25 @@ export function NoticeEditModal({
           </EnrollmentFormField>
 
           <EnrollmentFormField
-            label="첨부파일"
+            label="본문 이미지"
+            htmlFor="edit-notice-image"
+            error={fieldErrors.image}
+          >
+            <NoticeAttachmentPicker
+              value={form.image}
+              existingFileName={existingImageName}
+              accept="image/*"
+              placeholder="이미지 선택 (선택)"
+              onChange={(image) => updateField("image", image)}
+            />
+            <p className="text-xs text-[#9CA3AF]">
+              학생 공지 상세 본문에 이미지가 그대로 표시됩니다. 새 이미지를 선택하지
+              않으면 기존 이미지가 유지됩니다.
+            </p>
+          </EnrollmentFormField>
+
+          <EnrollmentFormField
+            label="첨부파일 (다운로드용)"
             htmlFor="edit-notice-attachment"
             error={fieldErrors.attachment}
           >
@@ -216,7 +238,8 @@ export function NoticeEditModal({
               onChange={(attachment) => updateField("attachment", attachment)}
             />
             <p className="text-xs text-[#9CA3AF]">
-              새 파일을 선택하지 않으면 기존 첨부파일이 그대로 유지됩니다.
+              학생 화면에 다운로드 버튼으로 노출됩니다. 새 파일을 선택하지 않으면
+              기존 첨부파일이 그대로 유지됩니다.
             </p>
           </EnrollmentFormField>
 
