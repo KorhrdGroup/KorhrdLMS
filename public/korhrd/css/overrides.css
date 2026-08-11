@@ -283,8 +283,8 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 /* 높이 줄이기 — 조건이 20개라 전달본 값(항목 40px)이면 사이드바가 화면을 넘칩니다.
    글자 크기는 그대로 두고 위아래 여백만 좁힙니다. */
 .filter-group { padding: 12px }
-/* 위아래도 좌우와 같은 10px (2026-08-11, 디자인 요청) */
-.filter-item { padding: 10px }
+/* 안쪽 여백 — 위아래 8px · 좌우 10px (2026-08-11, 디자인 요청) */
+.filter-item { padding: 8px 10px }
 
 /* FAQ 아이템 테두리 (2026-08-10, 디자인 요청)
    과정 상세(page--flat)에서는 .faq__item 에 border 가 걸리지만,
