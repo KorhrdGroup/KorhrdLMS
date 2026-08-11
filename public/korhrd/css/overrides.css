@@ -503,17 +503,20 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    좁은 화면에서는 영상·이동 버튼·목차 다음으로 내립니다.
      영상 → 현재 강의 → 이전/다음 → 목차 → 학습자료 → 진도율 → FAQ
 
-   크기. 28px 숫자에 위아래 18px 여백이라 상자가 83px 이었습니다. 좁은 화면에서는
-   영상 바로 아래 큰 덩어리가 하나 더 있는 셈이라 눈에 너무 걸립니다.
-   숫자를 섹션 제목 크기(22px)로, 여백을 12/16px 로 줄여 60px 안쪽으로 낮춥니다.
-   막대 두께와 색은 그대로입니다 — 읽는 데 필요한 정보는 줄지 않습니다. */
+   크기. 28px 숫자(페이지 제목 크기)에 위아래 18px 여백이라 상자가 83px 이었습니다.
+   진도율은 한 줄짜리 알림인데 영상 아래에서 제목만큼 자리를 차지했습니다.
+   숫자를 섹션 제목 크기(22px)로, 위아래 여백을 14px 로 줄입니다 — 어느 폭에서나
+   같습니다. 좌우만 좁은 화면에서 한 번 더 좁힙니다.
+   막대 두께와 색은 그대로입니다 — 읽는 데 필요한 정보는 줄지 않습니다.
+     데스크탑 83 → 63px · 모바일 83 → 61px */
 @media (max-width: 980px) {
   .classroom__grid .lec-progress { order: 2 }
   .lec-qna { order: 3 }
 }
+.lec-progress { padding: 14px 22px }
+.lec-progress__pct { font-size: var(--fs-xl) }
 @media (max-width: 560px) {
   .lec-progress { padding: 12px 16px }
-  .lec-progress__pct { font-size: var(--fs-xl) }
 }
 
 /* 이전/다음 강의 버튼에 방향 화살표 (2026-08-11, 디자인 요청)
@@ -663,3 +666,10 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 @media (max-width: 560px) {
   .classroom__grid .rv-cta .toc-open .toc__badge { display: none }
 }
+
+/* 학습자료 — 첫 칸만 남색이던 것 (2026-08-11, 디자인 요청)
+   전달본은 `.material-grid a:first-child{ color:var(--navy); font-weight:700 }`
+   으로 교안파일 다운로드만 진하게 두었습니다. 세 칸은 고르는 자리이지
+   하나가 더 중요한 자리가 아니라, 옆 칸들과 같은 회색으로 맞춥니다
+   (.material-grid > * 의 값과 같습니다). */
+.material-grid a:first-child { color: var(--muted); font-weight: 600 }
