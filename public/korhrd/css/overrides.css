@@ -186,6 +186,10 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   gap: var(--s-3);
   width: 100%;
   text-align: left;
+  /* 아래 항목과 좌우를 맞춥니다 — .filter-item 이 좌우 10px 을 갖고 있어
+     제목만 그만큼 밖으로 나가 있었습니다(글자 시작 64.5 vs 체크박스 74.5,
+     화살표 끝 250.5 vs 개수 끝 240.5). 같은 값을 줘서 선을 맞춥니다. */
+  padding: 0 10px;
 }
 
 /* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev · .footer__box .chev)
