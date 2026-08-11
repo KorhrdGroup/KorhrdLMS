@@ -188,22 +188,40 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   text-align: left;
 }
 
-/* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev)과 같은 그림입니다.
-   그 규칙들에 선택자를 얹을 수 없어 같은 값으로 씁니다. 크기만 22 → 16px 로
-   줄였습니다 — 12px 짜리 제목 옆이라 22px 은 글자보다 커 보입니다.
+/* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev · .footer__box .chev)
+   과 **같은 값**을 씁니다. 그 규칙에 선택자를 얹을 수 없어 값을 옮겨 적었습니다.
    (.panel-toggle 을 붙이면 classroom.css 가 16px 글자 + 16/18px 패딩까지 끌고 와
     제목이 66px 이 됩니다. 그래서 클래스를 쓰지 않고 여기서 화살표만 그립니다) */
 .filter-group__title .chev {
-  flex-shrink: 0; width: 16px; height: 16px; font-size: 0;
+  flex-shrink: 0; width: 22px; height: 22px; font-size: 0;
   background-color: var(--faint);
-  -webkit-mask: var(--chev) center / 13px no-repeat;
-  mask: var(--chev) center / 13px no-repeat;
+  -webkit-mask: var(--chev) center / 18px no-repeat;
+  mask: var(--chev) center / 18px no-repeat;
   transition: transform .18s;
 }
 .filter-group__title[aria-expanded="true"] .chev { transform: rotate(180deg) }
 
-/* 접힌 묶음은 제목만 남습니다 — 펼쳤을 때의 아래 여백(8px)을 지웁니다 */
+/* 부드럽게 여닫기 — FAQ 와 같은 grid 0fr↔1fr 모프입니다(review.css .faq__a).
+   바깥이 높이를 애니메이션하고 안쪽이 잘라냅니다. 안쪽에 패딩을 주면 0fr 에서
+   그 높이만큼 남아 완전히 닫히지 않으므로 여백은 항목이 각자 갖습니다. */
+.filter-group__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .32s cubic-bezier(.4, 0, .2, 1), opacity .24s ease;
+}
+.filter-group__title[aria-expanded="true"] + .filter-group__panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.filter-group__panel-inner { overflow: hidden; min-height: 0 }
+
+/* 접힌 묶음은 제목만 남깁니다 — 펼쳤을 때의 아래 여백(8px)이 남지 않게 */
 .filter-group.is-folded .filter-group__title { margin-bottom: 0 }
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-group__panel { transition: none }
+}
 
 /* 고른 개수 — 접어 두면 몇 개 골랐는지 알 수 없어 제목 옆에 붙입니다.
    선택 상태를 나타내는 색이라 .filter-item[aria-pressed] 와 같은 짝을 씁니다. */

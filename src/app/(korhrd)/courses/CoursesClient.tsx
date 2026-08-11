@@ -157,30 +157,36 @@ export default function CoursesClient({ initial = {} }: {
           {chosen.length > 0 && <span className="filter-group__count">{chosen.length}</span>}
           <span className="chev" aria-hidden="true">⌄</span>
         </button>
-        <div id={`filter-items-${group}`} hidden={!isOpen(group)}>
-          {values.map((v) => (
-            <button
-              key={v} className="filter-item" type="button"
-              aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
-            >
-              {v}{suffix} <span className="num">{countOf(group, v)}</span>
-            </button>
-          ))}
-          {/* 초기화는 목록 아래에 둡니다. 오른쪽 위에 있으면 접기 화살표를 가려
-              아코디언으로 안 보였습니다. 접힌 동안에는 개수 배지가 대신 알립니다. */}
-          {chosen.length > 0 && (
-            <button
-              className="filter-group__reset" type="button"
-              aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
-              onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
-            >
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              초기화
-            </button>
-          )}
+        {/* FAQ 와 같은 방식으로 부드럽게 여닫습니다 — 바깥이 0fr↔1fr 로 모프하고
+            안쪽이 잘라냅니다(review.css .faq__a / .faq__a-inner).
+            hidden 을 쓰면 그냥 사라져서 애니메이션이 재생되지 않습니다.
+            대신 접혀 있는 동안 키보드로 들어가지 않게 inert 를 겁니다. */}
+        <div className="filter-group__panel" id={`filter-items-${group}`} inert={!isOpen(group)}>
+          <div className="filter-group__panel-inner">
+            {values.map((v) => (
+              <button
+                key={v} className="filter-item" type="button"
+                aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
+              >
+                {v}{suffix} <span className="num">{countOf(group, v)}</span>
+              </button>
+            ))}
+            {/* 초기화는 목록 아래에 둡니다. 오른쪽 위에 있으면 접기 화살표를 가려
+                아코디언으로 안 보였습니다. 접힌 동안에는 개수 배지가 대신 알립니다. */}
+            {chosen.length > 0 && (
+              <button
+                className="filter-group__reset" type="button"
+                aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
+                onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
+              >
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                초기화
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
