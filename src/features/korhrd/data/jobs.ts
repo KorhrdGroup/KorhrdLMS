@@ -27,7 +27,7 @@ export type JobSite = {
   url?: string;
   /**
    * 사이트 로고 파일명(확장자 포함) — public/job-site/{logo}.
-   * 16x16 자리에 들어갑니다. 없으면 링크 아이콘이 나옵니다.
+   * 16x16 자리에 들어갑니다. 없으면 마크 없이 이름만 나옵니다.
    */
   logo?: string;
 };
@@ -71,7 +71,7 @@ export const JOB_SITES: Record<string, JobSite[]> = {
     "esg": [
       { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       /* 환경부도 고용24와 같은 국가 사이트라 같은 마크를 씁니다 */
-      { name: "환경부 채용", logo: "work24.svg" },
+      { name: "환경부 채용", url: "https://www.mcee.go.kr/home/web/index.do?menuId=10574", logo: "work24.svg" },
       { name: "지자체 환경 일자리" }
     ],
     "it": [
