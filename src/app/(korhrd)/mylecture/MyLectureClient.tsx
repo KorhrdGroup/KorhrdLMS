@@ -250,19 +250,14 @@ export default function MyLectureClient({
                   <tr><th scope="row">가입일</th><td><time dateTime={MEMBER.joinedAt}>{MEMBER.joinedAt}</time></td></tr>
                 </tbody>
               </table>
-              <div className="issue-actions mt-4" style={{ alignItems: 'center' }}>
+              <div className="issue-actions mt-4">
                 <Link className="btn btn--primary" href="/mypage">정보 수정</Link>
                 <Link className="btn btn--ghost" href="/mypage/password">비밀번호 변경</Link>
-                {/* 탈퇴는 버튼처럼 크게 두지 않습니다 — 은색 글씨 링크로 오른쪽에 둡니다 */}
                 <button
+                  className="btn btn--ghost"
                   type="button"
                   onClick={handleWithdraw}
                   disabled={isWithdrawing}
-                  style={{
-                    background: 'none', border: 0, padding: 0, cursor: 'pointer',
-                    font: 'inherit', fontSize: '13px', color: 'var(--faint, #9CA3AF)',
-                    textDecoration: 'underline',
-                  }}
                 >
                   탈퇴하기
                 </button>
