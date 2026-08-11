@@ -24,6 +24,11 @@ export default async function Page({ params }: PageProps) {
   const prev = index > 0 ? notices[index - 1] : null;
   const next = index < notices.length - 1 ? notices[index + 1] : null;
 
+  // 이미지 첨부는 본문처럼 바로 보여주고, 다운로드 버튼은 그대로 둡니다.
+  const isImageAttachment =
+    notice.attachment != null &&
+    /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(notice.attachment.fileName);
+
   return (
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
@@ -47,6 +52,18 @@ export default async function Page({ params }: PageProps) {
         <div className="article__body" style={{ whiteSpace: "pre-line" }}>
           {notice.body}
         </div>
+
+        {notice.attachment && isImageAttachment ? (
+          <div className="article__body">
+            {/* R2 등 외부 저장소 주소라 next/image 대신 img 를 씁니다 */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={notice.attachment.fileUrl}
+              alt={notice.title}
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
+          </div>
+        ) : null}
 
         {notice.attachment ? (
           <p className="article__actions">
