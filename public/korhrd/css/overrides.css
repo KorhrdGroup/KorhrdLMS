@@ -102,6 +102,20 @@ input[type="checkbox"]:checked,
    표 자체의 정렬은 그대로입니다. */
 .course-row .spec-table { padding-bottom: 2px; padding-left: 2px }
 
+/* 취업 길찾기 — 로고 없는 채용처는 링크 아이콘으로 (2026-08-11, 디자인 요청)
+   '지역 복지관 홈페이지'처럼 특정 사이트가 아닌 항목은 로고가 없어 회색 네모
+   자리표시가 그대로 나왔습니다. 자리표시 대신 링크 글리프를 넣습니다.
+
+   파일을 <img> 로 넣지 않고 마스크로 그립니다 — 받은 SVG 가 검정 고정이라
+   그대로 쓰면 글자(--ink-2)보다 진합니다. 마스크로 두면 색을 여기서 정할 수
+   있습니다(전달본이 셰브론에 쓰는 방식과 같습니다). */
+.jobd-site .ph {
+  background: var(--faint);
+  border-radius: 0;
+  -webkit-mask: url("/job-site/link.svg") center / 16px no-repeat;
+  mask: url("/job-site/link.svg") center / 16px no-repeat;
+}
+
 /* 본문이 짧아도 푸터가 화면에 보이지 않게 (2026-08-11, 디자인 요청)
    전달본은 body{min-height:100vh} + main{flex:1 0 auto} 로 스티키 푸터를 만듭니다.
    그래서 본문이 짧으면 푸터가 화면 **바닥에 붙어** 보입니다(= 화면 안에 들어옵니다).
