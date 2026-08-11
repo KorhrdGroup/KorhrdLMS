@@ -136,8 +136,8 @@ export const ENROLL_EVENT_DEADLINE = "2026-12-31T23:59:59";
  * 원본 파일명이 한글이라 macOS(NFD)와 URL(NFC) 정규화가 어긋나 404가 나기 쉽습니다.
  * `public/course-detail/ministry-logo/` 에서 ASCII 파일명으로 바꿔 두고 여기서 매핑합니다.
  *
- * 미보유: 경찰청 · 국토교통부 · 행정안전부 · 중소벤처기업부 · 질병관리청 · 고용노동부
- * (로고가 없으면 상세페이지에서 부처명을 텍스트로 표시합니다.)
+ * 이 폴더에 없는 부처는 목록 화면이 쓰는 SVG(public/ministry-logo/)로 잇습니다
+ * — 아래 MINISTRY_LOGO_SVG 참고. 양쪽 다 없을 때만 부처명을 글자로 표시합니다.
  */
 export const MINISTRY_LOGO_SLUG: Record<string, string> = {
   과학기술정보통신부: "msit",
@@ -159,10 +159,33 @@ export const MINISTRY_LOGO_SLUG: Record<string, string> = {
   "교육부/고용노동부": "moe", // 두 부처 공동 소관, 로고는 교육부로 표시
 };
 
+/**
+ * 이 화면의 PNG 폴더에는 없지만 목록 화면(public/ministry-logo/)에는 있는 부처.
+ * 값은 그 폴더의 파일명입니다 — `{파일명}-white.svg` · `{파일명}-black.svg`.
+ *
+ * 크기는 CSS 가 잡으므로(.dhero__gov img{height:32px} · .dcert__logo--gov img{height:62px})
+ * PNG 든 SVG 든 같게 나옵니다.
+ * 이름이 파일명과 다른 과정은 목록 쪽 GovMark 와 같은 별칭을 씁니다.
+ */
+export const MINISTRY_LOGO_SVG: Record<string, string> = {
+  경찰청: "경찰청",
+  국토교통부: "국토교통부",
+  행정안전부: "행정안전부",
+  중소기업벤처부: "중소벤처기업부", // 운영 사이트 표기 → 정식 명칭
+  질병관리부: "질병관리청", //         운영 사이트 표기 → 정식 명칭
+};
+
 export function ministryLogo(agency: string | null, tone: "white" | "black"): string | null {
   if (!agency) return null;
-  const slug = MINISTRY_LOGO_SLUG[agency.trim()];
-  return slug ? `/course-detail/ministry-logo/${slug}-${tone}@3x.png` : null;
+  const name = agency.trim();
+
+  const slug = MINISTRY_LOGO_SLUG[name];
+  if (slug) return `/course-detail/ministry-logo/${slug}-${tone}@3x.png`;
+
+  const svg = MINISTRY_LOGO_SVG[name];
+  if (svg) return `/ministry-logo/${encodeURIComponent(svg)}-${tone}.svg`;
+
+  return null;
 }
 
 /** 상세페이지 전용 정적 에셋 경로. index.html의 assets/ 를 그대로 옮겨둔 것입니다. */
