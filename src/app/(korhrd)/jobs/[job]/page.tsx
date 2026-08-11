@@ -90,7 +90,7 @@ export default async function JobDetailPage({ params }: Params) {
                   const mark = s.logo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={`/job-site/${s.logo}.svg`} alt="" aria-hidden="true"
+                      src={`/job-site/${s.logo}`} alt="" aria-hidden="true"
                       width={16} height={16}
                       style={{ width: 16, height: 16, objectFit: 'contain', flexShrink: 0 }}
                     />

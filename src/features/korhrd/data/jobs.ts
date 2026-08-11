@@ -26,60 +26,61 @@ export type JobSite = {
   name: string;
   url?: string;
   /**
-   * 사이트 로고 파일명 — public/job-site/{logo}.svg. 16x16 자리에 들어갑니다
-   * (.jobd-site .ph). 없으면 회색 네모 자리표시가 그대로 나옵니다.
+   * 사이트 로고 파일명(확장자 포함) — public/job-site/{logo}.
+   * 16x16 자리에 들어갑니다. 없으면 링크 아이콘이 나옵니다.
    */
   logo?: string;
 };
 
 export const JOB_SITES: Record<string, JobSite[]> = {
     "welfare": [
-      { name: "복지넷", url: "https://www.bokji.net/job/off/01.bokji", logo: "bokji" },
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
+      { name: "복지넷", url: "https://www.bokji.net/job/off/01.bokji", logo: "bokji.svg" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "지역 복지관 홈페이지" }
     ],
     "education": [
-      { name: "에듀넷", url: "https://www.edunet.net" },
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
+      { name: "에듀넷", logo: "edunet.png", url: "https://www.edunet.net" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "지역 교육청·학교 채용" }
     ],
     "counsel": [
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
-      { name: "한국심리학회", url: "https://www.koreanpsychology.or.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
+      { name: "한국심리학회", logo: "kpa.jpg", url: "https://www.koreanpsychology.or.kr" },
       { name: "지역 상담센터" }
     ],
     "medical": [
-      { name: "메디잡", url: "https://www.medijob.co.kr" },
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
+      { name: "메디잡", logo: "medijob.png", url: "https://www.medijob.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "병원 채용 홈페이지" }
     ],
     "pet": [
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "반려동물 관련 커뮤니티" },
       { name: "동물병원 채용" }
     ],
     "beauty": [
-      { name: "뷰티잡", url: "https://www.beautyjob.co.kr" },
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
+      { name: "뷰티잡", logo: "beautyjob.png", url: "https://www.beautyjob.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "지역 매장 채용" }
     ],
     "office": [
-      { name: "사람인", url: "https://www.saramin.co.kr" },
-      { name: "잡코리아", url: "https://www.jobkorea.co.kr" },
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" }
+      { name: "사람인", logo: "saramin.jpg", url: "https://www.saramin.co.kr" },
+      { name: "잡코리아", logo: "jobkorea.webp", url: "https://www.jobkorea.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" }
     ],
     "esg": [
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
-      { name: "환경부 채용" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
+      /* 환경부도 고용24와 같은 국가 사이트라 같은 마크를 씁니다 */
+      { name: "환경부 채용", logo: "work24.svg" },
       { name: "지자체 환경 일자리" }
     ],
     "it": [
-      { name: "원티드", url: "https://www.wanted.co.kr" },
-      { name: "점핏", url: "https://www.jumpit.co.kr" },
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" }
+      { name: "원티드", logo: "wanted.png", url: "https://www.wanted.co.kr" },
+      { name: "점핏", logo: "jumpit.webp", url: "https://www.jumpit.co.kr" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" }
     ],
     "hobby": [
-      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24" },
+      { name: "고용24", url: "https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do", logo: "work24.svg" },
       { name: "지역 문화센터" },
       { name: "소상공인 창업 지원" }
     ]
