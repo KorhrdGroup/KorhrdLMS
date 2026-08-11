@@ -48,9 +48,8 @@ export default async function Page({ params }: PageProps) {
             <span>작성 <b>{review.author} 수강생</b></span>
             <span>등록일 <b><time dateTime={review.date}>{review.date}</time></b></span>
           </p>
-          {/* 작성자 블록 — 사진이 없으면 자리표시(.ph)가 그대로 보입니다 */}
+          {/* 작성자 블록 — 프로필 사진 기능이 없어 동그라미 자리표시는 뺐습니다 (2026-08-11) */}
           <div className="article__profile">
-            <span className="ph" aria-hidden="true" />
             <div>
               <b>{review.author} 수강생</b>
               <span>{[review.course, ...review.alsoCourses].join(' · ')} 취득</span>
