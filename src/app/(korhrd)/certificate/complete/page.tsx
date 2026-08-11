@@ -55,29 +55,24 @@ export default async function Page({ searchParams }: PageProps) {
 
           <ul className="next-list">
             <li>
-              <span className="ph ph--icon-sm" aria-hidden="true" />
               <span><b>배송지</b> — {receipt.fullAddress || '등록된 주소가 없습니다'}</span>
             </li>
             <li>
-              <span className="ph ph--icon-sm" aria-hidden="true" />
               <span><b>배송 예정</b> — 신청일 다음 날부터 최대 7일(휴일 제외) 이내 도착</span>
             </li>
             <li>
-              <span className="ph ph--icon-sm" aria-hidden="true" />
               <span><b>발급 형태</b> — 상장형 · 카드형 자격증 동시 발급</span>
             </li>
             {receipt.needsDeposit ? (
               <li>
-                <span className="ph ph--icon-sm" aria-hidden="true" />
-                <span>
+                  <span>
                   <b>입금하실 금액</b> — {won(receipt.payableAmount)} · 신한은행 140-015-773620
                   (주)한평생그룹 (본인 명의 입금)
                 </span>
               </li>
             ) : (
               <li>
-                <span className="ph ph--icon-sm" aria-hidden="true" />
-                <span><b>결제</b> — {receipt.paymentStatusLabel} (추가 입금이 필요하지 않습니다)</span>
+                  <span><b>결제</b> — {receipt.paymentStatusLabel} (추가 입금이 필요하지 않습니다)</span>
               </li>
             )}
           </ul>
