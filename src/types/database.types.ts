@@ -1755,6 +1755,7 @@ export type Database = {
           attachment_storage_path: string | null
           author_name: string
           content: string
+          category: string | null
           created_at: string
           deleted_at: string | null
           id: string
@@ -1773,6 +1774,7 @@ export type Database = {
           attachment_file_url?: string | null
           attachment_storage_path?: string | null
           author_name?: string
+          category?: string | null
           content: string
           created_at?: string
           deleted_at?: string | null
@@ -1792,6 +1794,7 @@ export type Database = {
           attachment_file_url?: string | null
           attachment_storage_path?: string | null
           author_name?: string
+          category?: string | null
           content?: string
           created_at?: string
           deleted_at?: string | null

@@ -12,6 +12,8 @@ function normalize(value: string) {
 export type ParsedNoticeInput = {
   title: string;
   content: string;
+  /** 빈 문자열(분류 없음)은 null 로 저장합니다. */
+  category: string | null;
   attachment: NoticeRegistrationInput["attachment"];
   image: NoticeRegistrationInput["image"];
   isPinned: boolean;
@@ -32,6 +34,7 @@ export function validateNoticeInput(
   return {
     title: normalize(input.title),
     content: normalize(input.content),
+    category: normalize(input.category) || null,
     attachment: input.attachment,
     image: input.image,
     isPinned: input.isPinned,
@@ -53,6 +56,7 @@ export async function createNotice(
   const notice: Notice = await createNoticeRecord({
     title: parsed.title,
     content: parsed.content,
+    category: parsed.category,
     attachment: parsed.attachment,
     image: parsed.image,
     isPinned: parsed.isPinned,

@@ -10,12 +10,13 @@ import type { Database } from "@/types/database.types";
  */
 
 const NOTICE_SELECT =
-  "id, title, content, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, image_file_name, image_file_url, image_storage_path, created_at, updated_at" as const;
+  "id, title, content, category, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, image_file_name, image_file_url, image_storage_path, created_at, updated_at" as const;
 
 type NoticeRow = {
   id: string;
   title: string;
   content: string;
+  category: string | null;
   author_name: string;
   is_pinned: boolean;
   is_published: boolean;
@@ -36,6 +37,7 @@ function toNotice(row: NoticeRow): Notice {
     id: row.id,
     title: row.title,
     content: row.content,
+    category: row.category,
     authorName: row.author_name,
     isPinned: row.is_pinned,
     isPublished: row.is_published,
@@ -133,6 +135,7 @@ export async function createNoticeRecord(
     .insert({
       title: input.title,
       content: input.content,
+      category: input.category,
       author_name: input.authorName,
       is_pinned: input.isPinned,
       is_published: input.isPublished,
@@ -162,6 +165,7 @@ export async function updateNoticeRecord(
 
   if (patch.title !== undefined) payload.title = patch.title;
   if (patch.content !== undefined) payload.content = patch.content;
+  if (patch.category !== undefined) payload.category = patch.category;
   if (patch.isPinned !== undefined) payload.is_pinned = patch.isPinned;
   if (patch.isPublished !== undefined) payload.is_published = patch.isPublished;
   if (patch.attachment !== undefined) {

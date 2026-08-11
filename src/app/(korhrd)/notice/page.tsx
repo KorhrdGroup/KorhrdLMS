@@ -25,8 +25,11 @@ export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
   const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
   const page = Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1);
+  const cat = Array.isArray(params.cat) ? params.cat[0] : params.cat;
 
-  const notices = await getPublishedNoticesForSite();
+  const all = await getPublishedNoticesForSite();
+  // 분류 탭 — "전체"(cat 없음)면 모두, 아니면 해당 분류만. 고정 공지는 항상 남깁니다.
+  const notices = cat ? all.filter((n) => n.pinned || n.category === cat) : all;
   const totalPages = Math.max(1, Math.ceil(notices.length / PER_PAGE));
   const current = Math.min(page, totalPages);
   const slice = notices.slice((current - 1) * PER_PAGE, current * PER_PAGE);

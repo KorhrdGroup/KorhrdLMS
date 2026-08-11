@@ -17,6 +17,8 @@ export type SiteNoticeListItem = {
   no: number | null;
   pinned: boolean;
   title: string;
+  /** 분류(수강 안내/신규 과정/이벤트). null 이면 "전체" 탭에서만 보입니다. */
+  category: string | null;
   date: string;
   body: string;
   /** 첨부파일(있을 때만). 학생 화면에서 다운로드 링크로 노출합니다. */
@@ -40,6 +42,7 @@ export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]
     no: sorted.length - index,
     pinned: notice.isPinned,
     title: notice.title,
+    category: notice.category,
     date: notice.createdAt.slice(0, 10),
     body: notice.content,
     attachment:

@@ -12,11 +12,15 @@ import {
 } from "@/features/enrollments/components/enrollment-form-field";
 import { createNoticeAction } from "@/features/notice-management/actions/notice-registration.actions";
 import { NoticeAttachmentPicker } from "@/features/notice-management/components/notice-attachment-picker";
-import type { NoticeRegistrationInput } from "@/features/notice-management/types/notice.types";
+import {
+  NOTICE_CATEGORY_OPTIONS,
+  type NoticeRegistrationInput,
+} from "@/features/notice-management/types/notice.types";
 
 const INITIAL_FORM: NoticeRegistrationInput = {
   title: "",
   content: "",
+  category: "",
   attachment: null,
   image: null,
   isPinned: false,
@@ -160,6 +164,23 @@ export function NoticeRegistrationModal({
             className="min-h-40"
             onChange={(event) => updateField("content", event.target.value)}
           />
+        </EnrollmentFormField>
+
+        <EnrollmentFormField label="분류" htmlFor="notice-category">
+          <select
+            id="notice-category"
+            className="h-10 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#374151]"
+            value={form.category}
+            onChange={(event) => updateField("category", event.target.value)}
+          >
+            <option value="">분류 없음 (전체에서만 표시)</option>
+            {NOTICE_CATEGORY_OPTIONS.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+          <p className="text-xs text-[#9CA3AF]">
+            학생 공지사항의 분류 탭(수강 안내·신규 과정·이벤트) 필터에 쓰입니다.
+          </p>
         </EnrollmentFormField>
 
         <EnrollmentFormField

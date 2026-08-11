@@ -30,10 +30,15 @@ export type NoticeAttachmentInput = {
   storagePath?: string | null;
 };
 
+/** 학생 공지사항 필터 탭과 같은 값입니다. null(분류 없음)이면 "전체"에서만 보입니다. */
+export const NOTICE_CATEGORY_OPTIONS = ["수강 안내", "신규 과정", "이벤트"] as const;
+export type NoticeCategory = (typeof NOTICE_CATEGORY_OPTIONS)[number];
+
 export type Notice = {
   id: string;
   title: string;
   content: string;
+  category: string | null;
   authorName: string;
   isPinned: boolean;
   isPublished: boolean;
@@ -69,6 +74,8 @@ export type NoticeListQuery = {
 export type NoticeRegistrationInput = {
   title: string;
   content: string;
+  /** 분류(수강 안내/신규 과정/이벤트). 빈 문자열이면 분류 없음(null)으로 저장합니다. */
+  category: string;
   attachment: NoticeAttachmentInput | null;
   /** 본문 이미지(렌더링용). 첨부파일(다운로드용)과 구분됩니다. */
   image: NoticeAttachmentInput | null;

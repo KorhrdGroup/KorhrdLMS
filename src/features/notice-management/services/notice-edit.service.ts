@@ -24,6 +24,7 @@ export async function getNoticeForEdit(noticeId: string): Promise<GetNoticeForEd
       id: notice.id,
       title: notice.title,
       content: notice.content,
+      category: notice.category ?? "",
       attachment: notice.attachment,
       image: notice.image,
       isPinned: notice.isPinned,
@@ -52,6 +53,7 @@ export async function updateNotice(
   const updated = await updateNoticeRecord(noticeId, {
     title: parsed.title,
     content: parsed.content,
+    category: parsed.category,
     attachment: parsed.attachment ?? existing.attachment,
     image: parsed.image ?? existing.image,
     isPinned: parsed.isPinned,
