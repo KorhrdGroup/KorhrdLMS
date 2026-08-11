@@ -253,9 +253,11 @@ export default function MyLectureClient({
               <div className="issue-actions mt-4">
                 <Link className="btn btn--primary" href="/mypage">정보 수정</Link>
                 <Link className="btn btn--ghost" href="/mypage/password">비밀번호 변경</Link>
+                {/* 탈퇴하기만 오른쪽 끝으로 밀어냅니다(space-between 효과) */}
                 <button
                   className="btn btn--ghost"
                   type="button"
+                  style={{ marginLeft: 'auto' }}
                   onClick={handleWithdraw}
                   disabled={isWithdrawing}
                 >
