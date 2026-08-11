@@ -377,11 +377,23 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
      오른쪽 <aside> 는 지역 표시(landmark)라 상자를 그대로 둡니다. */
   .classroom__grid > div { display: contents }
 
-  /* 그리드 칸이 되면서 세로 간격이 gap(32px) + 각자의 margin 으로 겹칩니다.
+  /* 그리드 칸이 되면서 세로 간격이 gap + 각자의 margin 으로 겹칩니다.
      margin 을 지우고 gap 하나로 통일합니다. */
   .classroom__grid .cur-lecture,
   .classroom__grid .lec-progress,
   .classroom__grid .rv-cta { margin: 0 }
+
+  /* 간격은 16px 로 (2026-08-11, 디자인 요청)
+     전달본 gap 은 24px 인데, 한 칸으로 쌓이면 상자가 일곱 개 줄줄이 서서
+     좁은 화면에서 사이가 벙벙해 보였습니다. 오른쪽 묶음이 카드 사이에
+     쓰는 값(.lec-side gap:var(--s-6))과 같은 16px 로 맞춰, 쌓인 상자가
+     처음부터 끝까지 같은 간격이 되게 합니다.
+     (그 전에는 24 / 24 / 24 / 24 / 16 / 44 로 제각각이었습니다) */
+  .classroom__grid { row-gap: var(--s-6) }
+
+  /* 자주 묻는 질문은 카드 묶음이 아니라 제목이 따로 붙는 다른 단락이라
+     한 칸 더 띄웁니다 — gap 16 + 여기 16 = 32px. */
+  .lec-qna { margin-top: var(--s-6) }
 
   /* 영상 묶음은 기본값(order:0)이라 먼저 옵니다 */
   .lec-side { order: 1 }
