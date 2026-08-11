@@ -37,7 +37,10 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
         </nav>
 
         <div className="exam__head">
-          <h1>{only ? `${data.courseTitle} 시험 · ${only.title}` : `${data.courseTitle} · 시험`}</h1>
+          {/* 시험이 하나면 그 시험 이름만 씁니다. 이름 자체가 '{과정명} 수료시험'
+              이라, 앞에 과정명을 한 번 더 붙이면 같은 말이 두 번 나옵니다
+              (2026-08-11, 디자인 요청). */}
+          <h1>{only ? only.title : `${data.courseTitle} · 시험`}</h1>
         </div>
 
         {only ? (

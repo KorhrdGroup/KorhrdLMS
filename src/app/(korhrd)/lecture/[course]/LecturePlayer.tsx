@@ -21,6 +21,27 @@ const STATUS_LABEL: Record<string, string> = {
   not_started: '',
 };
 
+/** 좁은 화면(모바일·태블릿) 기준 — classroom.css 가 한 칸으로 바꾸는 지점과 같습니다 */
+const NARROW = '(max-width: 980px)';
+
+/**
+ * 지금 좁은 화면인가. 서버와 첫 렌더에서는 알 수 없어 null 입니다.
+ * 화면 폭은 CSS 만 아는 값이라, 값을 모르는 동안의 접힘/펼침은 CSS 가 정합니다
+ * (.panel-card[data-open="auto"]). 여기서 얻은 값은 aria-expanded 를 실제와
+ * 맞추는 데 씁니다.
+ */
+function useNarrow() {
+  const [narrow, setNarrow] = useState<boolean | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia(NARROW);
+    const sync = () => setNarrow(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+  return narrow;
+}
+
 /**
  * 강의 재생 화면 — 마크업은 korhrd 디자인(lecture.html), 재생·진도는 기존 강의실 서비스.
  *
@@ -53,6 +74,44 @@ export function LecturePlayer({
   const handout = materials.find((item) => item !== sample) ?? sample;
   const preview = sample ?? handout;
   const [toast, setToast] = useState<string | null>(null);
+
+  /* 학습자료·강의목차 접기.
+     null = 아직 손대지 않음 → 기본값을 씁니다(넓은 화면 펼침 / 좁은 화면 접힘).
+     좁은 화면에서는 영상이 먼저 보여야 하는데 20강짜리 목차가 펼쳐져 있으면
+     한참 내려야 영상이 나옵니다 (2026-08-11, 디자인 요청). */
+  const narrow = useNarrow();
+  const [tocOpen, setTocOpen] = useState<boolean | null>(null);
+  const [materialOpen, setMaterialOpen] = useState<boolean | null>(null);
+
+  /** 화면 폭을 모르는 동안에는 "auto" 를 내보내고 CSS 에 맡깁니다 */
+  const panelState = (open: boolean | null) =>
+    open !== null ? String(open) : narrow === null ? 'auto' : String(!narrow);
+  const isOpen = (open: boolean | null) => (open !== null ? open : narrow === null ? true : !narrow);
+
+  const tocExpanded = isOpen(tocOpen);
+  const materialExpanded = isOpen(materialOpen);
+
+  /* 좁은 화면에서 목차는 바텀시트라, 열려 있는 동안은 뒤 화면이 밀려 내려가지
+     않게 잠그고 Esc 로 닫습니다 (수강신청 필터 시트와 같은 처리). */
+  const tocIsSheet = narrow === true && tocExpanded;
+  useEffect(() => {
+    if (!tocIsSheet) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setTocOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [tocIsSheet]);
+
+  /* 시트에서 차시를 고르면 그 강의로 넘어갑니다 — 시트는 닫아 둡니다.
+     넓은 화면의 목차는 늘 펼쳐 두는 자리라 건드리지 않습니다. */
+  useEffect(() => {
+    if (narrow) setTocOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detail.session.order]);
 
   const { session, sessions, courseCode, courseTitle, prevOrder, nextOrder } = detail;
   const completedCount = sessions.filter((s) => s.status === 'completed').length;
@@ -193,12 +252,43 @@ export function LecturePlayer({
               <span className="lec-progress__pct">{coursePercent}%</span>
             </div>
 
-            <p className="rv-cta" style={{ display: 'flex', gap: 8 }}>
+            {/* 이동 줄 — 이전 · 강의목차 · 다음.
+                이 줄 전체가 넓은 화면에서는 숨겨집니다(오른쪽에 목차가 늘 펼쳐져
+                있으니 필요 없습니다). 그래서 가운데 목차 버튼에도 따로 감추는
+                규칙이 필요 없습니다. 한 줄에 나눠 놓는 규칙은 overrides.css 에
+                있습니다 — 인라인 style 이면 숨기는 규칙을 이깁니다. */}
+            <p className="rv-cta">
               {prevOrder !== null ? (
-                <Link className="btn btn--ghost" href={`/lecture/${courseCode}/${prevOrder}`}>이전 강의</Link>
+                <Link
+                  className="btn btn--ghost btn--quiet btn--sm lec-nav lec-nav--prev"
+                  href={`/lecture/${courseCode}/${prevOrder}`}
+                  aria-label="이전 강의"
+                >
+                  {/* 모바일에서는 글자를 감추고 화살표만 남깁니다(overrides.css).
+                      그때도 이름이 읽히도록 aria-label 을 답니다. */}
+                  <span className="btn__label">이전</span>
+                </Link>
               ) : null}
+              <button
+                className="btn btn--ghost toc-open"
+                type="button"
+                aria-expanded={tocExpanded}
+                aria-controls="toc"
+                onClick={() => setTocOpen(!tocExpanded)}
+              >
+                {/* 시트 머리말(.toc__head)과 같은 것을 보여 줍니다 */}
+                <b>강의목차 <span>총 {sessions.length}강</span></b>
+                <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
+                <span className="chev" aria-hidden="true" />
+              </button>
               {nextOrder !== null ? (
-                <Link className="btn btn--primary" href={`/lecture/${courseCode}/${nextOrder}`}>다음 강의</Link>
+                <Link
+                  className="btn btn--ghost btn--quiet btn--sm lec-nav lec-nav--next"
+                  href={`/lecture/${courseCode}/${nextOrder}`}
+                  aria-label="다음 강의"
+                >
+                  <span className="btn__label">다음</span>
+                </Link>
               ) : null}
             </p>
 
@@ -208,15 +298,26 @@ export function LecturePlayer({
 
           <aside className="lec-side" aria-label="학습 자료 및 강의 목차">
             {/* 학습자료 — 관리자 자료실에서 공개한 파일을 그대로 내려받습니다 */}
-            <div className="panel-card">
-              <button className="panel-toggle" type="button" aria-expanded="true" aria-controls="material">
+            <div className="panel-card" data-open={panelState(materialOpen)}>
+              <button
+                className="panel-toggle"
+                type="button"
+                aria-expanded={materialExpanded}
+                aria-controls="material"
+                onClick={() => setMaterialOpen(!materialExpanded)}
+              >
                 학습자료<span className="chev" aria-hidden="true">⌄</span>
               </button>
               {/* 교안파일 다운로드 · 교안파일 미리보기 · 기출문제 3칸 고정입니다.
                   같은 교안 파일을 두 방식으로 엽니다 — 내려받기(download)와
                   새 탭 미리보기. 자료실에 '예시' 파일이 따로 올라와 있으면
                   미리보기는 그 파일을 씁니다. 기출문제만 파일이 아니라 풀이 화면입니다. */}
-              <div className="material-grid panel-body" id="material">
+              {/* 여닫힘은 FAQ 와 같은 grid 0fr↔1fr 모프입니다(review.css .faq__a).
+                  바깥이 높이를 애니메이션하고, 안쪽이 잘라 냅니다 —
+                  안쪽에 padding 이 있으면 0fr 이 그 높이로 고정돼 안 닫힙니다. */}
+              <div className="panel-body" id="material">
+                <div className="panel-body-inner" inert={!materialExpanded}>
+                  <div className="material-grid">
                 {/* R2 는 다른 출처라 <a download> 가 무시되고 현재 창에서 열립니다.
                     같은 출처인 API 를 거쳐 attachment 로 받아야 내려받아집니다. */}
                 {handout?.fileUrl ? (
@@ -273,32 +374,60 @@ export function LecturePlayer({
                     기출문제
                   </span>
                 )}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* 시안(lecture.html)과 같은 구조입니다. 목록은 .toc__list 여야
-                max-height:560px + 안쪽 스크롤이 걸립니다 — panel-body 로 두면
-                차시가 많은 과정에서 20강이 그대로 늘어져 옆 화면을 밀어냅니다. */}
-            <div className="panel-card">
-              <div className="toc__head">
+            {/* 강의목차 — 넓은 화면에서는 오른쪽 카드, 좁은 화면에서는 바텀시트.
+                껍데기는 전달본 수강신청 필터 시트(.fsheet)를 그대로 씁니다.
+                목록을 두 벌 그리지 않으려고 한 덩어리를 감싸기만 했습니다 —
+                981px 부터는 .toc-sheet 와 .fsheet__panel 이 display:contents 가
+                되어 카드가 다시 .lec-side 의 자식으로 돌아갑니다(overrides.css).
+
+                data-open 을 껍데기에도 답니다. 시트가 올라와 있는지(껍데기)와
+                목록이 펼쳐져 있는지(카드)가 같은 값을 쓰기 때문입니다. */}
+            <div className="fsheet toc-sheet" data-open={panelState(tocOpen)}>
+              <div className="fsheet__dim" onClick={() => setTocOpen(false)} />
+              <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="강의목차">
+            <div className="panel-card" data-open={panelState(tocOpen)}>
+              {/* 원본은 접히지 않는 머리말(div)이었습니다. 좁은 화면에서 기본으로
+                  접어 두기로 하면서 버튼으로 바꿉니다 — 클래스는 그대로 두고
+                  셰브론만 더합니다(학습자료·FAQ 와 같은 모양). */}
+              <button
+                className="toc__head"
+                type="button"
+                aria-expanded={tocExpanded}
+                aria-controls="toc"
+                onClick={() => setTocOpen(!tocExpanded)}
+              >
                 <b>강의목차 <span>총 {sessions.length}강</span></b>
                 <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
+                <span className="chev" aria-hidden="true" />
+              </button>
+              {/* 학습자료와 같은 모프 구조입니다. 목록 자체는 max-height + 스크롤을
+                  그대로 유지해야 해서, 감싸는 두 겹을 따로 둡니다. */}
+              <div className="toc__panel" id="toc">
+                <div className="toc__panel-inner" inert={!tocExpanded}>
+                  <ul className="toc__list" ref={tocListRef}>
+                    {sessions.map((item) => (
+                      <li
+                        key={item.id}
+                        ref={item.order === session.order ? currentItemRef : undefined}
+                        className={`toc__item${item.order === session.order ? ' is-current' : ''}`}
+                      >
+                        <Link href={`/lecture/${courseCode}/${item.order}`}>
+                          <span className="toc__no">{String(item.order).padStart(2, '0')}강</span>
+                          <span className="toc__title">{item.title}</span>
+                          <span className="toc__done">{STATUS_LABEL[item.status] ?? ''}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <ul className="toc__list" id="toc" ref={tocListRef}>
-                {sessions.map((item) => (
-                  <li
-                    key={item.id}
-                    ref={item.order === session.order ? currentItemRef : undefined}
-                    className={`toc__item${item.order === session.order ? ' is-current' : ''}`}
-                  >
-                    <Link href={`/lecture/${courseCode}/${item.order}`}>
-                      <span className="toc__no">{String(item.order).padStart(2, '0')}강</span>
-                      <span className="toc__title">{item.title}</span>
-                      <span className="toc__done">{STATUS_LABEL[item.status] ?? ''}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            </div>
+              </div>
             </div>
           </aside>
         </div>
