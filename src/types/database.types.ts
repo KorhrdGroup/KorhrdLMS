@@ -883,39 +883,42 @@ export type Database = {
       course_reviews: {
         Row: {
           also_course_ids: string[]
+          author_name: string | null
           body: string
           course_id: string
           created_at: string
           deleted_at: string | null
           id: string
           is_published: boolean
-          member_id: string
+          member_id: string | null
           photo_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
           also_course_ids?: string[]
+          author_name?: string | null
           body: string
           course_id: string
           created_at?: string
           deleted_at?: string | null
           id?: string
           is_published?: boolean
-          member_id: string
+          member_id?: string | null
           photo_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           also_course_ids?: string[]
+          author_name?: string | null
           body?: string
           course_id?: string
           created_at?: string
           deleted_at?: string | null
           id?: string
           is_published?: boolean
-          member_id?: string
+          member_id?: string | null
           photo_url?: string | null
           title?: string
           updated_at?: string

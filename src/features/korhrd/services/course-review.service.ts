@@ -37,7 +37,9 @@ type ReviewRow = {
   photo_url: string | null;
   also_course_ids: string[];
   created_at: string;
-  member_id: string;
+  member_id: string | null;
+  /** 시드(홍보)용 후기의 하드코딩 작성자 이름 — 있으면 회원 이름 대신 씁니다. */
+  author_name: string | null;
   member: { name: string } | null;
   course: { id: string; name: string } | null;
 };
@@ -45,7 +47,7 @@ type ReviewRow = {
 // members는 course_review_helpfuls를 통해서도 연결돼 경로가 모호해집니다.
 // 어떤 외래키로 이어붙일지 제약 이름으로 못박습니다.
 const REVIEW_SELECT = `
-  id, title, body, photo_url, also_course_ids, created_at, member_id,
+  id, title, body, photo_url, also_course_ids, created_at, member_id, author_name,
   member:members!course_reviews_member_id_fkey ( name ),
   course:courses!course_reviews_course_id_fkey ( id, name )
 ` as const;
@@ -91,7 +93,7 @@ export async function listCourseReviews(options?: {
       id: row.id,
       title: row.title,
       body: row.body,
-      author: maskName(row.member?.name ?? "수강생"),
+      author: maskName(row.author_name ?? row.member?.name ?? "수강생"),
       date: row.created_at.slice(0, 10),
       course: row.course?.name ?? "",
       alsoCourses: (row.also_course_ids ?? [])
