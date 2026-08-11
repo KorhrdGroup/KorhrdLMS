@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { withdrawMyAccountAction } from '@/features/members/actions/member-profile.actions';
 import { EXTEND_COUNT } from '@/features/korhrd/data/enrollments';
 import type { CourseReviewItem, ReviewableCourse } from '@/features/korhrd/services/course-review.service';
 import MyCard from '@/features/korhrd/components/mylecture/MyCard';
@@ -51,6 +52,16 @@ export default function MyLectureClient({
 }) {
   const [tab, setTab] = useState<Tab>((initialTab as Tab) || 'active');
   const [extend, setExtend] = useState<Record<string, number>>(EXTEND_COUNT);
+  const [isWithdrawing, startWithdraw] = useTransition();
+
+  const handleWithdraw = () => {
+    if (!window.confirm('정말 탈퇴하시겠어요?\n탈퇴하면 다시 로그인할 수 없습니다.')) return;
+    startWithdraw(async () => {
+      // 성공하면 액션이 홈으로 리다이렉트합니다 — 돌아오는 건 실패했을 때뿐입니다.
+      const result = await withdrawMyAccountAction();
+      if (result && !result.success) window.alert(result.message);
+    });
+  };
 
   const TABS: [Tab, string, number | null][] = [
     ['active', '수강중인 과목', ACTIVE.length],
@@ -239,9 +250,22 @@ export default function MyLectureClient({
                   <tr><th scope="row">가입일</th><td><time dateTime={MEMBER.joinedAt}>{MEMBER.joinedAt}</time></td></tr>
                 </tbody>
               </table>
-              <div className="issue-actions mt-4">
+              <div className="issue-actions mt-4" style={{ alignItems: 'center' }}>
                 <Link className="btn btn--primary" href="/mypage">정보 수정</Link>
                 <Link className="btn btn--ghost" href="/mypage/password">비밀번호 변경</Link>
+                {/* 탈퇴는 버튼처럼 크게 두지 않습니다 — 은색 글씨 링크로 오른쪽에 둡니다 */}
+                <button
+                  type="button"
+                  onClick={handleWithdraw}
+                  disabled={isWithdrawing}
+                  style={{
+                    background: 'none', border: 0, padding: 0, cursor: 'pointer',
+                    font: 'inherit', fontSize: '13px', color: 'var(--faint, #9CA3AF)',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  탈퇴하기
+                </button>
               </div>
             </div>
 
@@ -251,7 +275,7 @@ export default function MyLectureClient({
                 <li>자격증은 등록된 주소로 배송되니 변경 시 미리 수정해 주세요</li>
                 <li>휴대폰 번호는 시험 일정·합격 안내 문자 수신에 사용됩니다</li>
                 <li>아이디는 변경할 수 없으며 탈퇴 후 재가입이 필요합니다</li>
-                <li>회원 탈퇴는 고객센터(02-2135-9249)로 문의해 주세요</li>
+                <li>회원 탈퇴는 위 탈퇴하기 버튼으로 진행하실 수 있습니다</li>
               </ul>
             </div>
           </section>
