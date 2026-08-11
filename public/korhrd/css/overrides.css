@@ -530,10 +530,10 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   -webkit-mask: var(--arr) center / contain no-repeat;
   mask: var(--arr) center / contain no-repeat;
 }
-/* 이전 = 흰 버튼(왼쪽 화살표) · 다음 = 남색 버튼(오른쪽 화살표) */
-.classroom__grid .rv-cta .btn--primary::before,
-.classroom__grid .rv-cta .btn--ghost::after { content: none }
-.classroom__grid .rv-cta .btn--ghost::before { transform: rotate(180deg) }
+/* 방향은 버튼 종류가 아니라 lec-nav--prev/next 가 정합니다.
+   이전·다음이 같은 모양(.btn--ghost)이 되면서 종류로는 구분할 수 없습니다. */
+.classroom__grid .rv-cta .lec-nav--prev::after,
+.classroom__grid .rv-cta .lec-nav--next::before { content: none }
 
 /* ==========================================================================
    강의목차 바텀시트 (2026-08-11, 디자인 요청)
@@ -602,4 +602,63 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
     transform: rotate(180deg);
   }
   .classroom__grid .rv-cta .toc-open::before { content: none }
+}
+
+
+/* ==========================================================================
+   강의실 이동 줄 — 이전 · 강의목차 · 다음 (2026-08-11, 디자인 요청)
+
+   위계: 이전/다음은 같은 무게여야 합니다. 남색(.btn--primary)은 '지금 눌러야
+   하는 버튼' 신호라 강의 이동에는 과했습니다. 둘 다 전달본의 조용한 아웃라인
+   (.btn--ghost.btn--quiet)으로 맞췄습니다 — 새 색을 만들지 않았습니다.
+   가운데 목차만 글자색이 진하고 파란 강 수·남색 배지를 달고 있어, 크기와
+   내용만으로 이 줄의 중심이 됩니다.
+
+   화살표: 받은 꼬리 달린 화살표(left_tail/right_tail.svg)입니다. 파일로 두지
+   않고 토큰처럼 인라인해 마스크로 씁니다 — 원본 SVG 가 검정 고정이라 그대로
+   쓰면 조용한 회색 글자와 색이 어긋납니다. currentColor 로 두면 글자를 따라갑니다.
+   ========================================================================== */
+:root {
+  --arr-tail-left: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3Cpath d='M14.5965 7.10263H3.67826L7.72381 3.24975C8.09182 2.89925 8.09182 2.33113 7.72381 1.98064C7.35579 1.63015 6.75926 1.63015 6.39124 1.98064L0.737045 7.36557L0.672625 7.43393C0.370738 7.78644 0.392029 8.30609 0.737045 8.63467L6.39124 14.0196C6.75926 14.3701 7.35579 14.3701 7.72381 14.0196C8.09182 13.6691 8.09182 13.101 7.72381 12.7505L3.67826 8.89761L14.5965 8.89761C15.1169 8.89761 15.5388 8.49579 15.5388 8.00012C15.5388 7.50445 15.1169 7.10263 14.5965 7.10263Z' fill='black'/%3E %3C/svg%3E");
+  --arr-tail-right: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3Cpath d='M1.40355 7.10263H12.3217L8.27619 3.24975C7.90818 2.89925 7.90818 2.33113 8.27619 1.98064C8.64421 1.63015 9.24074 1.63015 9.60876 1.98064L15.263 7.36557L15.3274 7.43393C15.6293 7.78644 15.608 8.30609 15.263 8.63467L9.60876 14.0196C9.24074 14.3701 8.64421 14.3701 8.27619 14.0196C7.90818 13.6691 7.90818 13.101 8.27619 12.7505L12.3217 8.89761L1.40355 8.89761C0.883093 8.89761 0.461182 8.49579 0.461182 8.00012C0.461182 7.50445 0.883093 7.10263 1.40355 7.10263Z' fill='black'/%3E %3C/svg%3E");
+}
+
+@media (max-width: 980px) {
+  /* 양옆은 내용만큼만, 가운데가 남는 자리를 다 가집니다 */
+  .classroom__grid .rv-cta .btn { width: auto; flex: none }
+  .classroom__grid .rv-cta .toc-open { flex: 1; min-width: 0; gap: var(--s-3) }
+
+  /* 가운데 목차 — 시트 머리말과 같은 것을 보여 줍니다.
+     머리말은 16px 이지만 여기서는 한 줄에 셋이 들어가야 해서 본문 크기로 낮춥니다. */
+  .classroom__grid .rv-cta .toc-open b { font-size: var(--fs-sm); font-weight: 700 }
+  .classroom__grid .rv-cta .toc-open b span { color: var(--blue); margin-left: 3px }
+  .classroom__grid .rv-cta .toc-open .toc__badge { flex: none }
+  .classroom__grid .rv-cta .toc-open .chev {
+    flex: none; width: 16px; height: 16px; margin-left: auto;
+    background-color: var(--faint);
+    -webkit-mask: var(--chev) center / contain no-repeat;
+    mask: var(--chev) center / contain no-repeat;
+    transform: rotate(180deg);
+  }
+  .classroom__grid .rv-cta .toc-open::before,
+  .classroom__grid .rv-cta .toc-open::after { content: none }
+
+  /* 이전/다음 화살표 — 받은 꼬리 달린 화살표로 바꿉니다 */
+  .classroom__grid .rv-cta .lec-nav--prev::before {
+    -webkit-mask-image: var(--arr-tail-left);
+    mask-image: var(--arr-tail-left);
+    transform: none;
+  }
+  .classroom__grid .rv-cta .lec-nav--next::after {
+    -webkit-mask-image: var(--arr-tail-right);
+    mask-image: var(--arr-tail-right);
+    transform: none;
+  }
+}
+
+/* 모바일은 셋을 다 담을 폭이 안 나옵니다(375px 기준 335px).
+   양옆 글자를 접고 화살표만 남깁니다 — 이름은 aria-label 이 들고 있습니다. */
+@media (max-width: 560px) {
+  .classroom__grid .rv-cta .lec-nav .btn__label { display: none }
+  .classroom__grid .rv-cta .lec-nav { padding: 8px 10px }
 }

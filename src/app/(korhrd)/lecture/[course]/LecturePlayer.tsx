@@ -259,7 +259,15 @@ export function LecturePlayer({
                 있습니다 — 인라인 style 이면 숨기는 규칙을 이깁니다. */}
             <p className="rv-cta">
               {prevOrder !== null ? (
-                <Link className="btn btn--ghost" href={`/lecture/${courseCode}/${prevOrder}`}>이전</Link>
+                <Link
+                  className="btn btn--ghost btn--quiet btn--sm lec-nav lec-nav--prev"
+                  href={`/lecture/${courseCode}/${prevOrder}`}
+                  aria-label="이전 강의"
+                >
+                  {/* 모바일에서는 글자를 감추고 화살표만 남깁니다(overrides.css).
+                      그때도 이름이 읽히도록 aria-label 을 답니다. */}
+                  <span className="btn__label">이전</span>
+                </Link>
               ) : null}
               <button
                 className="btn btn--ghost toc-open"
@@ -268,10 +276,19 @@ export function LecturePlayer({
                 aria-controls="toc"
                 onClick={() => setTocOpen(!tocExpanded)}
               >
-                강의목차
+                {/* 시트 머리말(.toc__head)과 같은 것을 보여 줍니다 */}
+                <b>강의목차 <span>총 {sessions.length}강</span></b>
+                <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
+                <span className="chev" aria-hidden="true" />
               </button>
               {nextOrder !== null ? (
-                <Link className="btn btn--primary" href={`/lecture/${courseCode}/${nextOrder}`}>다음</Link>
+                <Link
+                  className="btn btn--ghost btn--quiet btn--sm lec-nav lec-nav--next"
+                  href={`/lecture/${courseCode}/${nextOrder}`}
+                  aria-label="다음 강의"
+                >
+                  <span className="btn__label">다음</span>
+                </Link>
               ) : null}
             </p>
 
