@@ -63,10 +63,29 @@ export default async function Page({ params }: PageProps) {
         ) : null}
 
         {notice.attachment ? (
-          <p className="article__actions">
+          /* 첨부파일 — 버튼 줄(.article__actions, 가운데 정렬)이 아니라
+             본문처럼 왼쪽에 붙이고, 클립 아이콘으로 첨부임을 드러냅니다. */
+          <p style={{ marginTop: 20 }}>
             {/* Storage가 다른 출처라 <a download> 가 안 먹혀, 같은 출처 API 로 내려받습니다 */}
-            <a className="btn btn--ghost" href={`/api/notices/${notice.id}/download`}>
-              첨부파일 {notice.attachment.fileName} ({notice.attachment.fileSizeLabel})
+            <a
+              className="btn btn--ghost"
+              href={`/api/notices/${notice.id}/download`}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+            >
+              <svg
+                aria-hidden="true"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+              </svg>
+              첨부파일 : {notice.attachment.fileName} ({notice.attachment.fileSizeLabel})
             </a>
           </p>
         ) : null}
