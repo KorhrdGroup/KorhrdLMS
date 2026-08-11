@@ -44,15 +44,19 @@ export default async function Page({ params }: PageProps) {
       <article className="article">
         <div className="article__head">
           <h1 className="article__title">{review.title}</h1>
-          <p className="article__meta">
-            <span>등록일 <b><time dateTime={review.date}>{review.date}</time></b></span>
-          </p>
-          {/* 작성자 블록 — 프로필 사진 기능이 없어 동그라미 자리표시는 뺐습니다 (2026-08-11) */}
-          <div className="article__profile">
+          {/* 작성자 블록 — 프로필 사진 기능이 없어 동그라미 자리표시는 뺐습니다 (2026-08-11)
+              등록일은 같은 줄 오른쪽 끝에 둡니다(space-between). */}
+          <div
+            className="article__profile"
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          >
             <div>
               <b>{review.author} 수강생</b>
               <span>{[review.course, ...review.alsoCourses].join(' · ')} 취득</span>
             </div>
+            <span className="article__meta">
+              등록일 <b><time dateTime={review.date}>{review.date}</time></b>
+            </span>
           </div>
 
           <p className="article__tags">
