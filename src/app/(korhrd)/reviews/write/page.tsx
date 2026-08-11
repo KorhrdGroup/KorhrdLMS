@@ -35,7 +35,7 @@ export default async function Page({ searchParams }: PageProps) {
     const supabase = await createClient();
     const { data: row } = await supabase
       .from('course_reviews')
-      .select('course_id, also_course_ids')
+      .select('course_id, also_course_ids, photo_url')
       .eq('id', id)
       .maybeSingle();
 
@@ -45,6 +45,7 @@ export default async function Page({ searchParams }: PageProps) {
       title: review.title,
       body: review.body,
       alsoCourseIds: row?.also_course_ids ?? [],
+      photoUrl: row?.photo_url ?? null,
     };
   }
 

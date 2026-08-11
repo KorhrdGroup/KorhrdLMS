@@ -6,6 +6,10 @@ import { useState, useTransition } from 'react';
 
 import { submitCourseReviewAction } from '@/features/korhrd/actions/course-review.actions';
 import type { ReviewableCourse } from '@/features/korhrd/services/course-review.service';
+import { uploadCertificatePhotoFile } from '@/features/certificate-applications/lib/certificate-photo-upload.client';
+
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const PHOTO_TYPES = ['image/png', 'image/jpeg'];
 
 /**
  * 합격후기 작성·수정 — 마크업은 korhrd 디자인(review-edit.html), 저장은 course_reviews.
@@ -18,13 +22,23 @@ export function ReviewWriteForm({
   initial,
 }: {
   courses: ReviewableCourse[];
-  initial?: { id: string; courseId: string; title: string; body: string; alsoCourseIds: string[] };
+  initial?: {
+    id: string;
+    courseId: string;
+    title: string;
+    body: string;
+    alsoCourseIds: string[];
+    photoUrl?: string | null;
+  };
 }) {
   const router = useRouter();
   const [courseId, setCourseId] = useState(initial?.courseId ?? courses[0]?.courseId ?? '');
   const [title, setTitle] = useState(initial?.title ?? '');
   const [body, setBody] = useState(initial?.body ?? '');
   const [alsoIds, setAlsoIds] = useState<string[]>(initial?.alsoCourseIds ?? []);
+  const [photo, setPhoto] = useState<File | null>(null);
+  // 새로 고른 파일의 미리보기. 없으면 기존 사진(수정 시)을 보여줍니다.
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -35,12 +49,22 @@ export function ReviewWriteForm({
     event.preventDefault();
     setError(null);
     startTransition(async () => {
+      let photoUrl: string | undefined;
+      if (photo) {
+        try {
+          photoUrl = await uploadCertificatePhotoFile(photo);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : '사진 업로드에 실패했습니다.');
+          return;
+        }
+      }
       const result = await submitCourseReviewAction({
         reviewId: initial?.id,
         courseId,
         title,
         body,
         alsoCourseIds: alsoIds,
+        photoUrl,
       });
       if (result.success) {
         router.push(`/reviews/${result.reviewId}`);
@@ -143,6 +167,58 @@ export function ReviewWriteForm({
               placeholder="수강 계기, 학습 방법, 합격 후 달라진 점 등을 자유롭게 적어주세요."
               onChange={(event) => setBody(event.target.value)}
             />
+          </div>
+
+          <div className="field">
+            <label htmlFor="review-photo">
+              자격증 사진 <span className="hint">(선택 · JPG/PNG, 5MB 이하)</span>
+            </label>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              {photoPreview || initial?.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={photoPreview ?? initial?.photoUrl ?? ''}
+                  alt="자격증 사진 미리보기"
+                  style={{
+                    width: '96px', height: '96px', objectFit: 'cover',
+                    borderRadius: '8px', border: '1px solid var(--border)', flexShrink: 0,
+                  }}
+                />
+              ) : (
+                <span className="ph ph--cert-sq" aria-hidden="true" style={{ flexShrink: 0 }}>
+                  자격증 사진<small>1 : 1</small>
+                </span>
+              )}
+              <div style={{ flex: 1, minWidth: '220px' }}>
+                <input
+                  id="review-photo" type="file" accept="image/png,image/jpeg"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
+                    if (file) {
+                      if (!PHOTO_TYPES.includes(file.type)) {
+                        setError('JPG, PNG 형식의 이미지만 첨부할 수 있습니다.');
+                        event.target.value = '';
+                        return;
+                      }
+                      if (file.size > PHOTO_MAX_BYTES) {
+                        setError('사진 파일은 5MB 이하만 첨부할 수 있습니다.');
+                        event.target.value = '';
+                        return;
+                      }
+                    }
+                    setError(null);
+                    setPhoto(file);
+                    if (photoPreview) URL.revokeObjectURL(photoPreview);
+                    setPhotoPreview(file ? URL.createObjectURL(file) : null);
+                  }}
+                />
+                <p className="field__note">
+                  {initial?.photoUrl
+                    ? '새 파일을 올리면 기존 사진이 교체됩니다.'
+                    : '취득한 자격증 사진을 올리면 후기 카드에 함께 표시됩니다.'}
+                </p>
+              </div>
+            </div>
           </div>
 
           {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}

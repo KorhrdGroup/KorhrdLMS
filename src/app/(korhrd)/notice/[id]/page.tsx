@@ -64,7 +64,8 @@ export default async function Page({ params }: PageProps) {
 
         {notice.attachment ? (
           <p className="article__actions">
-            <a className="btn btn--ghost" href={notice.attachment.fileUrl} download>
+            {/* Storage가 다른 출처라 <a download> 가 안 먹혀, 같은 출처 API 로 내려받습니다 */}
+            <a className="btn btn--ghost" href={`/api/notices/${notice.id}/download`}>
               첨부파일 {notice.attachment.fileName} ({notice.attachment.fileSizeLabel})
             </a>
           </p>
