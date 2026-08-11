@@ -45,13 +45,12 @@ export default async function Page({ params }: PageProps) {
         <div className="article__head">
           <h1 className="article__title">{review.title}</h1>
           <p className="article__meta">
-            <span>작성 <b>{review.author} 수강생</b></span>
             <span>등록일 <b><time dateTime={review.date}>{review.date}</time></b></span>
           </p>
           {/* 작성자 블록 — 프로필 사진 기능이 없어 동그라미 자리표시는 뺐습니다 (2026-08-11) */}
           <div className="article__profile">
             <div>
-              <b>{review.author}</b>
+              <b>{review.author} 수강생</b>
               <span>{[review.course, ...review.alsoCourses].join(' · ')} 취득</span>
             </div>
           </div>
