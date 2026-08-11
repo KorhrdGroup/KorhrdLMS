@@ -67,9 +67,17 @@ export default function CoursesClient({ initial = {} }: {
   const [filterOpen, setFilterOpen] = useState(false);
   /** 시트 왼쪽 레일에서 고른 그룹 (FILTER_GROUPS 인덱스) */
   const [sheetGroup, setSheetGroup] = useState(0);
-  /** 사이드바에서 펼쳐 둔 조건 묶음. 처음에는 전부 펼칩니다 */
+  /**
+   * 사이드바에서 펼쳐 둔 조건 묶음.
+   *
+   * 처음에는 **첫 묶음(과정)만** 펼칩니다. 셋 다 펼치면 사이드바가 895px 이라
+   * 화면에 보이는 736px 을 넘겨 마지막 '연령'이 아예 안 보였고, 조건이 세 갈래라는
+   * 것조차 알 수 없었습니다. 첫 묶음만 펼치면 555px 이라 세 제목이 모두 보이면서
+   * 주로 쓰는 과정 조건은 바로 고를 수 있습니다.
+   * 고른 개수는 접혀 있어도 제목 옆 배지로 보입니다.
+   */
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-  const isOpen = (group: Group) => openGroups[group] ?? true;
+  const isOpen = (group: Group) => openGroups[group] ?? group === FILTER_GROUPS[0].group;
 
   /* 시트가 열린 동안은 뒤 목록이 밀려 내려가지 않게 잠그고, Esc로 닫습니다 */
   useEffect(() => {
