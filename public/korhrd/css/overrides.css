@@ -330,3 +330,8 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   gap: var(--s-4);
   flex-wrap: wrap;
 }
+
+/* 게시글 본문 아래 구분선 — appendix.css 정리 과정에서 빠진 것을 복구 (2026-08-11) */
+.article__body {
+  border-bottom: 1px solid var(--line);
+}
