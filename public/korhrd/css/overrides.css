@@ -176,6 +176,17 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
      사이드바 가로폭이 그때마다 달라졌습니다.
      전달본도 같은 방식을 씁니다(.dtabs__in · .dwho — appendix.css) */
   scrollbar-width: none;
+
+  /* 아래가 뚝 잘려 보이던 것 (2026-08-11, 디자인 요청)
+     스크롤바를 감춰 둬서 더 있다는 표시가 없는데 카드가 컨테이너 끝에서
+     그대로 잘렸습니다. 아래쪽을 흐리게 해 "더 있다"를 알립니다.
+
+     흐려지는 24px 만큼 아래 여백을 함께 둡니다 — 끝까지 내리면 그 자리에
+     빈 여백만 남아 마지막 항목이 흐려지지 않습니다.
+     스크롤이 없을 때도 그 자리는 빈 여백이라 티가 나지 않습니다. */
+  padding-bottom: 24px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
 }
 #course-filters::-webkit-scrollbar { display: none }
 
