@@ -237,15 +237,26 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    선택 상태를 나타내는 색이라 .filter-item[aria-pressed] 와 같은 짝을 씁니다. */
 .filter-group__count {
   margin-right: auto;               /* 화살표는 오른쪽 끝에 그대로 둡니다 */
-  min-width: 16px;
-  padding: 0 5px;
+
+  /* 숫자를 원 한가운데 놓습니다.
+     line-height 로 맞추면 글자 상자가 위아래로 1px·2px 로 어긋납니다
+     (숫자는 아랫줄기가 없어 상자 안에서 위로 붙습니다).
+     flex 로 상자째 가운데 정렬하고 line-height 는 1 로 둬서 글꼴에
+     상관없이 가운데로 떨어지게 합니다. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;                   /* 두 자리 수는 옆으로 늘어납니다 */
+
   border-radius: var(--r-full);
   background: var(--blue-soft);
   color: var(--blue);
   font-size: var(--fs-2xs);
   font-weight: 700;
-  line-height: 16px;
-  text-align: center;
+  line-height: 1;
 }
 
 /* 초기화 — 이제 목록 아래에 놓입니다. 전달본은 오른쪽 위 절대배치였는데
