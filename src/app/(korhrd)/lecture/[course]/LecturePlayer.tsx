@@ -21,6 +21,27 @@ const STATUS_LABEL: Record<string, string> = {
   not_started: '',
 };
 
+/** 좁은 화면(모바일·태블릿) 기준 — classroom.css 가 한 칸으로 바꾸는 지점과 같습니다 */
+const NARROW = '(max-width: 980px)';
+
+/**
+ * 지금 좁은 화면인가. 서버와 첫 렌더에서는 알 수 없어 null 입니다.
+ * 화면 폭은 CSS 만 아는 값이라, 값을 모르는 동안의 접힘/펼침은 CSS 가 정합니다
+ * (.panel-card[data-open="auto"]). 여기서 얻은 값은 aria-expanded 를 실제와
+ * 맞추는 데 씁니다.
+ */
+function useNarrow() {
+  const [narrow, setNarrow] = useState<boolean | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia(NARROW);
+    const sync = () => setNarrow(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+  return narrow;
+}
+
 /**
  * 강의 재생 화면 — 마크업은 korhrd 디자인(lecture.html), 재생·진도는 기존 강의실 서비스.
  *
@@ -53,6 +74,22 @@ export function LecturePlayer({
   const handout = materials.find((item) => item !== sample) ?? sample;
   const preview = sample ?? handout;
   const [toast, setToast] = useState<string | null>(null);
+
+  /* 학습자료·강의목차 접기.
+     null = 아직 손대지 않음 → 기본값을 씁니다(넓은 화면 펼침 / 좁은 화면 접힘).
+     좁은 화면에서는 영상이 먼저 보여야 하는데 20강짜리 목차가 펼쳐져 있으면
+     한참 내려야 영상이 나옵니다 (2026-08-11, 디자인 요청). */
+  const narrow = useNarrow();
+  const [tocOpen, setTocOpen] = useState<boolean | null>(null);
+  const [materialOpen, setMaterialOpen] = useState<boolean | null>(null);
+
+  /** 화면 폭을 모르는 동안에는 "auto" 를 내보내고 CSS 에 맡깁니다 */
+  const panelState = (open: boolean | null) =>
+    open !== null ? String(open) : narrow === null ? 'auto' : String(!narrow);
+  const isOpen = (open: boolean | null) => (open !== null ? open : narrow === null ? true : !narrow);
+
+  const tocExpanded = isOpen(tocOpen);
+  const materialExpanded = isOpen(materialOpen);
 
   const { session, sessions, courseCode, courseTitle, prevOrder, nextOrder } = detail;
   const completedCount = sessions.filter((s) => s.status === 'completed').length;
@@ -208,15 +245,21 @@ export function LecturePlayer({
 
           <aside className="lec-side" aria-label="학습 자료 및 강의 목차">
             {/* 학습자료 — 관리자 자료실에서 공개한 파일을 그대로 내려받습니다 */}
-            <div className="panel-card">
-              <button className="panel-toggle" type="button" aria-expanded="true" aria-controls="material">
+            <div className="panel-card" data-open={panelState(materialOpen)}>
+              <button
+                className="panel-toggle"
+                type="button"
+                aria-expanded={materialExpanded}
+                aria-controls="material"
+                onClick={() => setMaterialOpen(!materialExpanded)}
+              >
                 학습자료<span className="chev" aria-hidden="true">⌄</span>
               </button>
               {/* 교안파일 다운로드 · 교안파일 미리보기 · 기출문제 3칸 고정입니다.
                   같은 교안 파일을 두 방식으로 엽니다 — 내려받기(download)와
                   새 탭 미리보기. 자료실에 '예시' 파일이 따로 올라와 있으면
                   미리보기는 그 파일을 씁니다. 기출문제만 파일이 아니라 풀이 화면입니다. */}
-              <div className="material-grid panel-body" id="material">
+              <div className="material-grid panel-body" id="material" hidden={!materialExpanded}>
                 {/* R2 는 다른 출처라 <a download> 가 무시되고 현재 창에서 열립니다.
                     같은 출처인 API 를 거쳐 attachment 로 받아야 내려받아집니다. */}
                 {handout?.fileUrl ? (
@@ -279,12 +322,22 @@ export function LecturePlayer({
             {/* 시안(lecture.html)과 같은 구조입니다. 목록은 .toc__list 여야
                 max-height:560px + 안쪽 스크롤이 걸립니다 — panel-body 로 두면
                 차시가 많은 과정에서 20강이 그대로 늘어져 옆 화면을 밀어냅니다. */}
-            <div className="panel-card">
-              <div className="toc__head">
+            <div className="panel-card" data-open={panelState(tocOpen)}>
+              {/* 원본은 접히지 않는 머리말(div)이었습니다. 좁은 화면에서 기본으로
+                  접어 두기로 하면서 버튼으로 바꿉니다 — 클래스는 그대로 두고
+                  셰브론만 더합니다(학습자료·FAQ 와 같은 모양). */}
+              <button
+                className="toc__head"
+                type="button"
+                aria-expanded={tocExpanded}
+                aria-controls="toc"
+                onClick={() => setTocOpen(!tocExpanded)}
+              >
                 <b>강의목차 <span>총 {sessions.length}강</span></b>
                 <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
-              </div>
-              <ul className="toc__list" id="toc" ref={tocListRef}>
+                <span className="chev" aria-hidden="true" />
+              </button>
+              <ul className="toc__list" id="toc" ref={tocListRef} hidden={!tocExpanded}>
                 {sessions.map((item) => (
                   <li
                     key={item.id}
