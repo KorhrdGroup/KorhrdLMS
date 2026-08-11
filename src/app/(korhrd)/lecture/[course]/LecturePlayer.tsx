@@ -91,6 +91,28 @@ export function LecturePlayer({
   const tocExpanded = isOpen(tocOpen);
   const materialExpanded = isOpen(materialOpen);
 
+  /* 좁은 화면에서 목차는 바텀시트라, 열려 있는 동안은 뒤 화면이 밀려 내려가지
+     않게 잠그고 Esc 로 닫습니다 (수강신청 필터 시트와 같은 처리). */
+  const tocIsSheet = narrow === true && tocExpanded;
+  useEffect(() => {
+    if (!tocIsSheet) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setTocOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [tocIsSheet]);
+
+  /* 시트에서 차시를 고르면 그 강의로 넘어갑니다 — 시트는 닫아 둡니다.
+     넓은 화면의 목차는 늘 펼쳐 두는 자리라 건드리지 않습니다. */
+  useEffect(() => {
+    if (narrow) setTocOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detail.session.order]);
+
   const { session, sessions, courseCode, courseTitle, prevOrder, nextOrder } = detail;
   const completedCount = sessions.filter((s) => s.status === 'completed').length;
   const coursePercent = sessions.length ? Math.round((completedCount / sessions.length) * 100) : 0;
@@ -230,14 +252,26 @@ export function LecturePlayer({
               <span className="lec-progress__pct">{coursePercent}%</span>
             </div>
 
-            {/* 두 버튼을 한 줄에 나눠 놓는 규칙은 overrides.css 에 있습니다 —
-                넓은 화면에서 이 줄을 숨기려면 인라인 style 이 없어야 합니다. */}
+            {/* 이동 줄 — 이전 · 강의목차 · 다음.
+                이 줄 전체가 넓은 화면에서는 숨겨집니다(오른쪽에 목차가 늘 펼쳐져
+                있으니 필요 없습니다). 그래서 가운데 목차 버튼에도 따로 감추는
+                규칙이 필요 없습니다. 한 줄에 나눠 놓는 규칙은 overrides.css 에
+                있습니다 — 인라인 style 이면 숨기는 규칙을 이깁니다. */}
             <p className="rv-cta">
               {prevOrder !== null ? (
-                <Link className="btn btn--ghost" href={`/lecture/${courseCode}/${prevOrder}`}>이전 강의</Link>
+                <Link className="btn btn--ghost" href={`/lecture/${courseCode}/${prevOrder}`}>이전</Link>
               ) : null}
+              <button
+                className="btn btn--ghost toc-open"
+                type="button"
+                aria-expanded={tocExpanded}
+                aria-controls="toc"
+                onClick={() => setTocOpen(!tocExpanded)}
+              >
+                강의목차
+              </button>
               {nextOrder !== null ? (
-                <Link className="btn btn--primary" href={`/lecture/${courseCode}/${nextOrder}`}>다음 강의</Link>
+                <Link className="btn btn--primary" href={`/lecture/${courseCode}/${nextOrder}`}>다음</Link>
               ) : null}
             </p>
 
@@ -328,9 +362,17 @@ export function LecturePlayer({
               </div>
             </div>
 
-            {/* 시안(lecture.html)과 같은 구조입니다. 목록은 .toc__list 여야
-                max-height:560px + 안쪽 스크롤이 걸립니다 — panel-body 로 두면
-                차시가 많은 과정에서 20강이 그대로 늘어져 옆 화면을 밀어냅니다. */}
+            {/* 강의목차 — 넓은 화면에서는 오른쪽 카드, 좁은 화면에서는 바텀시트.
+                껍데기는 전달본 수강신청 필터 시트(.fsheet)를 그대로 씁니다.
+                목록을 두 벌 그리지 않으려고 한 덩어리를 감싸기만 했습니다 —
+                981px 부터는 .toc-sheet 와 .fsheet__panel 이 display:contents 가
+                되어 카드가 다시 .lec-side 의 자식으로 돌아갑니다(overrides.css).
+
+                data-open 을 껍데기에도 답니다. 시트가 올라와 있는지(껍데기)와
+                목록이 펼쳐져 있는지(카드)가 같은 값을 쓰기 때문입니다. */}
+            <div className="fsheet toc-sheet" data-open={panelState(tocOpen)}>
+              <div className="fsheet__dim" onClick={() => setTocOpen(false)} />
+              <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="강의목차">
             <div className="panel-card" data-open={panelState(tocOpen)}>
               {/* 원본은 접히지 않는 머리말(div)이었습니다. 좁은 화면에서 기본으로
                   접어 두기로 하면서 버튼으로 바꿉니다 — 클래스는 그대로 두고
@@ -366,6 +408,8 @@ export function LecturePlayer({
                     ))}
                   </ul>
                 </div>
+              </div>
+            </div>
               </div>
             </div>
           </aside>
