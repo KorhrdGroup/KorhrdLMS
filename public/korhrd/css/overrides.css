@@ -190,6 +190,12 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
      제목만 그만큼 밖으로 나가 있었습니다(글자 시작 64.5 vs 체크박스 74.5,
      화살표 끝 250.5 vs 개수 끝 240.5). 같은 값을 줘서 선을 맞춥니다. */
   padding: 0 10px;
+
+  /* 글자도 주변과 맞춥니다 (2026-08-11, 디자인 요청)
+     전달본은 12px(--fs-xs)인데 바로 아래 항목(.filter-item)·정렬 버튼
+     (.sort-group button)·결과 문구(.toolbar__result)·마이페이지 사이드 메뉴
+     (.side-nav__item)가 모두 14px(--fs-sm) 입니다. 제목만 작아 겉돌았습니다. */
+  font-size: var(--fs-sm);
 }
 
 /* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev · .footer__box .chev)
