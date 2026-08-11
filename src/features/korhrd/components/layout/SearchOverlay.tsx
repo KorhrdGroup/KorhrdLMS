@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
+import { PRIVATE_CERT_TOP5, popularNameKey } from '@/features/korhrd/data/popular-top5';
 
 /* 인기 자격증 초기값(하드코딩) — 과정 데이터의 인기 순위(rank, 1이 1위).
    실제 순위는 /api/popular-courses(수강신청 수 집계)가 내려주고,
@@ -13,6 +14,17 @@ const POPULAR_FALLBACK = [...COURSES]
   .sort((a, b) => a.rank - b.rank)
   .slice(0, 10)
   .map((c) => c.n);
+
+/** 상위 5개는 운영 지정(민간자격증 Top5)으로 고정하고, 나머지만 데이터로 채웁니다. */
+function buildPopular(dynamicNames: string[]): string[] {
+  const pinnedKeys = new Set(PRIVATE_CERT_TOP5.map(popularNameKey));
+  const rest = [...dynamicNames, ...POPULAR_FALLBACK].filter(
+    (name, i, arr) =>
+      !pinnedKeys.has(popularNameKey(name)) &&
+      arr.findIndex((v) => popularNameKey(v) === popularNameKey(name)) === i,
+  );
+  return [...PRIVATE_CERT_TOP5, ...rest].slice(0, 10);
+}
 
 /** 최근 검색어 — 브라우저에만 저장합니다(localStorage). 서버로 보내지 않습니다. */
 const RECENT_KEY = 'korhrd-recent-searches';
@@ -40,7 +52,7 @@ function saveRecent(list: string[]) {
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState('');
   const [recent, setRecent] = useState<string[]>([]);
-  const [popular, setPopular] = useState<string[]>(POPULAR_FALLBACK);
+  const [popular, setPopular] = useState<string[]>(() => buildPopular([]));
   const inputRef = useRef<HTMLInputElement>(null);
 
   /** 검색어를 최근 목록 맨 앞에 저장합니다(중복은 앞으로 끌어올림). */
@@ -71,7 +83,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
       .then((res) => (res.ok ? res.json() : { names: [] }))
       .then(({ names }: { names: string[] }) => {
         if (!Array.isArray(names) || names.length === 0) return;
-        setPopular([...new Set([...names, ...POPULAR_FALLBACK])].slice(0, 10));
+        setPopular(buildPopular(names));
       })
       .catch(() => {});
     inputRef.current?.focus();

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { CourseReviewItem } from '@/features/korhrd/services/course-review.service';
+import { PRIVATE_CERT_TOP5, popularNameKey } from '@/features/korhrd/data/popular-top5';
 import ReviewRow from '@/features/korhrd/components/review/ReviewRow';
 import Pagination from '@/features/korhrd/components/ui/Pagination';
 
@@ -20,11 +21,19 @@ export default function ReviewsClient({ reviews: REVIEWS }: { reviews: CourseRev
   const [sort, setSort] = useState<'new' | 'helpful'>('new');
   const [page, setPage] = useState(1);
 
-  /* 셀렉트 목록은 실제로 후기가 있는 과정만 (빈 결과가 나오는 선택지를 없앱니다) */
-  const courseOptions = useMemo(
-    () => [...new Set(REVIEWS.map((r) => r.course))].sort((a, b) => a.localeCompare(b, 'ko')),
-    [REVIEWS],
-  );
+  /* 셀렉트 목록은 실제로 후기가 있는 과정만 (빈 결과가 나오는 선택지를 없앱니다).
+     민간자격증 Top5 는 맨 앞에 고정하고 나머지는 가나다순입니다. */
+  const courseOptions = useMemo(() => {
+    const all = [...new Set(REVIEWS.map((r) => r.course))];
+    const top5Keys = PRIVATE_CERT_TOP5.map(popularNameKey);
+    const pinned = top5Keys
+      .map((key) => all.find((name) => popularNameKey(name) === key))
+      .filter((name): name is string => Boolean(name));
+    const rest = all
+      .filter((name) => !pinned.includes(name))
+      .sort((a, b) => a.localeCompare(b, 'ko'));
+    return [...pinned, ...rest];
+  }, [REVIEWS]);
 
   const rows = useMemo(() => {
     const hit = course ? REVIEWS.filter((r) => r.course === course) : REVIEWS;
