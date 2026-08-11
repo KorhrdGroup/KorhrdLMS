@@ -405,16 +405,44 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 }
 
 /* 목차·학습자료 접기 (2026-08-11, 디자인 요청)
-   data-open="auto" = 아직 아무도 누르지 않은 상태입니다. 화면 폭은 CSS 만
-   아는 값이라 첫 화면의 기본 접힘은 여기서 정합니다 — 자바스크립트로 정하면
-   펼쳐진 채 그려졌다가 접히면서 한 번 덜컹입니다.
-   누른 뒤에는 data-open 이 true/false 로 바뀌어 화면 폭과 무관해집니다. */
-@media (max-width: 980px) {
-  .panel-card[data-open="auto"] > .panel-body,
-  .panel-card[data-open="auto"] > .toc__list { display: none }
+
+   여닫힘은 FAQ 와 같은 grid 0fr↔1fr 모프입니다(review.css .faq__a 주석 참고).
+   실제 내용 높이를 한 속성으로 애니메이션하므로 높이를 재지 않아도 열림·닫힘이
+   모두 매끄럽습니다. 안쪽(-inner)이 잘라 내는 일을 맡고, 여백은 그 안쪽 요소가
+   가집니다 — 자르는 요소에 padding 이 있으면 0fr 이 그 높이로 고정돼 안 닫힙니다.
+
+   기본값은 data-open 이 정합니다.
+     auto  아직 아무도 누르지 않음 → 데스크탑(981px~)에서만 펼침
+     true  / false — 누른 뒤. 화면 폭과 무관합니다.
+   기본 접힘을 자바스크립트로 정하면 펼쳐진 채 그려졌다가 접히면서 한 번
+   덜컹이므로, 화면 폭만 아는 CSS 에 맡깁니다. */
+.panel-card > .panel-body,
+.panel-card > .toc__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .32s cubic-bezier(.4, 0, .2, 1), opacity .24s ease;
 }
-.panel-card[data-open="false"] > .panel-body,
-.panel-card[data-open="false"] > .toc__list { display: none }
+.panel-card[data-open="true"] > .panel-body,
+.panel-card[data-open="true"] > .toc__panel { grid-template-rows: 1fr; opacity: 1 }
+@media (min-width: 981px) {
+  .panel-card[data-open="auto"] > .panel-body,
+  .panel-card[data-open="auto"] > .toc__panel { grid-template-rows: 1fr; opacity: 1 }
+}
+.panel-body-inner,
+.toc__panel-inner { overflow: hidden; min-height: 0 }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-card > .panel-body,
+  .panel-card > .toc__panel { transition: none }
+}
+
+/* 머리말 아래 구분선은 내용 쪽이 가집니다.
+   .toc__head 에 두면 접혔을 때 카드 테두리 바로 위에 선이 남아 아래쪽만 두 줄로
+   겹쳐 보이고, 접히는 동안 선만 먼저 사라져 깜빡입니다. 학습자료 카드가 이미
+   그렇게 하고 있습니다(.material-grid{ border-top }). 목차도 같게 맞춥니다. */
+.toc__head { border-bottom: 0 }
+.toc__list { border-top: 1px solid var(--line) }
 
 /* 목차 머리말이 버튼이 되면서 필요한 것.
    .toc__head 는 space-between 인데 셰브론이 붙어 셋이 되면 완료 배지가
@@ -452,19 +480,10 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   .material-grid .m-ico img { width: 26px; height: 26px }
 }
 
-/* 접힌 목차 카드가 학습자료 카드와 달라 보이던 것 (2026-08-11)
-
-   1) 아랫줄. .toc__head 는 목록과 나뉘라고 border-bottom 을 답니다. 접으면
-      목록이 사라져 그 선이 카드 테두리 바로 위에 남고, 아래쪽만 두 줄로
-      겹쳐 보였습니다. 접혔을 때는 뗍니다 — 조건은 위 감추기 규칙과 같습니다.
-
-   2) 높이. 학습자료 머리말(.panel-toggle)은 카드 여백 토큰을 쓰는데
-      (좁은 화면에서 20 → 16px 로 줄어듭니다) .toc__head 만 18px 로 박혀 있어
-      두 카드가 나란히 접혔을 때 목차 쪽이 6px 더 높았습니다. 같은 토큰을
-      씁니다. 좌우는 20px 그대로 둡니다 — 아래 목록 줄(.toc__item a)과
-      왼쪽 선을 맞춰야 합니다. */
-.panel-card[data-open="false"] > .toc__head { border-bottom: 0 }
-@media (max-width: 980px) {
-  .panel-card[data-open="auto"] > .toc__head { border-bottom: 0 }
-}
+/* 접힌 목차 카드 높이를 학습자료 카드와 맞춥니다 (2026-08-11)
+   학습자료 머리말(.panel-toggle)은 카드 여백 토큰을 쓰는데(좁은 화면에서
+   20 → 16px 로 줄어듭니다) .toc__head 만 18px 로 박혀 있어, 두 카드가 나란히
+   접혔을 때 목차 쪽이 6px 더 높았습니다. 같은 토큰을 씁니다.
+   좌우는 20px 그대로 둡니다 — 아래 목록 줄(.toc__item a)과 왼쪽 선을
+   맞춰야 합니다. (아랫줄 문제는 위 '머리말 아래 구분선' 항목에서 다룹니다) */
 .toc__head { padding: var(--pad-card-y) 20px }

@@ -259,7 +259,12 @@ export function LecturePlayer({
                   같은 교안 파일을 두 방식으로 엽니다 — 내려받기(download)와
                   새 탭 미리보기. 자료실에 '예시' 파일이 따로 올라와 있으면
                   미리보기는 그 파일을 씁니다. 기출문제만 파일이 아니라 풀이 화면입니다. */}
-              <div className="material-grid panel-body" id="material" hidden={!materialExpanded}>
+              {/* 여닫힘은 FAQ 와 같은 grid 0fr↔1fr 모프입니다(review.css .faq__a).
+                  바깥이 높이를 애니메이션하고, 안쪽이 잘라 냅니다 —
+                  안쪽에 padding 이 있으면 0fr 이 그 높이로 고정돼 안 닫힙니다. */}
+              <div className="panel-body" id="material">
+                <div className="panel-body-inner" inert={!materialExpanded}>
+                  <div className="material-grid">
                 {/* R2 는 다른 출처라 <a download> 가 무시되고 현재 창에서 열립니다.
                     같은 출처인 API 를 거쳐 attachment 로 받아야 내려받아집니다. */}
                 {handout?.fileUrl ? (
@@ -316,6 +321,8 @@ export function LecturePlayer({
                     기출문제
                   </span>
                 )}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -337,21 +344,27 @@ export function LecturePlayer({
                 <span className="toc__badge">{completedCount}/{sessions.length} 완료</span>
                 <span className="chev" aria-hidden="true" />
               </button>
-              <ul className="toc__list" id="toc" ref={tocListRef} hidden={!tocExpanded}>
-                {sessions.map((item) => (
-                  <li
-                    key={item.id}
-                    ref={item.order === session.order ? currentItemRef : undefined}
-                    className={`toc__item${item.order === session.order ? ' is-current' : ''}`}
-                  >
-                    <Link href={`/lecture/${courseCode}/${item.order}`}>
-                      <span className="toc__no">{String(item.order).padStart(2, '0')}강</span>
-                      <span className="toc__title">{item.title}</span>
-                      <span className="toc__done">{STATUS_LABEL[item.status] ?? ''}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {/* 학습자료와 같은 모프 구조입니다. 목록 자체는 max-height + 스크롤을
+                  그대로 유지해야 해서, 감싸는 두 겹을 따로 둡니다. */}
+              <div className="toc__panel" id="toc">
+                <div className="toc__panel-inner" inert={!tocExpanded}>
+                  <ul className="toc__list" ref={tocListRef}>
+                    {sessions.map((item) => (
+                      <li
+                        key={item.id}
+                        ref={item.order === session.order ? currentItemRef : undefined}
+                        className={`toc__item${item.order === session.order ? ' is-current' : ''}`}
+                      >
+                        <Link href={`/lecture/${courseCode}/${item.order}`}>
+                          <span className="toc__no">{String(item.order).padStart(2, '0')}강</span>
+                          <span className="toc__title">{item.title}</span>
+                          <span className="toc__done">{STATUS_LABEL[item.status] ?? ''}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </aside>
         </div>
