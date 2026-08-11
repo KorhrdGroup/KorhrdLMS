@@ -257,7 +257,7 @@ export default function MyLectureClient({
                 <button
                   className="btn btn--ghost"
                   type="button"
-                  style={{ marginLeft: 'auto', color: 'var(--faint, #9CA3AF)' }}
+                  style={{ marginLeft: 'auto', color: 'var(--faint, #9CA3AF)', border: 0, background: 'none' }}
                   onClick={handleWithdraw}
                   disabled={isWithdrawing}
                 >
