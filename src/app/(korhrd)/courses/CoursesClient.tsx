@@ -67,9 +67,17 @@ export default function CoursesClient({ initial = {} }: {
   const [filterOpen, setFilterOpen] = useState(false);
   /** 시트 왼쪽 레일에서 고른 그룹 (FILTER_GROUPS 인덱스) */
   const [sheetGroup, setSheetGroup] = useState(0);
-  /** 사이드바에서 펼쳐 둔 조건 묶음. 처음에는 전부 펼칩니다 */
+  /**
+   * 사이드바에서 펼쳐 둔 조건 묶음.
+   *
+   * 처음에는 **첫 묶음(과정)만** 펼칩니다. 셋 다 펼치면 사이드바가 895px 이라
+   * 화면에 보이는 736px 을 넘겨 마지막 '연령'이 아예 안 보였고, 조건이 세 갈래라는
+   * 것조차 알 수 없었습니다. 첫 묶음만 펼치면 555px 이라 세 제목이 모두 보이면서
+   * 주로 쓰는 과정 조건은 바로 고를 수 있습니다.
+   * 고른 개수는 접혀 있어도 제목 옆 배지로 보입니다.
+   */
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-  const isOpen = (group: Group) => openGroups[group] ?? true;
+  const isOpen = (group: Group) => openGroups[group] ?? group === FILTER_GROUPS[0].group;
 
   /* 시트가 열린 동안은 뒤 목록이 밀려 내려가지 않게 잠그고, Esc로 닫습니다 */
   useEffect(() => {
@@ -149,30 +157,36 @@ export default function CoursesClient({ initial = {} }: {
           {chosen.length > 0 && <span className="filter-group__count">{chosen.length}</span>}
           <span className="chev" aria-hidden="true">⌄</span>
         </button>
-        <div id={`filter-items-${group}`} hidden={!isOpen(group)}>
-          {values.map((v) => (
-            <button
-              key={v} className="filter-item" type="button"
-              aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
-            >
-              {v}{suffix} <span className="num">{countOf(group, v)}</span>
-            </button>
-          ))}
-          {/* 초기화는 목록 아래에 둡니다. 오른쪽 위에 있으면 접기 화살표를 가려
-              아코디언으로 안 보였습니다. 접힌 동안에는 개수 배지가 대신 알립니다. */}
-          {chosen.length > 0 && (
-            <button
-              className="filter-group__reset" type="button"
-              aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
-              onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
-            >
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              초기화
-            </button>
-          )}
+        {/* FAQ 와 같은 방식으로 부드럽게 여닫습니다 — 바깥이 0fr↔1fr 로 모프하고
+            안쪽이 잘라냅니다(review.css .faq__a / .faq__a-inner).
+            hidden 을 쓰면 그냥 사라져서 애니메이션이 재생되지 않습니다.
+            대신 접혀 있는 동안 키보드로 들어가지 않게 inert 를 겁니다. */}
+        <div className="filter-group__panel" id={`filter-items-${group}`} inert={!isOpen(group)}>
+          <div className="filter-group__panel-inner">
+            {values.map((v) => (
+              <button
+                key={v} className="filter-item" type="button"
+                aria-pressed={chosen.includes(v)} onClick={() => toggle(group, v)}
+              >
+                {v}{suffix} <span className="num">{countOf(group, v)}</span>
+              </button>
+            ))}
+            {/* 초기화는 목록 아래에 둡니다. 오른쪽 위에 있으면 접기 화살표를 가려
+                아코디언으로 안 보였습니다. 접힌 동안에는 개수 배지가 대신 알립니다. */}
+            {chosen.length > 0 && (
+              <button
+                className="filter-group__reset" type="button"
+                aria-label={`${GROUP_LABEL[group]} 조건 초기화`}
+                onClick={() => setPicked((p) => ({ ...p, [group]: [] }))}
+              >
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M13.7 2.2v3.1h-3.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                초기화
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );

@@ -102,6 +102,18 @@ input[type="checkbox"]:checked,
    표 자체의 정렬은 그대로입니다. */
 .course-row .spec-table { padding-bottom: 2px; padding-left: 2px }
 
+/* 본문이 짧아도 푸터가 화면에 보이지 않게 (2026-08-11, 디자인 요청)
+   전달본은 body{min-height:100vh} + main{flex:1 0 auto} 로 스티키 푸터를 만듭니다.
+   그래서 본문이 짧으면 푸터가 화면 **바닥에 붙어** 보입니다(= 화면 안에 들어옵니다).
+   내용이 몇 줄뿐인 화면에서는 푸터가 본문처럼 커 보여, 아예 한 화면 아래로
+   내리기로 했습니다.
+
+   본문 최소 높이를 '화면 높이 - 헤더' 로 두면 본문 끝이 정확히 화면 끝에
+   떨어지고 푸터는 그 아래에서 시작합니다 — 스크롤해야 보입니다.
+   --header-h 는 전달본이 폭에 따라 64/56px 로 바꿔 주므로 그대로 씁니다.
+   내용이 이미 긴 화면에는 아무 영향이 없습니다. */
+main { min-height: calc(100vh - var(--header-h)) }
+
 /* 기출문제 풀이 — 정보 칸을 항목 수에 맞춥니다 (2026-08-10, 디자인 요청)
    전달본 .exam-info 는 4칸 고정(repeat(4,1fr))입니다. 수료시험은 시험명·응시기간·
    문항수·시험시간 넷이라 딱 맞는데, 기출문제 풀이는 과정·문항수·유형 셋이라
@@ -146,13 +158,35 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 #course-filters {
   position: sticky;
   top: calc(var(--header-h) + var(--s-4));
-  max-height: calc(100vh - var(--header-h) - var(--s-7));
+
+  /* 높이 기준 (2026-08-11 수정)
+     헤더에 붙었을 때(top 74px)를 기준으로 잡았더니, 페이지 맨 위에서는
+     사이드바가 아직 제자리(208px)에 있어 아래가 화면 밖으로 124px 나갔습니다.
+     그 상태로 안쪽을 스크롤하면 마지막 '연령'이 화면 밖에서 잘려 보였습니다.
+
+     그래서 붙기 전 자리를 기준으로 잡습니다 — 208px 은 헤더(64) + 경로(47) +
+     제목 블록(97) 로, 화면 높이가 달라져도 그대로인 값입니다(실측).
+     붙었을 때는 아래에 여유가 조금 남지만, 어느 위치에서도 잘리지 않습니다. */
+  --filters-offset: 208px;
+  max-height: calc(100vh - var(--filters-offset) - var(--s-7));
+
   overflow-y: auto;
   overscroll-behavior: contain;
   /* 스크롤바를 감춥니다 — 조건을 접고 펴면 스크롤바가 생겼다 사라지며
      사이드바 가로폭이 그때마다 달라졌습니다.
      전달본도 같은 방식을 씁니다(.dtabs__in · .dwho — appendix.css) */
   scrollbar-width: none;
+
+  /* 아래가 뚝 잘려 보이던 것 (2026-08-11, 디자인 요청)
+     스크롤바를 감춰 둬서 더 있다는 표시가 없는데 카드가 컨테이너 끝에서
+     그대로 잘렸습니다. 아래쪽을 흐리게 해 "더 있다"를 알립니다.
+
+     흐려지는 24px 만큼 아래 여백을 함께 둡니다 — 끝까지 내리면 그 자리에
+     빈 여백만 남아 마지막 항목이 흐려지지 않습니다.
+     스크롤이 없을 때도 그 자리는 빈 여백이라 티가 나지 않습니다. */
+  padding-bottom: 24px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
 }
 #course-filters::-webkit-scrollbar { display: none }
 
@@ -163,38 +197,77 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   gap: var(--s-3);
   width: 100%;
   text-align: left;
+  /* 아래 항목과 좌우를 맞춥니다 — .filter-item 이 좌우 10px 을 갖고 있어
+     제목만 그만큼 밖으로 나가 있었습니다(글자 시작 64.5 vs 체크박스 74.5,
+     화살표 끝 250.5 vs 개수 끝 240.5). 같은 값을 줘서 선을 맞춥니다. */
+  padding: 0 10px;
+
+  /* 글자도 주변과 맞춥니다 (2026-08-11, 디자인 요청)
+     전달본은 12px(--fs-xs)인데 바로 아래 항목(.filter-item)·정렬 버튼
+     (.sort-group button)·결과 문구(.toolbar__result)·마이페이지 사이드 메뉴
+     (.side-nav__item)가 모두 14px(--fs-sm) 입니다. 제목만 작아 겉돌았습니다. */
+  font-size: var(--fs-sm);
 }
 
-/* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev)과 같은 그림입니다.
-   그 규칙들에 선택자를 얹을 수 없어 같은 값으로 씁니다. 크기만 22 → 16px 로
-   줄였습니다 — 12px 짜리 제목 옆이라 22px 은 글자보다 커 보입니다.
+/* 화살표 — 전달본 공통 셰브론(.faq__q .arrow · .filter-toggle .chev · .footer__box .chev)
+   과 **같은 값**을 씁니다. 그 규칙에 선택자를 얹을 수 없어 값을 옮겨 적었습니다.
    (.panel-toggle 을 붙이면 classroom.css 가 16px 글자 + 16/18px 패딩까지 끌고 와
     제목이 66px 이 됩니다. 그래서 클래스를 쓰지 않고 여기서 화살표만 그립니다) */
 .filter-group__title .chev {
-  flex-shrink: 0; width: 16px; height: 16px; font-size: 0;
+  flex-shrink: 0; width: 22px; height: 22px; font-size: 0;
   background-color: var(--faint);
-  -webkit-mask: var(--chev) center / 13px no-repeat;
-  mask: var(--chev) center / 13px no-repeat;
+  -webkit-mask: var(--chev) center / 18px no-repeat;
+  mask: var(--chev) center / 18px no-repeat;
   transition: transform .18s;
 }
 .filter-group__title[aria-expanded="true"] .chev { transform: rotate(180deg) }
 
-/* 접힌 묶음은 제목만 남습니다 — 펼쳤을 때의 아래 여백(8px)을 지웁니다 */
+/* 부드럽게 여닫기 — FAQ 와 같은 grid 0fr↔1fr 모프입니다(review.css .faq__a).
+   바깥이 높이를 애니메이션하고 안쪽이 잘라냅니다. 안쪽에 패딩을 주면 0fr 에서
+   그 높이만큼 남아 완전히 닫히지 않으므로 여백은 항목이 각자 갖습니다. */
+.filter-group__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .32s cubic-bezier(.4, 0, .2, 1), opacity .24s ease;
+}
+.filter-group__title[aria-expanded="true"] + .filter-group__panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.filter-group__panel-inner { overflow: hidden; min-height: 0 }
+
+/* 접힌 묶음은 제목만 남깁니다 — 펼쳤을 때의 아래 여백(8px)이 남지 않게 */
 .filter-group.is-folded .filter-group__title { margin-bottom: 0 }
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-group__panel { transition: none }
+}
 
 /* 고른 개수 — 접어 두면 몇 개 골랐는지 알 수 없어 제목 옆에 붙입니다.
    선택 상태를 나타내는 색이라 .filter-item[aria-pressed] 와 같은 짝을 씁니다. */
 .filter-group__count {
   margin-right: auto;               /* 화살표는 오른쪽 끝에 그대로 둡니다 */
-  min-width: 16px;
-  padding: 0 5px;
+
+  /* 숫자를 원 한가운데 놓습니다.
+     line-height 로 맞추면 글자 상자가 위아래로 1px·2px 로 어긋납니다
+     (숫자는 아랫줄기가 없어 상자 안에서 위로 붙습니다).
+     flex 로 상자째 가운데 정렬하고 line-height 는 1 로 둬서 글꼴에
+     상관없이 가운데로 떨어지게 합니다. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;                   /* 두 자리 수는 옆으로 늘어납니다 */
+
   border-radius: var(--r-full);
   background: var(--blue-soft);
   color: var(--blue);
   font-size: var(--fs-2xs);
   font-weight: 700;
-  line-height: 16px;
-  text-align: center;
+  line-height: 1;
 }
 
 /* 초기화 — 이제 목록 아래에 놓입니다. 전달본은 오른쪽 위 절대배치였는데
@@ -210,7 +283,8 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 /* 높이 줄이기 — 조건이 20개라 전달본 값(항목 40px)이면 사이드바가 화면을 넘칩니다.
    글자 크기는 그대로 두고 위아래 여백만 좁힙니다. */
 .filter-group { padding: 12px }
-.filter-item { padding: 6px 10px }
+/* 안쪽 여백 — 위아래 8px · 좌우 10px (2026-08-11, 디자인 요청) */
+.filter-item { padding: 8px 10px }
 
 /* FAQ 아이템 테두리 (2026-08-10, 디자인 요청)
    과정 상세(page--flat)에서는 .faq__item 에 border 가 걸리지만,
