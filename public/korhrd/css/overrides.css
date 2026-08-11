@@ -492,7 +492,27 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    있습니다. 그 아래 버튼 두 개는 같은 일을 한 번 더 하는 셈입니다.
    한 칸으로 접히는 980px 아래에서는 목차가 접혀 있으니 그대로 둡니다.
    (.rv-cta 는 시험·성적 화면도 쓰는 공통 버튼 줄이라 강의실 안으로 한정합니다) */
-.classroom__grid .rv-cta { display: flex; gap: var(--s-3) }
+/* 세 칸을 상자 하나로 묶고 사이를 선으로 나눕니다 (2026-08-11, 디자인 요청).
+   버튼 세 개가 각자 테두리를 두르고 떨어져 있으면 서로 다른 일을 하는 것처럼
+   보였는데, 실제로는 '어느 강의로 갈까' 하나를 셋으로 나눈 것입니다.
+   테두리는 상자가 하나만 두르고, 칸 사이는 1px 선으로만 나눕니다. */
+.classroom__grid .rv-cta {
+  display: flex;
+  gap: 0;
+  /* 카드들과 같은 1px 테두리입니다 (버튼 기본값 1.5px 이 아니라) */
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+/* 안쪽 버튼은 테두리·모서리를 내려놓고 칸 노릇만 합니다.
+   배경은 비워 상자 색이 비치게 두되, 누를 때 밝아지는 것(.btn--ghost:hover)은
+   그대로 살립니다. */
+.classroom__grid .rv-cta .btn {
+  border: 0; border-radius: 0; background: none;
+  padding: 12px 14px;
+}
+.classroom__grid .rv-cta .btn + .btn { border-left: 1px solid var(--line) }
 @media (min-width: 981px) {
   .classroom__grid .rv-cta { display: none }
 }
@@ -591,20 +611,6 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   /* 시트가 올라와 있을 때 머리말 화살표는 아래쪽 — 누르면 내려간다는 뜻입니다.
      (접기였을 때는 열린 상태에서 위를 가리키는 게 맞았습니다) */
   .toc-sheet .toc__head[aria-expanded="true"] .chev { transform: none }
-
-  /* 이동 줄 — 이전 · 강의목차 · 다음.
-     가운데를 넓게 잡습니다. 양쪽은 두 글자라 좁아도 충분합니다. */
-  .classroom__grid .rv-cta .btn { width: auto; flex: 1 }
-  .classroom__grid .rv-cta .toc-open { flex: 1.6 }
-  /* 가운데 버튼의 화살표는 위쪽 — 아래에서 올라오는 시트라는 신호입니다 */
-  .classroom__grid .rv-cta .toc-open::after {
-    content: ""; flex: none; width: 14px; height: 14px;
-    background-color: currentColor;
-    -webkit-mask: var(--chev) center / contain no-repeat;
-    mask: var(--chev) center / contain no-repeat;
-    transform: rotate(180deg);
-  }
-  .classroom__grid .rv-cta .toc-open::before { content: none }
 }
 
 
@@ -665,6 +671,7 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    열면 머리말에 그대로 나옵니다. 강의목차·총 N강·화살표는 남습니다. */
 @media (max-width: 560px) {
   .classroom__grid .rv-cta .toc-open .toc__badge { display: none }
+  .classroom__grid .rv-cta .btn { padding: 12px 10px }
 }
 
 /* 학습자료 — 첫 칸만 남색이던 것 (2026-08-11, 디자인 요청)
