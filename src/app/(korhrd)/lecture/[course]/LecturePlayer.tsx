@@ -230,7 +230,9 @@ export function LecturePlayer({
               <span className="lec-progress__pct">{coursePercent}%</span>
             </div>
 
-            <p className="rv-cta" style={{ display: 'flex', gap: 8 }}>
+            {/* 두 버튼을 한 줄에 나눠 놓는 규칙은 overrides.css 에 있습니다 —
+                넓은 화면에서 이 줄을 숨기려면 인라인 style 이 없어야 합니다. */}
+            <p className="rv-cta">
               {prevOrder !== null ? (
                 <Link className="btn btn--ghost" href={`/lecture/${courseCode}/${prevOrder}`}>이전 강의</Link>
               ) : null}

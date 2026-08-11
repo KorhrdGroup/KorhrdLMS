@@ -487,3 +487,13 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    좌우는 20px 그대로 둡니다 — 아래 목록 줄(.toc__item a)과 왼쪽 선을
    맞춰야 합니다. (아랫줄 문제는 위 '머리말 아래 구분선' 항목에서 다룹니다) */
 .toc__head { padding: var(--pad-card-y) 20px }
+
+/* 강의실 — 넓은 화면에서는 이전/다음 강의 버튼을 빼둡니다 (2026-08-11, 디자인 요청)
+   2단일 때는 오른쪽에 강의목차가 늘 펼쳐져 있어 아무 차시로나 바로 갈 수
+   있습니다. 그 아래 버튼 두 개는 같은 일을 한 번 더 하는 셈입니다.
+   한 칸으로 접히는 980px 아래에서는 목차가 접혀 있으니 그대로 둡니다.
+   (.rv-cta 는 시험·성적 화면도 쓰는 공통 버튼 줄이라 강의실 안으로 한정합니다) */
+.classroom__grid .rv-cta { display: flex; gap: var(--s-3) }
+@media (min-width: 981px) {
+  .classroom__grid .rv-cta { display: none }
+}
