@@ -4,19 +4,65 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
 
-const POPULAR = [
-  '병원동행매니저', '간병사', '노인돌봄생활지원사', '베이비시터', '산후관리사',
-  '병원코디네이터', '학교안전지도사', '심리상담사 1급', '노인심리상담사 1급', '집합건물관리사',
-];
+/* 인기 자격증 — 하드코딩 대신 과정 데이터의 인기 순위(rank, 1이 1위)를 그대로 씁니다.
+   메인 "인기" 배지와 같은 기준이라 두 화면이 어긋나지 않습니다. */
+const POPULAR = [...COURSES]
+  .filter((c) => c.rank > 0)
+  .sort((a, b) => a.rank - b.rank)
+  .slice(0, 10)
+  .map((c) => c.n);
+
+/** 최근 검색어 — 브라우저에만 저장합니다(localStorage). 서버로 보내지 않습니다. */
+const RECENT_KEY = 'korhrd-recent-searches';
+const RECENT_MAX = 10;
+
+function loadRecent(): string[] {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list.filter((v): v is string => typeof v === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecent(list: string[]) {
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(list));
+  } catch {
+    /* 시크릿 모드 등 저장 불가 환경은 조용히 넘어갑니다 */
+  }
+}
 
 /** 전체화면 검색 — 헤더의 "자격증 검색"으로 열립니다 */
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState('');
+  const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /** 검색어를 최근 목록 맨 앞에 저장합니다(중복은 앞으로 끌어올림). */
+  const remember = (term: string) => {
+    const key = term.trim();
+    if (!key) return;
+    setRecent((prev) => {
+      const next = [key, ...prev.filter((v) => v !== key)].slice(0, RECENT_MAX);
+      saveRecent(next);
+      return next;
+    });
+  };
+
+  const removeRecent = (term: string) => {
+    setRecent((prev) => {
+      const next = prev.filter((v) => v !== term);
+      saveRecent(next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!open) return;
     setQ('');
+    setRecent(loadRecent());
     inputRef.current?.focus();
     document.body.classList.add('is-locked');
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -48,7 +94,10 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
           <span className="logo">
             <img src="/logo.svg" alt="한평생 직업훈련" width={147} height={18} />
           </span>
-          <form className="search-field" action="/courses" method="get" role="search">
+          <form
+            className="search-field" action="/courses" method="get" role="search"
+            onSubmit={() => remember(q)}
+          >
             <label className="sr-only" htmlFor="search-input">자격증 검색</label>
             <input
               id="search-input" name="q" type="search" autoComplete="off" ref={inputRef}
@@ -85,9 +134,30 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                 </div>
                 <div>
                   <h2>최근 검색어</h2>
-                  {/* TODO: localStorage 등으로 실제 검색 기록 연결 */}
                   <ul className="recent-list">
-                    <li><span className="empty">최근 검색어가 없습니다</span></li>
+                    {recent.length === 0 ? (
+                      <li><span className="empty">최근 검색어가 없습니다</span></li>
+                    ) : (
+                      recent.map((term) => (
+                        <li key={term} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          {/* 누르면 그 검색어로 바로 검색합니다 */}
+                          <button
+                            type="button"
+                            style={{ background: 'none', border: 0, padding: 0, cursor: 'pointer', font: 'inherit', color: 'inherit' }}
+                            onClick={() => { setQ(term); inputRef.current?.focus(); }}
+                          >
+                            {term}
+                          </button>
+                          <button
+                            type="button" aria-label={`${term} 삭제`}
+                            style={{ background: 'none', border: 0, padding: 0, cursor: 'pointer', color: 'var(--faint, #999)', fontSize: 12 }}
+                            onClick={() => removeRecent(term)}
+                          >
+                            ✕
+                          </button>
+                        </li>
+                      ))
+                    )}
                   </ul>
                 </div>
               </div>
@@ -106,7 +176,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                     <ul>
                       {names.map((n) => (
                         <li key={n}>
-                          <Link href={`/courses/${encodeURIComponent(n)}`}>
+                          <Link href={`/courses/${encodeURIComponent(n)}`} onClick={() => remember(q)}>
                             {n.split(q).map((part, i, arr) => (
                               <span key={i}>{part}{i < arr.length - 1 && <mark>{q}</mark>}</span>
                             ))}
