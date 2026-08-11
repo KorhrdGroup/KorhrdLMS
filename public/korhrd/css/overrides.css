@@ -158,7 +158,18 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 #course-filters {
   position: sticky;
   top: calc(var(--header-h) + var(--s-4));
-  max-height: calc(100vh - var(--header-h) - var(--s-7));
+
+  /* 높이 기준 (2026-08-11 수정)
+     헤더에 붙었을 때(top 74px)를 기준으로 잡았더니, 페이지 맨 위에서는
+     사이드바가 아직 제자리(208px)에 있어 아래가 화면 밖으로 124px 나갔습니다.
+     그 상태로 안쪽을 스크롤하면 마지막 '연령'이 화면 밖에서 잘려 보였습니다.
+
+     그래서 붙기 전 자리를 기준으로 잡습니다 — 208px 은 헤더(64) + 경로(47) +
+     제목 블록(97) 로, 화면 높이가 달라져도 그대로인 값입니다(실측).
+     붙었을 때는 아래에 여유가 조금 남지만, 어느 위치에서도 잘리지 않습니다. */
+  --filters-offset: 208px;
+  max-height: calc(100vh - var(--filters-offset) - var(--s-7));
+
   overflow-y: auto;
   overscroll-behavior: contain;
   /* 스크롤바를 감춥니다 — 조건을 접고 펴면 스크롤바가 생겼다 사라지며
