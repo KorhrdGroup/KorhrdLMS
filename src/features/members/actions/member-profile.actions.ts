@@ -1,13 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
+import { STUDENT_SESSION_COOKIE } from "@/lib/student/session";
 import {
   updateMyProfile,
   type MemberProfileInput,
   type MemberProfileUpdateResult,
 } from "@/features/members/services/member-profile.service";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * 본인 회원정보 저장.
@@ -34,4 +38,33 @@ export async function updateMyProfileAction(
   }
 
   return result;
+}
+
+/**
+ * 회원 탈퇴 — 회원정보 수정 화면의 "탈퇴하기".
+ *
+ * 데이터를 지우지 않고 status 를 withdrawn 으로 바꾸는 소프트 탈퇴입니다
+ * (수강·자격증 이력은 관리자 화면의 "탈퇴회원"에서 계속 조회됩니다).
+ * 처리 후 세션 쿠키를 지우고 홈으로 보냅니다.
+ */
+export async function withdrawMyAccountAction(): Promise<{ success: false; message: string } | never> {
+  const member = await getMockableStudentMember();
+
+  if (!member) {
+    return { success: false, message: "로그인이 필요합니다." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("members")
+    .update({ status: "withdrawn" })
+    .eq("id", member.id);
+
+  if (error) {
+    return { success: false, message: "탈퇴 처리에 실패했습니다. 고객센터로 문의해 주세요." };
+  }
+
+  const cookieStore = await cookies();
+  cookieStore.delete(STUDENT_SESSION_COOKIE);
+  redirect("/");
 }

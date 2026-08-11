@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { updateMyProfileAction } from '@/features/members/actions/member-profile.actions';
+import {
+  updateMyProfileAction,
+  withdrawMyAccountAction,
+} from '@/features/members/actions/member-profile.actions';
 import type { MemberProfile } from '@/features/members/services/member-profile.service';
 import PostcodeButton from '@/features/korhrd/components/form/PostcodeButton';
 
@@ -27,6 +30,15 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const handleWithdraw = () => {
+    if (!window.confirm('정말 탈퇴하시겠어요?\n탈퇴하면 다시 로그인할 수 없습니다.')) return;
+    startTransition(async () => {
+      // 성공하면 액션이 홈으로 리다이렉트합니다 — 돌아오는 건 실패했을 때뿐입니다.
+      const result = await withdrawMyAccountAction();
+      if (result && !result.success) setError(result.message);
+    });
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -141,10 +153,23 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
         {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
         {saved ? <p className="my-card__status my-card__status--pass">변경 내용을 저장했습니다.</p> : null}
 
-        <div className="result-cta mt-4">
+        <div className="result-cta mt-4" style={{ alignItems: 'center' }}>
           <Link className="btn btn--ghost btn--lg" href="/mylecture?tab=mypage">취소</Link>
           <button className="btn btn--primary btn--lg" type="submit" disabled={isPending}>
             {isPending ? '저장 중…' : '변경 내용 저장'}
+          </button>
+          {/* 탈퇴는 버튼처럼 크게 두지 않습니다 — 은색 글씨 링크로 오른쪽에 둡니다 */}
+          <button
+            type="button"
+            onClick={handleWithdraw}
+            disabled={isPending}
+            style={{
+              background: 'none', border: 0, padding: 0, cursor: 'pointer',
+              font: 'inherit', fontSize: '13px', color: 'var(--faint, #9CA3AF)',
+              textDecoration: 'underline',
+            }}
+          >
+            탈퇴하기
           </button>
         </div>
       </form>
