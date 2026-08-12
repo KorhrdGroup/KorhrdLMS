@@ -1,15 +1,14 @@
 import { listPublishedNotices } from "@/features/notice-management/repositories/notice.repository";
 
 /**
- * 학생 화면(사이트 공지사항 `/notice`, 학습강의실 공지사항
+ * 학생 화면(고객센터 › 공지사항 `/support`, 학습강의실 공지사항
  * `/classroom/[slug]/notices`)과의 연동 지점입니다.
  *
- * 현재 두 학생 화면은 각각 별도의 Mock 데이터 파일
- * (`src/components/notice/data/notice-data.ts`,
- * `src/components/classroom/data/course-notice-data.ts`)을 사용하고 있습니다.
- * 아래 두 함수는 그 화면들이 기대하는 타입과 동일한 형태로 데이터를 반환하도록
- * 설계되어, 추후 해당 페이지들을 이 모듈(또는 Supabase `notices` 테이블)로
- * 전환할 때 조회 함수만 교체하면 되도록(드롭인) 만들었습니다.
+ * 고객센터 공지사항은 이 모듈을 통해 어드민 공지 DB를 그대로 읽습니다.
+ * 학습강의실 공지사항은 아직 Mock 데이터 파일
+ * (`src/components/classroom/data/course-notice-data.ts`)을 쓰고 있습니다.
+ * 아래 두 함수는 그 화면이 기대하는 타입과 동일한 형태로 데이터를 돌려주도록
+ * 설계되어, 전환할 때 조회 함수만 교체하면 되도록(드롭인) 만들었습니다.
  */
 
 export type SiteNoticeListItem = {
