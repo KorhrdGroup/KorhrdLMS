@@ -66,8 +66,8 @@ export function CertificateDetailModal({
   const [actualPaymentAmount, setActualPaymentAmount] = useState("");
   const [deliveryStatus, setDeliveryStatus] = useState<CertificateDeliveryStatus>("pending");
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("unpaid");
-  const [photoUrl, setPhotoUrl] = useState("");
   const [isLoading, startLoad] = useTransition();
+  const [isDownloading, setIsDownloading] = useState(false);
   const [isSubmitting, startSubmit] = useTransition();
 
   function loadDetail(targetId: string) {
@@ -88,7 +88,6 @@ export function CertificateDetailModal({
         setActualPaymentAmount(String(result.application.actualPaymentAmount));
         setDeliveryStatus(result.application.deliveryStatus);
         setPaymentStatus(result.application.paymentStatus);
-        setPhotoUrl(result.application.photoUrl ?? "");
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : "신청 내역을 불러오지 못했습니다.",
@@ -130,7 +129,6 @@ export function CertificateDetailModal({
           actualPaymentAmount: parsedAmount,
           deliveryStatus,
           paymentStatus,
-          photoUrl,
         });
 
         if (!result.success) {
@@ -246,21 +244,64 @@ export function CertificateDetailModal({
           </dl>
 
           <section className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
-            <div className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white">
-              {photoUrl.trim() ? (
-                // eslint-disable-next-line @next/next/no-img-element
+            {/* 미리보기 — 클릭하면 새 탭에서 원본 크기로 봅니다 */}
+            {detail.photoUrl ? (
+              <a
+                href={detail.photoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white"
+                title="새 탭에서 크게 보기"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={photoUrl}
+                  src={detail.photoUrl}
                   alt={`${detail.applicantName} 증명사진`}
                   className="h-full w-full object-cover"
                 />
-              ) : (
+              </a>
+            ) : (
+              <div className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white">
                 <span className="px-1 text-center text-[10px] text-[#9CA3AF]">사진 없음</span>
-              )}
+              </div>
+            )}
+            <div className="flex flex-1 items-center justify-between gap-2">
+              <p className="text-xs text-[#6B7280]">
+                {detail.photoUrl
+                  ? "학생이 발급 신청 시 올린 증명사진입니다. 클릭하면 크게 보입니다."
+                  : "학생이 증명사진을 올리지 않았습니다."}
+              </p>
+              {detail.photoUrl ? (
+                <AdminButton
+                  type="button"
+                  variant="outline"
+                  disabled={isDownloading}
+                  onClick={async () => {
+                    if (!detail.photoUrl) return;
+                    setIsDownloading(true);
+                    try {
+                      // 저장소가 다른 출처라 <a download> 가 무시됩니다 — 받아서 blob 으로 저장합니다.
+                      const res = await fetch(detail.photoUrl);
+                      if (!res.ok) throw new Error();
+                      const blob = await res.blob();
+                      const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = `${detail.applicantName}_증명사진.${ext}`;
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    } catch {
+                      window.open(detail.photoUrl, "_blank");
+                    } finally {
+                      setIsDownloading(false);
+                    }
+                  }}
+                >
+                  {isDownloading ? "다운로드 중..." : "다운로드"}
+                </AdminButton>
+              ) : null}
             </div>
-            <p className="text-xs text-[#6B7280]">
-              증명사진 URL을 변경한 뒤 하단 저장 버튼을 눌러주세요.
-            </p>
           </section>
 
           <div className="space-y-3 border-t border-[#E5E7EB] pt-3">
@@ -308,16 +349,6 @@ export function CertificateDetailModal({
                     </option>
                   ))}
                 </select>
-              </EnrollmentFormField>
-
-              <EnrollmentFormField label="증명사진 URL" htmlFor="photoUrl">
-                <AdminInput
-                  id="photoUrl"
-                  variant="outline"
-                  value={photoUrl}
-                  placeholder="/photos/example.jpg"
-                  onChange={(event) => setPhotoUrl(event.target.value)}
-                />
               </EnrollmentFormField>
             </div>
           </div>
