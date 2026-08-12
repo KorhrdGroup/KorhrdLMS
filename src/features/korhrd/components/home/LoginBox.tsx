@@ -28,7 +28,8 @@ export default function LoginBox({ learning = [] }: { learning?: LoginBoxCourse[
         </div>
         <p className="loginbox__actions">
           <Link className="btn btn--primary" href="/login">로그인</Link>
-          <Link className="btn btn--soft-ink" href="/signup">회원가입</Link>
+          {/* 회원가입도 로그인 화면으로 (2026-08-12, 디자인 요청) */}
+          <Link className="btn btn--soft-ink" href="/login">회원가입</Link>
         </p>
       </div>
     );

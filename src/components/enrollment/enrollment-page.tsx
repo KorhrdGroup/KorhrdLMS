@@ -75,11 +75,12 @@ export function EnrollmentPage({
     if (selectedCourses.length === 0 || isSubmitting) return;
 
     if (!isLoggedIn) {
-      const wantsSignup = window.confirm(
-        "수강신청을 위해서 교육원 회원가입이 필요합니다.\n회원가입을 하시겠습니까?",
+      // 가입도 로그인 화면에서 시작합니다 (2026-08-12, 디자인 요청)
+      const wantsLogin = window.confirm(
+        "수강신청을 위해서 로그인이 필요합니다.\n로그인 화면으로 이동하시겠습니까?",
       );
-      if (wantsSignup) {
-        router.push("/signup");
+      if (wantsLogin) {
+        router.push("/login?redirect=/enrollment");
       }
       return;
     }

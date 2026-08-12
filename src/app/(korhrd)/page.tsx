@@ -51,6 +51,9 @@ const NATCERTS = [
   { img: '/natcert/korean.jpg', name: '한국어 교원' },
 ];
 
+/** 국가자격증 안내가 연결되는 곳 — 카드 넷과 아래 버튼이 모두 여기로 갑니다 */
+const NATCERT_SITE = 'https://barosocial.vercel.app/';
+
 export default async function HomePage() {
   const homeReviews = (await listCourseReviews()).slice(0, 3);
   // 실제 수강완료·발급완료 내역. 티커는 최소 몇 줄이 있어야 자연스러워
@@ -172,7 +175,7 @@ export default async function HomePage() {
               <li className="stat"><b>128,400<small>+</small></b><span>누적 수강생</span></li>
               <li className="stat"><b>96,200<small>건</small></b><span>자격증 발급</span></li>
               <li className="stat"><b>4.8<small>/5.0</small></b><span>평균 수강 만족도</span></li>
-              <li className="stat"><b>70<small>개+</small></b><span>정식 등록 자격 과정</span></li>
+              <li className="stat"><b>60<small>개+</small></b><span>정식 등록 자격 과정</span></li>
             </ul>
             <GovMarquee />
           </div>
@@ -322,7 +325,9 @@ export default async function HomePage() {
 
       {/* ======================== 국가자격증 안내 ========================
            Figma section (334:9450) — 사진 카드 4개 + 전체 폭 버튼.
-           국가자격증은 관계사(hpsedu.co.kr)에서 다루므로 외부 링크입니다. */}
+           국가자격증은 별도 사이트에서 다루므로 외부 링크입니다.
+           카드 넷과 아래 버튼이 모두 같은 곳으로 갑니다 — 주소는 NATCERT_SITE 한 곳에서
+           고칩니다 (2026-08-12: 한평생원격교육원 → barosocial). */}
       <section className="section" aria-labelledby="natcert-title">
         <div className="container">
           <div className="section-head content">
@@ -331,7 +336,7 @@ export default async function HomePage() {
 
           <div className="content natcert-grid">
             {NATCERTS.map((c) => (
-              <a className="natcert-card" href="https://www.hpsedu.co.kr/" target="_blank" rel="noopener" key={c.name}>
+              <a className="natcert-card" href={NATCERT_SITE} target="_blank" rel="noopener" key={c.name}>
                 <img src={c.img} alt="" aria-hidden="true" loading="lazy" />
                 <strong>{c.name}</strong>
               </a>
@@ -339,7 +344,7 @@ export default async function HomePage() {
           </div>
 
           <a className="content btn btn--primary btn--block natcert-more"
-             href="https://www.hpsedu.co.kr/" target="_blank" rel="noopener">
+             href={NATCERT_SITE} target="_blank" rel="noopener">
             국가자격증 알아보기 <span aria-hidden="true">→</span>
           </a>
         </div>

@@ -703,3 +703,20 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
     border-top: 0;
   }
 }
+
+/* 폼 드롭다운 화살표를 사이트 공통 셰브론으로 (2026-08-12, 디자인 요청)
+   전달본 .field select 는 네이티브 화살표를 그대로 씁니다 — 브라우저마다 모양이
+   달라 옆 칸들과 따로 놉니다. 합격후기 정렬 드롭다운(.select-box, review.css)이
+   이미 공통 셰브론을 쓰고 있어 그 값을 그대로 가져옵니다.
+
+   select 는 배경색이 필드 전체를 칠하므로 마스크 대신 이미지로 둡니다
+   (색은 공통 셰브론과 같은 --faint #919191 을 SVG 안에 박아 둡니다).
+   화살표 자리를 비우려고 오른쪽 여백을 넓힙니다 — 14(좌우 대칭) + 16(아이콘)
+   + 8(사이) = 38px. 왼쪽 14px 은 .field input 과 같습니다. */
+.field select {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23919191' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  background-size: 16px;
+  padding-right: 38px;
+  cursor: pointer;
+}

@@ -29,10 +29,16 @@ const REDIRECT_LABELS: [prefix: string, label: string][] = [
   ['/support', '고객센터'],
 ];
 
+/**
+ * 로그인이 필요해서 넘어온 것인지 가려냅니다.
+ * 목록에 없는 주소는 그냥 헤더의 로그인을 누른 것이라(공개 화면) 이름을 돌려주지
+ * 않습니다 — 예전에는 '이 화면'으로 뭉뚱그려, 로그인이 필요 없는 화면에서도
+ * "로그인 후 이용하실 수 있습니다" 라고 잘못 안내했습니다 (2026-08-12).
+ */
 function labelFor(path: string | undefined) {
   if (!path) return null;
-  const hit = REDIRECT_LABELS.find(([prefix]) => path.startsWith(prefix));
-  return hit ? hit[1] : '이 화면';
+  const clean = path.split('?')[0];
+  return REDIRECT_LABELS.find(([prefix]) => clean.startsWith(prefix))?.[1] ?? null;
 }
 
 /** 로그인 — 마크업은 korhrd 디자인(login.html), 인증은 기존 Supabase 액션. */

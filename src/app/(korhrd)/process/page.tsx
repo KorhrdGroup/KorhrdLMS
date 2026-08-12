@@ -164,47 +164,6 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 비용 안내 */}
-        <section className="section" aria-labelledby="fee-title">
-          <div className="container">
-            <div className="section-head content">
-              <h2 id="fee-title">비용 안내</h2>
-              <p>수강과 시험까지는 비용이 없습니다. 자격증 실물 발급을 원하실 때만 발급비가 발생합니다.</p>
-            </div>
-
-            <div className="content">
-              <ul className="summary">
-                <li><span className="k">수강료</span><span className="v">0원 <del>300,000~400,000원</del></span></li>
-                <li><span className="k">시험 응시료</span><span className="v">0원</span></li>
-                <li><span className="k">강의 교안 · 기출 문제</span><span className="v">0원</span></li>
-                <li className="is-total">
-                  <span className="k">자격증 발급비 (선택)</span>
-                  <span className="v">과정당 100,000원</span>
-                </li>
-              </ul>
-
-              <p className="notice mt-4">
-                <span>
-                  발급비 <b>100,000원</b>에는 협회 자격증 발급비용과 택배비가 포함되며,
-                  상장형과 카드형 자격증이 함께 발급됩니다.
-                  집체교육을 진행하는 과정의 발급비는 <b>200,000원</b>입니다.
-                  발급비는 신한은행 140-015-773620 (주)한평생그룹 계좌 입금 또는 카드 결제로 납부하실 수 있습니다.
-                </span>
-              </p>
-
-              <table className="info-table mt-4">
-                <caption className="sr-only">자격증 발급 및 배송 안내</caption>
-                <tbody>
-                  <tr><th scope="row">발급 형태</th><td>상장형 + 카드형 동시 발급</td></tr>
-                  <tr><th scope="row">필요 서류</th><td>증명사진 (카드형 자격증에 첨부됩니다. 미첨부시 사진 없이 자격증만 발급)</td></tr>
-                  <tr><th scope="row">배송 일정</th><td>매주 화요일 협회로 명단 전달 · 전달일로부터 1~2일 소요</td></tr>
-                  <tr><th scope="row">자격관리기관</th><td>한국직업능력협회 (02-465-9568)</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
         {/* FAQ */}
         <section className="section section--alt" aria-labelledby="pfaq-title">
           <div className="container">

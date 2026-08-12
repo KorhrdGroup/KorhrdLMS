@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import BirthDateSelect from '@/features/korhrd/components/form/BirthDateSelect';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
@@ -86,10 +87,8 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
           <label htmlFor="mp-birth">
             생년월일 <span className="hint">— 자격증에 표기됩니다</span>
           </label>
-          <input
-            id="mp-birth" type="date" autoComplete="bday" max={new Date().toISOString().slice(0, 10)}
-            value={birthDate} onChange={(event) => setBirthDate(event.target.value)}
-          />
+          {/* 자격증 발급신청과 같은 칸을 씁니다 — 같은 값을 받는 자리입니다 */}
+          <BirthDateSelect id="mp-birth" value={birthDate} onChange={setBirthDate} />
         </div>
 
         <div className="field">

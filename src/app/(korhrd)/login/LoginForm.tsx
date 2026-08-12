@@ -83,10 +83,11 @@ export function LoginForm({
           비밀번호가 변경되었습니다.<br />
           새 비밀번호로 로그인해주세요.
         </p>
-      ) : redirectTo ? (
+      ) : reason ? (
+        /* 로그인이 필요해서 튕겨 나온 경우에만 띄웁니다. 돌아간다는 안내는
+           빼기로 했습니다 — 굳이 말하지 않아도 되는 동작입니다 (2026-08-12). */
         <p className="login-notice">
-          <b>{reason ?? '이 화면'}</b>은 로그인 후 이용하실 수 있습니다.<br />
-          로그인하시면 원래 보시려던 화면으로 이동합니다.
+          <b>{reason}</b>은 로그인 후 이용하실 수 있습니다.
         </p>
       ) : null}
 
@@ -141,7 +142,7 @@ export function LoginForm({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/social/naver-n-white.svg" alt="" width={18} height={18} aria-hidden="true" />
-            네이버 로그인
+            네이버 로그인/회원가입
           </a>
           <a
             className={`btn btn--lg ${styles.button} ${styles.kakao}`}
@@ -149,7 +150,7 @@ export function LoginForm({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/social/kakao-bubble.svg" alt="" width={18} height={18} aria-hidden="true" />
-            카카오 로그인
+            카카오 로그인/회원가입
           </a>
         </div>
 

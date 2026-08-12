@@ -17,8 +17,20 @@ function maskName(name: string): string {
   return `${trimmed[0]}${"*".repeat(trimmed.length - 2)}${trimmed.at(-1)}`;
 }
 
-/** "2026-04-17T…" → "26-04-17" (티커 표기) */
-const shortDate = (iso: string) => iso.slice(2, 10);
+/**
+ * 티커에 찍는 날짜 — 실제 완료·발급일이 아니라 **오늘**입니다 (2026-08-12, 디자인 요청).
+ * 티커가 늘 최신으로 보이게 해달라는 요청이라, 표시용으로만 오늘로 덮습니다.
+ * 정렬은 그대로 실제 시각(at)으로 하므로 최신순 차례는 유지됩니다.
+ *
+ * ⚠ 화면에 나오는 날짜가 기록의 실제 날짜와 다릅니다. 서로 다른 날 발급된 건들이
+ *   전부 같은 날짜로 보입니다. 되돌리려면 이 함수를 iso.slice(2, 10) 로 바꾸세요.
+ *
+ * 홈은 요청마다 서버에서 그려지는 화면(ƒ)이라 날짜가 굳지 않습니다.
+ * 서버 시간대가 UTC 여도 한국 날짜가 나오도록 Asia/Seoul 로 잡습니다
+ * (en-CA 로케일이 YYYY-MM-DD 로 내줍니다).
+ */
+const todayShort = () =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul" }).format(new Date()).slice(2);
 
 export async function getLiveFeed(): Promise<LiveRow[]> {
   const supabase = await createClient();
@@ -50,7 +62,7 @@ export async function getLiveFeed(): Promise<LiveRow[]> {
       state: "done",
       name: maskName(row.member?.name ?? ""),
       course: row.course?.name ?? "",
-      date: shortDate(row.learning_completed_at),
+      date: todayShort(),
       at: row.learning_completed_at,
     });
   }
@@ -64,7 +76,7 @@ export async function getLiveFeed(): Promise<LiveRow[]> {
       state: "issued",
       name: maskName(row.member?.name ?? ""),
       course: row.certificate_name,
-      date: shortDate(row.issued_at),
+      date: todayShort(),
       at: row.issued_at,
     });
   }
