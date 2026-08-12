@@ -104,6 +104,18 @@
   --fs-2xl:   28px;   /* 페이지·히어로 제목 */
 }
 
+/* 모바일 본문 — 좁은 화면에서 14px 본문은 읽기에 작아 아래 네 단계만 1px씩
+   올립니다. 제목(lg 이상)은 그대로 두어 스케일 순서와 위계는 유지됩니다.
+   (본문 14→15 · 보조 12→13 · 캡션 11→12 · 본문강조 16→17) */
+@media (max-width:560px){
+  :root{
+    --fs-2xs: 12px;
+    --fs-xs:  13px;
+    --fs-sm:  15px;
+    --fs-md:  17px;
+  }
+}
+
 /* --------------------------------------------------------------------------
    2. Reset & Base
    -------------------------------------------------------------------------- */
@@ -1454,7 +1466,10 @@ div.req{ background:var(--surface-sunken); border-radius:var(--r-lg); padding:18
 .notice b{ color:inherit; font-weight:700 }
 
 .detail-cta{
-  position:sticky; bottom:0; z-index:40; background:#fff; padding:15px 20px;
+  /* 화면 아래 붙어 따라다니는 신청 바입니다. 본문 중간의 앵커 탭바(.dtabs · z 50)
+     보다 위에 있어야 스크롤 중 탭바가 이 바를 덮고 지나가지 않습니다.
+     헤더(z 60)·시트·모달보다는 아래에 둡니다. */
+  position:sticky; bottom:0; z-index:55; background:#fff; padding:15px 20px;
   box-shadow:0 -4px 16px rgba(0,0,0,.10);
   display:flex; align-items:center; justify-content:center; gap:var(--s-5); flex-wrap:wrap;
 }
@@ -1493,12 +1508,12 @@ div.req{ background:var(--surface-sunken); border-radius:var(--r-lg); padding:18
   .detail-cta__bottom{ display:flex; align-items:center; justify-content:space-between; gap:var(--s-3)}
   .detail-cta__label{ flex-shrink:0; font-size:var(--fs-sm); line-height:1.2 }
   .detail-cta__alarm{ width:26px; height:26px }
-  .detail-cta .btn--cta{ flex:1; margin-left:0; padding:15px 20px; font-size:var(--fs-lg); font-weight:700 }
-  /* 카운트다운을 아래 줄에 크게 */
+  .detail-cta .btn--cta{ flex:1; margin-left:0; padding:13px 18px; font-size:var(--fs-md); font-weight:700 }
+  /* 카운트다운을 아래 줄에 — 화면을 다 차지하지 않게 한 단계 작게 */
   .detail-cta .timer{ gap:var(--s-1)}
   .timer__unit{ gap:var(--s-1)}
-  .timer__box{ min-width:29px; height:42px; padding:0 3px; font-size:var(--fs-2xl) }
-  .timer__sep{ font-size:var(--fs-lg); margin:0 1px }
+  .timer__box{ min-width:26px; height:36px; padding:0 3px; font-size:var(--fs-xl) }
+  .timer__sep{ font-size:var(--fs-md); margin:0 1px }
   .detail-cta__left{ flex-shrink:0; font-size:var(--fs-sm); line-height:1.2; text-align:right }
 }
 
@@ -2900,7 +2915,9 @@ input[type="checkbox"]:disabled{ cursor:default; opacity:.5 }
 .dtable{ width:100%; border-collapse:separate; border-spacing:0; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden }
 .dtable th, .dtable td{ padding:19px 24px; font-size:var(--fs-sm); border-bottom:1px solid var(--line) }
 .dtable tr:last-child th, .dtable tr:last-child td{ border-bottom:0 }
-.dtable th{ width:250px; background:var(--surface-sunken); color:var(--ink-2); font-weight:700; text-align:center; border-right:1px solid var(--line) }
+/* 항목 이름은 한 낱말이라 아무 데서나 끊기면 '자격관리기 / 관'처럼 읽힙니다.
+   keep-all 로 낱말 중간을 막고, 끊어도 되는 자리는 마크업의 <wbr> 로 지정합니다. */
+.dtable th{ width:250px; background:var(--surface-sunken); color:var(--ink-2); font-weight:700; text-align:center; border-right:1px solid var(--line); word-break:keep-all }
 .dtable td{ color:var(--ink-3) }
 
 @media (max-width:980px){
@@ -3035,11 +3052,20 @@ input[type="checkbox"]:disabled{ cursor:default; opacity:.5 }
 @media (max-width:560px){
   .dtabs__in{ padding:0 16px }
   .dtabs a{ padding:13px 14px; font-size:var(--fs-sm) }
-  .drev__card{ width:260px }
+  /* 후기 카드 폭은 데스크탑·태블릿과 같은 300px을 씁니다 — 옆으로 흐르는
+     마르퀴라 좁은 화면에서 줄일 이유가 없고, 줄이면 본문이 더 잘립니다 */
   .dhero__rule{ margin:40px 0 28px }
   .dhero__desc{ font-size:var(--fs-sm) }
   /* 딤 값은 그대로 두고, 헤더 내용을 아래(어두운 영역)로 밀어 잘 보이게 위 여백을 키웁니다 */
   .dhero__in{ min-height:300px; padding-top:250px }
+  /* 이력서 배너 — 시안처럼 이력서 카드가 화면을 꽉 채우게 합니다.
+     원본 좌우에 여백이 13%씩 있어 100%로는 작아 보입니다. 화면보다 크게 늘려
+     좌우를 흘려보내고(섹션의 overflow:hidden 이 잘라냅니다), 그만큼 하단도
+     받침 박스에 깊이 잠깁니다. margin-left 는 넘친 폭의 절반이라 가운데 정렬입니다. */
+  .dresume .dresume__stage{ margin-left:-20px; margin-right:-20px }
+  .dresume__shot{ width:132%; max-width:none; margin-left:-16% }
+  /* 확대한 만큼 이미지 아래 빈 여백도 커져, 받침 박스를 더 높여 덮습니다 */
+  .dresume__base{ height:32% }
 }
 
 /* ==========================================================================

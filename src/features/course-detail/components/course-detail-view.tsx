@@ -411,7 +411,9 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
               {/* 모바일은 자격증 두 장을 세로로 쌓은 별도 시안을 씁니다 — 가로 시안을
                   좁은 화면에 그대로 넣으면 글씨가 읽히지 않을 만큼 작아집니다.
                   (데스크탑 3600×2028 · 모바일 515×1313) */}
-              <picture style={{ display: "contents" }}>
+              {/* display:block — contents 로 두면 박스가 없어져 제목 아래 간격
+                  (.dsec__title + * 의 margin-top)이 먹지 않습니다 */}
+              <picture style={{ display: "block" }}>
                 <source media="(min-width: 561px)" srcSet={CERT_SAMPLE.desktop} sizes={CERT_SAMPLE.desktopSizes} />
                 <img {...CERT_SAMPLE.imgProps} className="dsample__img" alt="상장형 자격증과 카드형 자격증 견본 예시" />
               </picture>
@@ -426,7 +428,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
               </h2>
               <div className="dresume__stage">
                 {/* 모바일은 여백을 줄인 별도 시안을 씁니다 (데스크탑 2847×1526 · 모바일 734×447) */}
-                <picture style={{ display: "contents" }}>
+                <picture style={{ display: "block" }}>
                   <source media="(min-width: 561px)" srcSet={RESUME_BANNER.desktop} sizes={RESUME_BANNER.desktopSizes} />
                   <img {...RESUME_BANNER.imgProps} className="dresume__shot" alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시" />
                 </picture>
