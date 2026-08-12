@@ -51,3 +51,14 @@
   .dcert__logo img,
   .dcert__logo--gov img { max-width: 72%; max-height: 66% }
 }
+
+/* 교수 약력 목록을 왼쪽 정렬로 (2026-08-12, 디자인 요청)
+   전달본은 560px 아래에서 교수 카드를 통째로 가운데 정렬합니다
+   (.dprof{ text-align:center } · .dprof__list li{ justify-content:center }).
+   사진·이름은 가운데가 맞지만, 약력은 열 줄 넘게 이어지는 목록이라 체크 표시가
+   줄마다 다른 자리에서 시작해 읽는 눈이 계속 흔들립니다. 목록만 왼쪽으로 세웁니다.
+   (여러 줄로 접히는 항목도 있어 text-align 까지 함께 되돌립니다 — 안 그러면
+    두 번째 줄만 가운데로 갑니다) */
+@media (max-width: 560px) {
+  .dprof__list li { justify-content: flex-start; text-align: left }
+}
