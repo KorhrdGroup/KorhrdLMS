@@ -11,7 +11,6 @@ import SearchOverlay from './SearchOverlay';
 const NAV = [
   { href: '/jobs', label: '취업 길찾기' },
   { href: '/courses', label: '수강신청' },
-  { href: '/mylecture', label: '나의 강의실', requiresLogin: true },
   { href: '/certificate', label: '자격증 발급신청', requiresLogin: true },
   { href: '/reviews', label: '합격후기' },
   { href: '/notice', label: '공지사항' },
@@ -30,7 +29,7 @@ const NAV = [
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, userName } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
@@ -144,8 +143,11 @@ export default function Header() {
               <span className="header__auth">
                 {isLoggedIn ? (
                   <>
-                    <Link className="util-link util-link--strong" href="/mylecture?tab=mypage">
-                      {userName} 님
+                    {/* 이름 대신 갈 곳을 적습니다 — 이름은 길면 잘리고(8em) 어디로
+                        가는 버튼인지도 알기 어려웠습니다 (2026-08-12, 디자인 요청).
+                        메뉴에서 '나의 강의실' 을 뺐으므로 이 자리가 그 입구입니다. */}
+                    <Link className="util-link util-link--strong" href="/mylecture">
+                      나의 강의실
                     </Link>
                     {/* 로그아웃은 폼 제출로 합니다. 서버 액션을 코드에서 호출하면
                         액션 안의 redirect가 라우터를 타지 못해 세션이 남습니다.
