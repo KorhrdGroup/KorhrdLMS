@@ -335,3 +335,371 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 .article__body {
   border-bottom: 1px solid var(--line);
 }
+
+/* 게시글 본문 최소 높이 (2026-08-11, 디자인 요청)
+   후기가 두세 줄이면 본문 칸이 145px 밖에 안 돼서, 제목 블록(205px)보다도
+   작은 띠처럼 보이고 아래가 휑했습니다. 글이 짧아도 본문이 한 덩어리로
+   읽히도록 최소 높이를 둡니다.
+
+   값은 '몇 줄이 들어가는 칸인가' 로 잡았습니다 — 본문 한 줄이 26.6px
+   (14px * 1.9), 위아래 여백이 32px 씩입니다. box-sizing 이 border-box 라
+   아래 값에는 그 64px 이 포함돼 있습니다.
+     모바일   220px → 약 6줄   (좁아서 같은 글도 여러 줄로 감깁니다)
+     태블릿   260px → 약 7.5줄
+     데스크탑 280px → 약 8줄   (본문 폭 840px 이라 한 줄에 많이 들어갑니다)
+
+   폭이 넓을수록 같은 글이 적은 줄로 접혀 칸이 더 납작해지므로, 넓은 화면일수록
+   값을 키웁니다. 끊는 지점은 전달본이 쓰는 560 / 980 그대로입니다.
+
+   데스크탑이 300px 이 아니라 280px 인 이유: 1280x800 노트북에서 300px 이면
+   '목록으로' 버튼이 화면 밖으로 16px 밀려납니다. 280px 이면 아슬아슬하게
+   화면 안에 남습니다(제목이 두 줄이면 어차피 밀립니다).
+
+   글이 이미 긴 글에는 아무 영향이 없습니다.
+   (합격후기·공지 상세가 같은 마크업이라 두 곳에 함께 걸립니다) */
+.article__body { min-height: 220px }
+@media (min-width: 561px) { .article__body { min-height: 260px } }
+@media (min-width: 981px) { .article__body { min-height: 280px } }
+
+/* ==========================================================================
+   강의실 — 좁은 화면 순서·접힘 (2026-08-11, 디자인 요청)
+
+   전달본 classroom.css 는 980px 아래에서 `.lec-side{ order:-1 }` 로 오른쪽
+   묶음(학습자료 + 강의목차)을 통째로 영상 **위**에 올립니다. 그래서 강의실에
+   들어오면 20강짜리 목차부터 보이고 영상은 한참 내려야 나왔습니다.
+
+   바꾼 순서:  영상 → 현재 강의 → 진도율 → 이전/다음 강의 → 목차 → 학습자료 → FAQ
+   ========================================================================== */
+@media (max-width: 980px) {
+  /* 왼쪽 칸(영상~FAQ)과 오른쪽 묶음은 각각 한 덩어리라, 사이에 목차만 끼워
+     넣을 수 없습니다. 왼쪽 칸의 상자를 없애 그 안의 것들이 바깥 그리드의
+     칸이 되게 하면(display:contents) 하나씩 순서를 줄 수 있습니다.
+     오른쪽 <aside> 는 지역 표시(landmark)라 상자를 그대로 둡니다. */
+  .classroom__grid > div { display: contents }
+
+  /* 그리드 칸이 되면서 세로 간격이 gap + 각자의 margin 으로 겹칩니다.
+     margin 을 지우고 gap 하나로 통일합니다. */
+  .classroom__grid .cur-lecture,
+  .classroom__grid .lec-progress,
+  .classroom__grid .rv-cta { margin: 0 }
+
+  /* 간격은 16px 로 (2026-08-11, 디자인 요청)
+     전달본 gap 은 24px 인데, 한 칸으로 쌓이면 상자가 일곱 개 줄줄이 서서
+     좁은 화면에서 사이가 벙벙해 보였습니다. 오른쪽 묶음이 카드 사이에
+     쓰는 값(.lec-side gap:var(--s-6))과 같은 16px 로 맞춰, 쌓인 상자가
+     처음부터 끝까지 같은 간격이 되게 합니다.
+     (그 전에는 24 / 24 / 24 / 24 / 16 / 44 로 제각각이었습니다) */
+  .classroom__grid { row-gap: var(--s-6) }
+
+  /* 자주 묻는 질문은 카드 묶음이 아니라 제목이 따로 붙는 다른 단락이라
+     한 칸 더 띄웁니다 — gap 16 + 여기 16 = 32px. */
+  .lec-qna { margin-top: var(--s-6) }
+
+  /* 영상 묶음은 기본값(order:0)이라 먼저 옵니다 */
+  .lec-side { order: 1 }
+  .lec-qna { order: 2 }
+
+  /* 목차는 흐름에서 빠져 바텀시트가 되므로(아래 .toc-sheet), 오른쪽 묶음에
+     실제로 남는 것은 학습자료 하나뿐입니다. 순서를 매길 것이 없습니다. */
+}
+
+/* 목차·학습자료 접기 (2026-08-11, 디자인 요청)
+
+   여닫힘은 FAQ 와 같은 grid 0fr↔1fr 모프입니다(review.css .faq__a 주석 참고).
+   실제 내용 높이를 한 속성으로 애니메이션하므로 높이를 재지 않아도 열림·닫힘이
+   모두 매끄럽습니다. 안쪽(-inner)이 잘라 내는 일을 맡고, 여백은 그 안쪽 요소가
+   가집니다 — 자르는 요소에 padding 이 있으면 0fr 이 그 높이로 고정돼 안 닫힙니다.
+
+   기본값은 data-open 이 정합니다.
+     auto  아직 아무도 누르지 않음 → 데스크탑(981px~)에서만 펼침
+     true  / false — 누른 뒤. 화면 폭과 무관합니다.
+   기본 접힘을 자바스크립트로 정하면 펼쳐진 채 그려졌다가 접히면서 한 번
+   덜컹이므로, 화면 폭만 아는 CSS 에 맡깁니다. */
+.panel-card > .panel-body,
+.panel-card > .toc__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .32s cubic-bezier(.4, 0, .2, 1), opacity .24s ease;
+}
+.panel-card[data-open="true"] > .panel-body,
+.panel-card[data-open="true"] > .toc__panel { grid-template-rows: 1fr; opacity: 1 }
+@media (min-width: 981px) {
+  .panel-card[data-open="auto"] > .panel-body,
+  .panel-card[data-open="auto"] > .toc__panel { grid-template-rows: 1fr; opacity: 1 }
+}
+.panel-body-inner,
+.toc__panel-inner { overflow: hidden; min-height: 0 }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-card > .panel-body,
+  .panel-card > .toc__panel { transition: none }
+}
+
+/* 머리말 아래 구분선은 내용 쪽이 가집니다.
+   .toc__head 에 두면 접혔을 때 카드 테두리 바로 위에 선이 남아 아래쪽만 두 줄로
+   겹쳐 보이고, 접히는 동안 선만 먼저 사라져 깜빡입니다. 학습자료 카드가 이미
+   그렇게 하고 있습니다(.material-grid{ border-top }). 목차도 같게 맞춥니다. */
+.toc__head { border-bottom: 0 }
+.toc__list { border-top: 1px solid var(--line) }
+
+/* 목차 머리말이 버튼이 되면서 필요한 것.
+   .toc__head 는 space-between 인데 셰브론이 붙어 셋이 되면 완료 배지가
+   가운데로 흘러갑니다. 제목이 남은 자리를 다 먹게 해서 배지·셰브론을
+   오른쪽에 붙여 둡니다. */
+.toc__head { width: 100%; text-align: left }
+.toc__head b { margin-right: auto }
+
+/* 셰브론 — 전달본 공통 셰브론(review.css 의 .panel-toggle .chev)과 같은 값입니다.
+   그 규칙에 선택자를 더할 수 없어(전달본 파일은 건드리지 않습니다) 옮겨 적습니다. */
+.toc__head .chev {
+  flex: none; width: 22px; height: 22px;
+  background-color: var(--faint);
+  -webkit-mask: var(--chev) center / 18px no-repeat;
+  mask: var(--chev) center / 18px no-repeat;
+  transition: transform .2s;
+}
+.toc__head[aria-expanded="true"] .chev { transform: rotate(180deg) }
+
+/* 모바일 학습자료 — 세 칸을 한 줄에 (2026-08-11, 디자인 요청)
+   전달본은 560px 아래에서 세 칸을 세로로 쌓습니다(grid-template-columns:1fr).
+   접힌 상태가 기본이 되면서 펼쳤을 때 세 줄이 길게 이어지는 게 부담스러워
+   한 줄로 되돌리고, 대신 아이콘과 글자를 줄여 폭을 맞춥니다.
+     아이콘 52 → 40px (그림 34 → 26px) · 글자 14 → 11px · 좌우 여백 12 → 6px */
+@media (max-width: 560px) {
+  .material-grid { grid-template-columns: repeat(3, 1fr) }
+  .material-grid > * + * { border-left: 1px solid var(--line); border-top: 0 }
+  .material-grid > * {
+    padding: 14px 6px;
+    font-size: var(--fs-2xs);
+    gap: var(--s-2);
+    word-break: keep-all;
+  }
+  .material-grid .m-ico { width: 40px; height: 40px }
+  .material-grid .m-ico img { width: 26px; height: 26px }
+}
+
+/* 접힌 목차 카드 높이를 학습자료 카드와 맞춥니다 (2026-08-11)
+   학습자료 머리말(.panel-toggle)은 카드 여백 토큰을 쓰는데(좁은 화면에서
+   20 → 16px 로 줄어듭니다) .toc__head 만 18px 로 박혀 있어, 두 카드가 나란히
+   접혔을 때 목차 쪽이 6px 더 높았습니다. 같은 토큰을 씁니다.
+   좌우는 20px 그대로 둡니다 — 아래 목록 줄(.toc__item a)과 왼쪽 선을
+   맞춰야 합니다. (아랫줄 문제는 위 '머리말 아래 구분선' 항목에서 다룹니다) */
+.toc__head { padding: var(--pad-card-y) 20px }
+
+/* 강의실 — 넓은 화면에서는 이전/다음 강의 버튼을 빼둡니다 (2026-08-11, 디자인 요청)
+   2단일 때는 오른쪽에 강의목차가 늘 펼쳐져 있어 아무 차시로나 바로 갈 수
+   있습니다. 그 아래 버튼 두 개는 같은 일을 한 번 더 하는 셈입니다.
+   한 칸으로 접히는 980px 아래에서는 목차가 접혀 있으니 그대로 둡니다.
+   (.rv-cta 는 시험·성적 화면도 쓰는 공통 버튼 줄이라 강의실 안으로 한정합니다) */
+/* 세 칸을 상자 하나로 묶고 사이를 선으로 나눕니다 (2026-08-11, 디자인 요청).
+   버튼 세 개가 각자 테두리를 두르고 떨어져 있으면 서로 다른 일을 하는 것처럼
+   보였는데, 실제로는 '어느 강의로 갈까' 하나를 셋으로 나눈 것입니다.
+   테두리는 상자가 하나만 두르고, 칸 사이는 1px 선으로만 나눕니다. */
+.classroom__grid .rv-cta {
+  display: flex;
+  gap: 0;
+  /* 카드들과 같은 1px 테두리입니다 (버튼 기본값 1.5px 이 아니라) */
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+/* 안쪽 버튼은 테두리·모서리를 내려놓고 칸 노릇만 합니다.
+   배경은 비워 상자 색이 비치게 두되, 누를 때 밝아지는 것(.btn--ghost:hover)은
+   그대로 살립니다. */
+.classroom__grid .rv-cta .btn {
+  border: 0; border-radius: 0; background: none;
+  padding: 12px 14px;
+}
+.classroom__grid .rv-cta .btn + .btn { border-left: 1px solid var(--line) }
+@media (min-width: 981px) {
+  .classroom__grid .rv-cta { display: none }
+}
+
+/* 강의실 진도율 — 좁은 화면에서 낮추고, 목차 아래로 (2026-08-11, 디자인 요청)
+
+   자리. 진도율은 지금 무엇을 할지가 아니라 얼마나 왔는지를 알려 주는 요약이라,
+   좁은 화면에서는 영상·이동 버튼·목차 다음으로 내립니다.
+     영상 → 현재 강의 → 이전/다음 → 목차 → 학습자료 → 진도율 → FAQ
+
+   크기. 28px 숫자(페이지 제목 크기)에 위아래 18px 여백이라 상자가 83px 이었습니다.
+   진도율은 한 줄짜리 알림인데 영상 아래에서 제목만큼 자리를 차지했습니다.
+   숫자를 섹션 제목 크기(22px)로, 위아래 여백을 14px 로 줄입니다 — 어느 폭에서나
+   같습니다. 좌우만 좁은 화면에서 한 번 더 좁힙니다.
+   막대 두께와 색은 그대로입니다 — 읽는 데 필요한 정보는 줄지 않습니다.
+     데스크탑 83 → 63px · 모바일 83 → 61px */
+@media (max-width: 980px) {
+  .classroom__grid .lec-progress { order: 2 }
+  .lec-qna { order: 3 }
+}
+.lec-progress { padding: 14px 22px }
+.lec-progress__pct { font-size: var(--fs-xl) }
+@media (max-width: 560px) {
+  .lec-progress { padding: 12px 16px }
+}
+
+/* 이전/다음 강의 버튼에 방향 화살표 (2026-08-11, 디자인 요청)
+   전달본 페이지네이션이 쓰는 것과 같은 마스크 화살표(--arr)입니다
+   (account.css .pagination__arrow). currentColor 라 흰 글자 버튼에서는 희게,
+   테두리 버튼에서는 글자색으로 따라갑니다.
+   .btn 이 이미 inline-flex + gap 이라 가상 요소가 칸 하나를 차지합니다.
+   한쪽 강의가 없으면 버튼도 없으므로 남은 버튼의 화살표만 나옵니다. */
+.classroom__grid .rv-cta .btn::before,
+.classroom__grid .rv-cta .btn::after {
+  content: "";
+  flex: none; width: 14px; height: 14px;
+  background-color: currentColor;
+  -webkit-mask: var(--arr) center / contain no-repeat;
+  mask: var(--arr) center / contain no-repeat;
+}
+/* 방향은 버튼 종류가 아니라 lec-nav--prev/next 가 정합니다.
+   이전·다음이 같은 모양(.btn--ghost)이 되면서 종류로는 구분할 수 없습니다. */
+.classroom__grid .rv-cta .lec-nav--prev::after,
+.classroom__grid .rv-cta .lec-nav--next::before { content: none }
+
+/* ==========================================================================
+   강의목차 바텀시트 (2026-08-11, 디자인 요청)
+
+   좁은 화면에서는 목차를 이전/다음 버튼 사이의 버튼으로 열고, 아래에서
+   올라오는 시트로 보여 줍니다. 목록이 20강씩 되다 보니 그 자리에서 펼치면
+   화면을 다 잡아먹었습니다.
+
+   목록을 두 벌 그리지 않으려고, 오른쪽 카드를 전달본 필터 시트 껍데기
+   (.fsheet — course.css)로 감싸기만 했습니다. 981px 부터는 껍데기를
+   display:contents 로 없애 카드가 다시 .lec-side 의 자식이 됩니다.
+   ========================================================================== */
+
+/* --- 넓은 화면: 껍데기를 없애 원래 카드로 되돌립니다 --- */
+@media (min-width: 981px) {
+  .toc-sheet,
+  .toc-sheet .fsheet__panel { display: contents }
+  /* .fsheet 는 닫힌 시트를 visibility:hidden 으로 감춥니다. 상자가 사라져도
+     visibility 는 자식에게 물려지므로 여기서 되돌려 놓아야 합니다. */
+  .toc-sheet { visibility: visible }
+  .toc-sheet .fsheet__dim { display: none }
+}
+
+/* --- 좁은 화면: 시트 --- */
+@media (max-width: 980px) {
+  /* 열림 여부는 data-open 이 정합니다. .fsheet 원래 방식인 is-open 클래스는
+     자바스크립트가 붙이는 것이라, 첫 화면에서 열린 채 그려졌다가 닫히며
+     덜컹입니다. 접힘 기본값을 CSS 가 정하는 다른 곳들과 같은 방식입니다. */
+  .toc-sheet[data-open="true"] { visibility: visible; transition-delay: 0s }
+  .toc-sheet[data-open="true"] .fsheet__dim { opacity: 1 }
+  .toc-sheet[data-open="true"] .fsheet__panel { transform: none }
+
+  /* 목차는 항목 수가 과정마다 달라서, 필터 시트처럼 높이를 고정하지 않고
+     내용만큼만 올라오되 화면의 3/4 을 넘지 않게 합니다. */
+  .toc-sheet .fsheet__panel { height: auto; max-height: 75vh }
+
+  /* 카드 테두리·모서리는 시트가 가지므로 안쪽 카드에서는 뺍니다 */
+  .toc-sheet .panel-card {
+    display: flex; flex-direction: column; min-height: 0;
+    border: 0; border-radius: 0; background: none;
+  }
+
+  /* 시트 안에서는 목록이 늘 펼쳐져 있습니다 — 여닫는 건 시트 자체입니다.
+     머리말은 시트 제목 줄이 되고, 누르면 닫힙니다. */
+  .toc-sheet .toc__panel {
+    grid-template-rows: 1fr; opacity: 1; transition: none;
+    flex: 1; min-height: 0;
+  }
+  .toc-sheet .toc__panel-inner { display: flex; min-height: 0 }
+  .toc-sheet .toc__list { max-height: none; flex: 1; border-top: 0 }
+  .toc-sheet .toc__head { border-bottom: 1px solid var(--line) }
+  /* 시트가 올라와 있을 때 머리말 화살표는 아래쪽 — 누르면 내려간다는 뜻입니다.
+     (접기였을 때는 열린 상태에서 위를 가리키는 게 맞았습니다) */
+  .toc-sheet .toc__head[aria-expanded="true"] .chev { transform: none }
+}
+
+
+/* ==========================================================================
+   강의실 이동 줄 — 이전 · 강의목차 · 다음 (2026-08-11, 디자인 요청)
+
+   위계: 이전/다음은 같은 무게여야 합니다. 남색(.btn--primary)은 '지금 눌러야
+   하는 버튼' 신호라 강의 이동에는 과했습니다. 둘 다 전달본의 조용한 아웃라인
+   (.btn--ghost.btn--quiet)으로 맞췄습니다 — 새 색을 만들지 않았습니다.
+   가운데 목차만 글자색이 진하고 파란 강 수·남색 배지를 달고 있어, 크기와
+   내용만으로 이 줄의 중심이 됩니다.
+
+   화살표: 받은 꼬리 달린 화살표(left_tail/right_tail.svg)입니다. 파일로 두지
+   않고 토큰처럼 인라인해 마스크로 씁니다 — 원본 SVG 가 검정 고정이라 그대로
+   쓰면 조용한 회색 글자와 색이 어긋납니다. currentColor 로 두면 글자를 따라갑니다.
+   ========================================================================== */
+:root {
+  --arr-tail-left: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3Cpath d='M14.5965 7.10263H3.67826L7.72381 3.24975C8.09182 2.89925 8.09182 2.33113 7.72381 1.98064C7.35579 1.63015 6.75926 1.63015 6.39124 1.98064L0.737045 7.36557L0.672625 7.43393C0.370738 7.78644 0.392029 8.30609 0.737045 8.63467L6.39124 14.0196C6.75926 14.3701 7.35579 14.3701 7.72381 14.0196C8.09182 13.6691 8.09182 13.101 7.72381 12.7505L3.67826 8.89761L14.5965 8.89761C15.1169 8.89761 15.5388 8.49579 15.5388 8.00012C15.5388 7.50445 15.1169 7.10263 14.5965 7.10263Z' fill='black'/%3E %3C/svg%3E");
+  --arr-tail-right: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3Cpath d='M1.40355 7.10263H12.3217L8.27619 3.24975C7.90818 2.89925 7.90818 2.33113 8.27619 1.98064C8.64421 1.63015 9.24074 1.63015 9.60876 1.98064L15.263 7.36557L15.3274 7.43393C15.6293 7.78644 15.608 8.30609 15.263 8.63467L9.60876 14.0196C9.24074 14.3701 8.64421 14.3701 8.27619 14.0196C7.90818 13.6691 7.90818 13.101 8.27619 12.7505L12.3217 8.89761L1.40355 8.89761C0.883093 8.89761 0.461182 8.49579 0.461182 8.00012C0.461182 7.50445 0.883093 7.10263 1.40355 7.10263Z' fill='black'/%3E %3C/svg%3E");
+}
+
+@media (max-width: 980px) {
+  /* 양옆은 내용만큼만, 가운데가 남는 자리를 다 가집니다 */
+  .classroom__grid .rv-cta .btn { width: auto; flex: none }
+  .classroom__grid .rv-cta .toc-open { flex: 1; min-width: 0; gap: var(--s-3) }
+
+  /* 가운데 목차 — 시트 머리말과 같은 것을 보여 줍니다.
+     머리말은 16px 이지만 여기서는 한 줄에 셋이 들어가야 해서 본문 크기로 낮춥니다. */
+  .classroom__grid .rv-cta .toc-open b { font-size: var(--fs-sm); font-weight: 700 }
+  .classroom__grid .rv-cta .toc-open b span { color: var(--blue); margin-left: 3px }
+  .classroom__grid .rv-cta .toc-open .toc__badge { flex: none }
+  /* 셰브론을 오른쪽 끝으로 밀지 않습니다 — 세 조각이 한 덩어리로 가운데
+     오도록 두면 좌우 여백이 같아집니다(.btn 이 이미 justify-content:center). */
+  .classroom__grid .rv-cta .toc-open .chev {
+    flex: none; width: 16px; height: 16px;
+    background-color: var(--faint);
+    -webkit-mask: var(--chev) center / contain no-repeat;
+    mask: var(--chev) center / contain no-repeat;
+  }
+  .classroom__grid .rv-cta .toc-open::before,
+  .classroom__grid .rv-cta .toc-open::after { content: none }
+
+  /* 이전/다음 화살표 — 받은 꼬리 달린 화살표로 바꿉니다 */
+  .classroom__grid .rv-cta .lec-nav--prev::before {
+    -webkit-mask-image: var(--arr-tail-left);
+    mask-image: var(--arr-tail-left);
+    transform: none;
+  }
+  .classroom__grid .rv-cta .lec-nav--next::after {
+    -webkit-mask-image: var(--arr-tail-right);
+    mask-image: var(--arr-tail-right);
+    transform: none;
+  }
+}
+
+/* 모바일(375px 기준 335px)은 셋을 다 담기에 빠듯합니다. 완료 배지만 뺍니다
+   (2026-08-11, 디자인 요청) — 진도는 바로 아래 진도율 막대에도 있고, 시트를
+   열면 머리말에 그대로 나옵니다. 강의목차·총 N강·화살표는 남습니다. */
+@media (max-width: 560px) {
+  .classroom__grid .rv-cta .toc-open .toc__badge { display: none }
+  .classroom__grid .rv-cta .btn { padding: 12px 10px }
+}
+
+/* 학습자료 — 첫 칸만 남색이던 것 (2026-08-11, 디자인 요청)
+   전달본은 `.material-grid a:first-child{ color:var(--navy); font-weight:700 }`
+   으로 교안파일 다운로드만 진하게 두었습니다. 세 칸은 고르는 자리이지
+   하나가 더 중요한 자리가 아니라, 옆 칸들과 같은 회색으로 맞춥니다
+   (.material-grid > * 의 값과 같습니다). */
+.material-grid a:first-child { color: var(--muted); font-weight: 600 }
+
+/* 기출문제 풀이 정보 칸 — 좁은 화면에서 1 + 2 로 (2026-08-11, 디자인 요청)
+   전달본은 980px 아래에서 2칸으로 접습니다(classroom.css). 항목이 셋인
+   기출문제 풀이에서는 [과정|문항수] / [유형] 이 되어, 가장 긴 과정명이 반 칸에
+   갇히고 아래 한 칸만 덩그러니 남았습니다.
+   과정을 윗줄 한 칸으로 펴고 문항수·유형을 아랫줄에 나란히 둡니다.
+   가운데 정렬과 칸 사이 선은 전달본 것이 그대로 걸립니다
+   (.exam-info div{ text-align:center } · nth-child(n+3) 윗선).
+   항목이 넷인 수료시험은 그대로 2x2 입니다. */
+@media (max-width: 980px) {
+  .exam-info:has(> div:nth-child(3):last-child) > div:first-child {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+  }
+  /* 세로선은 아랫줄 두 칸 **사이**에만 둡니다. 전달본은 '앞 칸이 있으면 왼쪽 선'
+     (div + div) 이라 아랫줄 왼쪽 칸에도 선이 붙어 상자 맨 왼쪽에 그어졌고,
+     반대로 3번째 칸은 선을 지우고 있었습니다 — 줄이 바뀌면서 뒤집힙니다. */
+  .exam-info:has(> div:nth-child(3):last-child) > div:nth-child(2) { border-left: 0 }
+  .exam-info:has(> div:nth-child(3):last-child) > div:nth-child(3) {
+    border-left: 1px solid rgba(255, 255, 255, .12);
+    border-top: 0;
+  }
+}

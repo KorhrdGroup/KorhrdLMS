@@ -83,17 +83,31 @@ export default async function JobDetailPage({ params }: Params) {
             <section className="jobd-block">
               <h2>채용공고는 여기에서 확인하세요</h2>
               <div className="jobd-sites">
-                {sites.map((s) =>
-                  s.url ? (
+                {sites.map((s) => {
+                  /* 로고 파일이 있는 곳만 마크를 답니다. "지역 복지관 홈페이지"처럼
+                     특정 사이트를 가리키지 않는 항목은 링크도 로고도 없으므로
+                     이름만 둡니다 — 자리표시 네모나 링크 아이콘을 넣지 않습니다.
+                     크기는 원본 job.css 의 16x16 이고, 로고 비율이 제각각이라
+                     contain 으로 맞춥니다. */
+                  const mark = s.logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={`/job-site/${s.logo}`} alt="" aria-hidden="true"
+                      width={16} height={16}
+                      style={{ width: 16, height: 16, objectFit: 'contain', flexShrink: 0 }}
+                    />
+                  ) : null;
+
+                  return s.url ? (
                     <a className="jobd-site" key={s.name} href={s.url} target="_blank" rel="noopener noreferrer">
-                      <span className="ph" aria-hidden="true" />{s.name}
+                      {mark}{s.name}
                     </a>
                   ) : (
                     <span className="jobd-site" key={s.name}>
-                      <span className="ph" aria-hidden="true" />{s.name}
+                      {mark}{s.name}
                     </span>
-                  )
-                )}
+                  );
+                })}
               </div>
               <p className="jobd-note">※ 외부 채용 사이트로 연결됩니다.</p>
             </section>
