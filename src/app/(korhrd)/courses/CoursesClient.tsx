@@ -155,7 +155,7 @@ export default function CoursesClient({ initial = {} }: {
 
   /* 고른 조건 수. 전에는 버튼에 고른 조건을 그대로 적었는데(원본 syncLabel —
      '복지·돌봄 과정 외 2개'), 검색바와 한 줄을 나눠 쓰게 되면서 조건이 길면
-     버튼이 넓어져 검색칸을 밀어냈습니다. 이름은 '과정 필터' 로 고정하고
+     버튼이 넓어져 검색칸을 밀어냈습니다. 이름은 '필터' 로 고정하고
      몇 개를 골랐는지는 숫자로 보여 줍니다 (2026-08-12, 디자인 요청). */
   const chosenCount = FILTER_GROUPS.reduce((n, { group }) => n + picked[group].length, 0);
 
@@ -270,14 +270,17 @@ export default function CoursesClient({ initial = {} }: {
           aria-expanded={filterOpen} aria-controls="course-filters"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <span data-filter-toggle-label>과정 필터</span>
+          <span data-filter-toggle-label>필터</span>
           {chosenCount > 0 ? (
             <span className="filter-toggle__count">
               {chosenCount}
               <span className="sr-only">개 조건 선택됨</span>
             </span>
           ) : null}
-          <span className="chev" aria-hidden="true">⌄</span>
+          {/* 셰브론(⌄)은 '아래로 펼친다' 는 뜻인데 이 버튼은 시트를 띄웁니다.
+              시안의 필터 아이콘(Figma tool/filter 332:8251)으로 바꿉니다
+              (2026-08-12, 디자인 요청). 그림은 CSS 가 마스크로 그립니다. */}
+          <span className="filter-toggle__ico" aria-hidden="true" />
         </button>
       </div>
 

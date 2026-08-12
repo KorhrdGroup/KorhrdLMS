@@ -899,6 +899,16 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   /* 버튼은 글자만큼만 — 남는 자리는 검색바가 가집니다 */
   .course-bar .filter-toggle { flex: none; width: auto }
 
+  /* 필터 아이콘 — 시안 tool/filter 332:8251.
+     색은 Atomic/Mono/400 #B2B2B2 = 사이트 토큰 --mono-400 과 같은 값입니다.
+     색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다. */
+  .filter-toggle__ico {
+    flex: none; width: 18px; height: 18px;
+    background-color: var(--mono-400);
+    -webkit-mask: url("/korhrd/img/icon/filter.svg") center / contain no-repeat;
+    mask: url("/korhrd/img/icon/filter.svg") center / contain no-repeat;
+  }
+
   /* 고른 조건 수 — 사이드바 묶음 배지와 같은 모양입니다 */
   .filter-toggle__count {
     flex: none;
