@@ -898,6 +898,22 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 .search-field input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
   /* 버튼은 글자만큼만 — 남는 자리는 검색바가 가집니다 */
   .course-bar .filter-toggle { flex: none; width: auto }
+
+  /* 고른 조건 수 — 사이드바 묶음 배지와 같은 모양입니다 */
+  .filter-toggle__count {
+    flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-sizing: border-box; min-width: 18px; height: 18px; padding: 0 5px;
+    border-radius: var(--r-full); background: var(--blue-soft); color: var(--blue);
+    font-size: var(--fs-2xs); font-weight: 700; line-height: 1;
+  }
+}
+
+/* 모바일은 한 줄을 검색바와 나눠 쓰므로 버튼을 더 좁힙니다 (2026-08-12, 디자인 요청).
+   좌우 여백을 14 → 10px 로 줄이고 조각 사이 간격도 좁혀, 남는 자리는 검색칸이
+   가져갑니다. */
+@media (max-width: 560px) {
+  .course-bar .filter-toggle { padding: 11px 10px; gap: var(--s-2) }
 }
 
 @media (max-width: 560px) {

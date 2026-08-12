@@ -151,14 +151,11 @@ export default function CoursesClient({ initial = {} }: {
 
   const resetAll = () => setPicked({ cat: [], purpose: [], age: [], gov: [] });
 
-  /** 토글 버튼 라벨 — 원본 syncLabel(). 고른 게 없으면 기본 문구, 여럿이면 '첫째 외 N개' */
-  const chosenAll = FILTER_GROUPS.flatMap(({ group, values, suffix = '' }) =>
-    values.filter((v) => picked[group].includes(v)).map((v) => v + suffix),
-  );
-  const toggleLabel =
-    chosenAll.length === 0 ? '자격증 과정 전체'
-    : chosenAll.length === 1 ? chosenAll[0]
-    : `${chosenAll[0]} 외 ${chosenAll.length - 1}개`;
+  /* 고른 조건 수. 전에는 버튼에 고른 조건을 그대로 적었는데(원본 syncLabel —
+     '복지·돌봄 과정 외 2개'), 검색바와 한 줄을 나눠 쓰게 되면서 조건이 길면
+     버튼이 넓어져 검색칸을 밀어냈습니다. 이름은 '과정 필터' 로 고정하고
+     몇 개를 골랐는지는 숫자로 보여 줍니다 (2026-08-12, 디자인 요청). */
+  const chosenCount = FILTER_GROUPS.reduce((n, { group }) => n + picked[group].length, 0);
 
   /* 검색 폼. 좁은 화면은 고정 줄(.course-bar)에, 넓은 화면은 도구 줄(.toolbar)에
      놓입니다 — 자리가 달라 두 벌을 그리고 CSS 가 폭에 맞는 쪽만 보여 줍니다.
@@ -271,7 +268,13 @@ export default function CoursesClient({ initial = {} }: {
           aria-expanded={filterOpen} aria-controls="course-filters"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <span data-filter-toggle-label>{toggleLabel}</span>
+          <span data-filter-toggle-label>과정 필터</span>
+          {chosenCount > 0 ? (
+            <span className="filter-toggle__count">
+              {chosenCount}
+              <span className="sr-only">개 조건 선택됨</span>
+            </span>
+          ) : null}
           <span className="chev" aria-hidden="true">⌄</span>
         </button>
       </div>
