@@ -86,6 +86,10 @@ export async function getLiveFeed(): Promise<LiveRow[]> {
     .slice(0, MAX_ROWS)
     .map(({ at: _at, ...row }) => row);
 
-  // 실데이터가 아직 적으면 더미(운영 지정 목록)로 뒤를 채웁니다.
-  return [...real, ...LIVE_FEED].slice(0, MAX_ROWS);
+  /* 실데이터가 아직 적으면 더미(운영 지정 목록)로 뒤를 채웁니다.
+     더미의 date 는 코드에 박혀 있어 그대로 쓰면 시간이 지날수록 낡습니다
+     (다음 달에도 26-08-11 로 보입니다). 실데이터와 마찬가지로 오늘로 덮습니다
+     (2026-08-12, 디자인 요청). liveFeed.ts 의 값은 목록 차례를 보여 주는
+     자료로 그대로 둡니다. */
+  return [...real, ...LIVE_FEED.map((row) => ({ ...row, date: todayShort() }))].slice(0, MAX_ROWS);
 }
