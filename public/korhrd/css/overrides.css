@@ -720,3 +720,17 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   padding-right: 38px;
   cursor: pointer;
 }
+
+/* 발급신청 완료 — 입금 안내 줄 (2026-08-12, 디자인 요청)
+   같은 목록의 배송지·배송예정·발급형태는 확인용 정보지만, 이 줄만 실제로 할 일
+   (입금)입니다. 전달본이 선택·강조에 쓰는 연블루(--blue-soft)를 깔고 가운데로
+   모아 다른 줄과 구분합니다.
+
+   .next-list li 는 flex + align-items:center 라 글자가 왼쪽에 붙습니다.
+   가운데로 세우려면 주축(가로) 정렬도 함께 바꿔야 합니다. */
+.next-list li.next-list__pay {
+  justify-content: center;
+  background: var(--blue-soft);
+  text-align: center;
+  line-height: 1.7;
+}

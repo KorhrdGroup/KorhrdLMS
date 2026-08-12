@@ -64,10 +64,14 @@ export default async function Page({ searchParams }: PageProps) {
               <span><b>발급 형태</b> — 상장형 · 카드형 자격증 동시 발급</span>
             </li>
             {receipt.needsDeposit ? (
-              <li>
-                  <span>
-                  <b>입금하실 금액</b> — {won(receipt.payableAmount)} · 신한은행 140-015-773620
-                  (주)한평생그룹 (본인 명의 입금)
+              /* 입금 안내는 이 화면에서 가장 먼저 읽혀야 하는 줄이라 다른 줄과
+                 다르게 그립니다 — 연블루 바탕에 가운데 정렬(overrides.css).
+                 '입금하실 금액 —' 이라는 이름표는 금액이 크게 서 있으면 없어도
+                 읽히므로 뺐습니다 (2026-08-12, 디자인 요청). */
+              <li className="next-list__pay">
+                <span>
+                  {won(receipt.payableAmount)}<br />
+                  신한은행 140-015-773620 (주)한평생그룹 (본인 명의 입금)
                   <CopyAccountButton text="신한은행 140-015-773620 (주)한평생그룹" />
                 </span>
               </li>
