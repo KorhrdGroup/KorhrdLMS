@@ -774,11 +774,40 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 }
 .course-bar .m-search { flex: 1; min-width: 0; margin-bottom: 0 }
 
-/* 입력칸 안 ✕ — 헤더 검색(.search-field button)과 같은 모양입니다.
+/* 입력칸 안 지우기 버튼 (2026-08-12, 디자인 요청)
+   Figma button_top 64:5454 — 회색 동그라미(Atomic/Mono/200 #E4E4E4) 안에 회색
+   ✕(Atomic/Mono/600 #656565), 아주 옅은 그림자. 두 색 다 사이트 토큰과 같은
+   값이라 --line · --muted 를 그대로 씁니다.
+
+   ✕ 는 글자가 아니라 시안에서 받은 아이콘 파일입니다(글꼴마다 모양이 다릅니다).
+   색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다 — 사이트가 셰브론에
+   쓰는 방식과 같습니다.
+
+   크기는 시안 비율(아이콘 14 / ✕ 10)을 유지하며 입력칸에 맞춰 줄였습니다:
+   동그라미 20px · ✕ 10px.
+
    type=search 가 브라우저마다 그리는 기본 ✕ 는 감춥니다(모양이 제각각입니다). */
-.m-search__clear { flex: none; color: var(--muted); font-size: var(--fs-md); line-height: 1; padding: 4px }
-.m-search__clear[hidden] { display: none }
-.m-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
+.m-search__clear,
+.search-field__clear {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0;
+  border-radius: var(--r-full);
+  background: var(--line);
+  box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+}
+.m-search__clear::before,
+.search-field__clear::before {
+  content: "";
+  width: 10px; height: 10px;
+  background-color: var(--muted);
+  -webkit-mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+  mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+}
+.m-search__clear[hidden],
+.search-field__clear[hidden] { display: none }
+.m-search input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
 
 /* 넓은 화면에서도 이 화면에서는 검색바를 보여 줍니다 (2026-08-12, 디자인 요청).
    전달본은 헤더 검색과 겹친다고 감췄는데(.m-search{display:none}), 목록을 보며
@@ -833,11 +862,40 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   /* 전달본의 아래 여백은 이제 줄이 가집니다 */
   .course-bar .m-search { flex: 1; min-width: 0; margin-bottom: 0 }
 
-/* 입력칸 안 ✕ — 헤더 검색(.search-field button)과 같은 모양입니다.
+/* 입력칸 안 지우기 버튼 (2026-08-12, 디자인 요청)
+   Figma button_top 64:5454 — 회색 동그라미(Atomic/Mono/200 #E4E4E4) 안에 회색
+   ✕(Atomic/Mono/600 #656565), 아주 옅은 그림자. 두 색 다 사이트 토큰과 같은
+   값이라 --line · --muted 를 그대로 씁니다.
+
+   ✕ 는 글자가 아니라 시안에서 받은 아이콘 파일입니다(글꼴마다 모양이 다릅니다).
+   색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다 — 사이트가 셰브론에
+   쓰는 방식과 같습니다.
+
+   크기는 시안 비율(아이콘 14 / ✕ 10)을 유지하며 입력칸에 맞춰 줄였습니다:
+   동그라미 20px · ✕ 10px.
+
    type=search 가 브라우저마다 그리는 기본 ✕ 는 감춥니다(모양이 제각각입니다). */
-.m-search__clear { flex: none; color: var(--muted); font-size: var(--fs-md); line-height: 1; padding: 4px }
-.m-search__clear[hidden] { display: none }
-.m-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
+.m-search__clear,
+.search-field__clear {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0;
+  border-radius: var(--r-full);
+  background: var(--line);
+  box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+}
+.m-search__clear::before,
+.search-field__clear::before {
+  content: "";
+  width: 10px; height: 10px;
+  background-color: var(--muted);
+  -webkit-mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+  mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+}
+.m-search__clear[hidden],
+.search-field__clear[hidden] { display: none }
+.m-search input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
   /* 버튼은 글자만큼만 — 남는 자리는 검색바가 가집니다 */
   .course-bar .filter-toggle { flex: none; width: auto }
 }

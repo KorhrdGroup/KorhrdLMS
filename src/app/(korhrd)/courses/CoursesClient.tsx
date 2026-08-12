@@ -175,13 +175,13 @@ export default function CoursesClient({ initial = {} }: {
         value={term} onChange={(event) => setTerm(event.target.value)}
       />
       {/* 헤더 검색과 같은 자리·같은 모양입니다. 입력이 있을 때만 보입니다
-          (type=search 의 브라우저 기본 ✕ 는 CSS 에서 감춥니다) */}
+          (type=search 의 브라우저 기본 ✕ 는 CSS 에서 감춥니다).
+          동그라미와 ✕ 는 CSS 가 그립니다 — 시안(Figma 64:5454)의 아이콘 파일을
+          마스크로 씁니다. */}
       <button
         type="button" className="m-search__clear" aria-label="검색어 지우기"
         hidden={term.length === 0} onClick={clearSearch}
-      >
-        ✕
-      </button>
+      />
       <button type="submit" aria-label="검색">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
