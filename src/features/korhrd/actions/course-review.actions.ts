@@ -137,6 +137,17 @@ export async function toggleReviewHelpfulAction(
     .select("review_id", { count: "exact", head: true })
     .eq("review_id", reviewId);
 
+  // 시드 수치(helpful_seed_count)를 더해야 목록과 같은 숫자가 됩니다.
+  const { data: seedRow } = await supabase
+    .from("course_reviews")
+    .select("helpful_seed_count")
+    .eq("id", reviewId)
+    .maybeSingle();
+
   revalidatePath("/reviews");
-  return { success: true, helpful: count ?? 0, helpfulByMe: !existing };
+  return {
+    success: true,
+    helpful: (count ?? 0) + (seedRow?.helpful_seed_count ?? 0),
+    helpfulByMe: !existing,
+  };
 }

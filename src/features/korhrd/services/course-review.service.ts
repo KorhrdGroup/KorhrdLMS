@@ -40,6 +40,8 @@ type ReviewRow = {
   member_id: string | null;
   /** 시드(홍보)용 후기의 하드코딩 작성자 이름 — 있으면 회원 이름 대신 씁니다. */
   author_name: string | null;
+  /** 시드 도움됐어요 수치 — 실제 클릭 수에 더해서 보여줍니다. */
+  helpful_seed_count: number;
   member: { name: string } | null;
   course: { id: string; name: string } | null;
 };
@@ -47,7 +49,7 @@ type ReviewRow = {
 // members는 course_review_helpfuls를 통해서도 연결돼 경로가 모호해집니다.
 // 어떤 외래키로 이어붙일지 제약 이름으로 못박습니다.
 const REVIEW_SELECT = `
-  id, title, body, photo_url, also_course_ids, created_at, member_id, author_name,
+  id, title, body, photo_url, also_course_ids, created_at, member_id, author_name, helpful_seed_count,
   member:members!course_reviews_member_id_fkey ( name ),
   course:courses!course_reviews_course_id_fkey ( id, name )
 ` as const;
@@ -99,7 +101,7 @@ export async function listCourseReviews(options?: {
       alsoCourses: (row.also_course_ids ?? [])
         .map((id) => nameById.get(id))
         .filter((name): name is string => Boolean(name)),
-      helpful: countByReview.get(row.id) ?? 0,
+      helpful: (countByReview.get(row.id) ?? 0) + (row.helpful_seed_count ?? 0),
       helpfulByMe: mineByReview.has(row.id),
       photo: row.photo_url ?? undefined,
       mine: options?.viewerId === row.member_id,

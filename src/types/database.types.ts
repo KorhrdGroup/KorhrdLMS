@@ -888,6 +888,7 @@ export type Database = {
           course_id: string
           created_at: string
           deleted_at: string | null
+          helpful_seed_count: number
           id: string
           is_published: boolean
           member_id: string | null
@@ -902,6 +903,7 @@ export type Database = {
           course_id: string
           created_at?: string
           deleted_at?: string | null
+          helpful_seed_count?: number
           id?: string
           is_published?: boolean
           member_id?: string | null
@@ -916,6 +918,7 @@ export type Database = {
           course_id?: string
           created_at?: string
           deleted_at?: string | null
+          helpful_seed_count?: number
           id?: string
           is_published?: boolean
           member_id?: string | null
