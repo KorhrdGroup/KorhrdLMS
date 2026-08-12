@@ -14,6 +14,10 @@ const EXAM_NAV_ITEMS = [
     label: "시험문제 관리(인쇄용)",
     href: "/admin/exams/questions",
   },
+  {
+    label: "합격/불합격 현황",
+    href: "/admin/exams/results",
+  },
 ] as const;
 
 const OTHER_ITEM_HREFS = EXAM_NAV_ITEMS.filter((item) => item.href !== "/admin/exams").map(
