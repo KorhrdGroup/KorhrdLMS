@@ -37,13 +37,13 @@ const STEPS = [
  *  줄이 모자라면 남는 높이를 행 간격으로 나눠 가집니다. */
 const HOME_NOTICE_LIMIT = 5;
 
-/* 취득 절차 화면을 없애면서 고객센터의 같은 문항으로 보냅니다 (2026-08-12).
+/* 고객센터의 같은 문항으로 보냅니다 (2026-08-12).
    # 뒤 id 는 SupportFaq 의 문항 id 입니다 — 그 문항이 펼쳐진 채로 열립니다. */
 const FAQS = [
-  { q: '수강료가 정말 0원인가요? 추가 비용은요?', href: '/support#s1' },
-  { q: '수료 조건과 시험 기준이 어떻게 되나요?', href: '/support#s2' },
-  { q: '자격증 발급까지 얼마나 걸리나요?', href: '/support#s3' },
-  { q: '자격증은 이력서에 기재 가능한가요?', href: '/support#s7' },
+  { q: '수강료가 정말 0원인가요? 추가 비용은요?', href: '/support/faq#s1' },
+  { q: '수료 조건과 시험 기준이 어떻게 되나요?', href: '/support/faq#s2' },
+  { q: '자격증 발급까지 얼마나 걸리나요?', href: '/support/faq#s3' },
+  { q: '자격증은 이력서에 기재 가능한가요?', href: '/support/faq#s7' },
 ];
 
 const NATCERTS = [
@@ -280,7 +280,7 @@ export default async function HomePage() {
             <div>
               <div className="list-head">
                 <h2>공지사항</h2>
-                <Link className="section-head__more" href="/notice">더보기 →</Link>
+                <Link className="section-head__more" href="/support">더보기 →</Link>
               </div>
               {/* 공지가 5건이 안 되면 남는 줄은 빈 칸으로 둡니다 — 칸 수를 고정해야
                   공지가 늘고 줄어도 목록 높이가 들썩이지 않습니다.

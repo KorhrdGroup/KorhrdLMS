@@ -13,7 +13,9 @@ const NAV = [
   { href: '/courses', label: '수강신청' },
   { href: '/certificate', label: '자격증 발급신청', requiresLogin: true },
   { href: '/reviews', label: '합격후기' },
-  { href: '/notice', label: '공지사항' },
+  /* 공지사항·자주 묻는 질문·취득 과정·1:1 문의가 고객센터 한 묶음이 됐습니다
+     (2026-08-12, 디자인 요청) */
+  { href: '/support', label: '고객센터' },
 ];
 
 /**
