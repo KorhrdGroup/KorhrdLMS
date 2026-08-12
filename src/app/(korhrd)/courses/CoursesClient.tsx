@@ -160,6 +160,37 @@ export default function CoursesClient({ initial = {} }: {
     : chosenAll.length === 1 ? chosenAll[0]
     : `${chosenAll[0]} 외 ${chosenAll.length - 1}개`;
 
+  /* 검색 폼. 좁은 화면은 고정 줄(.course-bar)에, 넓은 화면은 도구 줄(.toolbar)에
+     놓입니다 — 자리가 달라 두 벌을 그리고 CSS 가 폭에 맞는 쪽만 보여 줍니다.
+     상태(term)는 하나라 어느 쪽에 쳐도 같은 값입니다. id 만 다릅니다. */
+  const searchForm = (id: string) => (
+    <form className="m-search" action="/courses" method="get" role="search">
+      <label className="sr-only" htmlFor={id}>자격증 검색</label>
+      {/* 전달본 문구는 '어떤 자격증을 찾고 계신가요?' 였습니다. 한 줄을 필터
+          버튼과 나눠 쓰게 되면서 375px 에서 잘려, 헤더 검색과 같은 짧은
+          문구로 바꿉니다 (2026-08-12). */}
+      <input
+        id={id} name="q" type="search" autoComplete="off"
+        placeholder="자격증 검색"
+        value={term} onChange={(event) => setTerm(event.target.value)}
+      />
+      {/* 헤더 검색과 같은 자리·같은 모양입니다. 입력이 있을 때만 보입니다
+          (type=search 의 브라우저 기본 ✕ 는 CSS 에서 감춥니다) */}
+      <button
+        type="button" className="m-search__clear" aria-label="검색어 지우기"
+        hidden={term.length === 0} onClick={clearSearch}
+      >
+        ✕
+      </button>
+      <button type="submit" aria-label="검색">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      </button>
+    </form>
+  );
+
   const filterGroup = (group: Group, values: string[], suffix = '') => {
     const chosen = picked[group];
     return (
@@ -232,31 +263,7 @@ export default function CoursesClient({ initial = {} }: {
           펼쳐진 사이드바를 씁니다). 스크롤해도 헤더 아래에 붙어 있습니다
           (2026-08-12, 디자인 요청). 두 조각 다 원래 있던 것이고 자리만 모았습니다. */}
       <div className="course-bar">
-        <form className="m-search" action="/courses" method="get" role="search">
-          <label className="sr-only" htmlFor="m-search-input">자격증 검색</label>
-          {/* 전달본 문구는 '어떤 자격증을 찾고 계신가요?' 였습니다. 한 줄을 필터
-              버튼과 나눠 쓰게 되면서 375px 에서 잘려, 헤더 검색과 같은 짧은
-              문구로 바꿉니다 (2026-08-12). */}
-          <input
-            id="m-search-input" name="q" type="search" autoComplete="off"
-            placeholder="자격증 검색"
-            value={term} onChange={(event) => setTerm(event.target.value)}
-          />
-          {/* 헤더 검색과 같은 자리·같은 모양입니다. 입력이 있을 때만 보입니다
-              (type=search 의 브라우저 기본 ✕ 는 CSS 에서 감춥니다) */}
-          <button
-            type="button" className="m-search__clear" aria-label="검색어 지우기"
-            hidden={term.length === 0} onClick={clearSearch}
-          >
-            ✕
-          </button>
-          <button type="submit" aria-label="검색">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </button>
-        </form>
+        {searchForm('m-search-input')}
 
         {/* 바텀시트를 여는 버튼 */}
         <button
@@ -280,6 +287,10 @@ export default function CoursesClient({ initial = {} }: {
 
         <div>
           <div className="toolbar">
+            {/* 넓은 화면에서는 검색이 이 줄로 들어옵니다 — 목록 바로 위라
+                무엇을 찾아 몇 개가 나왔는지가 한눈에 이어집니다
+                (2026-08-12, 디자인 요청). */}
+            <div className="toolbar__search">{searchForm('course-search-wide')}</div>
             <p className="toolbar__result">
               {query ? (
                 <>
