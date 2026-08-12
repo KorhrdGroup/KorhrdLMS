@@ -35,6 +35,7 @@ function createFormFromDetail(detail: NoticeEditDetail): NoticeEditInput {
     category: detail.category,
     attachment: null,
     image: null,
+    imageLinkUrl: detail.imageLinkUrl,
     isPinned: detail.isPinned,
     isPublished: detail.isPublished,
   };
@@ -244,6 +245,13 @@ export function NoticeEditModal({
               학생 공지 상세 본문에 이미지가 그대로 표시됩니다. 새 이미지를 선택하지
               않으면 기존 이미지가 유지됩니다.
             </p>
+            <AdminInput
+              id="edit-notice-image-link"
+              variant="outline"
+              value={form.imageLinkUrl}
+              placeholder="이미지 클릭 시 이동할 링크 (선택) — 예: /courses 또는 https://..."
+              onChange={(event) => updateField("imageLinkUrl", event.target.value)}
+            />
           </EnrollmentFormField>
 
           <EnrollmentFormField

@@ -49,16 +49,33 @@ export default async function Page({ params }: PageProps) {
           {notice.body}
         </div>
 
-        {/* 본문 이미지 — 어드민 "본문 이미지" 필드. 첨부파일(다운로드)과 별개입니다. */}
+        {/* 본문 이미지 — 어드민 "본문 이미지" 필드. 첨부파일(다운로드)과 별개입니다.
+            어드민이 링크를 설정했으면 클릭 시 그 주소로 이동합니다. */}
         {notice.imageUrl ? (
           <div className="article__body">
-            {/* 외부 저장소(Supabase Storage) 주소라 next/image 대신 img 를 씁니다 */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={notice.imageUrl}
-              alt={notice.title}
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
+            {notice.imageLinkUrl ? (
+              <a
+                href={notice.imageLinkUrl}
+                {...(/^https?:\/\//.test(notice.imageLinkUrl)
+                  ? { target: "_blank", rel: "noopener" }
+                  : {})}
+              >
+                {/* 외부 저장소(Supabase Storage) 주소라 next/image 대신 img 를 씁니다 */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={notice.imageUrl}
+                  alt={notice.title}
+                  style={{ maxWidth: "100%", height: "auto", cursor: "pointer" }}
+                />
+              </a>
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={notice.imageUrl}
+                alt={notice.title}
+                style={{ maxWidth: "100%", height: "auto" }}
+              />
+            )}
           </div>
         ) : null}
 

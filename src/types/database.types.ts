@@ -1767,6 +1767,7 @@ export type Database = {
           id: string
           image_file_name: string | null
           image_file_url: string | null
+          image_link_url: string | null
           image_storage_path: string | null
           is_pinned: boolean
           is_published: boolean
@@ -1787,6 +1788,7 @@ export type Database = {
           id?: string
           image_file_name?: string | null
           image_file_url?: string | null
+          image_link_url?: string | null
           image_storage_path?: string | null
           is_pinned?: boolean
           is_published?: boolean
@@ -1807,6 +1809,7 @@ export type Database = {
           id?: string
           image_file_name?: string | null
           image_file_url?: string | null
+          image_link_url?: string | null
           image_storage_path?: string | null
           is_pinned?: boolean
           is_published?: boolean

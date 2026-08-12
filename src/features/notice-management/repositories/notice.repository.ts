@@ -10,7 +10,7 @@ import type { Database } from "@/types/database.types";
  */
 
 const NOTICE_SELECT =
-  "id, title, content, category, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, image_file_name, image_file_url, image_storage_path, created_at, updated_at" as const;
+  "id, title, content, category, author_name, is_pinned, is_published, view_count, attachment_file_name, attachment_file_size_label, attachment_file_url, attachment_storage_path, image_file_name, image_file_url, image_storage_path, image_link_url, created_at, updated_at" as const;
 
 type NoticeRow = {
   id: string;
@@ -28,6 +28,7 @@ type NoticeRow = {
   image_file_name: string | null;
   image_file_url: string | null;
   image_storage_path: string | null;
+  image_link_url: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -58,6 +59,7 @@ function toNotice(row: NoticeRow): Notice {
           storagePath: row.image_storage_path,
         }
       : null,
+    imageLinkUrl: row.image_link_url,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -146,6 +148,7 @@ export async function createNoticeRecord(
       image_file_name: input.image?.fileName ?? null,
       image_file_url: input.image?.fileUrl ?? null,
       image_storage_path: input.image?.storagePath ?? null,
+      image_link_url: input.imageLinkUrl,
     })
     .select(NOTICE_SELECT)
     .single();
@@ -178,6 +181,9 @@ export async function updateNoticeRecord(
     payload.image_file_name = patch.image?.fileName ?? null;
     payload.image_file_url = patch.image?.fileUrl ?? null;
     payload.image_storage_path = patch.image?.storagePath ?? null;
+  }
+  if (patch.imageLinkUrl !== undefined) {
+    payload.image_link_url = patch.imageLinkUrl;
   }
 
   const supabase = await createClient();

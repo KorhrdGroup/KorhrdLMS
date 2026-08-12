@@ -46,6 +46,8 @@ export type Notice = {
   attachment: NoticeAttachmentInput | null;
   /** 본문 이미지(있으면 학생 화면 본문에 그대로 렌더링). 첨부파일과 별개입니다. */
   image: NoticeAttachmentInput | null;
+  /** 본문 이미지 클릭 시 이동할 링크(선택). 빈 값이면 링크 없음. */
+  imageLinkUrl: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -79,6 +81,8 @@ export type NoticeRegistrationInput = {
   attachment: NoticeAttachmentInput | null;
   /** 본문 이미지(렌더링용). 첨부파일(다운로드용)과 구분됩니다. */
   image: NoticeAttachmentInput | null;
+  /** 본문 이미지 클릭 시 이동할 링크(선택). */
+  imageLinkUrl: string;
   isPinned: boolean;
   isPublished: boolean;
 };
