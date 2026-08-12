@@ -1,4 +1,5 @@
 import type { LiveRow } from "@/features/korhrd/components/home/LiveTicker";
+import { LIVE_FEED } from "@/features/korhrd/data/liveFeed";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -68,8 +69,11 @@ export async function getLiveFeed(): Promise<LiveRow[]> {
     });
   }
 
-  return rows
+  const real = rows
     .sort((a, b) => (a.at < b.at ? 1 : -1))
     .slice(0, MAX_ROWS)
     .map(({ at: _at, ...row }) => row);
+
+  // 실데이터가 아직 적으면 더미(운영 지정 목록)로 뒤를 채웁니다.
+  return [...real, ...LIVE_FEED].slice(0, MAX_ROWS);
 }
