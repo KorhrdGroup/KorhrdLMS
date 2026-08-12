@@ -78,6 +78,9 @@ const FOLDER_TO_COURSE = {
 
 /** 변환본 파일명 → 과정명 (변환하며 이름이 제각각이 되어 직접 지정합니다) */
 const CONVERTED_TO_COURSE = {
+  "바리스타.pdf": "바리스타",
+  "방과후수학지도사.pdf": "방과후수학지도사&스토리텔링수학지도사",
+  "네일아트코디네이터_전차시교안.pdf": "네일아트코디네이터",
   "SNS마케팅전문가_교안.pdf": "SNS마케팅전문가",
   "도시농업관리사.pdf": "도시농업전문가",
   "독서심리상담사_신규.pdf": "독서심리상담사",
@@ -86,7 +89,7 @@ const CONVERTED_TO_COURSE = {
   "방역관리사.pdf": "방역관리사",
   "병원코디네이터.pdf": "병원코디네이터1급",
   "실버보드게임지도사.pdf": "실버보드게임지도사",
-  "아동공예지도자.pdf": "아동공예지도자 [8종 공예과정]",
+  "아동공예지도자.pdf": "아동공예지도자 8종 공예과정",
   "아동미술심리상담사.pdf": "아동미술심리상담사",
   "안전교육지도사.pdf": "안전관리사/안전교육지도사",
   "유품정리사_교안.pdf": "유품정리사",
@@ -107,7 +110,7 @@ const CONVERTED_TO_COURSE = {
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 await client.connect();
 const { rows: courses } = await client.query(
-  `SELECT id, code, name FROM courses WHERE deleted_at IS NULL AND status='active'`,
+  `SELECT id, code, name FROM courses WHERE deleted_at IS NULL AND status IN ('active','hidden')`,
 );
 const byName = new Map(courses.map((c) => [nfc(c.name), c]));
 const byNorm = new Map(courses.map((c) => [norm(c.name), c]));
