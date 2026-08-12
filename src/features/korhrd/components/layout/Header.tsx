@@ -123,7 +123,14 @@ export default function Header() {
                 className="search-trigger"
                 type="button"
                 aria-haspopup="dialog"
-                onClick={() => setSearchOpen(true)}
+                onClick={() => {
+                  /* 좁은 화면에서는 이 버튼이 햄버거 패널 안에 있습니다. 패널을 열어
+                     둔 채 검색을 띄우면 검색창 아래로 패널이 삐져나옵니다.
+                     검색을 여는 동안에는 패널을 접습니다 — 검색을 닫으면 원래
+                     화면으로 돌아갑니다 (2026-08-12, 디자인 요청). */
+                  setNavOpen(false);
+                  setSearchOpen(true);
+                }}
               >
                 <span className="txt">자격증 검색</span>
                 <span className="ico" aria-hidden="true">
