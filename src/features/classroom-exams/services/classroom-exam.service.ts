@@ -55,9 +55,10 @@ function resolveExamStatus(
   eligible: boolean,
   submission: ExamSubmissionRow | undefined,
 ): ClassroomExamStatus {
-  // 관리자가 재시험을 허용한 경우, 이미 제출한 시험이라도 다시 응시할 수 있도록
-  // "제출완료" 상태로 잠그지 않습니다.
-  if (submission && !submission.retake_allowed) {
+  // 관리자가 재시험을 허용했거나 **불합격한 시험**은 이미 제출했더라도
+  // 다시 응시할 수 있도록 "제출완료" 상태로 잠그지 않습니다.
+  // (불합격 → 나의 강의실 카드의 "시험 응시하기" → 이 화면에서 바로 재응시)
+  if (submission && !submission.retake_allowed && submission.is_passed !== false) {
     return "submitted";
   }
 
@@ -229,8 +230,12 @@ export async function getClassroomExamTaking(
     findSubmission(supabase, access.enrollmentId, examId),
   ]);
 
-  // 재시험이 허용된 응시 기록은 기존 채점 결과 대신 문제 응시 화면을 다시 보여줍니다.
-  const activeSubmission = submission && !submission.retake_allowed ? submission : null;
+  // 재시험이 허용됐거나 불합격한 응시 기록은 기존 채점 결과 대신 문제 응시
+  // 화면을 다시 보여줍니다(시험 목록의 상태 판정과 같은 규칙).
+  const activeSubmission =
+    submission && !submission.retake_allowed && submission.is_passed !== false
+      ? submission
+      : null;
 
   if (!activeSubmission && progressRate < threshold) {
     return {
@@ -256,6 +261,8 @@ export async function getClassroomExamTaking(
       totalScore,
       questions: questions.map(toQuestion),
       submittedResult: activeSubmission ? toSubmittedResult(activeSubmission) : null,
+      // 재응시로 문제 화면이 다시 열린 경우, 지난 응시 점수를 하단에 참고로 보여줍니다.
+      previousResult: !activeSubmission && submission ? toSubmittedResult(submission) : null,
     },
   };
 }

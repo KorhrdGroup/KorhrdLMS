@@ -76,7 +76,13 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
         ) : null}
 
         {data.exams.map((exam) => {
-          const badge = STATUS_BADGE[exam.status] ?? STATUS_BADGE.locked;
+          /* 불합격 후 재응시 — 응시 가능한데 지난 응시 기록이 있는 경우입니다.
+             합격이면 성적은 성적 확인 화면에서 보지만, 불합격은 이 화면에서
+             지난 점수를 보여주고 바로 다시 응시하게 합니다. */
+          const retaking = exam.status === 'available' && exam.score !== null;
+          const badge = retaking
+            ? { tone: 'pass', label: '재응시 가능' }
+            : STATUS_BADGE[exam.status] ?? STATUS_BADGE.locked;
           return (
             <article className="my-card" key={exam.id}>
               <div>
@@ -88,9 +94,11 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
                   {exam.questionCount}문항 · {exam.durationMinutes}분
                   {exam.passScore !== null ? ` · 합격 ${exam.passScore}점` : ''}
                 </p>
-                {exam.status === 'submitted' && exam.score !== null ? (
+                {exam.score !== null && (exam.status === 'submitted' || retaking) ? (
                   <p className={`my-card__status my-card__status--${exam.isPassed ? 'pass' : 'fail'}`}>
-                    {exam.score}점 / {exam.totalScore}점 · {exam.isPassed ? '합격' : '불합격'}
+                    {retaking
+                      ? `지난 응시 ${exam.score}점 / ${exam.totalScore}점 · 불합격`
+                      : `${exam.score}점 / ${exam.totalScore}점 · ${exam.isPassed ? '합격' : '불합격'}`}
                   </p>
                 ) : null}
               </div>
@@ -101,7 +109,7 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
                     className="btn btn--primary btn--block"
                     href={`/exam/${data.courseCode}/${exam.id}`}
                   >
-                    시험 응시하기
+                    {retaking ? '재응시하기' : '시험 응시하기'}
                   </Link>
                 ) : exam.status === 'submitted' ? (
                   /* 제출한 시험은 점수만 있는 간이 화면 대신 성적 확인으로 보냅니다 */

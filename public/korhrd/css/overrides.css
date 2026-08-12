@@ -720,3 +720,71 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   padding-right: 38px;
   cursor: pointer;
 }
+
+/* 발급신청 완료 — 입금 안내 줄 (2026-08-12, 디자인 요청)
+   같은 목록의 배송지·배송예정·발급형태는 확인용 정보지만, 이 줄만 실제로 할 일
+   (입금)입니다. 전달본이 선택·강조에 쓰는 연블루(--blue-soft)를 깔고 가운데로
+   모아 다른 줄과 구분합니다.
+
+   .next-list li 는 flex + align-items:center 라 글자가 왼쪽에 붙습니다.
+   가운데로 세우려면 주축(가로) 정렬도 함께 바꿔야 합니다. */
+.next-list li.next-list__pay {
+  justify-content: center;
+  background: var(--blue-soft);
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* 발급신청 완료 — 버튼 두 개를 한 줄에 (2026-08-12, 디자인 요청)
+   위아래로 쌓여 있던 것을 흰색 왼쪽 · 남색 오른쪽으로 나란히 둡니다.
+   좁은 화면에서는 두 글자씩이 아니라 문장이라 한 줄에 무리하지 않고 쌓입니다. */
+.complete__cta {
+  display: flex;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+.complete__cta .btn { flex: 1 }
+/* 모바일에서는 쌓되 남색(지금 할 일)이 위로 옵니다 — 세로로 놓이면 위가
+   먼저 읽히는 자리입니다. column-reverse 라 마크업 순서는 그대로 두고
+   보이는 차례만 뒤집습니다 (2026-08-12, 디자인 요청). */
+@media (max-width: 560px) {
+  .complete__cta { flex-direction: column-reverse }
+}
+
+/* 수강신청 — 검색바와 필터 버튼을 한 줄로, 스크롤해도 위에 붙게
+   (2026-08-12, 디자인 요청)
+
+   전달본은 검색바(.m-search)가 제목 위, 필터 버튼(.filter-toggle)이 제목 아래
+   따로 있었습니다. 둘 다 '무엇을 볼지 고르는' 도구라 한 줄로 모으고, 목록을
+   내리는 동안에도 손에 닿게 헤더 아래에 붙여 둡니다.
+
+   둘 다 좁은 화면 전용이라(데스크톱은 헤더 검색 + 펼쳐진 사이드바) 이 줄도
+   980px 아래에서만 나옵니다. */
+.course-bar { display: none }
+
+@media (max-width: 980px) {
+  .course-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    position: sticky;
+    top: var(--header-h);
+    z-index: 40;
+    /* 아래로 지나가는 카드가 비쳐 보이지 않게 페이지 바탕색을 깔고,
+       좌우 여백만큼 넓혀 컨테이너 가장자리까지 덮습니다. */
+    background: var(--surface-sunken);
+    padding: var(--s-3) 0;
+    margin-bottom: var(--s-3);
+    transition: top .25s ease;
+  }
+  /* 전달본의 아래 여백은 이제 줄이 가집니다 */
+  .course-bar .m-search { flex: 1; min-width: 0; margin-bottom: 0 }
+  /* 버튼은 글자만큼만 — 남는 자리는 검색바가 가집니다 */
+  .course-bar .filter-toggle { flex: none; width: auto }
+}
+
+@media (max-width: 560px) {
+  /* 이 폭에서만 헤더가 스크롤에 숨습니다. 숨은 동안에는 줄이 그 자리를 대신
+     차지해 화면 맨 위에 붙습니다 — 강의 상세 탭바와 같은 처리입니다. */
+  .header.is-hidden ~ #main .course-bar { top: 0 }
+}

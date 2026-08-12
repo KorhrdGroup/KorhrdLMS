@@ -77,6 +77,8 @@ export type ClassroomExamTaking = {
   questions: ClassroomExamQuestion[];
   /** 이미 제출한 경우 채점 결과. 있으면 문제 화면 대신 결과 화면을 보여줍니다. */
   submittedResult: ClassroomExamSubmittedResult | null;
+  /** 불합격 후 재응시인 경우 지난 응시의 채점 결과 — 문제 화면 하단에 참고로 보여줍니다. */
+  previousResult: ClassroomExamSubmittedResult | null;
 };
 
 export type GetClassroomExamTakingResult =

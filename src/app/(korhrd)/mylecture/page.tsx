@@ -30,6 +30,13 @@ export default async function Page({ searchParams }: PageProps) {
     .maybeSingle();
 
   const data = await getMyLectureData(session.id);
+
+  // [임시 미리보기] ?preview=fail 로 열면 수강중 카드를 불합격 상태로 바꿔 보여줍니다.
+  // 디자인 확인용이며, 파라미터 없이 열면 실제 데이터 그대로입니다.
+  const preview = Array.isArray(params.preview) ? params.preview[0] : params.preview;
+  if (preview === 'fail') {
+    data.active = data.active.map((e) => ({ ...e, status: 'fail' as const, score: 52 }));
+  }
   const [reviewable, allReviews] = await Promise.all([
     listReviewableCourses(session.id),
     listCourseReviews({ viewerId: session.id }),

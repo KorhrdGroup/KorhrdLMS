@@ -202,18 +202,6 @@ export default function CoursesClient({ initial = {} }: {
         </ol>
       </nav>
 
-      {/* 모바일 전용 검색바 — 데스크톱은 헤더 검색을 씁니다 */}
-      <form className="m-search" action="/courses" method="get" role="search">
-        <label className="sr-only" htmlFor="m-search-input">자격증 검색</label>
-        <input id="m-search-input" name="q" type="search" autoComplete="off" placeholder="어떤 자격증을 찾고 계신가요?" />
-        <button type="submit" aria-label="검색">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-        </button>
-      </form>
-
       <div className="page-head page-head--row">
         <h1>수강신청</h1>
         <p className="promo-chip">
@@ -222,8 +210,25 @@ export default function CoursesClient({ initial = {} }: {
         </p>
       </div>
 
-      <div className="layout-side">
-        {/* 모바일 전용 — 바텀시트를 여는 버튼. 데스크톱에서는 CSS가 감춥니다 */}
+      {/* 검색바 + 필터 버튼 한 줄 — 좁은 화면 전용입니다(데스크톱은 헤더 검색과
+          펼쳐진 사이드바를 씁니다). 스크롤해도 헤더 아래에 붙어 있습니다
+          (2026-08-12, 디자인 요청). 두 조각 다 원래 있던 것이고 자리만 모았습니다. */}
+      <div className="course-bar">
+        <form className="m-search" action="/courses" method="get" role="search">
+          <label className="sr-only" htmlFor="m-search-input">자격증 검색</label>
+          {/* 전달본 문구는 '어떤 자격증을 찾고 계신가요?' 였습니다. 한 줄을 필터
+              버튼과 나눠 쓰게 되면서 375px 에서 잘려, 헤더 검색과 같은 짧은
+              문구로 바꿉니다 (2026-08-12). */}
+          <input id="m-search-input" name="q" type="search" autoComplete="off" placeholder="자격증 검색" />
+          <button type="submit" aria-label="검색">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
+              <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </button>
+        </form>
+
+        {/* 바텀시트를 여는 버튼 */}
         <button
           className="filter-toggle" type="button" data-filter-toggle
           aria-expanded={filterOpen} aria-controls="course-filters"
@@ -232,7 +237,9 @@ export default function CoursesClient({ initial = {} }: {
           <span data-filter-toggle-label>{toggleLabel}</span>
           <span className="chev" aria-hidden="true">⌄</span>
         </button>
+      </div>
 
+      <div className="layout-side">
         {/* 980px 이하에서는 .is-collapsed 가 이 사이드바를 감추고 시트가 대신 뜹니다.
             DOM에는 남겨둬야 필터 상태와 개수 계산이 한 곳에 유지됩니다.
             접힘은 hidden 속성이 아니라 클래스로 둡니다 — hidden은 전역 리셋에서
