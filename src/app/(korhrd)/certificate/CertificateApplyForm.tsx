@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import BirthDateSelect from '@/features/korhrd/components/form/BirthDateSelect';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
@@ -61,7 +62,11 @@ export function CertificateApplyForm({
   });
 
   const [deliveryName, setDeliveryName] = useState(data.profile.name ?? '');
-  // 자격증에 인쇄되는 값입니다. 회원가입에서 받지 않아 비어 있을 수 있어 여기서 받습니다.
+
+  /* 생년월일 — 자격증에 인쇄되는 값입니다. 회원가입에서 받지 않아 비어 있을 수 있어
+     여기서 받습니다. 달력 입력(type="date")은 태어난 해까지 몇십 번을 넘겨야 해서
+     연·월·일을 따로 고르게 바꿨습니다 (2026-08-12, 디자인 요청).
+     서버로는 예전과 같은 'YYYY-MM-DD' 한 줄로 보냅니다. */
   const [birthDate, setBirthDate] = useState(data.profile.birthDate ?? '');
   const [phone, setPhone] = useState(data.profile.phone ?? '');
   const [postalCode, setPostalCode] = useState(data.profile.postalCode ?? '');
@@ -329,18 +334,14 @@ export function CertificateApplyForm({
                 </div>
 
                 <div className="field">
-                  <label htmlFor="rbirth">
+                  <label htmlFor="rbirth-y">
                     생년월일 <span className="req" aria-hidden="true">*</span>
                     {/* 원본 join.html 과 같이 (필수) 와 안내 사이에 한 칸 둡니다 —
                         붙이면 별표 뒤에 "*—" 로 붙어 보입니다 */}
                     <span className="sr-only">(필수)</span>{' '}
                     <span className="hint">— 자격증에 표기됩니다</span>
                   </label>
-                  <input
-                    id="rbirth" type="date" required autoComplete="bday"
-                    max={new Date().toISOString().slice(0, 10)}
-                    value={birthDate} onChange={(event) => setBirthDate(event.target.value)}
-                  />
+                  <BirthDateSelect id="rbirth-y" required value={birthDate} onChange={setBirthDate} />
                 </div>
                 <div className="field">
                   <label htmlFor="zip">우편번호 <span className="req" aria-hidden="true">*</span><span className="sr-only">(필수)</span></label>
