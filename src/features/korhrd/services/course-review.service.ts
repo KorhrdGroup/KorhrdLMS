@@ -114,7 +114,8 @@ export async function getCourseReview(
   return all.find((review) => review.id === id) ?? null;
 }
 
-/** 후기를 쓸 수 있는 과정 = 수료(합격)한 과정. 이미 쓴 과정은 alreadyWritten으로 표시합니다. */
+/** 후기를 쓸 수 있는 과정 = 수료(합격)하고 **자격증 발급신청까지 마친** 과정.
+    이미 쓴 과정은 alreadyWritten으로 표시합니다. */
 export type ReviewableCourse = {
   courseId: string;
   courseTitle: string;
@@ -139,6 +140,16 @@ export async function listReviewableCourses(memberId: string): Promise<Reviewabl
     .is("deleted_at", null);
   const reviewByCourse = new Map((written ?? []).map((row) => [row.course_id, row.id]));
 
+  // 자격증 발급신청까지 마친 과정만 후기 작성 대상입니다 (2026-08-11 운영 규칙).
+  const { data: certApps } = await supabase
+    .from("certificate_applications")
+    .select("course_id")
+    .eq("member_id", memberId)
+    .is("deleted_at", null);
+  const appliedCourseIds = new Set(
+    (certApps ?? []).map((row) => row.course_id).filter(Boolean),
+  );
+
   const rows = (enrollments ?? []) as unknown as {
     id: string;
     status: string;
@@ -155,6 +166,7 @@ export async function listReviewableCourses(memberId: string): Promise<Reviewabl
       row.end_date,
     );
     if (!eligibility.isCompleted) continue;
+    if (!appliedCourseIds.has(row.course.id)) continue;
     result.push({
       courseId: row.course.id,
       courseTitle: row.course.name,
