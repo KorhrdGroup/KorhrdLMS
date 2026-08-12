@@ -734,3 +734,16 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   text-align: center;
   line-height: 1.7;
 }
+
+/* 발급신청 완료 — 버튼 두 개를 한 줄에 (2026-08-12, 디자인 요청)
+   위아래로 쌓여 있던 것을 흰색 왼쪽 · 남색 오른쪽으로 나란히 둡니다.
+   좁은 화면에서는 두 글자씩이 아니라 문장이라 한 줄에 무리하지 않고 쌓입니다. */
+.complete__cta {
+  display: flex;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+.complete__cta .btn { flex: 1 }
+@media (max-width: 560px) {
+  .complete__cta { flex-direction: column }
+}

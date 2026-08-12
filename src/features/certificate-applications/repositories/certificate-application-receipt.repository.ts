@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { CertificateDeliveryStatus, PaymentStatus } from "@/types/database.types";
+import type { CertificateDeliveryStatus, PaymentMethod, PaymentStatus } from "@/types/database.types";
 
 /**
  * 자격증 발급 신청 "접수 완료" 화면(`/certificate/complete`)에서만 쓰는 조회입니다.
@@ -16,6 +16,8 @@ export type CertificateApplicationReceiptRow = {
   issuance_cost: number;
   actual_payment_amount: number;
   payment_status: PaymentStatus;
+  /** 카드인지 무통장인지 — 완료 화면의 안내가 갈립니다 */
+  payment_method: PaymentMethod | null;
   delivery_status: CertificateDeliveryStatus;
   postal_code: string | null;
   address: string | null;
@@ -30,6 +32,7 @@ const RECEIPT_SELECT = `
   issuance_cost,
   actual_payment_amount,
   payment_status,
+  payment_method,
   delivery_status,
   postal_code,
   address,

@@ -48,9 +48,11 @@ export default async function Page({ searchParams }: PageProps) {
           <p className="complete__sub">
             {receipt.certificateName} · 신청일 {receipt.appliedAt}
             <br />
-            {receipt.needsDeposit
-              ? '입금 확인 후 발급이 진행되며, 매주 화요일 협회로 명단이 전달됩니다.'
-              : '결제가 확인되어 발급이 진행됩니다. 매주 화요일 협회로 명단이 전달됩니다.'}
+            {!receipt.needsDeposit
+              ? '결제가 확인되어 발급이 진행됩니다. 매주 화요일 협회로 명단이 전달됩니다.'
+              : receipt.isCardPayment
+                ? '결제 확인 후 발급이 진행되며, 매주 화요일 협회로 명단이 전달됩니다.'
+                : '입금 확인 후 발급이 진행되며, 매주 화요일 협회로 명단이 전달됩니다.'}
           </p>
 
           <ul className="next-list">
@@ -63,12 +65,21 @@ export default async function Page({ searchParams }: PageProps) {
             <li>
               <span><b>발급 형태</b> — 상장형 · 카드형 자격증 동시 발급</span>
             </li>
-            {receipt.needsDeposit ? (
-              /* 입금 안내는 이 화면에서 가장 먼저 읽혀야 하는 줄이라 다른 줄과
-                 다르게 그립니다 — 연블루 바탕에 가운데 정렬(overrides.css).
-                 다른 줄과 달리 이름표 뒤 대시는 두지 않습니다. 금액과 계좌가
-                 줄로 나뉘어 있어 굳이 끊어 줄 필요가 없습니다
-                 (2026-08-12, 디자인 요청). */
+            {/* 결제 안내는 이 화면에서 가장 먼저 읽혀야 하는 줄이라 다른 줄과 다르게
+                그립니다 — 연블루 바탕에 가운데 정렬(overrides.css). 다른 줄과 달리
+                이름표 뒤 대시는 두지 않습니다: 금액과 그 아랫줄이 이미 나뉘어
+                있어 굳이 끊어 줄 필요가 없습니다 (2026-08-12, 디자인 요청). */}
+            {receipt.needsDeposit && receipt.isCardPayment ? (
+              /* 카드는 이 화면에서 결제하지 않습니다 — 결제 버튼은 발급 신청
+                 현황(/certificate/status)에 있습니다. 계좌를 보여 주면 카드로
+                 고른 사람이 무통장으로 오해합니다. */
+              <li className="next-list__pay">
+                <span>
+                  <b>결제하실 금액</b> {won(receipt.payableAmount)} (카드 결제)<br />
+                  아래 <b>발급 신청 현황 보기</b>에서 결제를 진행해 주세요
+                </span>
+              </li>
+            ) : receipt.needsDeposit ? (
               <li className="next-list__pay">
                 <span>
                   <b>입금하실 금액</b> {won(receipt.payableAmount)} (본인 명의 입금)<br />
@@ -83,15 +94,14 @@ export default async function Page({ searchParams }: PageProps) {
             )}
           </ul>
 
-          <div style={{ display: 'grid', gap: 8 }}>
-            {/* 무통장입금 안내로 운영합니다 — 발급비 결제하기(PayApp) 버튼은 뺐습니다 (2026-08-12) */}
-            <Link
-              className="btn btn--block btn--primary btn--lg"
-              href="/mylecture"
-            >
-              나의 강의실로 이동
+          {/* 결제가 남았든 아니든 다음에 볼 곳은 발급 신청 현황입니다 — 진행 단계도,
+              카드 결제 버튼도 거기 있습니다. 그래서 남색(주 동작)을 그쪽에 두고
+              나의 강의실은 흰색으로 왼쪽에 둡니다 (2026-08-12, 디자인 요청). */}
+          <div className="complete__cta">
+            <Link className="btn btn--ghost btn--lg" href="/mylecture">
+              나의 강의실로
             </Link>
-            <Link className="btn btn--ghost btn--block" href="/certificate/status">
+            <Link className="btn btn--primary btn--lg" href="/certificate/status">
               발급 신청 현황 보기
             </Link>
           </div>
