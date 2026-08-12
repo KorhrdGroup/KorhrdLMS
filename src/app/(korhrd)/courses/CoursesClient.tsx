@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
@@ -55,11 +56,20 @@ export default function CoursesClient({ initial = {} }: {
   initial?: { cat?: string; purpose?: string; age?: string; q?: string };
 }) {
   const cart = useCart();
+  const router = useRouter();
 
   /* 검색어. 헤더 검색과 이 화면의 검색바가 둘 다 /courses?q=… 로 넘어오므로
      URL 이 곧 상태입니다 — 여기서 따로 들고 있지 않습니다 (2026-08-12, 디자인 요청).
      이름·분야·주무부처 어디든 걸리면 보여 줍니다. 띄어쓰기와 대소문자는 무시합니다. */
   const query = (initial.q ?? '').trim();
+  /* 입력칸에 지금 적혀 있는 말. URL 의 검색어로 시작하고, 주소가 바뀌면 따라갑니다.
+     ✕ 로 지우면 입력칸을 비우고, 검색 중이었다면 전체 목록으로 되돌립니다. */
+  const [term, setTerm] = useState(query);
+  useEffect(() => { setTerm(query); }, [query]);
+  const clearSearch = () => {
+    setTerm('');
+    if (query) router.push('/courses');
+  };
   const norm = (v: string) => v.replace(/\s+/g, '').toLowerCase();
   const needle = norm(query);
 
@@ -229,8 +239,17 @@ export default function CoursesClient({ initial = {} }: {
               문구로 바꿉니다 (2026-08-12). */}
           <input
             id="m-search-input" name="q" type="search" autoComplete="off"
-            placeholder="자격증 검색" defaultValue={query}
+            placeholder="자격증 검색"
+            value={term} onChange={(event) => setTerm(event.target.value)}
           />
+          {/* 헤더 검색과 같은 자리·같은 모양입니다. 입력이 있을 때만 보입니다
+              (type=search 의 브라우저 기본 ✕ 는 CSS 에서 감춥니다) */}
+          <button
+            type="button" className="m-search__clear" aria-label="검색어 지우기"
+            hidden={term.length === 0} onClick={clearSearch}
+          >
+            ✕
+          </button>
           <button type="submit" aria-label="검색">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
@@ -264,8 +283,7 @@ export default function CoursesClient({ initial = {} }: {
             <p className="toolbar__result">
               {query ? (
                 <>
-                  ‘{query}’ 검색 결과 <b>{rows.length}</b>개 과정{' '}
-                  <Link href="/courses" className="toolbar__clear">검색 지우기</Link>
+                  ‘{query}’ 검색 결과 <b>{rows.length}</b>개 과정
                 </>
               ) : (
                 <>전체 <b>{rows.length}</b>개 과정</>
