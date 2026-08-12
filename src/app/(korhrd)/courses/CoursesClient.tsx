@@ -300,7 +300,7 @@ export default function CoursesClient({ initial = {} }: {
                   ‘{query}’ 검색 결과 <b>{rows.length}</b>개 과정
                 </>
               ) : (
-                <>전체 <b>{rows.length}</b>개 과정</>
+                <><b>{rows.length}</b>개 과정</>
               )}
             </p>
             <div className="sort-group" role="group" aria-label="정렬">
@@ -370,6 +370,14 @@ export default function CoursesClient({ initial = {} }: {
                   aria-selected={sheetGroup === i} onClick={() => setSheetGroup(i)}
                 >
                   {GROUP_LABEL[group]}
+                  {/* 고른 개수 — 다른 칸으로 옮겨도 무엇을 골라 뒀는지 보입니다
+                      (사이드바 묶음·필터 버튼과 같은 배지) (2026-08-12, 디자인 요청) */}
+                  {picked[group].length > 0 ? (
+                    <span className="fsheet__group-count">
+                      {picked[group].length}
+                      <span className="sr-only">개 선택됨</span>
+                    </span>
+                  ) : null}
                 </button>
               ))}
             </div>
@@ -413,7 +421,7 @@ export default function CoursesClient({ initial = {} }: {
               </svg>
             </button>
             <button className="btn btn--primary btn--sm" type="button" onClick={() => setFilterOpen(false)}>
-              선택하기
+              확인
             </button>
           </div>
         </div>
