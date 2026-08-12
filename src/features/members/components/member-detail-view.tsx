@@ -8,7 +8,10 @@ import type { EnrollmentRecordListItem } from "@/features/enrollments/types/enro
 import type { GradeListItem } from "@/features/grades/types/grade.types";
 import { MemberDetailSummaryCard } from "@/features/members/components/member-detail-summary-card";
 import { MemberEditModal } from "@/features/members/components/member-edit-modal";
-import { MemberEnrollmentsPanel } from "@/features/members/components/member-enrollments-panel";
+import {
+  MemberEnrollmentsPanel,
+  type CourseOption,
+} from "@/features/members/components/member-enrollments-panel";
 import { MemberGradesPanel } from "@/features/members/components/member-grades-panel";
 import { M } from "@/features/members/lib/member-design";
 import type { MemberDetail } from "@/features/members/types/member-detail.types";
@@ -28,6 +31,8 @@ type MemberDetailViewProps = {
   member: MemberDetail;
   enrollments: EnrollmentRecordListItem[];
   grades: GradeListItem[];
+  /** 수강신청 대행에 쓸 노출 중 과정 목록 */
+  courseOptions: CourseOption[];
 };
 
 function EmptyTabPanel() {
@@ -38,7 +43,7 @@ function EmptyTabPanel() {
   );
 }
 
-export function MemberDetailView({ member, enrollments, grades }: MemberDetailViewProps) {
+export function MemberDetailView({ member, enrollments, grades, courseOptions }: MemberDetailViewProps) {
   const [activeTab, setActiveTab] = useState<(typeof MEMBER_DETAIL_TABS)[number]["id"]>("basic");
   const [editOpen, setEditOpen] = useState(false);
 
@@ -145,7 +150,11 @@ export function MemberDetailView({ member, enrollments, grades }: MemberDetailVi
       {/* 패널 */}
       <div style={{ paddingTop: 20 }}>
         {activeTab === "enrollments" ? (
-          <MemberEnrollmentsPanel enrollments={enrollments} />
+          <MemberEnrollmentsPanel
+            memberId={member.id}
+            enrollments={enrollments}
+            courseOptions={courseOptions}
+          />
         ) : activeTab === "grades" ? (
           <MemberGradesPanel grades={grades} />
         ) : (

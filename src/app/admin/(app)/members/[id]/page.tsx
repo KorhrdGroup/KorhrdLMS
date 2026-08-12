@@ -5,6 +5,7 @@ import { getEnrollmentRecordsForMember } from "@/features/enrollments/services/e
 import { getGradeRecordsForMember } from "@/features/grades/services/grade-list.service";
 import { MemberDetailView } from "@/features/members/components/member-detail-view";
 import { getMemberDetail } from "@/features/members/services/member-detail.service";
+import { createClient } from "@/lib/supabase/server";
 
 type MemberDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -35,13 +36,26 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
       notFound();
     }
 
-    const [enrollments, grades] = await Promise.all([
+    const supabase = await createClient();
+    const [enrollments, grades, { data: courseRows }] = await Promise.all([
       getEnrollmentRecordsForMember(id),
       getGradeRecordsForMember(id),
+      // 수강신청 대행에 쓸 노출 중 과정 목록
+      supabase
+        .from("courses")
+        .select("id, name")
+        .eq("status", "active")
+        .is("deleted_at", null)
+        .order("name"),
     ]);
 
     return (
-      <MemberDetailView member={result.member} enrollments={enrollments} grades={grades} />
+      <MemberDetailView
+        member={result.member}
+        enrollments={enrollments}
+        grades={grades}
+        courseOptions={courseRows ?? []}
+      />
     );
   } catch (error) {
     const message =
