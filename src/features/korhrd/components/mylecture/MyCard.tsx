@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { Enrollment } from '@/features/korhrd/lib/types';
 import { cardStatus, MAX_EXTEND } from '@/features/korhrd/lib/myStatus';
 
@@ -26,11 +27,25 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
   extendCount?: number;
   onExtend?: (course: string) => void;
 }) {
+  const router = useRouter();
   const s = cardStatus(enrollment, extendCount);
   const ended = enrollment.status === 'expired' || enrollment.status === 'issued';
 
+  /* 카드 아무 곳이나 눌러도 강의실로 들어갑니다 — 안의 버튼·링크를 눌렀을 때는
+     그 동작(시험 응시 등)이 우선이므로 카드 이동은 건너뜁니다. */
+  const canEnter = Boolean(courseCode) && enrollment.status !== 'issued';
+  const handleCardClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (!canEnter) return;
+    if ((event.target as HTMLElement).closest('a, button')) return;
+    router.push(`/lecture/${courseCode}`);
+  };
+
   return (
-    <article className="my-card">
+    <article
+      className="my-card"
+      onClick={handleCardClick}
+      style={canEnter ? { cursor: 'pointer' } : undefined}
+    >
       <div>
         <div className="my-card__head">
           <h2>{enrollment.course}</h2>
