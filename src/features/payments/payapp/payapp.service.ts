@@ -6,6 +6,7 @@ import {
   PAY_STATE_REQUEST_CANCELED,
   getPayAppConfig,
 } from "@/features/payments/payapp/payapp.config";
+import { todayInKst } from "@/lib/shared/kst-date";
 import { createClient } from "@/lib/supabase/server";
 import type { Database, PaymentStatus } from "@/types/database.types";
 
@@ -175,7 +176,9 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   const supabase = await createClient();
   const query = supabase
     .from("certificate_applications")
-    .select("id, actual_payment_amount, payment_status, member_login_id")
+    .select(
+      "id, actual_payment_amount, payment_status, member_login_id, member_id, course_id, certificate_name",
+    )
     .is("deleted_at", null);
 
   const { data, error } = applicationId
@@ -191,6 +194,9 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
     actual_payment_amount: number;
     payment_status: PaymentStatus;
     member_login_id: string;
+    member_id: string;
+    course_id: string | null;
+    certificate_name: string;
   } | null;
 
   if (!application) {
@@ -246,5 +252,86 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
     throw new Error(updateError.message);
   }
 
+  // 결제관리(/admin/payments, course_payments)에도 같은 건을 기록합니다.
+  // 실패해도 결제 상태 반영(위)은 이미 끝났으므로 통보 처리는 성공으로 답합니다
+  // (여기서 던지면 PayApp이 재통보를 반복합니다).
+  try {
+    await syncCoursePaymentRecord(supabase, {
+      memberId: application.member_id,
+      courseId: application.course_id,
+      certificateName: application.certificate_name,
+      amount: Number.isFinite(paidAmount) ? paidAmount : expectedAmount,
+      paymentStatus: update.payment_status ?? null,
+      paymentMethod: update.payment_method ?? null,
+      mulNo: mulNo ?? null,
+    });
+  } catch (error) {
+    console.error("[payapp] 결제관리 기록 실패:", error);
+  }
+
   return { ok: true };
+}
+
+/**
+ * 자격증 발급비 결제를 결제관리 목록(course_payments)에 반영합니다.
+ * 같은 PayApp 결제번호(pg_order_id)가 이미 있으면 상태만 갱신합니다.
+ */
+async function syncCoursePaymentRecord(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  input: {
+    memberId: string;
+    courseId: string | null;
+    certificateName: string;
+    amount: number;
+    paymentStatus: PaymentStatus | null;
+    paymentMethod: Database["public"]["Enums"]["payment_method"] | null;
+    mulNo: string | null;
+  },
+) {
+  // course_payments.course_id 가 필수라, 과정 정보가 없는 옛 신청 건은 건너뜁니다.
+  if (!input.courseId || !input.paymentStatus) {
+    return;
+  }
+
+  const status: Database["public"]["Enums"]["course_payment_status"] =
+    input.paymentStatus === "paid"
+      ? "paid"
+      : input.paymentStatus === "canceled"
+        ? "canceled"
+        : "pending"; // partial 등 미확정 상태
+
+  const base = {
+    member_id: input.memberId,
+    course_id: input.courseId,
+    amount: input.amount,
+    payment_method: input.paymentMethod ?? ("card" as const),
+    status,
+    payment_date: todayInKst(),
+    product_name: `${input.certificateName} 발급비`,
+    pg_provider: "payapp",
+    pg_order_id: input.mulNo,
+    approved_at: status === "paid" ? new Date().toISOString() : null,
+    canceled_at: status === "canceled" ? new Date().toISOString() : null,
+    memo: "자격증 발급비 (PayApp 자동 기록)",
+  };
+
+  if (input.mulNo) {
+    const { data: existing } = await supabase
+      .from("course_payments")
+      .select("id")
+      .eq("pg_provider", "payapp")
+      .eq("pg_order_id", input.mulNo)
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from("course_payments")
+        .update({ status, amount: base.amount, approved_at: base.approved_at, canceled_at: base.canceled_at })
+        .eq("id", existing.id);
+      return;
+    }
+  }
+
+  await supabase.from("course_payments").insert(base);
 }

@@ -68,6 +68,8 @@ export function CertificateDetailModal({
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("unpaid");
   const [isLoading, startLoad] = useTransition();
   const [isDownloading, setIsDownloading] = useState(false);
+  // 증명사진 크게 보기 팝업(라이트박스) — 새 탭 대신 화면 위에 띄웁니다.
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [isSubmitting, startSubmit] = useTransition();
 
   function loadDetail(targetId: string) {
@@ -111,6 +113,7 @@ export function CertificateDetailModal({
       setDetail(null);
       setErrorMessage(null);
       setFormError(null);
+      setIsPhotoOpen(false);
     }
   }
 
@@ -244,14 +247,13 @@ export function CertificateDetailModal({
           </dl>
 
           <section className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
-            {/* 미리보기 — 클릭하면 새 탭에서 원본 크기로 봅니다 */}
+            {/* 미리보기 — 클릭하면 팝업(라이트박스)으로 크게 봅니다 */}
             {detail.photoUrl ? (
-              <a
-                href={detail.photoUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white"
-                title="새 탭에서 크게 보기"
+              <button
+                type="button"
+                onClick={() => setIsPhotoOpen(true)}
+                className="flex h-16 w-12 shrink-0 cursor-zoom-in items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white p-0"
+                title="크게 보기"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -259,7 +261,7 @@ export function CertificateDetailModal({
                   alt={`${detail.applicantName} 증명사진`}
                   className="h-full w-full object-cover"
                 />
-              </a>
+              </button>
             ) : (
               <div className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white">
                 <span className="px-1 text-center text-[10px] text-[#9CA3AF]">사진 없음</span>
@@ -268,7 +270,7 @@ export function CertificateDetailModal({
             <div className="flex flex-1 items-center justify-between gap-2">
               <p className="text-xs text-[#6B7280]">
                 {detail.photoUrl
-                  ? "학생이 발급 신청 시 올린 증명사진입니다. 클릭하면 크게 보입니다."
+                  ? "학생이 발급 신청 시 올린 증명사진입니다. 사진을 클릭하면 크게 보입니다."
                   : "학생이 증명사진을 올리지 않았습니다."}
               </p>
               {detail.photoUrl ? (
@@ -352,6 +354,32 @@ export function CertificateDetailModal({
               </EnrollmentFormField>
             </div>
           </div>
+        </div>
+      ) : null}
+
+      {/* 증명사진 라이트박스 — 배경이나 ✕를 누르면 닫힙니다 */}
+      {isPhotoOpen && detail?.photoUrl ? (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-6"
+          role="dialog"
+          aria-label="증명사진 크게 보기"
+          onClick={() => setIsPhotoOpen(false)}
+        >
+          <button
+            type="button"
+            aria-label="닫기"
+            className="absolute right-4 top-4 text-2xl leading-none text-white/90 hover:text-white"
+            onClick={() => setIsPhotoOpen(false)}
+          >
+            ✕
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={detail.photoUrl}
+            alt={`${detail.applicantName} 증명사진`}
+            className="max-h-[85vh] max-w-[90vw] rounded-lg bg-white object-contain shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          />
         </div>
       ) : null}
     </AdminModal>
