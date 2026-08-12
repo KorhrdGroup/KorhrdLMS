@@ -235,12 +235,22 @@ export default async function HomePage() {
             {homeReviews.map((r) => (
               <article className="review" key={r.id}>
                 <div className="review__top">
-                  {/* 자격증 예시 이미지 — 합격후기 목록과 같은 파일 (2026-08-10, 디자인 요청) */}
-                  <Image
-                    className="ph review__ava" src={REVIEW_CERT} alt=""
-                    width={72} height={72}
-                    style={{ objectFit: 'contain', background: '#fff' }}
-                  />
+                  {/* 올린 자격증 사진이 있으면 그 사진, 없으면 예시 이미지 — 합격후기 목록과 같은 규칙 */}
+                  {r.photo ? (
+                    // 업로드 사진은 외부 저장소 주소라 next/image(remotePatterns) 대상이 아닙니다
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      className="ph review__ava" src={r.photo} alt=""
+                      width={72} height={72}
+                      style={{ objectFit: 'cover', background: '#fff' }}
+                    />
+                  ) : (
+                    <Image
+                      className="ph review__ava" src={REVIEW_CERT} alt=""
+                      width={72} height={72}
+                      style={{ objectFit: 'contain', background: '#fff' }}
+                    />
+                  )}
                   <div>
                     <h3>{r.title}</h3>
                     <p className="review__who">{r.author} 수강생</p>
