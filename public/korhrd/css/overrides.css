@@ -949,3 +949,9 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    않았습니다. 좁은 화면에서 이미 쓰고 있는 14px(--fs-sm) 로 맞춥니다 —
    두 폭이 같은 크기가 되고, 취소선이라 여전히 '0원' 보다 뒤로 물러납니다. */
 .course-row__price del { font-size: var(--fs-sm) }
+
+/* 수강신청 목록 — '원' 은 어느 폭에서나 검정 (2026-08-12, 디자인 요청)
+   전달본은 좁은 화면에서만 단위를 --ink 로 빼 두고(responsive.css 560 블록),
+   넓은 화면에서는 숫자와 같은 남색이었습니다. 강조되는 것은 '0' 이라 단위는
+   뒤로 물러나는 게 맞습니다 — 모바일 처리를 넓은 화면에도 그대로 씁니다. */
+.course-row__price strong span { color: var(--ink) }
