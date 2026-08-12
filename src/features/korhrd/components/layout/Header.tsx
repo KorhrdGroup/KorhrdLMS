@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { logoutStudentAction } from '@/features/auth/actions/student-login.actions';
 import { useAuth } from '@/features/korhrd/lib/useAuth';
@@ -29,6 +29,7 @@ const NAV = [
  */
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { isLoggedIn, userName } = useAuth();
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -61,7 +62,26 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [navOpen]);
 
-  const loginHref = `/login?redirect=${encodeURIComponent(pathname)}`;
+  /* 로그인한 뒤 어디로 돌려보낼지.
+     로그인·회원가입·계정찾기 자신은 돌아갈 자리가 아닙니다 — 그대로 두면
+     로그인을 마치고 다시 로그인 화면에 떨어집니다. 이때는 redirect 를 붙이지
+     않고 서버 액션의 기본값(/mylecture)에 맡깁니다. */
+  const AUTH_PATHS = ['/login', '/signup', '/find', '/find-account', '/logout'];
+  const isAuthPath = AUTH_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const loginFor = (target: string) =>
+    `/login?redirect=${encodeURIComponent(target)}`;
+  const loginHref = isAuthPath ? '/login' : loginFor(pathname);
+
+  /* 클릭하는 순간의 주소로 다시 만듭니다 — 서버에서 그릴 때는 usePathname 만
+     알 수 있어 물음표 뒤(?cat=..·?g=..)가 빠집니다. window.location 은 라우터를
+     거치지 않는 history.replaceState(취업 길찾기 직업군 전환)까지 그대로 담습니다.
+     자바스크립트가 없으면 위 href 로 넘어가 경로만 돌아갑니다. */
+  const goLogin = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isAuthPath || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    const here = window.location.pathname + window.location.search;
+    router.push(loginFor(here));
+  };
 
   return (
     <>
@@ -90,7 +110,7 @@ export default function Header() {
               {NAV.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.requiresLogin && !isLoggedIn ? loginHref : item.href}
+                  href={item.requiresLogin && !isLoggedIn ? loginFor(item.href) : item.href}
                   aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
                 >
                   {item.label}
@@ -129,7 +149,7 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <Link className="util-link util-link--login" href={loginHref}>
+                    <Link className="util-link util-link--login" href={loginHref} onClick={goLogin}>
                       로그인
                     </Link>
                     <Link className="util-link util-link--join" href="/signup">

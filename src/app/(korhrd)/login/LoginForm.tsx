@@ -83,11 +83,15 @@ export function LoginForm({
           비밀번호가 변경되었습니다.<br />
           새 비밀번호로 로그인해주세요.
         </p>
-      ) : redirectTo ? (
+      ) : reason ? (
         <p className="login-notice">
-          <b>{reason ?? '이 화면'}</b>은 로그인 후 이용하실 수 있습니다.<br />
+          <b>{reason}</b>은 로그인 후 이용하실 수 있습니다.<br />
           로그인하시면 원래 보시려던 화면으로 이동합니다.
         </p>
+      ) : redirectTo ? (
+        /* 공개 화면에서 헤더의 로그인을 누른 경우 — 그 화면이 로그인을 요구한 게
+           아니므로, 돌아간다는 사실만 알립니다. */
+        <p className="login-notice">로그인하시면 보시던 화면으로 돌아갑니다.</p>
       ) : null}
 
       <form className="form-card" onSubmit={handleSubmit}>
