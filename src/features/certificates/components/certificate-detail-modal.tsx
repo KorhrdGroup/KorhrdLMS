@@ -9,6 +9,7 @@ import {
   getCertificateDetailAction,
   updateCertificateApplicationAction,
 } from "@/features/certificates/actions/certificate.actions";
+import { uploadCertificatePhotoFile } from "@/features/certificate-applications/lib/certificate-photo-upload.client";
 import { CertificateDeliveryStatusBadge } from "@/features/certificates/components/certificate-delivery-status-badge";
 import {
   CERTIFICATE_DELIVERY_STATUS_FILTER_OPTIONS,
@@ -70,6 +71,30 @@ export function CertificateDetailModal({
   const [isDownloading, setIsDownloading] = useState(false);
   // 증명사진 크게 보기 팝업(라이트박스) — 새 탭 대신 화면 위에 띄웁니다.
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  /** 어드민이 직접 증명사진을 올리거나 교체합니다 — 업로드 후 바로 저장됩니다. */
+  async function handlePhotoUpload(file: File | null) {
+    if (!file || !applicationId) return;
+    setFormError(null);
+    setIsUploading(true);
+    try {
+      const photoUrl = await uploadCertificatePhotoFile(file);
+      const result = await updateCertificateApplicationAction(applicationId, { photoUrl });
+      if (!result.success) {
+        setFormError(result.message);
+        return;
+      }
+      loadDetail(applicationId);
+      onUpdated?.("증명사진을 저장했습니다.");
+    } catch (error) {
+      setFormError(
+        error instanceof Error ? error.message : "증명사진 업로드에 실패했습니다.",
+      );
+    } finally {
+      setIsUploading(false);
+    }
+  }
   const [isSubmitting, startSubmit] = useTransition();
 
   function loadDetail(targetId: string) {
@@ -270,9 +295,26 @@ export function CertificateDetailModal({
             <div className="flex flex-1 items-center justify-between gap-2">
               <p className="text-xs text-[#6B7280]">
                 {detail.photoUrl
-                  ? "학생이 발급 신청 시 올린 증명사진입니다. 사진을 클릭하면 크게 보입니다."
-                  : "학생이 증명사진을 올리지 않았습니다."}
+                  ? "학생이 올린 증명사진입니다. 사진을 클릭하면 크게 보입니다."
+                  : "증명사진이 없습니다 — 어드민이 직접 올릴 수 있습니다."}
               </p>
+              <div className="flex shrink-0 items-center gap-2">
+              {/* 어드민 직접 업로드/교체 (JPG·PNG) */}
+              <label
+                className={`inline-flex h-10 cursor-pointer items-center rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm font-medium text-[#374151] hover:bg-[#F9FAFB] ${isUploading ? "cursor-wait opacity-60" : ""}`}
+              >
+                {isUploading ? "업로드 중..." : detail.photoUrl ? "사진 교체" : "사진 올리기"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  className="hidden"
+                  disabled={isUploading}
+                  onChange={(event) => {
+                    void handlePhotoUpload(event.target.files?.[0] ?? null);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
               {detail.photoUrl ? (
                 <AdminButton
                   type="button"
@@ -303,6 +345,7 @@ export function CertificateDetailModal({
                   {isDownloading ? "다운로드 중..." : "다운로드"}
                 </AdminButton>
               ) : null}
+              </div>
             </div>
           </section>
 
