@@ -40,5 +40,14 @@ export type GradeAttendanceUpdateResult =
   | { success: true; detail: GradeDetail }
   | { success: false; message: string; field?: keyof GradeAttendanceUpdateInput };
 
+export type GradeExamUpdateInput = {
+  /** 시험점수(%), 0~100. 수료시험 제출 기록을 이 점수로 만들거나 덮어씁니다. */
+  examPercent: number;
+};
+
+export type GradeExamUpdateResult =
+  | { success: true; detail: GradeDetail }
+  | { success: false; message: string; field?: keyof GradeExamUpdateInput };
+
 export type GradeFilterOption = GradeLetter | "all";
 export type PassFilterOption = "all" | "passed" | "failed";

@@ -13,7 +13,10 @@ import {
   AdminCardTitle,
 } from "@/components/admin/ui/admin-card";
 import { AdminInput } from "@/components/admin/ui/admin-input";
-import { updateGradeAttendanceAction } from "@/features/grades/actions/grade.actions";
+import {
+  updateGradeAttendanceAction,
+  updateGradeExamAction,
+} from "@/features/grades/actions/grade.actions";
 import { GradeCompletionBadge } from "@/features/grades/components/grade-completion-badge";
 import { GradeLetterBadge } from "@/features/grades/components/grade-letter-badge";
 import { GradePassBadge } from "@/features/grades/components/grade-pass-badge";
@@ -38,9 +41,14 @@ export function GradeDetailView({ detail: initialDetail }: GradeDetailViewProps)
   const router = useRouter();
   const [detail, setDetail] = useState(initialDetail);
   const [attendanceInput, setAttendanceInput] = useState(String(initialDetail.attendanceRate));
+  const [examInput, setExamInput] = useState(
+    initialDetail.examPercent != null ? String(initialDetail.examPercent) : "",
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [examError, setExamError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, startSubmit] = useTransition();
+  const [isExamSubmitting, startExamSubmit] = useTransition();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,11 +70,45 @@ export function GradeDetailView({ detail: initialDetail }: GradeDetailViewProps)
 
         setDetail(result.detail);
         setAttendanceInput(String(result.detail.attendanceRate));
-        setSuccessMessage("출석점수를 수정했습니다. 총점·등급·합격여부가 자동으로 반영되었습니다.");
+        setSuccessMessage(
+          "진도율을 수정했습니다. 학생 화면의 진도·총점·등급·합격여부에 그대로 반영됩니다.",
+        );
         router.refresh();
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : "출석점수 수정에 실패했습니다.",
+        );
+      }
+    });
+  }
+
+  function handleExamSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setExamError(null);
+    setSuccessMessage(null);
+
+    const examPercent = Number(examInput);
+
+    startExamSubmit(async () => {
+      try {
+        const result = await updateGradeExamAction(detail.enrollmentId, { examPercent });
+
+        if (!result.success) {
+          setExamError(result.message);
+          return;
+        }
+
+        setDetail(result.detail);
+        setExamInput(
+          result.detail.examPercent != null ? String(result.detail.examPercent) : "",
+        );
+        setSuccessMessage(
+          "시험점수를 수정했습니다. 합격 기준 충족 여부와 총점·등급이 자동으로 반영됩니다.",
+        );
+        router.refresh();
+      } catch (error) {
+        setExamError(
+          error instanceof Error ? error.message : "시험점수 수정에 실패했습니다.",
         );
       }
     });
@@ -111,7 +153,7 @@ export function GradeDetailView({ detail: initialDetail }: GradeDetailViewProps)
       <div className="grid gap-6 lg:grid-cols-2">
         <AdminCard>
           <AdminCardHeader className="border-0 pb-0">
-            <AdminCardTitle className="text-base">출석점수 수정</AdminCardTitle>
+            <AdminCardTitle className="text-base">진도율(출석점수) 수정</AdminCardTitle>
           </AdminCardHeader>
           <AdminCardContent className="pt-3">
             <form className="space-y-4" onSubmit={handleSubmit}>
@@ -123,7 +165,7 @@ export function GradeDetailView({ detail: initialDetail }: GradeDetailViewProps)
 
               <div className="space-y-1.5">
                 <label htmlFor="attendanceRate" className="block text-sm font-medium text-[#374151]">
-                  출석점수 (0~100)
+                  진도율 % (0~100)
                 </label>
                 <AdminInput
                   id="attendanceRate"
@@ -135,7 +177,8 @@ export function GradeDetailView({ detail: initialDetail }: GradeDetailViewProps)
                   onChange={(event) => setAttendanceInput(event.target.value)}
                 />
                 <p className="text-xs text-[#6B7280]">
-                  출석점수를 수정하면 총점·등급·합격여부가 자동으로 다시 계산됩니다.
+                  실제 진도 기록에 반영됩니다 — 앞 차시부터 입력 비율만큼 수강 완료로
+                  바뀌고, 학생 화면 진도율과 총점·등급·합격여부가 함께 갱신됩니다.
                 </p>
               </div>
 
@@ -148,21 +191,43 @@ export function GradeDetailView({ detail: initialDetail }: GradeDetailViewProps)
 
         <AdminCard>
           <AdminCardHeader className="border-0 pb-0">
-            <AdminCardTitle className="text-base">시험 · 과제 점수 확인</AdminCardTitle>
+            <AdminCardTitle className="text-base">시험점수 수정</AdminCardTitle>
           </AdminCardHeader>
-          <AdminCardContent className="space-y-4 pt-3">
-            <InfoField
-              label="시험점수"
-              value={detail.examPercent != null ? `${detail.examPercent}점` : "미응시"}
-            />
-            <InfoField
-              label="과제점수"
-              value={detail.assignmentScore != null ? `${detail.assignmentScore}점` : "미제출"}
-            />
-            <p className="text-xs text-[#9CA3AF]">
-              시험점수·과제점수는 시험관리·과제관리 데이터를 기준으로 하며 이 화면에서는
-              확인만 가능합니다.
-            </p>
+          <AdminCardContent className="pt-3">
+            <form className="space-y-4" onSubmit={handleExamSubmit}>
+              {examError ? (
+                <p className="rounded-lg bg-[#FEF2F2] px-4 py-3 text-sm text-[#EF4444]">
+                  {examError}
+                </p>
+              ) : null}
+
+              <div className="space-y-1.5">
+                <label htmlFor="examPercent" className="block text-sm font-medium text-[#374151]">
+                  시험점수 (0~100){" "}
+                  <span className="font-normal text-[#9CA3AF]">
+                    — 현재 {detail.examPercent != null ? `${detail.examPercent}점` : "미응시"}
+                  </span>
+                </label>
+                <AdminInput
+                  id="examPercent"
+                  type="number"
+                  min={0}
+                  max={100}
+                  variant="outline"
+                  value={examInput}
+                  placeholder="예: 80"
+                  onChange={(event) => setExamInput(event.target.value)}
+                />
+                <p className="text-xs text-[#6B7280]">
+                  수료시험 제출 기록에 바로 반영됩니다 — 미응시 상태여도 점수를 넣으면
+                  응시한 것으로 만들어지고, 60점 이상이면 자동으로 합격 처리됩니다.
+                </p>
+              </div>
+
+              <AdminButton type="submit" disabled={isExamSubmitting}>
+                {isExamSubmitting ? "저장 중..." : "저장"}
+              </AdminButton>
+            </form>
           </AdminCardContent>
         </AdminCard>
       </div>
