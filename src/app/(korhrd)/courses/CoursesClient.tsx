@@ -27,7 +27,9 @@ import ScrollTopButton from '@/features/korhrd/components/ui/ScrollTopButton';
 type Group = 'cat' | 'purpose' | 'age' | 'gov';
 
 const GROUP_LABEL: Record<Group, string> = {
-  cat: '과정',
+  /* '과정' 이었는데 목록에 놓인 것도 과정이라 무엇을 고르는 칸인지 헷갈렸습니다.
+     고르는 것은 과정의 분야입니다 (2026-08-12, 디자인 요청). */
+  cat: '분야',
   purpose: '목적',
   age: '연령',
   gov: '주무부처',
