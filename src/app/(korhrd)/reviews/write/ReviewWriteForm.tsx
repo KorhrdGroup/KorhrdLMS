@@ -82,7 +82,7 @@ export function ReviewWriteForm({
         <div className="guide-box">
           <strong>작성 가능한 과정이 없습니다</strong>
           <ul>
-            <li>시험에 합격하고 자격증 발급 신청까지 마친 과정에 대해서만 후기를 작성하실 수 있습니다.</li>
+            <li>시험에 합격하고 자격증 발급 신청·결제까지 마친 과정에 대해서만 후기를 작성하실 수 있습니다.</li>
             <li>수강 현황은 <Link href="/mylecture">나의 강의실</Link>에서 확인하세요.</li>
           </ul>
         </div>
@@ -239,7 +239,7 @@ export function ReviewWriteForm({
       <div className="guide-box mt-4">
         <strong>합격후기 안내</strong>
         <ul>
-          <li>시험에 합격하고 자격증 발급 신청까지 마친 과정에 대해서만 작성하실 수 있습니다.</li>
+          <li>시험에 합격하고 자격증 발급 신청·결제까지 마친 과정에 대해서만 작성하실 수 있습니다.</li>
           <li>여러 과정을 함께 들으셨다면 대표 과정 1개를 고르고 나머지는 태그로 남겨주세요.</li>
           <li>욕설·광고 등 운영 정책에 어긋나는 후기는 사전 고지 없이 삭제됩니다.</li>
         </ul>

@@ -114,7 +114,7 @@ export async function getCourseReview(
   return all.find((review) => review.id === id) ?? null;
 }
 
-/** 후기를 쓸 수 있는 과정 = 수료(합격)하고 **자격증 발급신청까지 마친** 과정.
+/** 후기를 쓸 수 있는 과정 = 수료(합격) + 자격증 발급신청 + **발급비 결제 완료**한 과정.
     이미 쓴 과정은 alreadyWritten으로 표시합니다. */
 export type ReviewableCourse = {
   courseId: string;
@@ -140,11 +140,13 @@ export async function listReviewableCourses(memberId: string): Promise<Reviewabl
     .is("deleted_at", null);
   const reviewByCourse = new Map((written ?? []).map((row) => [row.course_id, row.id]));
 
-  // 자격증 발급신청까지 마친 과정만 후기 작성 대상입니다 (2026-08-11 운영 규칙).
+  // 자격증 발급신청 + 발급비 결제까지 마친 과정만 후기 작성 대상입니다 (2026-08-11 운영 규칙).
+  // prepaid 는 수강 시 선납으로 발급비를 이미 낸 경우라 결제 완료로 봅니다.
   const { data: certApps } = await supabase
     .from("certificate_applications")
-    .select("course_id")
+    .select("course_id, payment_status")
     .eq("member_id", memberId)
+    .in("payment_status", ["paid", "prepaid"])
     .is("deleted_at", null);
   const appliedCourseIds = new Set(
     (certApps ?? []).map((row) => row.course_id).filter(Boolean),
