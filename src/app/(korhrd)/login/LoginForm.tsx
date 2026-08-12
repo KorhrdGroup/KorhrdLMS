@@ -145,7 +145,7 @@ export function LoginForm({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/social/naver-n-white.svg" alt="" width={18} height={18} aria-hidden="true" />
-            네이버 로그인
+            네이버 로그인/회원가입
           </a>
           <a
             className={`btn btn--lg ${styles.button} ${styles.kakao}`}
@@ -153,7 +153,7 @@ export function LoginForm({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/social/kakao-bubble.svg" alt="" width={18} height={18} aria-hidden="true" />
-            카카오 로그인
+            카카오 로그인/회원가입
           </a>
         </div>
 

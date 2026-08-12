@@ -152,7 +152,10 @@ export default function Header() {
                     <Link className="util-link util-link--login" href={loginHref} onClick={goLogin}>
                       로그인
                     </Link>
-                    <Link className="util-link util-link--join" href="/signup">
+                    {/* 회원가입도 로그인 화면으로 보냅니다 (2026-08-12, 디자인 요청).
+                        소셜 버튼이 로그인과 가입을 겸하고, 아이디 가입 링크도 그 화면에
+                        있어서 들어갈 문은 하나면 됩니다. */}
+                    <Link className="util-link util-link--join" href="/login">
                       회원가입
                     </Link>
                   </>
