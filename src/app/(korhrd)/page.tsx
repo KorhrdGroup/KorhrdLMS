@@ -172,7 +172,7 @@ export default async function HomePage() {
               <li className="stat"><b>128,400<small>+</small></b><span>누적 수강생</span></li>
               <li className="stat"><b>96,200<small>건</small></b><span>자격증 발급</span></li>
               <li className="stat"><b>4.8<small>/5.0</small></b><span>평균 수강 만족도</span></li>
-              <li className="stat"><b>70<small>개+</small></b><span>정식 등록 자격 과정</span></li>
+              <li className="stat"><b>60<small>개+</small></b><span>정식 등록 자격 과정</span></li>
             </ul>
             <GovMarquee />
           </div>
