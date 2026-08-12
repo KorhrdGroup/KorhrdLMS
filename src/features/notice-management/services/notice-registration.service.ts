@@ -16,6 +16,7 @@ export type ParsedNoticeInput = {
   category: string | null;
   attachment: NoticeRegistrationInput["attachment"];
   image: NoticeRegistrationInput["image"];
+  imageLinkUrl: string | null;
   isPinned: boolean;
   isPublished: boolean;
 };
@@ -37,6 +38,7 @@ export function validateNoticeInput(
     category: normalize(input.category) || null,
     attachment: input.attachment,
     image: input.image,
+    imageLinkUrl: normalize(input.imageLinkUrl) || null,
     isPinned: input.isPinned,
     isPublished: input.isPublished,
   };
@@ -59,6 +61,7 @@ export async function createNotice(
     category: parsed.category,
     attachment: parsed.attachment,
     image: parsed.image,
+    imageLinkUrl: parsed.imageLinkUrl,
     isPinned: parsed.isPinned,
     isPublished: parsed.isPublished,
     authorName: DEFAULT_AUTHOR_NAME,

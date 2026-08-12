@@ -25,6 +25,8 @@ export type SiteNoticeListItem = {
   attachment: { fileName: string; fileSizeLabel: string; fileUrl: string } | null;
   /** 본문 이미지(있을 때만). 본문 아래에 그대로 렌더링합니다. */
   imageUrl: string | null;
+  /** 본문 이미지 클릭 시 이동할 링크(선택). */
+  imageLinkUrl: string | null;
 };
 
 export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]> {
@@ -54,6 +56,7 @@ export async function getPublishedNoticesForSite(): Promise<SiteNoticeListItem[]
           }
         : null,
     imageUrl: notice.image?.fileUrl ?? null,
+    imageLinkUrl: notice.imageLinkUrl,
   }));
 }
 

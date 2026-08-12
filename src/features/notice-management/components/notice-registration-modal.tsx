@@ -23,6 +23,7 @@ const INITIAL_FORM: NoticeRegistrationInput = {
   category: "",
   attachment: null,
   image: null,
+  imageLinkUrl: "",
   isPinned: false,
   isPublished: false,
 };
@@ -197,6 +198,13 @@ export function NoticeRegistrationModal({
           <p className="text-xs text-[#9CA3AF]">
             학생 공지 상세 본문에 이미지가 그대로 표시됩니다.
           </p>
+          <AdminInput
+            id="notice-image-link"
+            variant="outline"
+            value={form.imageLinkUrl}
+            placeholder="이미지 클릭 시 이동할 링크 (선택) — 예: /courses 또는 https://..."
+            onChange={(event) => updateField("imageLinkUrl", event.target.value)}
+          />
         </EnrollmentFormField>
 
         <EnrollmentFormField
