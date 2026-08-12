@@ -13,6 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 import type {
   CertificateDeliveryStatus,
   CertificateKind,
+  PaymentMethod,
   PaymentStatus,
 } from "@/types/database.types";
 
@@ -29,6 +30,7 @@ type CertificateListRow = {
   photo_url: string | null;
   issuance_cost: number;
   actual_payment_amount: number;
+  payment_method: PaymentMethod | null;
   payment_status: PaymentStatus;
   delivery_status: CertificateDeliveryStatus;
   applied_at: string;
@@ -49,6 +51,7 @@ function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
     photoUrl: row.photo_url,
     issuanceCost: row.issuance_cost,
     actualPaymentAmount: row.actual_payment_amount,
+    paymentMethod: row.payment_method,
     paymentStatus: row.payment_status,
     deliveryStatus: row.delivery_status,
     appliedAt: row.applied_at,

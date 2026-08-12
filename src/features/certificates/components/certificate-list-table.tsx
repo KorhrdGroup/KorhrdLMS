@@ -1,11 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import type { CSSProperties } from "react";
-import { useTransition } from "react";
 import { Eye, Trash2 } from "lucide-react";
 
-import { updateCertificateApplicationAction } from "@/features/certificates/actions/certificate.actions";
 import {
   formatApplicantWithId,
   formatCertificateAmount,
@@ -15,6 +12,7 @@ import {
 import { M } from "@/features/courses/lib/course-design";
 import type { CertificateListItem } from "@/features/certificates/types/certificate.types";
 import { PaymentStatusBadge } from "@/features/enrollments/components/payment-status-badge";
+import { getPaymentMethodLabel } from "@/features/payments/lib/payment-method.utils";
 import { formatDate } from "@/lib/shared/format-date";
 import type { PaginatedResult } from "@/lib/shared/list-query";
 
@@ -22,12 +20,6 @@ type CertificateListTableProps = {
   result: PaginatedResult<CertificateListItem>;
   onDetailClick?: (item: CertificateListItem) => void;
   onDeleteClick?: (item: CertificateListItem) => void;
-  onDeliveryError?: (message: string) => void;
-};
-
-type DeliveryCheckboxProps = {
-  item: CertificateListItem;
-  onError?: (message: string) => void;
 };
 
 const th: CSSProperties = {
@@ -57,55 +49,6 @@ const iconBtn: CSSProperties = {
   cursor: "pointer",
   whiteSpace: "nowrap",
 };
-
-/**
- * 배송여부 체크박스. 기존 LMS처럼 5단계 배송상태(pending/preparing/shipped/delivered/
- * canceled) 중 관리자가 직접 다루는 것은 "배송완료" 여부뿐이므로, 체크 시 delivered로,
- * 체크 해제 시 pending(배송예정)으로 단순화해 저장합니다. 변경은 즉시 Supabase에
- * 반영되고 새로고침 후에도 유지됩니다.
- */
-function DeliveryCheckbox({ item, onError }: DeliveryCheckboxProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const isDelivered = item.deliveryStatus === "delivered";
-
-  function handleChange(checked: boolean) {
-    startTransition(async () => {
-      try {
-        const result = await updateCertificateApplicationAction(item.id, {
-          deliveryStatus: checked ? "delivered" : "pending",
-        });
-
-        if (!result.success) {
-          onError?.(result.message);
-          return;
-        }
-
-        router.refresh();
-      } catch (error) {
-        onError?.(
-          error instanceof Error ? error.message : "배송여부 변경에 실패했습니다.",
-        );
-      }
-    });
-  }
-
-  return (
-    <label style={{ display: "inline-flex", cursor: "pointer", alignItems: "center", justifyContent: "center", gap: 6 }}>
-      <input
-        type="checkbox"
-        checked={isDelivered}
-        disabled={isPending}
-        onChange={(event) => handleChange(event.target.checked)}
-        style={{ width: 16, height: 16, accentColor: M.accent, opacity: isPending ? 0.5 : 1 }}
-        aria-label={`${item.applicantName} 배송완료 여부`}
-      />
-      <span style={{ fontSize: 12, color: M.mute }}>
-        {isPending ? "저장 중..." : isDelivered ? "배송완료" : "배송예정"}
-      </span>
-    </label>
-  );
-}
 
 function CertificatePhotoCell({ item }: { item: CertificateListItem }) {
   if (!item.photoUrl) {
@@ -144,7 +87,6 @@ export function CertificateListTable({
   result,
   onDetailClick,
   onDeleteClick,
-  onDeliveryError,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -166,9 +108,8 @@ export function CertificateListTable({
             <th style={{ ...th, minWidth: 220 }}>배송정보</th>
             <th style={{ ...th, textAlign: "center", width: 56 }}>사진</th>
             <th style={{ ...th, textAlign: "right", width: 112 }}>발급비용</th>
-            <th style={{ ...th, textAlign: "right", width: 112 }}>실결제금액</th>
-            <th style={{ ...th, textAlign: "center", width: 88 }}>결제상태</th>
-            <th style={{ ...th, textAlign: "center", width: 104 }}>배송여부</th>
+            <th style={{ ...th, textAlign: "center", width: 88 }}>결제방법</th>
+            <th style={{ ...th, textAlign: "center", width: 130 }}>결제상태</th>
             <th style={{ ...th, textAlign: "center", width: 112 }}>신청일</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>신청내역</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>삭제</th>
@@ -193,14 +134,18 @@ export function CertificateListTable({
                 <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                   {formatCertificateAmount(item.issuanceCost)}
                 </td>
-                <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
-                  {formatCertificateAmount(item.actualPaymentAmount)}
+                {/* 결제방법 — 값이 없으면 무통장입금 안내 상태입니다 */}
+                <td style={{ ...td, textAlign: "center" }}>
+                  {item.paymentMethod ? getPaymentMethodLabel(item.paymentMethod) : "무통장"}
                 </td>
                 <td style={{ ...td, textAlign: "center" }}>
                   <PaymentStatusBadge status={item.paymentStatus} />
-                </td>
-                <td style={{ ...td, textAlign: "center" }}>
-                  <DeliveryCheckbox item={item} onError={onDeliveryError} />
+                  {/* 입금이 끝났으면 다음 단계(협회 전달)를 바로 보여줍니다 */}
+                  {item.paymentStatus === "paid" || item.paymentStatus === "prepaid" ? (
+                    <div style={{ marginTop: 4, fontSize: 11, color: M.mute }}>
+                      매주 화요일 협회 전달
+                    </div>
+                  ) : null}
                 </td>
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{formatDate(item.appliedAt)}</td>
                 <td style={{ ...td, textAlign: "center" }}>

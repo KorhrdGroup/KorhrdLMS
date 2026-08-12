@@ -100,10 +100,6 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
         result={result}
         onDetailClick={handleDetailClick}
         onDeleteClick={handleDeleteClick}
-        onDeliveryError={(message) => {
-          setSuccessMessage(null);
-          setErrorMessage(message);
-        }}
       />
 
       <div style={{ marginTop: 20 }}>

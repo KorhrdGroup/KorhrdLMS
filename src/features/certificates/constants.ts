@@ -62,6 +62,7 @@ export const CERTIFICATE_LIST_SELECT = `
   photo_url,
   issuance_cost,
   actual_payment_amount,
+  payment_method,
   payment_status,
   delivery_status,
   applied_at,

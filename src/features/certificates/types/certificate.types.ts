@@ -32,6 +32,8 @@ export type CertificateListItem = {
   photoUrl: string | null;
   issuanceCost: number;
   actualPaymentAmount: number;
+  /** 결제방법. null 이면 무통장입금 안내 상태입니다. */
+  paymentMethod: PaymentMethod | null;
   paymentStatus: PaymentStatus;
   deliveryStatus: CertificateDeliveryStatus;
   appliedAt: string;
