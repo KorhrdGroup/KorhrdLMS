@@ -66,11 +66,12 @@ export default async function Page({ searchParams }: PageProps) {
             {receipt.needsDeposit ? (
               /* 입금 안내는 이 화면에서 가장 먼저 읽혀야 하는 줄이라 다른 줄과
                  다르게 그립니다 — 연블루 바탕에 가운데 정렬(overrides.css).
-                 '입금하실 금액 —' 이라는 이름표는 금액이 크게 서 있으면 없어도
-                 읽히므로 뺐습니다 (2026-08-12, 디자인 요청). */
+                 다른 줄과 달리 이름표 뒤 대시는 두지 않습니다. 금액과 계좌가
+                 줄로 나뉘어 있어 굳이 끊어 줄 필요가 없습니다
+                 (2026-08-12, 디자인 요청). */
               <li className="next-list__pay">
                 <span>
-                  {won(receipt.payableAmount)}<br />
+                  <b>입금하실 금액</b> {won(receipt.payableAmount)}<br />
                   신한은행 140-015-773620 (주)한평생그룹 (본인 명의 입금)
                   <CopyAccountButton text="신한은행 140-015-773620 (주)한평생그룹" />
                 </span>
