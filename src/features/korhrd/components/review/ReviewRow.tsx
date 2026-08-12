@@ -23,13 +23,22 @@ export default function ReviewRow({ review }: { review: Review }) {
   return (
     <article className="review-row">
       <div className="review-row__top">
-        {/* 후기 사진은 자격증 예시 이미지 한 장으로 통일합니다 (2026-08-10, 디자인 요청).
-            자리는 .ph--cert-lg 가 잡은 140x140 정사각인데 자격증은 세로가 길어,
-            잘리지 않도록 contain 으로 넣습니다(REVIEW_CERT). */}
-        <Image
-          className="ph ph--cert-lg" src={REVIEW_CERT} alt=""
-          width={140} height={140} style={{ objectFit: 'contain', background: '#fff' }}
-        />
+        {/* 수강생이 직접 올린 자격증 사진이 있으면 그걸 썸네일로, 없으면 예시 이미지.
+            자리는 .ph--cert-lg 가 잡은 140x140 정사각 — 업로드 사진은 cover 로 채우고,
+            예시 자격증은 세로가 길어 잘리지 않도록 contain 으로 넣습니다. */}
+        {review.photo ? (
+          // 업로드 사진은 외부 저장소 주소라 next/image(remotePatterns) 대상이 아닙니다
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            className="ph ph--cert-lg" src={review.photo} alt=""
+            width={140} height={140} style={{ objectFit: 'cover', background: '#fff' }}
+          />
+        ) : (
+          <Image
+            className="ph ph--cert-lg" src={REVIEW_CERT} alt=""
+            width={140} height={140} style={{ objectFit: 'contain', background: '#fff' }}
+          />
+        )}
         <div>
           <h2><Link href={`/reviews/${review.id}`}>{review.title}</Link></h2>
           <p className="review-row__meta">
