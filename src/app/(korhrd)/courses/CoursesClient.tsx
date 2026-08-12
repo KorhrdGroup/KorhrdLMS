@@ -52,9 +52,16 @@ type Sort = 'popular' | 'new' | 'name';
 /** URL 초기값은 서버(page.tsx)에서 받습니다 — useSearchParams는 Suspense를 요구해
  *  클라이언트 하이드레이션이 매달리는 문제가 있어 prop으로 바꿨습니다. */
 export default function CoursesClient({ initial = {} }: {
-  initial?: { cat?: string; purpose?: string; age?: string };
+  initial?: { cat?: string; purpose?: string; age?: string; q?: string };
 }) {
   const cart = useCart();
+
+  /* 검색어. 헤더 검색과 이 화면의 검색바가 둘 다 /courses?q=… 로 넘어오므로
+     URL 이 곧 상태입니다 — 여기서 따로 들고 있지 않습니다 (2026-08-12, 디자인 요청).
+     이름·분야·주무부처 어디든 걸리면 보여 줍니다. 띄어쓰기와 대소문자는 무시합니다. */
+  const query = (initial.q ?? '').trim();
+  const norm = (v: string) => v.replace(/\s+/g, '').toLowerCase();
+  const needle = norm(query);
 
   const [picked, setPicked] = useState<Record<Group, string[]>>(() => ({
     cat: initial.cat ? [initial.cat] : [],
@@ -123,13 +130,14 @@ export default function CoursesClient({ initial = {} }: {
       if (picked.purpose.length && !picked.purpose.some((v) => c.p.includes(v as never))) return false;
       if (picked.age.length && !picked.age.some((v) => c.a.includes(v as never))) return false;
       if (picked.gov.length && !picked.gov.includes(c.g)) return false;
+      if (needle && !norm([c.n, ...c.c, c.g].join(' ')).includes(needle)) return false;
       return true;
     });
     const byName = (a: typeof hit[0], b: typeof hit[0]) => a.n.localeCompare(b.n, 'ko');
     if (sort === 'name') return [...hit].sort(byName);
     if (sort === 'new') return [...hit].sort((a, b) => b.year - a.year || byName(a, b));
     return [...hit].sort((a, b) => (a.rank || 99) - (b.rank || 99) || byName(a, b));
-  }, [picked, sort]);
+  }, [picked, sort, needle]);
 
   const resetAll = () => setPicked({ cat: [], purpose: [], age: [], gov: [] });
 
@@ -219,7 +227,10 @@ export default function CoursesClient({ initial = {} }: {
           {/* 전달본 문구는 '어떤 자격증을 찾고 계신가요?' 였습니다. 한 줄을 필터
               버튼과 나눠 쓰게 되면서 375px 에서 잘려, 헤더 검색과 같은 짧은
               문구로 바꿉니다 (2026-08-12). */}
-          <input id="m-search-input" name="q" type="search" autoComplete="off" placeholder="자격증 검색" />
+          <input
+            id="m-search-input" name="q" type="search" autoComplete="off"
+            placeholder="자격증 검색" defaultValue={query}
+          />
           <button type="submit" aria-label="검색">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
@@ -250,7 +261,16 @@ export default function CoursesClient({ initial = {} }: {
 
         <div>
           <div className="toolbar">
-            <p className="toolbar__result">전체 <b>{rows.length}</b>개 과정</p>
+            <p className="toolbar__result">
+              {query ? (
+                <>
+                  ‘{query}’ 검색 결과 <b>{rows.length}</b>개 과정{' '}
+                  <Link href="/courses" className="toolbar__clear">검색 지우기</Link>
+                </>
+              ) : (
+                <>전체 <b>{rows.length}</b>개 과정</>
+              )}
+            </p>
             <div className="sort-group" role="group" aria-label="정렬">
               {([['popular', '인기순'], ['new', '신규순'], ['name', '가나다순']] as const).map(([key, label]) => (
                 <button key={key} type="button" aria-pressed={sort === key} onClick={() => setSort(key)}>
@@ -266,8 +286,17 @@ export default function CoursesClient({ initial = {} }: {
           <div>
             {rows.length === 0 ? (
               <div className="empty-state">
-                <strong>조건에 맞는 과정이 없습니다</strong>
-                조건을 하나씩 해제하시면 더 많은 과정을 보실 수 있습니다.
+                {query ? (
+                  <>
+                    <strong>‘{query}’ 에 맞는 과정이 없습니다</strong>
+                    다른 말로 찾아보시거나, <Link href="/courses">전체 과정</Link>을 둘러보세요.
+                  </>
+                ) : (
+                  <>
+                    <strong>조건에 맞는 과정이 없습니다</strong>
+                    조건을 하나씩 해제하시면 더 많은 과정을 보실 수 있습니다.
+                  </>
+                )}
               </div>
             ) : (
               rows.map((c) => (

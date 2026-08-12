@@ -21,6 +21,8 @@ export default async function Page({ searchParams }: PageProps) {
         cat: first(params.cat),
         purpose: first(params.purpose),
         age: first(params.age),
+        // 헤더 검색과 이 화면의 검색바가 둘 다 /courses?q=… 로 넘어옵니다
+        q: first(params.q),
       }}
     />
   );

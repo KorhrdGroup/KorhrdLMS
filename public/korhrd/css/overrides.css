@@ -758,9 +758,40 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    따로 있었습니다. 둘 다 '무엇을 볼지 고르는' 도구라 한 줄로 모으고, 목록을
    내리는 동안에도 손에 닿게 헤더 아래에 붙여 둡니다.
 
-   둘 다 좁은 화면 전용이라(데스크톱은 헤더 검색 + 펼쳐진 사이드바) 이 줄도
-   980px 아래에서만 나옵니다. */
-.course-bar { display: none }
+   검색바는 넓은 화면에서도 함께 보여 줍니다. 필터 버튼만 좁은 화면 전용입니다
+   (넓은 화면에는 사이드바가 펼쳐져 있습니다). */
+.course-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  position: sticky;
+  top: var(--header-h);
+  z-index: 40;
+  background: var(--surface-sunken);
+  padding: var(--s-3) 0;
+  margin-bottom: var(--s-3);
+  transition: top .25s ease;
+}
+.course-bar .m-search { flex: 1; min-width: 0; margin-bottom: 0 }
+
+/* 넓은 화면에서도 이 화면에서는 검색바를 보여 줍니다 (2026-08-12, 디자인 요청).
+   전달본은 헤더 검색과 겹친다고 감췄는데(.m-search{display:none}), 목록을 보며
+   바로 다시 찾는 자리라 헤더를 열지 않고 여기서 칠 수 있게 둡니다.
+   필터 버튼은 그대로 감춥니다 — 옆에 사이드바가 펼쳐져 있습니다. */
+@media (min-width: 981px) {
+  .course-bar .m-search {
+    display: flex; align-items: center; gap: var(--s-2);
+    padding: 0 14px; height: 48px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+  }
+  .course-bar .m-search input {
+    flex: 1; min-width: 0; border: 0; background: none; padding: 0;
+    font-size: var(--fs-sm); color: var(--ink);
+  }
+  .course-bar .m-search input::placeholder { color: var(--disabled) }
+  .course-bar .m-search button { flex: none; display: flex; color: var(--ink-2); padding: 4px }
+  .course-bar .filter-toggle { display: none }
+}
 
 @media (max-width: 980px) {
   .course-bar {
