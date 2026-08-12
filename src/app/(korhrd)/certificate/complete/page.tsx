@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { getCertificateApplicationReceipt } from '@/features/certificate-applications/services/certificate-application-receipt.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 
-import PayButton from '@/features/payments/payapp/PayButton';
+import CopyAccountButton from './CopyAccountButton';
 
 export const metadata: Metadata = {
   title: '자격증 발급 신청 완료 — 한평생 직업훈련',
@@ -58,7 +58,7 @@ export default async function Page({ searchParams }: PageProps) {
               <span><b>배송지</b> — {receipt.fullAddress || '등록된 주소가 없습니다'}</span>
             </li>
             <li>
-              <span><b>배송 예정</b> — 신청일 다음 날부터 최대 7일(휴일 제외) 이내 도착</span>
+              <span><b>배송 예정</b> — 신청일 다음 날부터 영업일 기준 최대 14일(휴일 제외) 이내 도착</span>
             </li>
             <li>
               <span><b>발급 형태</b> — 상장형 · 카드형 자격증 동시 발급</span>
@@ -68,6 +68,7 @@ export default async function Page({ searchParams }: PageProps) {
                   <span>
                   <b>입금하실 금액</b> — {won(receipt.payableAmount)} · 신한은행 140-015-773620
                   (주)한평생그룹 (본인 명의 입금)
+                  <CopyAccountButton text="신한은행 140-015-773620 (주)한평생그룹" />
                 </span>
               </li>
             ) : (
@@ -78,10 +79,9 @@ export default async function Page({ searchParams }: PageProps) {
           </ul>
 
           <div style={{ display: 'grid', gap: 8 }}>
-            {/* 결제가 남아 있으면 결제가 첫 번째 할 일입니다 */}
-            {receipt.needsDeposit ? <PayButton applicationId={receipt.id} /> : null}
+            {/* 무통장입금 안내로 운영합니다 — 발급비 결제하기(PayApp) 버튼은 뺐습니다 (2026-08-12) */}
             <Link
-              className={`btn btn--block ${receipt.needsDeposit ? 'btn--ghost' : 'btn--primary btn--lg'}`}
+              className="btn btn--block btn--primary btn--lg"
               href="/mylecture"
             >
               나의 강의실로 이동

@@ -39,7 +39,7 @@ const PROCESS_FAQS: ProcessFaqItem[] = [
     q: '자격증 발급까지 얼마나 걸리나요?',
     a: (
       <>
-        교육 기간은 신청일로부터 6주이며, 합격 후 7일 이내에 발급을 신청하셔야 합니다. 배송은 신청일 다음 날부터 최대 7일(휴일 제외) 소요됩니다.
+        교육 기간은 신청일로부터 6주이며, 합격 후 7일 이내에 발급을 신청하셔야 합니다. 배송은 신청일 다음 날부터 영업일 기준 최대 14일(휴일 제외) 소요됩니다.
       </>
     ),
   },
@@ -121,7 +121,7 @@ export default function Page() {
                 <img className="step__ico" src="/step/4-cert.svg" alt="" aria-hidden="true" />
                 <div className="step__head">
                   <h3>자격증 발급 신청</h3>
-                  <span className="step__dur">배송 최대 7일</span>
+                  <span className="step__dur">배송 최대 14일</span>
                 </div>
                 <p>상장형·카드형 자격증으로 발급 가능합니다.</p>
               </li>

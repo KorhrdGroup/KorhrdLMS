@@ -29,7 +29,7 @@ const STEPS = [
   { ico: '/step/1-apply.svg', title: '무료수강신청', dur: '약 3분', desc: '원하는 과정들을 선택해 0원으로 신청합니다.' },
   { ico: '/step/2-learn.svg', title: '온라인 강의 수강', dur: '6주 이내', desc: 'PC·모바일로 약 20시간 강의를 수강합니다.' },
   { ico: '/step/3-exam.svg', title: '온라인 시험 응시', dur: '60분', desc: '강의 수강 후 시험에 응시할 수 있습니다.' },
-  { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 7일', desc: '상장형·카드형 자격증으로 발급 가능합니다.' },
+  { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 14일', desc: '상장형·카드형 자격증으로 발급 가능합니다.' },
 ];
 
 /** 메인 공지 목록에 보여줄 최대 줄 수 — 이보다 적으면 적은 대로 둡니다.
