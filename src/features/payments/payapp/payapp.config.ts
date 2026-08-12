@@ -75,8 +75,10 @@ export function getFeedbackUrl(config: PayAppConfig) {
 }
 
 /** 결제 후 사용자가 돌아올 주소. 팝업에서 열리므로 부모 창을 이동시키고 닫는 페이지로 보냅니다. */
-export function getReturnUrl(config: PayAppConfig, _applicationId: string) {
-  return `${config.siteUrl}/certificate/payment-done`;
+export function getReturnUrl(config: PayAppConfig, applicationId: string) {
+  /* 결제를 마치면 그 신청 건의 완료 화면으로 돌려보냅니다 — 어떤 건을 결제한
+     것인지 id 를 달아 보냅니다 (2026-08-12, 디자인 요청). */
+  return `${config.siteUrl}/certificate/payment-done?id=${encodeURIComponent(applicationId)}`;
 }
 
 /**

@@ -5,13 +5,29 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
 /**
  * PayApp 결제 팝업 콜백 페이지.
- * 결제 완료 후 PayApp이 이 페이지로 리다이렉트합니다.
- * 부모 창(opener)을 발급 신청 현황으로 이동시키고 팝업을 닫습니다.
- * opener가 없으면(직접 접근) 직접 이동합니다.
+ *
+ * 결제 창은 팝업이라, 이 화면은 부모 창(opener)을 옮겨 놓고 자기는 닫습니다.
+ * 옮겨 갈 곳은 그 신청 건의 완료 화면입니다 — 결제까지 끝난 모습('결제가
+ * 완료됐어요')으로 그려집니다 (2026-08-12, 디자인 요청).
+ *
+ * 결제 결과 자체는 이 화면이 아니라 서버 통보(/api/payapp/feedback)로 확정됩니다.
+ * 여기서는 어디로 보낼지만 정합니다. id 가 없으면(옛 결제창·직접 접근) 예전처럼
+ * 발급 신청 현황으로 보냅니다.
  */
-export default function Page() {
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const raw = params.id;
+  const id = (Array.isArray(raw) ? raw[0] : raw) ?? '';
+  const target = id
+    ? `/certificate/complete?id=${encodeURIComponent(id)}`
+    : '/certificate/status';
+
   return (
     <div className="container">
       <div className="auth-wrap" style={{ paddingTop: 80, textAlign: 'center' }}>
@@ -24,7 +40,7 @@ export default function Page() {
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                var target = '/certificate/status';
+                var target = ${JSON.stringify(target)};
                 if (window.opener && !window.opener.closed) {
                   window.opener.location.href = target;
                   window.close();
@@ -36,7 +52,7 @@ export default function Page() {
           }}
         />
         <noscript>
-          <a className="btn btn--primary" href="/certificate/status">발급 신청 현황으로 이동</a>
+          <a className="btn btn--primary" href={target}>결제 결과 보기</a>
         </noscript>
       </div>
     </div>
