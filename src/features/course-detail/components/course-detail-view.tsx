@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 
 import type { CourseDetailData } from "@/components/course-detail/types";
 import { CourseDetailInteractions } from "@/features/course-detail/components/course-detail-interactions";
@@ -69,6 +69,42 @@ function interleave<T>(items: T[]): T[] {
 }
 
 const won = (value: number) => `${value.toLocaleString("ko-KR")}원`;
+
+/**
+ * 모바일·데스크탑 시안이 아예 다른 이미지(구도가 다른 별도 export)를 <picture> 로 묶습니다.
+ *
+ * next/image 의 <Image> 는 한 장을 크기만 바꿔 내보내므로, 세로/가로처럼 구도가
+ * 다른 시안에는 쓸 수 없습니다. getImageProps 로 각각의 srcSet 을 받아 화면 폭에
+ * 따라 고르게 합니다(next/image 문서의 Art Direction 방식).
+ *
+ * 기준 폭 561px — 스타일시트의 모바일 분기(max-width:560px)와 같은 자리입니다.
+ */
+function artDirected(opts: {
+  alt: string;
+  desktop: { src: string; width: number; height: number; sizes: string };
+  mobile: { src: string; width: number; height: number; sizes: string };
+}) {
+  const { props: desktopProps } = getImageProps({ alt: opts.alt, ...opts.desktop });
+  const { props: mobileProps } = getImageProps({ alt: opts.alt, ...opts.mobile });
+  return {
+    desktop: desktopProps.srcSet,
+    desktopSizes: opts.desktop.sizes,
+    /* 기본(=모바일) 한 장. <source> 가 맞지 않는 폭에서 이 img 가 쓰입니다 */
+    imgProps: mobileProps,
+  };
+}
+
+const CERT_SAMPLE = artDirected({
+  alt: "상장형 자격증과 카드형 자격증 견본 예시",
+  desktop: { src: ASSET("sample-certs.png"), width: 3600, height: 2028, sizes: "(max-width: 960px) 100vw, 920px" },
+  mobile: { src: ASSET("sample-certs-mobile.png"), width: 515, height: 1313, sizes: "100vw" },
+});
+
+const RESUME_BANNER = artDirected({
+  alt: "이력서에 자격증을 기재해 취업 경쟁력을 높인 예시",
+  desktop: { src: ASSET("resume-banner.png"), width: 2847, height: 1526, sizes: "(max-width: 1160px) 100vw, 1120px" },
+  mobile: { src: ASSET("resume-banner-mobile.png"), width: 734, height: 447, sizes: "100vw" },
+});
 
 export function CourseDetailView({ course }: { course: CourseDetailData }) {
   const heroLogo = ministryLogo(course.ministry, "white");
@@ -246,7 +282,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
         <section className="dsec dsec--navy" id="why" aria-labelledby="why-title">
           <div className="container">
             <h2 className="dsec__title dsec__title--on-navy" id="why-title">
-              한평생 직업훈련에서 수강해야 하는 이유!
+              한평생 직업훈련에서<br className="br-mo" /> 수강해야 하는 이유!
             </h2>
 
             <div className="dcompare">
@@ -372,14 +408,13 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
           <section className="dsec dsec--deep" aria-labelledby="sample-title">
             <div className="container">
               <h2 className="dsec__title dsec__title--on-navy" id="sample-title">자격증 발급 예시</h2>
-              {/* 원본 1800×1014. CSS 가 width:100%/max-width:920px 로 잡으므로
-                  실제로 필요한 폭은 920px 뿐입니다 — sizes 를 그에 맞춰 둡니다. */}
-              <Image
-                className="dsample__img" src={ASSET("sample-certs.png")}
-                alt="상장형 자격증과 카드형 자격증 견본 예시"
-                width={1800} height={1014}
-                sizes="(max-width: 960px) 100vw, 920px"
-              />
+              {/* 모바일은 자격증 두 장을 세로로 쌓은 별도 시안을 씁니다 — 가로 시안을
+                  좁은 화면에 그대로 넣으면 글씨가 읽히지 않을 만큼 작아집니다.
+                  (데스크탑 3600×2028 · 모바일 515×1313) */}
+              <picture style={{ display: "contents" }}>
+                <source media="(min-width: 561px)" srcSet={CERT_SAMPLE.desktop} sizes={CERT_SAMPLE.desktopSizes} />
+                <img {...CERT_SAMPLE.imgProps} className="dsample__img" alt="상장형 자격증과 카드형 자격증 견본 예시" />
+              </picture>
               <p className="dsample__note">{course.certificateNote}</p>
             </div>
           </section>
@@ -390,13 +425,11 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                 이력서에 기재하고 <em>취업 경쟁력 UP</em>
               </h2>
               <div className="dresume__stage">
-                {/* 원본 1600×825. CSS 최대 폭이 1120px 입니다. */}
-                <Image
-                  className="dresume__shot" src={ASSET("resume-banner.png")}
-                  alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시"
-                  width={1600} height={825}
-                  sizes="(max-width: 1160px) 100vw, 1120px"
-                />
+                {/* 모바일은 여백을 줄인 별도 시안을 씁니다 (데스크탑 2847×1526 · 모바일 734×447) */}
+                <picture style={{ display: "contents" }}>
+                  <source media="(min-width: 561px)" srcSet={RESUME_BANNER.desktop} sizes={RESUME_BANNER.desktopSizes} />
+                  <img {...RESUME_BANNER.imgProps} className="dresume__shot" alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시" />
+                </picture>
                 <span className="dresume__base" aria-hidden="true" />
               </div>
             </div>
@@ -469,7 +502,9 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
             <table className="dtable">
               <caption className="sr-only">자격관리기관 정보</caption>
               <tbody>
-                <tr><th scope="row">자격관리기관</th><td>{course.organization.name}</td></tr>
+                {/* <wbr>: 칸이 좁아 줄을 나눠야 할 때만 '자격 / 관리기관'으로 끊깁니다
+                    (표 헤더에 word-break:keep-all 이 걸려 있어 다른 자리에서는 끊기지 않습니다) */}
+                <tr><th scope="row">자격<wbr />관리기관</th><td>{course.organization.name}</td></tr>
                 <tr><th scope="row">대표</th><td>{course.organization.ceo}</td></tr>
                 <tr><th scope="row">연락처</th><td>{course.organization.contact}</td></tr>
                 <tr><th scope="row">주소</th><td>{course.organization.address}</td></tr>
@@ -508,7 +543,6 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
             <div>
               <p className="footer__links">
                 <a href="/about">교육원 소개</a>
-                <a href="/process">취득 절차</a>
                 <a href="/support">고객센터</a>
                 <a href="/terms">이용약관</a>
                 <a href="/privacy">개인정보처리방침</a>
