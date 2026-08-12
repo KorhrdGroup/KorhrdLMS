@@ -51,6 +51,7 @@ export function ExamListTable({ result, onEditClick, onDeleteClick }: ExamListTa
             <th style={{ ...th, textAlign: "center", width: 100 }}>시험종류</th>
             <th style={{ ...th, textAlign: "center", width: 90 }}>상태</th>
             <th style={{ ...th, textAlign: "center", width: 140 }}>문제관리</th>
+            <th style={{ ...th, textAlign: "center", width: 100 }}>응시결과</th>
             <th style={{ ...th, textAlign: "right", width: 130 }}>관리</th>
           </tr>
         </thead>
@@ -80,6 +81,26 @@ export function ExamListTable({ result, onEditClick, onDeleteClick }: ExamListTa
                   }}
                 >
                   문제관리 ({exam.questionCount})
+                </button>
+              </td>
+              <td style={{ ...td, textAlign: "center" }}>
+                {/* 합격자/불합격자 목록 */}
+                <button
+                  type="button"
+                  onClick={() => router.push(`/admin/exams/${exam.id}/results`)}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 7,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    background: "#fff",
+                    color: M.text,
+                    border: `1px solid ${M.border}`,
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  응시결과
                 </button>
               </td>
               <td style={{ ...td, textAlign: "right" }}>
