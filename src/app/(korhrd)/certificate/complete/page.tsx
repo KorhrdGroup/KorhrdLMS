@@ -71,8 +71,8 @@ export default async function Page({ searchParams }: PageProps) {
                  (2026-08-12, 디자인 요청). */
               <li className="next-list__pay">
                 <span>
-                  <b>입금하실 금액</b> {won(receipt.payableAmount)}<br />
-                  신한은행 140-015-773620 (주)한평생그룹 (본인 명의 입금)
+                  <b>입금하실 금액</b> {won(receipt.payableAmount)} (본인 명의 입금)<br />
+                  신한은행 140-015-773620 (주)한평생그룹
                   <CopyAccountButton text="신한은행 140-015-773620 (주)한평생그룹" />
                 </span>
               </li>
