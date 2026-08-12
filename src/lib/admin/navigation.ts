@@ -2,7 +2,6 @@ import {
   BarChart3,
   BookOpen,
   CreditCard,
-  FileText,
   LayoutGrid,
   Settings,
   ShieldCheck,
@@ -100,12 +99,8 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "시험관리", href: "/admin/exams" },
     ],
   },
-  {
-    label: "평가관리",
-    icon: FileText,
-    module: "evaluation",
-    children: [{ label: "성적관리", href: "/admin/exam-results" }],
-  },
+  // 평가관리(성적관리 /admin/exam-results)는 메뉴에서 뺐습니다 (2026-08-12).
+  // 성적 조작은 회원 상세 수강정보 탭·성적 상세(/admin/grades/[id])에서 합니다.
   {
     label: "게시판관리",
     icon: LayoutGrid,
