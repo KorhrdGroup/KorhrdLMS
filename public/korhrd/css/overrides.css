@@ -903,7 +903,7 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
      색은 Atomic/Mono/400 #B2B2B2 = 사이트 토큰 --mono-400 과 같은 값입니다.
      색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다. */
   .filter-toggle__ico {
-    flex: none; width: 18px; height: 18px;
+    flex: none; width: 16px; height: 16px;
     background-color: var(--mono-400);
     -webkit-mask: url("/korhrd/img/icon/filter.svg") center / contain no-repeat;
     mask: url("/korhrd/img/icon/filter.svg") center / contain no-repeat;
