@@ -218,7 +218,6 @@ export function AdminHomePage({ dashboard }: { dashboard: AdminDashboardData }) 
     notices,
     consultations,
     consultationUnanswered,
-    questions,
     examsTasks,
     newStatus,
     tuition,
@@ -291,9 +290,6 @@ export function AdminHomePage({ dashboard }: { dashboard: AdminDashboardData }) 
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <Panel title="자유게시판" href="/admin/boards/free">
-            {renderItems(questions, "등록된 글이 없습니다.")}
-          </Panel>
           <Panel title="시험 / 과제 현황" href="/admin/exams">
             {examsTasks.length === 0 ? (
               <EmptyRow label="진행중인 시험·과제가 없습니다." />

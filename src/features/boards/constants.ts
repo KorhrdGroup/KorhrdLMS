@@ -8,12 +8,11 @@ export const BOARD_TYPE_LABELS: Record<BoardType, string> = {
   faq: "FAQ",
 };
 
+// 자유게시판·자료실·FAQ 는 운영에서 쓰지 않아 메뉴에서 뺐습니다 (2026-08-12).
+// BoardType 값과 라벨은 남겨뒀으므로 다시 살리려면 여기 항목만 추가하면 됩니다.
 export const BOARD_NAV_ITEMS = [
   { boardType: "consultation" as const, label: BOARD_TYPE_LABELS.consultation },
   { boardType: "notice" as const, label: BOARD_TYPE_LABELS.notice },
-  { boardType: "free" as const, label: BOARD_TYPE_LABELS.free },
-  { boardType: "resource" as const, label: BOARD_TYPE_LABELS.resource },
-  { boardType: "faq" as const, label: BOARD_TYPE_LABELS.faq },
 ];
 
 export const BOARD_LIST_SELECT = `
