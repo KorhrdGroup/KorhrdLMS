@@ -744,6 +744,9 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   margin-top: var(--s-6);
 }
 .complete__cta .btn { flex: 1 }
+/* 모바일에서는 쌓되 남색(지금 할 일)이 위로 옵니다 — 세로로 놓이면 위가
+   먼저 읽히는 자리입니다. column-reverse 라 마크업 순서는 그대로 두고
+   보이는 차례만 뒤집습니다 (2026-08-12, 디자인 요청). */
 @media (max-width: 560px) {
-  .complete__cta { flex-direction: column }
+  .complete__cta { flex-direction: column-reverse }
 }

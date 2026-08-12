@@ -95,31 +95,36 @@ export default async function Page({ searchParams }: PageProps) {
             )}
           </ul>
 
-          {/* 흰색은 늘 발급 신청 현황(진행 단계를 보는 곳), 남색은 지금 해야 할 일입니다
-              — 카드는 결제, 무통장은 계좌 복사. 결제까지 끝났으면 더 할 일이 없어
-              나의 강의실로 보냅니다 (2026-08-12, 디자인 요청). */}
-          <div className="complete__cta">
-            <Link className="btn btn--ghost btn--lg" href="/certificate/status">
-              발급 신청 현황 보기
-            </Link>
-            {!receipt.needsDeposit ? (
-              <Link className="btn btn--primary btn--lg" href="/mylecture">
-                나의 강의실로
+          {/* 결제가 남았으면 흰색은 발급 신청 현황(진행 단계를 보는 곳), 남색은 지금
+              해야 할 일입니다 — 카드는 결제, 무통장은 계좌 복사.
+              결제까지 끝났으면 할 일이 없어 갈 곳 하나만 남깁니다
+              (2026-08-12, 디자인 요청). */}
+          {receipt.needsDeposit ? (
+            <div className="complete__cta">
+              <Link className="btn btn--ghost btn--lg" href="/certificate/status">
+                발급 신청 현황 보기
               </Link>
-            ) : receipt.isCardPayment ? (
-              <PayButton
-                applicationId={receipt.id}
-                className="btn btn--primary btn--lg"
-                label="결제하기"
-              />
-            ) : (
-              <CopyAccountButton
-                text="신한은행 140-015-773620 (주)한평생그룹"
-                className="btn btn--primary btn--lg"
-                label="입금계좌 복사"
-              />
-            )}
-          </div>
+              {receipt.isCardPayment ? (
+                <PayButton
+                  applicationId={receipt.id}
+                  className="btn btn--primary btn--lg"
+                  label="결제하기"
+                />
+              ) : (
+                <CopyAccountButton
+                  text="신한은행 140-015-773620 (주)한평생그룹"
+                  className="btn btn--primary btn--lg"
+                  label="입금계좌 복사"
+                />
+              )}
+            </div>
+          ) : (
+            <div className="complete__cta">
+              <Link className="btn btn--primary btn--lg" href="/certificate/status">
+                발급 신청 현황 보기
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
