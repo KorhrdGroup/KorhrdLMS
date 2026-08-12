@@ -110,12 +110,10 @@ export const adminNavGroups: AdminNavGroup[] = [
     label: "게시판관리",
     icon: LayoutGrid,
     module: "boards",
+    // 자유게시판·자료실·FAQ 는 운영에서 쓰지 않아 메뉴에서 뺐습니다 (2026-08-12).
     children: [
       { label: "공지사항", href: "/admin/notices" },
       { label: "1:1 상담", href: "/admin/boards/consultation" },
-      { label: "자유게시판", href: "/admin/boards/free" },
-      { label: "자료실", href: "/admin/boards/resource" },
-      { label: "FAQ", href: "/admin/boards/faq" },
     ],
   },
   {
