@@ -943,3 +943,9 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
      차지해 화면 맨 위에 붙습니다 — 강의 상세 탭바와 같은 처리입니다. */
   .header.is-hidden ~ #main .course-bar { top: 0 }
 }
+
+/* 수강신청 목록 — 정가(취소선) 글자 키우기 (2026-08-12, 디자인 요청)
+   전달본은 넓은 화면에서 12px(--fs-xs) 이라 옆의 28px '0원' 에 눌려 잘 읽히지
+   않았습니다. 좁은 화면에서 이미 쓰고 있는 14px(--fs-sm) 로 맞춥니다 —
+   두 폭이 같은 크기가 되고, 취소선이라 여전히 '0원' 보다 뒤로 물러납니다. */
+.course-row__price del { font-size: var(--fs-sm) }
