@@ -352,7 +352,7 @@ export default function CoursesClient({ initial = {} }: {
         <div className="fsheet__dim" onClick={() => setFilterOpen(false)} />
         <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="검색 조건">
           <div className="fsheet__head">
-            <h2>자격증</h2>
+            <h2>자격증 과정</h2>
             <button
               className="fsheet__close" type="button" aria-label="닫기"
               onClick={() => setFilterOpen(false)}
