@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { COURSES } from '@/features/korhrd/data/courses';
+import { useVisibleCourses } from '@/features/korhrd/lib/visible-courses-context';
 import type { AgeBand, Course, Purpose } from '@/features/korhrd/lib/types';
 import CourseCard from '@/features/korhrd/components/course/CourseCard';
 import PillRow from '@/features/korhrd/components/ui/PillRow';
@@ -24,15 +24,17 @@ const single = (c: Course) => !c.n.includes('&');
 export default function GoalPicker() {
   const [goal, setGoal] = useState<Purpose>('취업 준비');
   const [age, setAge] = useState<AgeBand | '전체'>('전체');
+  /* 노출 중인 과정만 추천합니다 — 자료 없는 과정이 메인에 뜨면 안 됩니다 */
+  const catalog = useVisibleCourses();
 
   /* 목적 칩의 숫자는 묶음 과정까지 포함한 전체 기준입니다 */
   const goalCount = useMemo(
-    () => Object.fromEntries(PURPOSES.map((p) => [p, COURSES.filter((c) => c.p.includes(p)).length])),
-    [],
+    () => Object.fromEntries(PURPOSES.map((p) => [p, catalog.filter((c) => c.p.includes(p)).length])),
+    [catalog],
   );
 
   const countFor = (a: AgeBand | '전체') =>
-    COURSES.filter(
+    catalog.filter(
       (c) => single(c) && c.p.includes(goal) && (a === '전체' || c.a.includes(a)),
     ).length;
 
@@ -42,14 +44,14 @@ export default function GoalPicker() {
 
   const cards = useMemo(
     () =>
-      COURSES.filter((c) => single(c) && c.p.includes(goal) && (activeAge === '전체' || c.a.includes(activeAge)))
+      catalog.filter((c) => single(c) && c.p.includes(goal) && (activeAge === '전체' || c.a.includes(activeAge)))
         .sort((a, b) => (a.rank || 99) - (b.rank || 99) || a.n.localeCompare(b.n, 'ko'))
         .slice(0, 4),
-    [goal, activeAge],
+    [goal, activeAge, catalog],
   );
 
   /* 더보기는 메인 카드와 달리 묶음 과정도 세어 목록 페이지와 개수를 맞춥니다 */
-  const moreCount = COURSES.filter(
+  const moreCount = catalog.filter(
     (c) => c.p.includes(goal) && (activeAge === '전체' || c.a.includes(activeAge)),
   ).length;
   const moreHref =

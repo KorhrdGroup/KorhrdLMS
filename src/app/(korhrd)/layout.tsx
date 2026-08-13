@@ -10,6 +10,8 @@ import {
 import { KorhrdAuthProvider } from "@/features/korhrd/lib/auth-context";
 import { CourseThumbProvider } from "@/features/korhrd/lib/course-thumb-context";
 import { getCourseThumbnailMap } from "@/features/korhrd/lib/course-thumbnails";
+import { VisibleCoursesProvider } from "@/features/korhrd/lib/visible-courses-context";
+import { getVisibleCourseCodes } from "@/features/korhrd/services/course-visibility.service";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
 
 /**
@@ -30,10 +32,12 @@ export default async function KorhrdLayout({ children }: { children: React.React
   // 학생 세션은 httpOnly 쿠키라 서버에서 읽어 Context로 내려줍니다.
   // (Supabase Auth가 아닙니다 — 헤더가 로그인 상태를 못 알아보던 원인)
   // 과정 썸네일은 어드민에서 바꾸면 바로 반영돼야 해서 스냅샷 대신 DB 값을 씁니다.
-  const [member, courseThumbs] = await Promise.all([
+  const [member, courseThumbs, visibleCodes] = await Promise.all([
     getMockableStudentMember(),
     getCourseThumbnailMap(),
+    getVisibleCourseCodes(),
   ]);
+  const visibleCourseCodes = visibleCodes ? [...visibleCodes] : null;
   const auth = {
     isLoggedIn: member !== null,
     userName: member?.name ?? "회원",
@@ -50,13 +54,16 @@ export default async function KorhrdLayout({ children }: { children: React.React
       <a className="skip-link" href="#main">본문 바로가기</a>
       <KorhrdAuthProvider value={auth}>
         <CourseThumbProvider value={courseThumbs}>
-          <BodyAuthFlag isLoggedIn={auth.isLoggedIn} />
-          <Header />
-          {/* 로그인 알림 팝업 — 다음 행동(시험·재응시·발급·입금)이 남았을 때 한 번 */}
-          <LoginNotice />
-          <main id="main">{children}</main>
-          <Footer />
-          <TabBar />
+          {/* 어드민에서 노출 중인 과정만 목록·검색·추천에 내보냅니다 (2026-08-13) */}
+          <VisibleCoursesProvider codes={visibleCourseCodes}>
+            <BodyAuthFlag isLoggedIn={auth.isLoggedIn} />
+            <Header />
+            {/* 로그인 알림 팝업 — 다음 행동(시험·재응시·발급·입금)이 남았을 때 한 번 */}
+            <LoginNotice />
+            <main id="main">{children}</main>
+            <Footer />
+            <TabBar />
+          </VisibleCoursesProvider>
         </CourseThumbProvider>
       </KorhrdAuthProvider>
     </div>

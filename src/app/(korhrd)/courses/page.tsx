@@ -1,3 +1,5 @@
+import { getVisibleCourseCodes } from '@/features/korhrd/services/course-visibility.service';
+
 import CoursesClient from './CoursesClient';
 
 /**
@@ -15,6 +17,10 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
+  /* 카탈로그(하드코딩 84개) 중 어드민에서 노출 중인 과정만 보여줍니다.
+     자료가 없는 과정이 목록에 떠서 신청하면 빈 강의실로 들어가던 문제 (2026-08-13). */
+  const visible = await getVisibleCourseCodes();
+
   return (
     <CoursesClient
       initial={{
@@ -24,6 +30,7 @@ export default async function Page({ searchParams }: PageProps) {
         // 헤더 검색과 이 화면의 검색바가 둘 다 /courses?q=… 로 넘어옵니다
         q: first(params.q),
       }}
+      visibleCodes={visible ? [...visible] : null}
     />
   );
 }

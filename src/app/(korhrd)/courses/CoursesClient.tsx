@@ -54,8 +54,11 @@ type Sort = 'popular' | 'new' | 'name';
 
 /** URL 초기값은 서버(page.tsx)에서 받습니다 — useSearchParams는 Suspense를 요구해
  *  클라이언트 하이드레이션이 매달리는 문제가 있어 prop으로 바꿨습니다. */
-export default function CoursesClient({ initial = {} }: {
+export default function CoursesClient({ initial = {}, visibleCodes }: {
   initial?: { cat?: string; purpose?: string; age?: string; q?: string };
+  /** 어드민에서 노출 중(active)인 과정 코드. 없으면(널) 카탈로그 전체를 보여줍니다.
+      — 하드코딩 카탈로그에는 자료가 없는 과정도 들어 있어 이걸로 거릅니다. */
+  visibleCodes?: string[] | null;
 }) {
   const cart = useCart();
   const router = useRouter();
@@ -74,6 +77,13 @@ export default function CoursesClient({ initial = {} }: {
   };
   const norm = (v: string) => v.replace(/\s+/g, '').toLowerCase();
   const needle = norm(query);
+
+  /* 노출 대상만 남긴 카탈로그. 이 화면의 모든 계산(필터 개수·목록)이 이걸 씁니다. */
+  const catalog = useMemo(() => {
+    if (!visibleCodes || visibleCodes.length === 0) return COURSES;
+    const allow = new Set(visibleCodes);
+    return COURSES.filter((c) => allow.has(c.code));
+  }, [visibleCodes]);
 
   const [picked, setPicked] = useState<Record<Group, string[]>>(() => ({
     cat: initial.cat ? [initial.cat] : [],
@@ -121,7 +131,7 @@ export default function CoursesClient({ initial = {} }: {
 
   /** 사이드바 개수 — 항상 전체 데이터 기준입니다 (다른 필터의 영향을 받지 않습니다) */
   const countOf = (group: Group, value: string) =>
-    COURSES.filter((c) =>
+    catalog.filter((c) =>
       group === 'cat' ? c.c.includes(value as never)
       : group === 'purpose' ? c.p.includes(value as never)
       : group === 'age' ? c.a.includes(value as never)
@@ -137,7 +147,7 @@ export default function CoursesClient({ initial = {} }: {
     }));
 
   const rows = useMemo(() => {
-    const hit = COURSES.filter((c) => {
+    const hit = catalog.filter((c) => {
       if (picked.cat.length && !picked.cat.some((v) => c.c.includes(v as never))) return false;
       if (picked.purpose.length && !picked.purpose.some((v) => c.p.includes(v as never))) return false;
       if (picked.age.length && !picked.age.some((v) => c.a.includes(v as never))) return false;
@@ -149,7 +159,7 @@ export default function CoursesClient({ initial = {} }: {
     if (sort === 'name') return [...hit].sort(byName);
     if (sort === 'new') return [...hit].sort((a, b) => b.year - a.year || byName(a, b));
     return [...hit].sort((a, b) => (a.rank || 99) - (b.rank || 99) || byName(a, b));
-  }, [picked, sort, needle]);
+  }, [picked, sort, needle, catalog]);
 
   const resetAll = () => setPicked({ cat: [], purpose: [], age: [], gov: [] });
 

@@ -70,7 +70,7 @@ const ALL_COURSES: Course[] = [
   {"n": "정원관리사 1급", "g": "산림청", "prof": "이민태 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2025-004041", "code": "CRS-KH-0058", "year": 2025, "lessons": 15, "rank": 0, "p": ["부업·창업", "자기계발"], "a": ["40~50대", "60대 이상"], "ap": "40~50대", "c": ["창업·취미"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0058.jpg"},
   {"n": "조향사[향수디자이너] 1급", "g": "식품의약품안전처부", "prof": "안정미 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2025-000580", "code": "CRS-KH-0059", "year": 2025, "lessons": 20, "rank": 0, "p": ["부업·창업", "자기계발"], "a": ["20~30대"], "ap": "20~30대", "c": ["뷰티"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0059.jpg"},
   {"n": "종이접기지도사 1급", "g": "문화체육관광부", "prof": "김진옥 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2019-004638", "code": "CRS-KH-0060", "year": 2019, "lessons": 24, "rank": 0, "p": ["아동·교육", "부업·창업", "자기계발"], "a": ["40~50대", "60대 이상"], "ap": "40~50대", "c": ["창업·취미"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0060.jpg"},
-  {"n": "지역아동교육지도사사 1급", "g": "교육부", "prof": "김교옥 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2019-004798", "code": "CRS-KH-0061", "closing": true, "year": 2019, "lessons": 25, "rank": 0, "p": ["아동·교육", "취업 준비"], "a": ["40~50대"], "ap": "40~50대", "c": ["교육·아동"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0061.jpg"},
+  {"n": "지역아동교육지도사 1급", "g": "교육부", "prof": "김교옥 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2019-004798", "code": "CRS-KH-0061", "closing": true, "year": 2019, "lessons": 25, "rank": 0, "p": ["아동·교육", "취업 준비"], "a": ["40~50대"], "ap": "40~50대", "c": ["교육·아동"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0061.jpg"},
   {"n": "진로적성상담사 & 진로직업상담사", "g": "교육부/고용노동부", "prof": "강샤론 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2019-004794", "code": "CRS-KH-0062", "closing": true, "year": 2019, "lessons": 23, "rank": 0, "p": ["심리상담", "취업 준비", "자기계발"], "a": ["40~50대"], "ap": "40~50대", "c": ["교육·아동"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0062.jpg"},
   {"n": "집합건물관리사 1급", "g": "법무부", "prof": "박영수 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2021-005235", "code": "CRS-KH-0063", "year": 2021, "lessons": 20, "rank": 0, "p": ["취업 준비", "이직·전직"], "a": ["40~50대"], "ap": "40~50대", "c": ["마케팅·사무"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0063.jpg"},
   {"n": "초등돌봄전담사 1급", "g": "교육부", "prof": "이영은 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2024-005850", "code": "CRS-KH-0064", "closing": true, "year": 2024, "lessons": 35, "rank": 0, "p": ["아동·교육", "취업 준비"], "a": ["40~50대"], "ap": "40~50대", "c": ["교육·아동"], "thumb": "https://fikmlxpiehdnsnsvbkbx.supabase.co/storage/v1/object/public/course-thumbnails/import/CRS-KH-0064.jpg"},
@@ -95,7 +95,11 @@ const ALL_COURSES: Course[] = [
   {"n": "치과병원코디네이터", "g": "보건복지부", "prof": "김시혜 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2026-003111", "code": "CRS-KH-0085", "year": 2026, "lessons": 20, "rank": 0, "p": ["취업 준비", "이직·전직"], "a": ["40~50대", "60대 이상"], "ap": "40~50대", "c": ["병원·의료"]},
 ];
 
-export const COURSES: Course[] = ALL_COURSES.filter((c) => !c.closing);
+/* 노출 여부는 **DB(courses.status)**가 정합니다 — visible-courses-context 참고.
+   전에는 여기서 `closing` 플래그로 걸렀는데, 그러면 어드민에서 공개로 돌려도
+   목록에 나오지 않았습니다(독서심리상담사·지역아동교육지도사, 2026-08-13).
+   `closing` 은 카드의 "마감임박" 표시용으로만 남깁니다. */
+export const COURSES: Course[] = ALL_COURSES;
 
 /** 과정명으로 한 건 찾기 (상세페이지에서 사용) */
 export function findCourse(name: string): Course | undefined {
