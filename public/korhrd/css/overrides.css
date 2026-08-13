@@ -955,3 +955,15 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    넓은 화면에서는 숫자와 같은 남색이었습니다. 강조되는 것은 '0' 이라 단위는
    뒤로 물러나는 게 맞습니다 — 모바일 처리를 넓은 화면에도 그대로 씁니다. */
 .course-row__price strong span { color: var(--ink) }
+
+/* 고객센터 상담 3블록 — 사이드 메뉴 아래로 (2026-08-12, 디자인 요청)
+   본문 위를 가로로 막고 있어서 네 화면 어디를 눌러도 상담 박스부터 지나야
+   했습니다. 옆 칸(210px)의 메뉴 아래로 내려 세로로 세웁니다.
+   전달본 .support-grid 는 3열이고 margin-bottom:8px 이라, 둘 다 덮습니다.
+   좁은 화면에서는 전달본이 이미 1열(account.css 980 블록)이라 폭 규칙은
+   같은 결과가 되고, 메뉴와 띄우는 간격만 남습니다. */
+.support-grid--side {
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+  margin: var(--s-5) 0 0;
+}
