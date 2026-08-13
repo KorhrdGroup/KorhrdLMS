@@ -8,6 +8,7 @@ import { useCart } from '@/features/korhrd/lib/useCart';
 import CourseRow from '@/features/korhrd/components/course/CourseRow';
 import CartBar from '@/features/korhrd/components/course/CartBar';
 import FloatingBanner from '@/features/korhrd/components/ui/FloatingBanner';
+import SampleVideoModal, { type SampleVideo } from './SampleVideoModal';
 import ScrollTopButton from '@/features/korhrd/components/ui/ScrollTopButton';
 
 /**
@@ -106,6 +107,30 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
    * 고른 개수는 접혀 있어도 제목 옆 배지로 보입니다.
    */
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+
+  /* "강의 샘플" 팝업 — 1강 영상만 서명 URL로 받아 재생합니다 */
+  const [sample, setSample] = useState<SampleVideo | null>(null);
+  const [sampleLoading, setSampleLoading] = useState<string | null>(null);
+
+  async function openSample(code: string) {
+    if (sampleLoading) return;
+    setSampleLoading(code);
+    try {
+      const response = await fetch(`/api/courses/sample-video?code=${encodeURIComponent(code)}`);
+      const data = (await response.json()) as
+        | { success: true; courseName: string; title: string; url: string }
+        | { success: false; message: string };
+      if (!data.success) {
+        alert(data.message || '강의 샘플은 준비 중입니다');
+        return;
+      }
+      setSample({ courseName: data.courseName, title: data.title, url: data.url });
+    } catch {
+      alert('강의 샘플을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setSampleLoading(null);
+    }
+  }
   const isOpen = (group: Group) => openGroups[group] ?? group === FILTER_GROUPS[0].group;
 
   /* 시트가 열린 동안은 뒤 목록이 밀려 내려가지 않게 잠그고, Esc로 닫습니다 */
@@ -351,7 +376,7 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
                   key={c.n} course={c}
                   selected={cart.has(c.n)}
                   onToggleSelect={() => cart.toggle(c.n)}
-                  onSample={() => alert('강의 샘플은 준비 중입니다')}
+                  onSample={() => openSample(c.code)}
                 />
               ))
             )}
@@ -446,6 +471,8 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
       {/* 이미 수강신청 화면이라 갈 곳이 없습니다 — 링크로 두면 고른 과목만 지웁니다 */}
       <FloatingBanner href={null} />
       <ScrollTopButton />
+
+      <SampleVideoModal sample={sample} onClose={() => setSample(null)} />
     </>
   );
 }
