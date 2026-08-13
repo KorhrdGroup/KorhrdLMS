@@ -1012,11 +1012,11 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   flex: 1; display: flex; align-items: center; justify-content: center;
   font-size: var(--fs-xs); color: var(--mono-400); white-space: nowrap;
 }
-/* 합격선 — 세로 눈금 + 위에 라벨. left 는 마크업이 지정합니다 */
-.pass-bar__line { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--ink); border-radius: 1px }
+/* 합격선 — 파란 점선 눈금 + 위에 파란 라벨. left 는 마크업이 지정합니다 */
+.pass-bar__line { position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 2px dashed var(--blue) }
 .pass-bar__line::after {
   content: attr(data-label); position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
-  font-size: var(--fs-2xs); font-weight: 700; color: var(--ink); white-space: nowrap;
+  font-size: var(--fs-2xs); font-weight: 700; color: var(--blue); white-space: nowrap;
 }
 .pass-viz__note { margin-top: var(--s-3); font-size: var(--fs-sm); color: var(--muted); line-height: 1.7 }
 @media (max-width: 560px) {
