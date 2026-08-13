@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
+import { useVisibleCourses } from '@/features/korhrd/lib/visible-courses-context';
 import { PRIVATE_CERT_TOP5, popularNameKey } from '@/features/korhrd/data/popular-top5';
 
 /* 인기 자격증 초기값(하드코딩) — 과정 데이터의 인기 순위(rank, 1이 1위).
@@ -54,6 +55,8 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
   const [recent, setRecent] = useState<string[]>([]);
   const [popular, setPopular] = useState<string[]>(() => buildPopular([]));
   const inputRef = useRef<HTMLInputElement>(null);
+  /* 검색 결과는 노출 중인 과정만 — 자료 없는 과정이 검색에 걸리면 안 됩니다 */
+  const catalog = useVisibleCourses();
 
   /** 검색어를 최근 목록 맨 앞에 저장합니다(중복은 앞으로 끌어올림). */
   const remember = (term: string) => {
@@ -101,12 +104,12 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
     const key = q.trim();
     if (!key) return null;
     const map = new Map<string, string[]>();
-    COURSES.filter((c) => c.n.includes(key)).forEach((c) => {
+    catalog.filter((c) => c.n.includes(key)).forEach((c) => {
       const cat = c.c[0] ?? '기타';
       map.set(cat, [...(map.get(cat) ?? []), c.n]);
     });
     return map;
-  }, [q]);
+  }, [q, catalog]);
 
   return (
     <div className={['search-overlay', open && 'is-open'].filter(Boolean).join(' ')}
