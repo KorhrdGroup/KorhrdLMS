@@ -21,10 +21,10 @@ type CertificateListTableProps = {
   result: PaginatedResult<CertificateListItem>;
   onDetailClick?: (item: CertificateListItem) => void;
   onDeleteClick?: (item: CertificateListItem) => void;
-  /** 대기중(unpaid) 건의 체크박스를 켜면 입금완료 처리합니다 */
-  onMarkPaid?: (item: CertificateListItem) => void;
-  /** 발송예정(pending) 건을 발송완료 처리합니다 */
-  onMarkShipped?: (item: CertificateListItem) => void;
+  /** 상태 체크박스 토글 — 켜면 입금완료, 끄면 대기중 */
+  onTogglePaid?: (item: CertificateListItem, paid: boolean) => void;
+  /** 배송 체크박스 토글 — 켜면 발송완료, 끄면 발송예정 */
+  onToggleShipped?: (item: CertificateListItem, shipped: boolean) => void;
 };
 
 const th: CSSProperties = {
@@ -92,8 +92,8 @@ export function CertificateListTable({
   result,
   onDetailClick,
   onDeleteClick,
-  onMarkPaid,
-  onMarkShipped,
+  onTogglePaid,
+  onToggleShipped,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -128,7 +128,14 @@ export function CertificateListTable({
             const rowNumber = result.total - ((result.page - 1) * result.pageSize + index);
 
             return (
-              <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <tr
+                key={item.id}
+                style={{
+                  borderBottom: `1px solid ${M.line}`,
+                  // 입금 대기중 건은 눈에 띄게 핑크 배경
+                  background: item.paymentStatus === "unpaid" ? "#FFE9EF" : undefined,
+                }}
+              >
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{rowNumber}</td>
                 <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.certificateName}</td>
                 <td style={td}>{formatApplicantWithId(item.applicantName, item.memberLoginId)}</td>
@@ -146,41 +153,57 @@ export function CertificateListTable({
                 <td style={{ ...td, textAlign: "center" }}>
                   {item.paymentMethod ? getPaymentMethodLabel(item.paymentMethod) : "무통장"}
                 </td>
+                {/* 상태 — 라벨 + 체크박스. 체크하면 입금완료, 해제하면 대기중 */}
                 <td style={{ ...td, textAlign: "center" }}>
-                  <PaymentStatusBadge status={item.paymentStatus} />
-                  {/* 대기중 건은 체크 한 번으로 입금완료 처리 */}
-                  {item.paymentStatus === "unpaid" ? (
+                  {item.paymentStatus === "unpaid" || item.paymentStatus === "paid" ? (
                     <label
-                      style={{ marginTop: 5, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontSize: 11, color: M.mute, cursor: "pointer", whiteSpace: "nowrap" }}
+                      style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", whiteSpace: "nowrap" }}
                     >
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: item.paymentStatus === "paid" ? "#3182F6" : M.danger,
+                        }}
+                      >
+                        {item.paymentStatus === "paid" ? "입금완료" : "대기중"}
+                      </span>
                       <input
                         type="checkbox"
-                        checked={false}
-                        onChange={() => onMarkPaid?.(item)}
-                        style={{ width: 14, height: 14, cursor: "pointer", accentColor: "#3182F6" }}
+                        checked={item.paymentStatus === "paid"}
+                        onChange={(event) => onTogglePaid?.(item, event.target.checked)}
+                        style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#3182F6" }}
                       />
-                      입금완료 처리
                     </label>
-                  ) : null}
-                  {/* 입금이 끝났으면 다음 단계(협회 전달)를 바로 보여줍니다 */}
-                  {item.paymentStatus === "paid" || item.paymentStatus === "prepaid" ? (
-                    <div style={{ marginTop: 4, fontSize: 11, color: M.mute }}>
-                      매주 화요일 협회 전달
-                    </div>
-                  ) : null}
+                  ) : (
+                    <PaymentStatusBadge status={item.paymentStatus} />
+                  )}
                 </td>
+                {/* 배송 — 체크하면 발송완료, 해제하면 발송예정 */}
                 <td style={{ ...td, textAlign: "center" }}>
-                  <CertificateDeliveryStatusBadge status={item.deliveryStatus} />
-                  {/* 발송예정 건은 클릭 한 번으로 발송완료 처리 */}
-                  {item.deliveryStatus === "pending" ? (
-                    <button
-                      type="button"
-                      onClick={() => onMarkShipped?.(item)}
-                      style={{ marginTop: 5, display: "block", margin: "5px auto 0", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600, border: `1px solid ${M.border}`, background: "#fff", color: "#3182F6", cursor: "pointer", whiteSpace: "nowrap" }}
+                  {item.deliveryStatus === "pending" || item.deliveryStatus === "shipped" ? (
+                    <label
+                      style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", whiteSpace: "nowrap" }}
                     >
-                      발송완료 처리
-                    </button>
-                  ) : null}
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: item.deliveryStatus === "shipped" ? "#3182F6" : M.danger,
+                        }}
+                      >
+                        {item.deliveryStatus === "shipped" ? "발송완료" : "발송예정"}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={item.deliveryStatus === "shipped"}
+                        onChange={(event) => onToggleShipped?.(item, event.target.checked)}
+                        style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#3182F6" }}
+                      />
+                    </label>
+                  ) : (
+                    <CertificateDeliveryStatusBadge status={item.deliveryStatus} />
+                  )}
                 </td>
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{formatDate(item.appliedAt)}</td>
                 <td style={{ ...td, textAlign: "center" }}>

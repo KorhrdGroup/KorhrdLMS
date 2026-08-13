@@ -121,11 +121,19 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
         result={result}
         onDetailClick={handleDetailClick}
         onDeleteClick={handleDeleteClick}
-        onMarkPaid={(item) =>
-          handleQuickUpdate(item, { paymentStatus: "paid" }, "입금완료 처리했습니다.")
+        onTogglePaid={(item, paid) =>
+          handleQuickUpdate(
+            item,
+            { paymentStatus: paid ? "paid" : "unpaid" },
+            paid ? "입금완료 처리했습니다." : "대기중으로 되돌렸습니다.",
+          )
         }
-        onMarkShipped={(item) =>
-          handleQuickUpdate(item, { deliveryStatus: "shipped" }, "발송완료 처리했습니다.")
+        onToggleShipped={(item, shipped) =>
+          handleQuickUpdate(
+            item,
+            { deliveryStatus: shipped ? "shipped" : "pending" },
+            shipped ? "발송완료 처리했습니다." : "발송예정으로 되돌렸습니다.",
+          )
         }
       />
 
