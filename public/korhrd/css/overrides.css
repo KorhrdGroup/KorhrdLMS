@@ -1016,3 +1016,26 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 @media (max-width: 560px) {
   .pass-bar { height: 28px }
 }
+
+/* 고객센터 메뉴 — 좁은 화면에서는 세로 목록 대신 탭 격자 (2026-08-13, 디자인 요청)
+   980 이하에서 사이드바가 본문 위로 쌓이면, 세로 목록 네 줄이 화면을 길게
+   차지했습니다. 옛 사이트의 게시판 탭처럼 격자로 눕힙니다 — 태블릿 4칸 한 줄,
+   모바일 2×2. 칸 나누는 선은 배경(--line)을 1px 틈으로 내보이는 방식이라
+   테두리가 겹치지 않습니다. 지금 보는 탭은 파랑 채움 + 흰 글자입니다. */
+@media (max-width: 980px) {
+  .support-nav {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    padding: 0; background: var(--line); border: 1px solid var(--line);
+    border-radius: var(--r-md); overflow: hidden;
+  }
+  .support-nav .side-nav__item {
+    justify-content: center; text-align: center; white-space: nowrap;
+    margin: 0; border-radius: 0; padding: 12px 8px; background: var(--surface);
+  }
+  .support-nav .side-nav__item + .side-nav__item { margin-top: 0 }
+  .support-nav .side-nav__item:hover { background: var(--surface-sunken) }
+  .support-nav .side-nav__item[aria-current="page"] { background: var(--blue); color: #fff }
+}
+@media (max-width: 560px) {
+  .support-nav { grid-template-columns: repeat(2, 1fr) }
+}
