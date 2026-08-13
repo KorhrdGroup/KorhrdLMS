@@ -74,7 +74,7 @@ export default function Page() {
               <span className="pass-bar__rest">전체 강의</span>
             </div>
             <p className="pass-viz__note">
-              전체 강의의 60%까지만 들으면 시험을 보실 수 있습니다. 더 들을수록 아래 출석 점수도 함께 올라갑니다.
+              강의 수강률 60%를 넘기면 시험 응시가 바로 가능합니다.
             </p>
           </div>
 
@@ -94,8 +94,8 @@ export default function Page() {
               <span className="pass-bar__line" style={{ left: '60%' }} data-label="합격선 60점" aria-hidden="true" />
             </div>
             <p className="pass-viz__note">
-              강의를 다 들으면 출석 점수 40점이 먼저 채워집니다. 남은 20점만 시험에서 받으면 되니,
-              문제의 3분의 1만 맞아도 합격선을 넘습니다.
+              합격 점수의 40%는 출석점수이며, 시험 점수는 60%를 차지합니다.
+              출석과 시험 점수를 합해, 총점 60점이 넘으면 합격이 가능합니다.
             </p>
           </div>
         </div>
