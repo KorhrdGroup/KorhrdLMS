@@ -95,7 +95,11 @@ const ALL_COURSES: Course[] = [
   {"n": "치과병원코디네이터", "g": "보건복지부", "prof": "김시혜 교수", "hours": 20, "price": 300000, "fee": 100000, "reg": "2026-003111", "code": "CRS-KH-0085", "year": 2026, "lessons": 20, "rank": 0, "p": ["취업 준비", "이직·전직"], "a": ["40~50대", "60대 이상"], "ap": "40~50대", "c": ["병원·의료"]},
 ];
 
-export const COURSES: Course[] = ALL_COURSES.filter((c) => !c.closing);
+/* 노출 여부는 **DB(courses.status)**가 정합니다 — visible-courses-context 참고.
+   전에는 여기서 `closing` 플래그로 걸렀는데, 그러면 어드민에서 공개로 돌려도
+   목록에 나오지 않았습니다(독서심리상담사·지역아동교육지도사, 2026-08-13).
+   `closing` 은 카드의 "마감임박" 표시용으로만 남깁니다. */
+export const COURSES: Course[] = ALL_COURSES;
 
 /** 과정명으로 한 건 찾기 (상세페이지에서 사용) */
 export function findCourse(name: string): Course | undefined {
