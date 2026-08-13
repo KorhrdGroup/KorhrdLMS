@@ -33,7 +33,6 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
               레이아웃에 두되, 본문 위를 가로로 막지 않게 옆 칸으로 내렸습니다. */}
           <div className="support-grid support-grid--side">
             <div className="tel-box">
-              <p className="tel-box__q">궁금한 점이 있으신가요?</p>
               <p className="tel-box__t">전화 상담 문의</p>
               <p className="tel-box__n"><a href="tel:0221359249">02-2135-9249</a></p>
               <p className="tel-box__h">
@@ -42,8 +41,9 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
               </p>
             </div>
 
-            {/* 실시간 카카오톡 상담 배너 (Figma card_cs).
-                --sm 은 전달본이 '좁은 사이드바(210px)용' 으로 만들어 둔 변형입니다 */}
+            {/* 실시간 카카오톡 상담 배너 — 시안 card_cs(86:9854) 그대로 한 줄 글 +
+                말풍선 한 짝입니다. '통화가 어려우신가요?' 줄은 시안에 없습니다.
+                --sm 은 전달본이 '좁은 사이드바(210px)용' 으로 만들어 둔 변형입니다. */}
             <a
               className="kakao-box kakao-box--sm"
               href="https://pf.kakao.com/_NHfxfb"
@@ -51,7 +51,6 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
               rel="noopener"
             >
               <span className="kakao-box__txt">
-                <span className="kakao-box__q">통화가 어려우신가요?</span>
                 <span className="kakao-box__t">실시간 카카오톡 상담</span>
               </span>
               <span className="kakao-box__ico" aria-hidden="true">
@@ -59,12 +58,6 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
                 <img src="/kakao-bubble.png" alt="" />
               </span>
             </a>
-
-            <Link className="support-card" href="/support/qna">
-              <span className="ph ph--icon" aria-hidden="true" />
-              <b>1:1 문의</b>
-              <span>남겨주시면 순차적으로 답변드립니다</span>
-            </Link>
           </div>
         </aside>
 
