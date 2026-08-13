@@ -400,7 +400,8 @@ export function CertificateDetailModal({
         </div>
       ) : null}
 
-      {/* 증명사진 라이트박스 — 배경이나 ✕를 누르면 닫힙니다 */}
+      {/* 증명사진 라이트박스 — 배경이나 ✕를 누르면 닫힙니다.
+          ✕는 사진이 밝아도 보이도록 반투명 검정 원 안에 둡니다. */}
       {isPhotoOpen && detail?.photoUrl ? (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-6"
@@ -408,21 +409,22 @@ export function CertificateDetailModal({
           aria-label="증명사진 크게 보기"
           onClick={() => setIsPhotoOpen(false)}
         >
-          <button
-            type="button"
-            aria-label="닫기"
-            className="absolute right-4 top-4 text-2xl leading-none text-white/90 hover:text-white"
-            onClick={() => setIsPhotoOpen(false)}
-          >
-            ✕
-          </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={detail.photoUrl}
-            alt={`${detail.applicantName} 증명사진`}
-            className="max-h-[85vh] max-w-[90vw] rounded-lg bg-white object-contain shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          />
+          <div className="relative" onClick={(event) => event.stopPropagation()}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={detail.photoUrl}
+              alt={`${detail.applicantName} 증명사진`}
+              className="max-h-[60vh] max-w-[min(420px,85vw)] rounded-lg bg-white object-contain shadow-2xl"
+            />
+            <button
+              type="button"
+              aria-label="닫기"
+              className="absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-base leading-none text-white shadow-md hover:bg-black"
+              onClick={() => setIsPhotoOpen(false)}
+            >
+              ✕
+            </button>
+          </div>
         </div>
       ) : null}
     </AdminModal>
