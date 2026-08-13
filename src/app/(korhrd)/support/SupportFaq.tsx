@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { useHydrated } from '@/features/korhrd/lib/useHydrated';
+
 /**
  * 자주 묻는 질문 — 분류 토글 + 아코디언.
  * 프로토타입 원본: korhrd-site/support.html (main.js의 data-toggle-group · data-faq-q)
@@ -63,6 +65,7 @@ const FAQS: Array<{ id: string; cat: Category; q: string; a: string }> = [
 export default function SupportFaq() {
   const [cat, setCat] = useState<(typeof CATEGORIES)[number]>('전체');
   const [open, setOpen] = useState<string>('s1');
+  const hydrated = useHydrated();
 
   /* 다른 화면에서 특정 문항으로 걸어 들어올 수 있게 합니다 — 메인 '자주 묻는 질문'
      이 /support#s3 처럼 문항을 지목합니다. 주소의 # 가 가리키는 문항을 펼치고
@@ -110,8 +113,9 @@ export default function SupportFaq() {
               {f.q}
               <span className="arrow" aria-hidden="true">⌄</span>
             </button>
-            {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid) */}
-            <div className="faq__a" id={f.id} hidden={open !== f.id}>
+            {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid).
+                hidden 은 첫 그림에서만 — display:none 이라 두면 여닫이가 뚝 끊깁니다 */}
+            <div className="faq__a" id={f.id} hidden={hydrated ? undefined : open !== f.id}>
               <div className="faq__a-inner">
                 <div className="faq__a-pad">{f.a}</div>
               </div>
