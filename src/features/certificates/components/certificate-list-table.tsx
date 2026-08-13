@@ -9,6 +9,7 @@ import {
   formatFullAddress,
   formatOptionalText,
 } from "@/features/certificates/lib/certificate.utils";
+import { CertificateDeliveryStatusBadge } from "@/features/certificates/components/certificate-delivery-status-badge";
 import { M } from "@/features/courses/lib/course-design";
 import type { CertificateListItem } from "@/features/certificates/types/certificate.types";
 import { PaymentStatusBadge } from "@/features/enrollments/components/payment-status-badge";
@@ -20,6 +21,10 @@ type CertificateListTableProps = {
   result: PaginatedResult<CertificateListItem>;
   onDetailClick?: (item: CertificateListItem) => void;
   onDeleteClick?: (item: CertificateListItem) => void;
+  /** 대기중(unpaid) 건의 체크박스를 켜면 입금완료 처리합니다 */
+  onMarkPaid?: (item: CertificateListItem) => void;
+  /** 발송예정(pending) 건을 발송완료 처리합니다 */
+  onMarkShipped?: (item: CertificateListItem) => void;
 };
 
 const th: CSSProperties = {
@@ -87,6 +92,8 @@ export function CertificateListTable({
   result,
   onDetailClick,
   onDeleteClick,
+  onMarkPaid,
+  onMarkShipped,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -110,6 +117,7 @@ export function CertificateListTable({
             <th style={{ ...th, textAlign: "right", width: 112 }}>발급비용</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>결제방법</th>
             <th style={{ ...th, textAlign: "center", width: 130 }}>결제상태</th>
+            <th style={{ ...th, textAlign: "center", width: 110 }}>배송</th>
             <th style={{ ...th, textAlign: "center", width: 112 }}>신청일</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>신청내역</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>삭제</th>
@@ -140,11 +148,38 @@ export function CertificateListTable({
                 </td>
                 <td style={{ ...td, textAlign: "center" }}>
                   <PaymentStatusBadge status={item.paymentStatus} />
+                  {/* 대기중 건은 체크 한 번으로 입금완료 처리 */}
+                  {item.paymentStatus === "unpaid" ? (
+                    <label
+                      style={{ marginTop: 5, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontSize: 11, color: M.mute, cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={false}
+                        onChange={() => onMarkPaid?.(item)}
+                        style={{ width: 14, height: 14, cursor: "pointer", accentColor: "#3182F6" }}
+                      />
+                      입금완료 처리
+                    </label>
+                  ) : null}
                   {/* 입금이 끝났으면 다음 단계(협회 전달)를 바로 보여줍니다 */}
                   {item.paymentStatus === "paid" || item.paymentStatus === "prepaid" ? (
                     <div style={{ marginTop: 4, fontSize: 11, color: M.mute }}>
                       매주 화요일 협회 전달
                     </div>
+                  ) : null}
+                </td>
+                <td style={{ ...td, textAlign: "center" }}>
+                  <CertificateDeliveryStatusBadge status={item.deliveryStatus} />
+                  {/* 발송예정 건은 클릭 한 번으로 발송완료 처리 */}
+                  {item.deliveryStatus === "pending" ? (
+                    <button
+                      type="button"
+                      onClick={() => onMarkShipped?.(item)}
+                      style={{ marginTop: 5, display: "block", margin: "5px auto 0", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600, border: `1px solid ${M.border}`, background: "#fff", color: "#3182F6", cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      발송완료 처리
+                    </button>
                   ) : null}
                 </td>
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{formatDate(item.appliedAt)}</td>
