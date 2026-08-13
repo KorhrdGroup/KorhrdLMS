@@ -31,13 +31,27 @@
   line-height: 1.6;
 }
 
-/* 안내 상자 아래, 내용 폭만큼만 차지하는 버튼 한 줄 */
+/* 안내 상자 아래, 내용 폭만큼만 차지하는 버튼 한 줄 —
+   상자→버튼, 버튼→체크박스 간격이 같도록 위아래 여백을 맞춥니다 */
 .cta {
-  margin: 18px 0 20px;
+  margin: 18px 0;
 }
 .cta :global(.btn) {
   padding: 11px 28px;
   font-size: var(--fs-sm);
+}
+/* 글자 오른편의 화살표 — 강의실 '다음' 버튼과 같은 꼬리 달린 화살표
+   (overrides.css :root 의 --arr-tail-right 마스크)입니다.
+   currentColor 라 흰 글자를 따라 희게 나옵니다.
+   .btn 이 이미 inline-flex + gap 이라 가상 요소가 칸 하나를 차지합니다. */
+.cta :global(.btn)::after {
+  content: "";
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask: var(--arr-tail-right) center / contain no-repeat;
+  mask: var(--arr-tail-right) center / contain no-repeat;
 }
 
 /* 오른쪽 위 X — 체크박스를 켠 채로 닫아야 오늘 하루 숨겨집니다 */
@@ -57,29 +71,23 @@
   color: var(--ink);
 }
 
+/* '오늘 하루 보지 않기' 줄 — 구분선 없이 버튼 아래에 붙습니다
+   (버튼과의 간격은 .cta 의 margin-bottom 이 담당합니다) */
 .foot {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
+  gap: var(--s-3);
 }
 
-/* '오늘 하루 보지 않기' 체크박스 줄 */
-.today {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-3);
-  cursor: pointer;
-  font-size: var(--fs-xs);
-  color: var(--muted);
-}
-.today input {
+/* 체크박스만 클릭 대상입니다 — 글자는 안내라 커서·호버 효과를 주지 않습니다 */
+.check {
   width: 16px;
   height: 16px;
   accent-color: var(--blue);
   cursor: pointer;
 }
-.today:hover {
-  color: var(--ink-2);
+.today {
+  font-size: var(--fs-xs);
+  color: var(--muted);
 }

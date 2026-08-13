@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
+import { useHydrated } from '@/features/korhrd/lib/useHydrated';
 import { createSupportQnaAction } from '@/features/support-qna/actions/support-qna.actions';
 import type { SupportQnaItem } from '@/features/support-qna/services/support-qna.service';
 
@@ -34,6 +35,7 @@ export function QnaBoard({
   const [agree, setAgree] = useState(false);
 
   const [open, setOpen] = useState<string | null>(null);
+  const hydrated = useHydrated();
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -180,8 +182,13 @@ export function QnaBoard({
                         {' '}{item.title}
                         <span className="arrow" aria-hidden="true">⌄</span>
                       </button>
-                      {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid) */}
-                      <div className="faq__a" id={`qna-${item.id}`} hidden={open !== item.id}>
+                      {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid).
+                          hidden 은 첫 그림에서만 — display:none 이라 두면 여닫이가 뚝 끊깁니다 */}
+                      <div
+                        className="faq__a"
+                        id={`qna-${item.id}`}
+                        hidden={hydrated ? undefined : open !== item.id}
+                      >
                         <div className="faq__a-inner">
                           <div className="faq__a-pad">
                             <p style={{ whiteSpace: 'pre-line' }}>{item.content}</p>

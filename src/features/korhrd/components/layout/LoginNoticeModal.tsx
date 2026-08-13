@@ -130,15 +130,16 @@ export default function LoginNoticeModal({ notice: realNotice }: { notice: Login
           </Link>
         </p>
 
+        {/* 글자는 안내일 뿐 — label 로 묶지 않아 체크박스만 눌러 켜고 끕니다 */}
         <div className={styles.foot}>
-          <label className={styles.today}>
-            <input
-              type="checkbox"
-              checked={hideToday}
-              onChange={(event) => toggleHideToday(event.target.checked)}
-            />
-            오늘 하루 이 창을 보지 않습니다
-          </label>
+          <input
+            className={styles.check}
+            type="checkbox"
+            checked={hideToday}
+            onChange={(event) => toggleHideToday(event.target.checked)}
+            aria-label="오늘 하루 이 창을 보지 않습니다"
+          />
+          <span className={styles.today}>오늘 하루 이 창을 보지 않습니다</span>
         </div>
       </div>
     </div>,

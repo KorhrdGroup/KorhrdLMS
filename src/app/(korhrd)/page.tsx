@@ -196,7 +196,7 @@ export default async function HomePage() {
               <h2 id="process-title">자격증 취득, 4단계면 됩니다</h2>
               <p>신청부터 발급까지 전 과정 온라인 · 교육기간 6주</p>
             </div>
-            <Link className="section-head__more" href="/support">더보기 →</Link>
+            <Link className="section-head__more" href="/support/process">더보기 →</Link>
           </div>
 
           {/* 좁은 화면에서는 세로로 쌓지 않고 가로 스와이프합니다 (styles/responsive.css) */}
@@ -310,7 +310,7 @@ export default async function HomePage() {
             <div>
               <div className="list-head">
                 <h2>자주 묻는 질문</h2>
-                <Link className="section-head__more" href="/support">더보기 →</Link>
+                <Link className="section-head__more" href="/support/faq">더보기 →</Link>
               </div>
 
               {/* 메인에서는 펼치지 않고 고객센터의 해당 문항으로 보냅니다 */}
