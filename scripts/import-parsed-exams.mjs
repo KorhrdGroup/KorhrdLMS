@@ -14,7 +14,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { basename } from "node:path";
 
 const DRY = process.argv.includes("--dry");
-const DIR = "scripts/data/parsed";
+const DIR = process.env.PARSED_DIR ?? "scripts/data/parsed";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -48,7 +48,7 @@ const { data: courseRows } = await supabase
   .from("courses")
   .select("id, code, name")
   .is("deleted_at", null)
-  .eq("status", "active");
+  .in("status", ["active", "hidden"]);
 
 const byNorm = new Map(courseRows.map((c) => [norm(c.name), c]));
 const byCode = new Map(courseRows.map((c) => [c.code, c]));
