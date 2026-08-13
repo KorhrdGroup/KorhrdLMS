@@ -1,6 +1,5 @@
 import Footer from "@/features/korhrd/components/layout/Footer";
 import Header from "@/features/korhrd/components/layout/Header";
-import LoginNotice from "@/features/korhrd/components/layout/LoginNotice";
 import TabBar from "@/features/korhrd/components/layout/TabBar";
 import { BodyAuthFlag } from "@/features/korhrd/components/layout/BodyAuthFlag";
 import {
@@ -58,8 +57,6 @@ export default async function KorhrdLayout({ children }: { children: React.React
           <VisibleCoursesProvider codes={visibleCourseCodes}>
             <BodyAuthFlag isLoggedIn={auth.isLoggedIn} />
             <Header />
-            {/* 로그인 알림 팝업 — 다음 행동(시험·재응시·발급·입금)이 남았을 때 한 번 */}
-            <LoginNotice />
             <main id="main">{children}</main>
             <Footer />
             <TabBar />
