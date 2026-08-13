@@ -13,12 +13,27 @@ const STEPS = [
   { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 14일', desc: '상장형·카드형 자격증으로 발급 가능합니다.' },
 ];
 
-/** 수료 · 합격 기준 — 같은 화면에 있던 네 가지 조건입니다 */
+/** 수료 · 합격 기준 — 같은 화면에 있던 네 가지 조건입니다.
+ *
+ * 숫자는 그대로 두되 설명은 "채워야 할 관문" 이 아니라 "이 정도면 된다" 로
+ * 읽히게 적습니다 (2026-08-13, 디자인 요청). 근거는 모두 실제 규칙입니다 —
+ * 진도 60% = 응시 자격, 시험은 객관식(classroom-exam.types 의 choices),
+ * 불합격 시 6주 안에 재응시 가능하고 최신 점수만 남습니다
+ * (classroom-exam.service startExamRetake). 출석 점수 합산 같은, 시스템에
+ * 없는 규칙은 적지 않습니다. */
 const REQUIREMENTS = [
-  { label: '온라인 강의', pct: '60%', value: '60%', desc: <>전체 진도율 대비<br />60% 이상 수강</> },
-  { label: '온라인 시험평가', pct: '60%', value: '60점', desc: <>100점 기준<br />평균 60점 이상</> },
-  { label: '발급 신청 기한', pct: '100%', value: '7일', desc: <>합격 후 7일 이내<br />미신청 시 과목 초기화</> },
-  { label: '수료 기간', pct: '100%', value: '6주', desc: <>신청일로부터<br />6주 과정</> },
+  { label: '온라인 강의', pct: '60%', value: '60%', desc: <>전체 강의의 60%만 들으면<br />시험을 보실 수 있습니다</> },
+  { label: '온라인 시험', pct: '60%', value: '60점', desc: <>객관식 · 강의에서 다룬<br />내용에서 출제됩니다</> },
+  { label: '발급 신청', pct: '100%', value: '7일', desc: <>합격하시면 7일 안에<br />발급을 신청해 주세요</> },
+  { label: '교육 기간', pct: '100%', value: '6주', desc: <>이 안에는 몇 번이든<br />다시 응시할 수 있습니다</> },
+];
+
+/** 숫자 밑에 붙는 안심 문단 — 네 숫자가 왜 부담이 아닌지 풀어 줍니다 */
+const REASSURANCES = [
+  '시험은 객관식이고, 강의에서 다룬 범위 안에서만 출제됩니다. 강의를 들으셨다면 충분히 풀 수 있는 수준입니다.',
+  '강의를 처음부터 끝까지 다 들어야 하는 것도 아닙니다. 전체의 60%만 수강하면 응시 자격이 생깁니다.',
+  '한 번에 합격하지 못해도 괜찮습니다. 교육 기간 안에는 다시 응시할 수 있고, 기록에는 최신 점수만 남습니다.',
+  '시험은 60분 동안 PC·모바일로 언제 어디서든 응시할 수 있습니다.',
 ];
 
 /** 고객센터 › 취득 과정 (2026-08-12, 디자인 요청으로 이 자리에 들어왔습니다) */
@@ -48,7 +63,7 @@ export default function Page() {
       <section className="mt-7">
         <div className="section-head">
           <h2>수료 · 합격 기준</h2>
-          <p>아래 네 가지 조건만 충족하면 자격증을 받으실 수 있습니다.</p>
+          <p>숫자만 보면 시험 같지만, 강의를 꾸준히 들으셨다면 무리 없이 넘는 기준입니다.</p>
         </div>
         <div className="req-grid">
           {REQUIREMENTS.map((r) => (
@@ -58,6 +73,15 @@ export default function Page() {
               <p className="req__desc">{r.desc}</p>
             </div>
           ))}
+        </div>
+
+        <div className="guide-box">
+          <strong>막상 해보면 어렵지 않습니다</strong>
+          <ul>
+            {REASSURANCES.map((text) => (
+              <li key={text}>{text}</li>
+            ))}
+          </ul>
         </div>
       </section>
     </>
