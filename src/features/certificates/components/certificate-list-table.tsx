@@ -9,6 +9,7 @@ import {
   formatFullAddress,
   formatOptionalText,
 } from "@/features/certificates/lib/certificate.utils";
+import { CertificateDeliveryStatusBadge } from "@/features/certificates/components/certificate-delivery-status-badge";
 import { M } from "@/features/courses/lib/course-design";
 import type { CertificateListItem } from "@/features/certificates/types/certificate.types";
 import { PaymentStatusBadge } from "@/features/enrollments/components/payment-status-badge";
@@ -20,6 +21,10 @@ type CertificateListTableProps = {
   result: PaginatedResult<CertificateListItem>;
   onDetailClick?: (item: CertificateListItem) => void;
   onDeleteClick?: (item: CertificateListItem) => void;
+  /** 상태 체크박스 토글 — 켜면 입금완료, 끄면 대기중 */
+  onTogglePaid?: (item: CertificateListItem, paid: boolean) => void;
+  /** 배송 체크박스 토글 — 켜면 발송완료, 끄면 발송예정 */
+  onToggleShipped?: (item: CertificateListItem, shipped: boolean) => void;
 };
 
 const th: CSSProperties = {
@@ -87,6 +92,8 @@ export function CertificateListTable({
   result,
   onDetailClick,
   onDeleteClick,
+  onTogglePaid,
+  onToggleShipped,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -110,6 +117,7 @@ export function CertificateListTable({
             <th style={{ ...th, textAlign: "right", width: 112 }}>발급비용</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>결제방법</th>
             <th style={{ ...th, textAlign: "center", width: 130 }}>결제상태</th>
+            <th style={{ ...th, textAlign: "center", width: 110 }}>배송</th>
             <th style={{ ...th, textAlign: "center", width: 112 }}>신청일</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>신청내역</th>
             <th style={{ ...th, textAlign: "center", width: 88 }}>삭제</th>
@@ -120,7 +128,14 @@ export function CertificateListTable({
             const rowNumber = result.total - ((result.page - 1) * result.pageSize + index);
 
             return (
-              <tr key={item.id} style={{ borderBottom: `1px solid ${M.line}` }}>
+              <tr
+                key={item.id}
+                style={{
+                  borderBottom: `1px solid ${M.line}`,
+                  // 입금 대기중 건은 눈에 띄게 핑크 배경
+                  background: item.paymentStatus === "unpaid" ? "#FFE9EF" : undefined,
+                }}
+              >
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{rowNumber}</td>
                 <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.certificateName}</td>
                 <td style={td}>{formatApplicantWithId(item.applicantName, item.memberLoginId)}</td>
@@ -138,14 +153,57 @@ export function CertificateListTable({
                 <td style={{ ...td, textAlign: "center" }}>
                   {item.paymentMethod ? getPaymentMethodLabel(item.paymentMethod) : "무통장"}
                 </td>
+                {/* 상태 — 라벨 + 체크박스. 체크하면 입금완료, 해제하면 대기중 */}
                 <td style={{ ...td, textAlign: "center" }}>
-                  <PaymentStatusBadge status={item.paymentStatus} />
-                  {/* 입금이 끝났으면 다음 단계(협회 전달)를 바로 보여줍니다 */}
-                  {item.paymentStatus === "paid" || item.paymentStatus === "prepaid" ? (
-                    <div style={{ marginTop: 4, fontSize: 11, color: M.mute }}>
-                      매주 화요일 협회 전달
-                    </div>
-                  ) : null}
+                  {item.paymentStatus === "unpaid" || item.paymentStatus === "paid" ? (
+                    <label
+                      style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: item.paymentStatus === "paid" ? "#3182F6" : M.danger,
+                        }}
+                      >
+                        {item.paymentStatus === "paid" ? "입금완료" : "대기중"}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={item.paymentStatus === "paid"}
+                        onChange={(event) => onTogglePaid?.(item, event.target.checked)}
+                        style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#3182F6" }}
+                      />
+                    </label>
+                  ) : (
+                    <PaymentStatusBadge status={item.paymentStatus} />
+                  )}
+                </td>
+                {/* 배송 — 체크하면 발송완료, 해제하면 발송예정 */}
+                <td style={{ ...td, textAlign: "center" }}>
+                  {item.deliveryStatus === "pending" || item.deliveryStatus === "shipped" ? (
+                    <label
+                      style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: item.deliveryStatus === "shipped" ? "#3182F6" : M.danger,
+                        }}
+                      >
+                        {item.deliveryStatus === "shipped" ? "발송완료" : "발송예정"}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={item.deliveryStatus === "shipped"}
+                        onChange={(event) => onToggleShipped?.(item, event.target.checked)}
+                        style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#3182F6" }}
+                      />
+                    </label>
+                  ) : (
+                    <CertificateDeliveryStatusBadge status={item.deliveryStatus} />
+                  )}
                 </td>
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{formatDate(item.appliedAt)}</td>
                 <td style={{ ...td, textAlign: "center" }}>

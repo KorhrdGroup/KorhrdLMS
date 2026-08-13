@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
+import { updateCertificateApplicationAction } from "@/features/certificates/actions/certificate.actions";
 import { M } from "@/features/courses/lib/course-design";
 import { CertificateDeleteConfirmModal } from "@/features/certificates/components/certificate-delete-confirm-modal";
 import { CertificateDetailModal } from "@/features/certificates/components/certificate-detail-modal";
@@ -35,6 +36,26 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
     setSuccessMessage(message);
     setErrorMessage(null);
     router.refresh();
+  }
+
+  /** 목록에서 바로 상태 처리 — 대기중 체크 → 입금완료, 발송예정 → 발송완료 */
+  async function handleQuickUpdate(
+    item: CertificateListItem,
+    input: Parameters<typeof updateCertificateApplicationAction>[1],
+    doneMessage: string,
+  ) {
+    setSuccessMessage(null);
+    setErrorMessage(null);
+    try {
+      const result = await updateCertificateApplicationAction(item.id, input);
+      if (!result.success) {
+        setErrorMessage(result.message);
+        return;
+      }
+      handleActionSuccess(`${item.applicantName} — ${doneMessage}`);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "처리에 실패했습니다.");
+    }
   }
 
   function handleDetailClick(item: CertificateListItem) {
@@ -100,6 +121,20 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
         result={result}
         onDetailClick={handleDetailClick}
         onDeleteClick={handleDeleteClick}
+        onTogglePaid={(item, paid) =>
+          handleQuickUpdate(
+            item,
+            { paymentStatus: paid ? "paid" : "unpaid" },
+            paid ? "입금완료 처리했습니다." : "대기중으로 되돌렸습니다.",
+          )
+        }
+        onToggleShipped={(item, shipped) =>
+          handleQuickUpdate(
+            item,
+            { deliveryStatus: shipped ? "shipped" : "pending" },
+            shipped ? "발송완료 처리했습니다." : "발송예정으로 되돌렸습니다.",
+          )
+        }
       />
 
       <div style={{ marginTop: 20 }}>

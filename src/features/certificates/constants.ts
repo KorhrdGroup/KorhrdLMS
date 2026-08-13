@@ -26,7 +26,7 @@ export const CERTIFICATE_DELIVERY_STATUS_LABELS: Record<
   CertificateDeliveryStatus,
   string
 > = {
-  pending: "접수",
+  pending: "발송예정",
   preparing: "준비중",
   shipped: "발송완료",
   delivered: "배송완료",
