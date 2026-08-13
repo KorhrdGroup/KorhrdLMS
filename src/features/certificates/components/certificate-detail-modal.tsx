@@ -320,26 +320,14 @@ export function CertificateDetailModal({
                   type="button"
                   variant="outline"
                   disabled={isDownloading}
-                  onClick={async () => {
-                    if (!detail.photoUrl) return;
+                  onClick={() => {
+                    // R2 사진은 브라우저 fetch 가 CORS 에 막혀 새 창으로 빠졌습니다.
+                    // 같은 출처의 다운로드 API가 attachment 로 바꿔 내려줍니다.
                     setIsDownloading(true);
-                    try {
-                      // 저장소가 다른 출처라 <a download> 가 무시됩니다 — 받아서 blob 으로 저장합니다.
-                      const res = await fetch(detail.photoUrl);
-                      if (!res.ok) throw new Error();
-                      const blob = await res.blob();
-                      const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
-                      const url = URL.createObjectURL(blob);
-                      const link = document.createElement("a");
-                      link.href = url;
-                      link.download = `${detail.applicantName}_증명사진.${ext}`;
-                      link.click();
-                      URL.revokeObjectURL(url);
-                    } catch {
-                      window.open(detail.photoUrl, "_blank");
-                    } finally {
-                      setIsDownloading(false);
-                    }
+                    const link = document.createElement("a");
+                    link.href = `/api/certificates/${detail.id}/photo-download`;
+                    link.click();
+                    setTimeout(() => setIsDownloading(false), 1500);
                   }}
                 >
                   {isDownloading ? "다운로드 중..." : "다운로드"}

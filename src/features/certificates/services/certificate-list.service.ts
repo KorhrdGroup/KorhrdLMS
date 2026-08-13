@@ -9,6 +9,7 @@ import {
   getTotalPages,
   type PaginatedResult,
 } from "@/lib/shared/list-query";
+import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
 import { createClient } from "@/lib/supabase/server";
 import type {
   CertificateDeliveryStatus,
@@ -48,7 +49,8 @@ function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
     postalCode: row.postal_code,
     address: row.address,
     addressDetail: row.address_detail,
-    photoUrl: row.photo_url,
+    // R2(videokorhrd.com) 사진은 서명해야 열립니다 — 다른 출처(Supabase 등)는 그대로 통과
+    photoUrl: signProtectedMediaUrl(row.photo_url),
     issuanceCost: row.issuance_cost,
     actualPaymentAmount: row.actual_payment_amount,
     paymentMethod: row.payment_method,
