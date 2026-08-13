@@ -112,7 +112,7 @@ export default async function Page() {
 
       <div className="layout-side mt-5">
         <aside>
-          <nav className="filter-group" aria-label="발급 메뉴">
+          <nav className="filter-group side-tabs side-tabs--2" aria-label="발급 메뉴">
             <Link className="side-nav__item" href="/certificate">발급 신청</Link>
             <Link className="side-nav__item" href="/certificate/status" aria-current="page">
               발급 신청 현황

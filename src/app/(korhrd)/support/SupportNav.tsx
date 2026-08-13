@@ -21,8 +21,8 @@ export default function SupportNav() {
   const pathname = usePathname();
 
   return (
-    /* support-nav — 좁은 화면에서 탭 격자로 바뀝니다 (overrides.css) */
-    <nav className="filter-group support-nav" aria-label="고객센터 메뉴">
+    /* side-tabs — 좁은 화면에서 탭 격자로 바뀝니다 (overrides.css) */
+    <nav className="filter-group side-tabs" aria-label="고객센터 메뉴">
       {ITEMS.map((item) => (
         <Link
           key={item.href}
