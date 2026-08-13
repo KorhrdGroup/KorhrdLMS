@@ -6,6 +6,7 @@ import { getLiveFeed } from '@/features/korhrd/services/live-feed.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 import { getPublishedNoticesForSite } from '@/features/notice-management/services/notice-student-view.service';
 import { JOB_GROUPS } from '@/features/korhrd/data/jobs';
+import LoginNotice from '@/features/korhrd/components/layout/LoginNotice';
 import TrustStrip from '@/features/korhrd/components/home/TrustStrip';
 import BannerCarousel from '@/features/korhrd/components/home/BannerCarousel';
 import LoginBox from '@/features/korhrd/components/home/LoginBox';
@@ -81,6 +82,9 @@ export default async function HomePage() {
   return (
     <>
       <h1 className="sr-only">한평생 직업훈련 — 정식 등록 민간자격 온라인 교육기관</h1>
+
+      {/* 로그인 알림 팝업 — 메인에서만, 다음 행동(시험·재응시·발급·입금)이 남았을 때 */}
+      <LoginNotice />
 
       <TrustStrip />
 
