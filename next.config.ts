@@ -12,10 +12,11 @@ const nextConfig: NextConfig = {
         hostname: "fikmlxpiehdnsnsvbkbx.supabase.co",
         pathname: "/storage/v1/object/public/course-thumbnails/**",
       },
-      /* 교수 사진은 R2 에 올립니다 (과정 상세 '교수 소개') */
+      /* 교수 사진은 R2 에 올립니다 (과정 상세 '교수 소개') — videokorhrd.com 은
+         R2 커스텀 도메인 (r2.dev 는 공개 접근을 꺼서 더 이상 쓰지 않음) */
       {
         protocol: "https",
-        hostname: "pub-9a68f6a216c94dd887caa254f2dd4130.r2.dev",
+        hostname: "videokorhrd.com",
         pathname: "/professors/**",
       },
     ],
