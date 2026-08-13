@@ -197,7 +197,7 @@ export function CourseEditModal({
       onOpenChange={handleOpenChange}
       title="과정수정"
       description="과정 정보를 수정하고 저장하세요."
-      className="flex max-h-[90vh] flex-col sm:max-w-2xl"
+      className="flex h-[min(92vh,920px)] max-h-[92vh] flex-col sm:max-w-4xl"
       footer={
         <>
           <AdminButton
@@ -225,7 +225,7 @@ export function CourseEditModal({
       ) : form ? (
         <form
           id="course-edit-form"
-          className="max-h-[min(60vh,640px)] space-y-4 overflow-y-auto pr-1"
+          className="space-y-5 pb-2"
           onSubmit={handleSubmit}
         >
           {formError ? (

@@ -150,7 +150,7 @@ export function MemberEditModal({
       onOpenChange={handleOpenChange}
       title="회원수정"
       description="회원 정보를 수정하고 저장하세요."
-      className="flex max-h-[90vh] flex-col sm:max-w-3xl"
+      className="flex h-[min(92vh,820px)] max-h-[92vh] flex-col sm:max-w-3xl"
       footer={
         <>
           <AdminButton
@@ -178,7 +178,7 @@ export function MemberEditModal({
       ) : form ? (
         <form
           id="member-edit-form"
-          className="max-h-[min(60vh,640px)] space-y-6 overflow-y-auto pr-1"
+          className="space-y-6 pb-2"
           onSubmit={handleSubmit}
         >
           {formError ? (
