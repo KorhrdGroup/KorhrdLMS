@@ -23,8 +23,11 @@ export type CertificateApplicationReceipt = {
   paymentStatusLabel: string;
   deliveryStatusLabel: string;
   fullAddress: string;
-  /** 추가 입금이 필요한 상태인지 — 입금 계좌 안내를 띄울지 판단합니다. */
+  /** 추가 입금이 필요한 상태인지 — 결제 안내를 띄울지 판단합니다. */
   needsDeposit: boolean;
+  /** 결제가 남았을 때 무통장 입금 안내를 띄울지, 카드 결제 안내를 띄울지 가릅니다.
+      옛 신청 건은 결제 방법이 비어 있을 수 있어 그때는 무통장으로 봅니다. */
+  isCardPayment: boolean;
 };
 
 /**
@@ -63,5 +66,6 @@ export async function getCertificateApplicationReceipt(
     deliveryStatusLabel: getCertificateDeliveryStatusLabel(row.delivery_status),
     fullAddress: formatFullAddress(row.postal_code, row.address, row.address_detail),
     needsDeposit: payableAmount > 0 && row.payment_status !== "paid",
+    isCardPayment: row.payment_method === "card",
   };
 }

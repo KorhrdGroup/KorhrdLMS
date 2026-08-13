@@ -24,7 +24,7 @@ export function NoticeFilter() {
           key={name} type="button"
           aria-pressed={current === name}
           onClick={() => {
-            router.push(name === '전체' ? '/notice' : `/notice?cat=${encodeURIComponent(name)}`);
+            router.push(name === '전체' ? '/support' : `/support?cat=${encodeURIComponent(name)}`);
           }}
         >
           {name}

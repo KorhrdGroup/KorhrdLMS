@@ -11,10 +11,11 @@ import SearchOverlay from './SearchOverlay';
 const NAV = [
   { href: '/jobs', label: '취업 길찾기' },
   { href: '/courses', label: '수강신청' },
-  { href: '/mylecture', label: '나의 강의실', requiresLogin: true },
   { href: '/certificate', label: '자격증 발급신청', requiresLogin: true },
   { href: '/reviews', label: '합격후기' },
-  { href: '/notice', label: '공지사항' },
+  /* 공지사항·자주 묻는 질문·취득 과정·1:1 문의가 고객센터 한 묶음이 됐습니다
+     (2026-08-12, 디자인 요청) */
+  { href: '/support', label: '고객센터' },
 ];
 
 /**
@@ -30,7 +31,7 @@ const NAV = [
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, userName } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
@@ -123,7 +124,14 @@ export default function Header() {
                 className="search-trigger"
                 type="button"
                 aria-haspopup="dialog"
-                onClick={() => setSearchOpen(true)}
+                onClick={() => {
+                  /* 좁은 화면에서는 이 버튼이 햄버거 패널 안에 있습니다. 패널을 열어
+                     둔 채 검색을 띄우면 검색창 아래로 패널이 삐져나옵니다.
+                     검색을 여는 동안에는 패널을 접습니다 — 검색을 닫으면 원래
+                     화면으로 돌아갑니다 (2026-08-12, 디자인 요청). */
+                  setNavOpen(false);
+                  setSearchOpen(true);
+                }}
               >
                 <span className="txt">자격증 검색</span>
                 <span className="ico" aria-hidden="true">
@@ -137,8 +145,11 @@ export default function Header() {
               <span className="header__auth">
                 {isLoggedIn ? (
                   <>
-                    <Link className="util-link util-link--strong" href="/mylecture?tab=mypage">
-                      {userName} 님
+                    {/* 이름 대신 갈 곳을 적습니다 — 이름은 길면 잘리고(8em) 어디로
+                        가는 버튼인지도 알기 어려웠습니다 (2026-08-12, 디자인 요청).
+                        메뉴에서 '나의 강의실' 을 뺐으므로 이 자리가 그 입구입니다. */}
+                    <Link className="util-link util-link--strong" href="/mylecture">
+                      나의 강의실
                     </Link>
                     {/* 로그아웃은 폼 제출로 합니다. 서버 액션을 코드에서 호출하면
                         액션 안의 redirect가 라우터를 타지 못해 세션이 남습니다.

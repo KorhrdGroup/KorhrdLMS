@@ -131,9 +131,12 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
               value={q} onChange={(e) => setQ(e.target.value)}
             />
             {/* 입력이 있을 때만 보입니다. type=search 의 브라우저 기본 ✕는 CSS에서 숨겼습니다 */}
-            <button type="button" aria-label="입력 지우기" hidden={q.length === 0} onClick={() => setQ('')}>
-              ✕
-            </button>
+            {/* 동그라미와 ✕ 는 CSS 가 그립니다 — 시안(Figma 64:5454)의 아이콘 파일을
+                마스크로 씁니다. 수강신청 검색의 지우기 버튼과 같은 모양입니다. */}
+            <button
+              className="search-field__clear" type="button" aria-label="입력 지우기"
+              hidden={q.length === 0} onClick={() => setQ('')}
+            />
             <button type="submit" className="submit" aria-label="검색">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
                 <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />

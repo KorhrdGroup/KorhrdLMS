@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { COURSES } from '@/features/korhrd/data/courses';
 import { useCart } from '@/features/korhrd/lib/useCart';
@@ -26,7 +27,9 @@ import ScrollTopButton from '@/features/korhrd/components/ui/ScrollTopButton';
 type Group = 'cat' | 'purpose' | 'age' | 'gov';
 
 const GROUP_LABEL: Record<Group, string> = {
-  cat: '과정',
+  /* '과정' 이었는데 목록에 놓인 것도 과정이라 무엇을 고르는 칸인지 헷갈렸습니다.
+     고르는 것은 과정의 분야입니다 (2026-08-12, 디자인 요청). */
+  cat: '분야',
   purpose: '목적',
   age: '연령',
   gov: '주무부처',
@@ -52,12 +55,28 @@ type Sort = 'popular' | 'new' | 'name';
 /** URL 초기값은 서버(page.tsx)에서 받습니다 — useSearchParams는 Suspense를 요구해
  *  클라이언트 하이드레이션이 매달리는 문제가 있어 prop으로 바꿨습니다. */
 export default function CoursesClient({ initial = {}, visibleCodes }: {
-  initial?: { cat?: string; purpose?: string; age?: string };
+  initial?: { cat?: string; purpose?: string; age?: string; q?: string };
   /** 어드민에서 노출 중(active)인 과정 코드. 없으면(널) 카탈로그 전체를 보여줍니다.
       — 하드코딩 카탈로그에는 자료가 없는 과정도 들어 있어 이걸로 거릅니다. */
   visibleCodes?: string[] | null;
 }) {
   const cart = useCart();
+  const router = useRouter();
+
+  /* 검색어. 헤더 검색과 이 화면의 검색바가 둘 다 /courses?q=… 로 넘어오므로
+     URL 이 곧 상태입니다 — 여기서 따로 들고 있지 않습니다 (2026-08-12, 디자인 요청).
+     이름·분야·주무부처 어디든 걸리면 보여 줍니다. 띄어쓰기와 대소문자는 무시합니다. */
+  const query = (initial.q ?? '').trim();
+  /* 입력칸에 지금 적혀 있는 말. URL 의 검색어로 시작하고, 주소가 바뀌면 따라갑니다.
+     ✕ 로 지우면 입력칸을 비우고, 검색 중이었다면 전체 목록으로 되돌립니다. */
+  const [term, setTerm] = useState(query);
+  useEffect(() => { setTerm(query); }, [query]);
+  const clearSearch = () => {
+    setTerm('');
+    if (query) router.push('/courses');
+  };
+  const norm = (v: string) => v.replace(/\s+/g, '').toLowerCase();
+  const needle = norm(query);
 
   /* 노출 대상만 남긴 카탈로그. 이 화면의 모든 계산(필터 개수·목록)이 이걸 씁니다. */
   const catalog = useMemo(() => {
@@ -133,24 +152,53 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
       if (picked.purpose.length && !picked.purpose.some((v) => c.p.includes(v as never))) return false;
       if (picked.age.length && !picked.age.some((v) => c.a.includes(v as never))) return false;
       if (picked.gov.length && !picked.gov.includes(c.g)) return false;
+      if (needle && !norm([c.n, ...c.c, c.g].join(' ')).includes(needle)) return false;
       return true;
     });
     const byName = (a: typeof hit[0], b: typeof hit[0]) => a.n.localeCompare(b.n, 'ko');
     if (sort === 'name') return [...hit].sort(byName);
     if (sort === 'new') return [...hit].sort((a, b) => b.year - a.year || byName(a, b));
     return [...hit].sort((a, b) => (a.rank || 99) - (b.rank || 99) || byName(a, b));
-  }, [picked, sort, catalog]);
+  }, [picked, sort, needle, catalog]);
 
   const resetAll = () => setPicked({ cat: [], purpose: [], age: [], gov: [] });
 
-  /** 토글 버튼 라벨 — 원본 syncLabel(). 고른 게 없으면 기본 문구, 여럿이면 '첫째 외 N개' */
-  const chosenAll = FILTER_GROUPS.flatMap(({ group, values, suffix = '' }) =>
-    values.filter((v) => picked[group].includes(v)).map((v) => v + suffix),
+  /* 고른 조건 수. 전에는 버튼에 고른 조건을 그대로 적었는데(원본 syncLabel —
+     '복지·돌봄 과정 외 2개'), 검색바와 한 줄을 나눠 쓰게 되면서 조건이 길면
+     버튼이 넓어져 검색칸을 밀어냈습니다. 이름은 '필터' 로 고정하고
+     몇 개를 골랐는지는 숫자로 보여 줍니다 (2026-08-12, 디자인 요청). */
+  const chosenCount = FILTER_GROUPS.reduce((n, { group }) => n + picked[group].length, 0);
+
+  /* 검색 폼. 좁은 화면은 고정 줄(.course-bar)에, 넓은 화면은 도구 줄(.toolbar)에
+     놓입니다 — 자리가 달라 두 벌을 그리고 CSS 가 폭에 맞는 쪽만 보여 줍니다.
+     상태(term)는 하나라 어느 쪽에 쳐도 같은 값입니다. id 만 다릅니다. */
+  const searchForm = (id: string) => (
+    <form className="m-search" action="/courses" method="get" role="search">
+      <label className="sr-only" htmlFor={id}>자격증 검색</label>
+      {/* 전달본 문구는 '어떤 자격증을 찾고 계신가요?' 였습니다. 한 줄을 필터
+          버튼과 나눠 쓰게 되면서 375px 에서 잘려, 헤더 검색과 같은 짧은
+          문구로 바꿉니다 (2026-08-12). */}
+      <input
+        id={id} name="q" type="search" autoComplete="off"
+        placeholder="자격증 검색"
+        value={term} onChange={(event) => setTerm(event.target.value)}
+      />
+      {/* 헤더 검색과 같은 자리·같은 모양입니다. 입력이 있을 때만 보입니다
+          (type=search 의 브라우저 기본 ✕ 는 CSS 에서 감춥니다).
+          동그라미와 ✕ 는 CSS 가 그립니다 — 시안(Figma 64:5454)의 아이콘 파일을
+          마스크로 씁니다. */}
+      <button
+        type="button" className="m-search__clear" aria-label="검색어 지우기"
+        hidden={term.length === 0} onClick={clearSearch}
+      />
+      <button type="submit" aria-label="검색">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      </button>
+    </form>
   );
-  const toggleLabel =
-    chosenAll.length === 0 ? '자격증 과정 전체'
-    : chosenAll.length === 1 ? chosenAll[0]
-    : `${chosenAll[0]} 외 ${chosenAll.length - 1}개`;
 
   const filterGroup = (group: Group, values: string[], suffix = '') => {
     const chosen = picked[group];
@@ -212,18 +260,6 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
         </ol>
       </nav>
 
-      {/* 모바일 전용 검색바 — 데스크톱은 헤더 검색을 씁니다 */}
-      <form className="m-search" action="/courses" method="get" role="search">
-        <label className="sr-only" htmlFor="m-search-input">자격증 검색</label>
-        <input id="m-search-input" name="q" type="search" autoComplete="off" placeholder="어떤 자격증을 찾고 계신가요?" />
-        <button type="submit" aria-label="검색">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-        </button>
-      </form>
-
       <div className="page-head page-head--row">
         <h1>수강신청</h1>
         <p className="promo-chip">
@@ -232,17 +268,33 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
         </p>
       </div>
 
-      <div className="layout-side">
-        {/* 모바일 전용 — 바텀시트를 여는 버튼. 데스크톱에서는 CSS가 감춥니다 */}
+      {/* 검색바 + 필터 버튼 한 줄 — 좁은 화면 전용입니다(데스크톱은 헤더 검색과
+          펼쳐진 사이드바를 씁니다). 스크롤해도 헤더 아래에 붙어 있습니다
+          (2026-08-12, 디자인 요청). 두 조각 다 원래 있던 것이고 자리만 모았습니다. */}
+      <div className="course-bar">
+        {searchForm('m-search-input')}
+
+        {/* 바텀시트를 여는 버튼 */}
         <button
           className="filter-toggle" type="button" data-filter-toggle
           aria-expanded={filterOpen} aria-controls="course-filters"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <span data-filter-toggle-label>{toggleLabel}</span>
-          <span className="chev" aria-hidden="true">⌄</span>
+          <span data-filter-toggle-label>필터</span>
+          {chosenCount > 0 ? (
+            <span className="filter-toggle__count">
+              {chosenCount}
+              <span className="sr-only">개 조건 선택됨</span>
+            </span>
+          ) : null}
+          {/* 셰브론(⌄)은 '아래로 펼친다' 는 뜻인데 이 버튼은 시트를 띄웁니다.
+              시안의 필터 아이콘(Figma tool/filter 332:8251)으로 바꿉니다
+              (2026-08-12, 디자인 요청). 그림은 CSS 가 마스크로 그립니다. */}
+          <span className="filter-toggle__ico" aria-hidden="true" />
         </button>
+      </div>
 
+      <div className="layout-side">
         {/* 980px 이하에서는 .is-collapsed 가 이 사이드바를 감추고 시트가 대신 뜹니다.
             DOM에는 남겨둬야 필터 상태와 개수 계산이 한 곳에 유지됩니다.
             접힘은 hidden 속성이 아니라 클래스로 둡니다 — hidden은 전역 리셋에서
@@ -253,7 +305,19 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
 
         <div>
           <div className="toolbar">
-            <p className="toolbar__result">전체 <b>{rows.length}</b>개 과정</p>
+            {/* 넓은 화면에서는 검색이 이 줄로 들어옵니다 — 목록 바로 위라
+                무엇을 찾아 몇 개가 나왔는지가 한눈에 이어집니다
+                (2026-08-12, 디자인 요청). */}
+            <div className="toolbar__search">{searchForm('course-search-wide')}</div>
+            <p className="toolbar__result">
+              {query ? (
+                <>
+                  ‘{query}’ 검색 결과 <b>{rows.length}</b>개 과정
+                </>
+              ) : (
+                <><b>{rows.length}</b>개 과정</>
+              )}
+            </p>
             <div className="sort-group" role="group" aria-label="정렬">
               {([['popular', '인기순'], ['new', '신규순'], ['name', '가나다순']] as const).map(([key, label]) => (
                 <button key={key} type="button" aria-pressed={sort === key} onClick={() => setSort(key)}>
@@ -269,8 +333,17 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
           <div>
             {rows.length === 0 ? (
               <div className="empty-state">
-                <strong>조건에 맞는 과정이 없습니다</strong>
-                조건을 하나씩 해제하시면 더 많은 과정을 보실 수 있습니다.
+                {query ? (
+                  <>
+                    <strong>‘{query}’ 에 맞는 과정이 없습니다</strong>
+                    다른 말로 찾아보시거나, <Link href="/courses">전체 과정</Link>을 둘러보세요.
+                  </>
+                ) : (
+                  <>
+                    <strong>조건에 맞는 과정이 없습니다</strong>
+                    조건을 하나씩 해제하시면 더 많은 과정을 보실 수 있습니다.
+                  </>
+                )}
               </div>
             ) : (
               rows.map((c) => (
@@ -294,7 +367,7 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
         <div className="fsheet__dim" onClick={() => setFilterOpen(false)} />
         <div className="fsheet__panel" role="dialog" aria-modal="true" aria-label="검색 조건">
           <div className="fsheet__head">
-            <h2>자격증</h2>
+            <h2>자격증 과정</h2>
             <button
               className="fsheet__close" type="button" aria-label="닫기"
               onClick={() => setFilterOpen(false)}
@@ -312,6 +385,14 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
                   aria-selected={sheetGroup === i} onClick={() => setSheetGroup(i)}
                 >
                   {GROUP_LABEL[group]}
+                  {/* 고른 개수 — 다른 칸으로 옮겨도 무엇을 골라 뒀는지 보입니다
+                      (사이드바 묶음·필터 버튼과 같은 배지) (2026-08-12, 디자인 요청) */}
+                  {picked[group].length > 0 ? (
+                    <span className="fsheet__group-count">
+                      {picked[group].length}
+                      <span className="sr-only">개 선택됨</span>
+                    </span>
+                  ) : null}
                 </button>
               ))}
             </div>
@@ -355,7 +436,7 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
               </svg>
             </button>
             <button className="btn btn--primary btn--sm" type="button" onClick={() => setFilterOpen(false)}>
-              선택하기
+              확인
             </button>
           </div>
         </div>

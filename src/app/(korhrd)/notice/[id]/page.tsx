@@ -30,7 +30,8 @@ export default async function Page({ params }: PageProps) {
       <nav className="breadcrumb" aria-label="현재 위치">
         <ol>
           <li><Link href="/">홈</Link></li>
-          <li><Link href="/notice">공지사항</Link></li>
+          <li><Link href="/support">고객센터</Link></li>
+          <li><Link href="/support">공지사항</Link></li>
           <li aria-current="page">상세보기</li>
         </ol>
       </nav>
@@ -126,7 +127,7 @@ export default async function Page({ params }: PageProps) {
         ) : null}
 
         <p className="article__actions">
-          <Link className="btn btn--primary" href="/notice">목록으로</Link>
+          <Link className="btn btn--primary" href="/support">목록으로</Link>
         </p>
       </article>
     </div>

@@ -11,8 +11,8 @@
  * 레이어는 변경하지 않아도 되도록 설계했습니다.
  *
  * 학생 화면과의 연동 지점:
- * - 사이트 공지사항(`/notice`, `src/components/notice/data/notice-data.ts`의
- *   `NoticeListItem`)과 필드 의미를 맞췄습니다: title↔title, isPinned↔pinned,
+ * - 고객센터 › 공지사항(`/support`, `services/notice-student-view.service.ts`의
+ *   `SiteNoticeListItem`)과 필드 의미를 맞췄습니다: title↔title, isPinned↔pinned,
  *   content↔body, createdAt↔date.
  * - 학습강의실 공지사항(`/classroom/[slug]/notices`,
  *   `src/components/classroom/data/course-notice-data.ts`의 `CourseNotice`)과도

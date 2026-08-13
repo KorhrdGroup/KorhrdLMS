@@ -15,7 +15,7 @@ export function NoticePagination({ current, total }: { current: number; total: n
       current={current}
       total={total}
       onChange={(page) =>
-        router.push(`/notice?page=${page}${cat ? `&cat=${encodeURIComponent(cat)}` : ""}`)
+        router.push(`/support?page=${page}${cat ? `&cat=${encodeURIComponent(cat)}` : ""}`)
       }
     />
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * 자주 묻는 질문 — 분류 토글 + 아코디언.
@@ -44,11 +44,43 @@ const FAQS: Array<{ id: string; cat: Category; q: string; a: string }> = [
     q: '수강 전 PC 설정은 어떻게 하나요?',
     a: '최신 버전의 크롬·엣지 브라우저를 권장합니다. 동영상 재생 오류 시 브라우저 캐시를 삭제하거나 원격지원 서비스를 이용해 주세요.',
   },
+  /* 취득 절차 화면을 이 화면으로 합치면서 옮겨온 두 문항입니다
+     (2026-08-12, 디자인 요청). 나머지 넷은 여기 있던 것과 같은 질문이라 합쳤습니다. */
+  {
+    id: 's6',
+    cat: '시험·수료',
+    q: '시험에 불합격하면 어떻게 되나요?',
+    a: '교육 기간(6주) 내에서 재응시하실 수 있습니다. 다만 합격 후 7일이 지나면 해당 과목이 초기화되어 발급 신청이 불가하므로, 합격하신 뒤에는 기한 내에 발급을 신청해 주세요.',
+  },
+  {
+    id: 's7',
+    cat: '자격증 발급',
+    q: '발급받은 자격증은 어디에 활용할 수 있나요?',
+    a: '자격증 취득 후 이력서 및 활용 기관에 정식으로 기재하실 수 있습니다. 다만 본 자격증은 한국직업능력연구원에 등록된 민간자격으로 국가공인 자격증이 아니므로, 채용 기관의 요구 조건을 미리 확인하시기 바랍니다.',
+  },
 ];
 
 export default function SupportFaq() {
   const [cat, setCat] = useState<(typeof CATEGORIES)[number]>('전체');
   const [open, setOpen] = useState<string>('s1');
+
+  /* 다른 화면에서 특정 문항으로 걸어 들어올 수 있게 합니다 — 메인 '자주 묻는 질문'
+     이 /support#s3 처럼 문항을 지목합니다. 주소의 # 가 가리키는 문항을 펼치고
+     그 자리로 옮깁니다 (2026-08-12, 취득 절차 화면을 합치면서). */
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!id || !FAQS.some((f) => f.id === id)) return;
+    setOpen(id);
+    /* 분류가 걸려 있으면 그 문항이 목록에 없을 수 있어 전체로 되돌립니다 */
+    setCat('전체');
+    /* 두 번 기다립니다 — 첫 프레임에 문항이 펼쳐지고, 그 뒤라야 자리가 정해집니다.
+       브라우저가 먼저 # 로 뛰어 놓은 자리(접힌 상태 기준)를 덮어씁니다. */
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById(`faq-${id}`)?.scrollIntoView({ block: 'center' });
+      });
+    });
+  }, []);
 
   const list = cat === '전체' ? FAQS : FAQS.filter((f) => f.cat === cat);
 
@@ -69,7 +101,7 @@ export default function SupportFaq() {
 
       <div className="faq faq--wide">
         {list.map((f) => (
-          <div className="faq__item" key={f.id}>
+          <div className="faq__item" key={f.id} id={`faq-${f.id}`}>
             <button
               className="faq__q" type="button"
               aria-expanded={open === f.id} aria-controls={f.id}

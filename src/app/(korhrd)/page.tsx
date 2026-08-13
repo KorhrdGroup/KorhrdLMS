@@ -37,11 +37,13 @@ const STEPS = [
  *  줄이 모자라면 남는 높이를 행 간격으로 나눠 가집니다. */
 const HOME_NOTICE_LIMIT = 5;
 
+/* 고객센터의 같은 문항으로 보냅니다 (2026-08-12).
+   # 뒤 id 는 SupportFaq 의 문항 id 입니다 — 그 문항이 펼쳐진 채로 열립니다. */
 const FAQS = [
-  { q: '수강료가 정말 0원인가요? 추가 비용은요?', href: '/process#p-faq-4' },
-  { q: '수료 조건과 시험 기준이 어떻게 되나요?', href: '/process#p-faq-5' },
-  { q: '자격증 발급까지 얼마나 걸리나요?', href: '/process#p-faq-6' },
-  { q: '자격증은 이력서에 기재 가능한가요?', href: '/process#p-faq-2' },
+  { q: '수강료가 정말 0원인가요? 추가 비용은요?', href: '/support/faq#s1' },
+  { q: '수료 조건과 시험 기준이 어떻게 되나요?', href: '/support/faq#s2' },
+  { q: '자격증 발급까지 얼마나 걸리나요?', href: '/support/faq#s3' },
+  { q: '자격증은 이력서에 기재 가능한가요?', href: '/support/faq#s7' },
 ];
 
 const NATCERTS = [
@@ -190,7 +192,7 @@ export default async function HomePage() {
               <h2 id="process-title">자격증 취득, 4단계면 됩니다</h2>
               <p>신청부터 발급까지 전 과정 온라인 · 교육기간 6주</p>
             </div>
-            <Link className="section-head__more" href="/process">더보기 →</Link>
+            <Link className="section-head__more" href="/support">더보기 →</Link>
           </div>
 
           {/* 좁은 화면에서는 세로로 쌓지 않고 가로 스와이프합니다 (styles/responsive.css) */}
@@ -278,7 +280,7 @@ export default async function HomePage() {
             <div>
               <div className="list-head">
                 <h2>공지사항</h2>
-                <Link className="section-head__more" href="/notice">더보기 →</Link>
+                <Link className="section-head__more" href="/support">더보기 →</Link>
               </div>
               {/* 공지가 5건이 안 되면 남는 줄은 빈 칸으로 둡니다 — 칸 수를 고정해야
                   공지가 늘고 줄어도 목록 높이가 들썩이지 않습니다.
@@ -304,10 +306,10 @@ export default async function HomePage() {
             <div>
               <div className="list-head">
                 <h2>자주 묻는 질문</h2>
-                <Link className="section-head__more" href="/process">더보기 →</Link>
+                <Link className="section-head__more" href="/support">더보기 →</Link>
               </div>
 
-              {/* 메인에서는 펼치지 않고 취득절차 페이지의 해당 항목으로 보냅니다 */}
+              {/* 메인에서는 펼치지 않고 고객센터의 해당 문항으로 보냅니다 */}
               <div className="faq faq--wide">
                 {FAQS.map((f) => (
                   <div className="faq__item" key={f.href}>

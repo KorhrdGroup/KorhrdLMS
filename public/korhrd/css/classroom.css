@@ -238,6 +238,20 @@
   padding:8px 16px; font-size:var(--fs-md); font-weight:700;
 }
 .result-summary__badge.is-fail{ background:var(--red-soft); color:var(--red) }
+
+/* 합격·불합격이면 배너 전체 색을 바꿉니다 — 합격 연초록, 불합격 분홍.
+   (미응시는 기본 남색 그대로) 밝은 배경이라 글씨는 잉크색, 통계 칸은 흰색,
+   배지는 채움색으로 뒤집어 대비를 살립니다. */
+.result-summary.is-pass{ background:var(--green-soft); color:var(--ink) }
+.result-summary.is-fail{ background:var(--red-soft); color:var(--ink) }
+.result-summary.is-pass .result-summary__badge{ background:var(--green); color:#fff }
+.result-summary.is-fail .result-summary__badge.is-fail{ background:var(--red); color:#fff }
+.result-summary.is-pass .result-summary__course small,
+.result-summary.is-fail .result-summary__course small{ color:var(--muted) }
+.result-summary.is-pass .result-summary__stat,
+.result-summary.is-fail .result-summary__stat{ background:#fff }
+.result-summary.is-pass .result-summary__stat dt{ color:var(--green) }
+.result-summary.is-fail .result-summary__stat dt{ color:var(--red) }
 .result-summary__course{ font-size:var(--fs-lg); font-weight:700 }
 .result-summary__course small{ display:block; font-size:var(--fs-sm); color:rgba(255,255,255,.65); font-weight:600; margin-top:2px }
 .result-summary__stats{ display:flex; gap:var(--s-5)}

@@ -24,7 +24,6 @@ const REDIRECT_LABELS: [prefix: string, label: string][] = [
   ['/exam', '시험 응시'],
   ['/mypage', '마이페이지'],
   ['/reviews/write', '합격후기 작성'],
-  ['/enrollment', '수강신청'],
   ['/courses', '수강신청'],
   ['/support', '고객센터'],
 ];

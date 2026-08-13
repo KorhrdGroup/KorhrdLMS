@@ -8,9 +8,12 @@ import { ExamList } from './ExamList';
 
 export const metadata: Metadata = { title: '시험 — 한평생 직업훈련' };
 
-type PageProps = { params: Promise<{ course: string }> };
+type PageProps = {
+  params: Promise<{ course: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const { course } = await params;
   const member = await getMockableStudentMember();
   if (!member) {
@@ -18,6 +21,22 @@ export default async function Page({ params }: PageProps) {
   }
 
   const data = await getClassroomCourseExams(member.id, course);
+
+  // [임시 미리보기] ?preview=fail 로 열면 불합격 후 재응시 상태로 바꿔 보여줍니다.
+  // 디자인 확인용이며, 파라미터 없이 열면 실제 데이터 그대로입니다.
+  const sp = await searchParams;
+  const preview = Array.isArray(sp.preview) ? sp.preview[0] : sp.preview;
+  if (data && preview === 'fail') {
+    data.progressRate = Math.max(data.progressRate, 80);
+    data.eligible = true;
+    data.exams = data.exams.map((exam) => ({
+      ...exam,
+      status: 'available' as const,
+      score: 52,
+      totalScore: 100,
+      isPassed: false,
+    }));
+  }
   if (!data) {
     return (
       <div className="container">

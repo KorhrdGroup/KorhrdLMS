@@ -76,13 +76,18 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
         )}
 
         {courseCode ? (
-          /* 응시 이력이 있으면 시험 목록이 아니라 성적 확인 화면으로 바로 보냅니다 */
-          <Link
-            className="btn btn--ghost btn--block"
-            href={enrollment.score !== undefined ? `/exam/${courseCode}/result` : `/exam/${courseCode}`}
-          >
-            {enrollment.score !== undefined ? '시험성적 확인' : '시험 응시하기'}
-          </Link>
+          /* 합격 등 응시 이력이 있으면 성적 확인 화면으로 보냅니다.
+             단 불합격은 재응시가 우선이라 시험 화면으로 보냅니다 — 지난 성적은
+             그 화면 카드에 함께 표시됩니다. */
+          enrollment.score !== undefined && enrollment.status !== 'fail' ? (
+            <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}/result`}>
+              시험성적 확인
+            </Link>
+          ) : (
+            <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}`}>
+              시험 응시하기
+            </Link>
+          )
         ) : !ended ? (
           <span className="btn btn--block" aria-disabled="true">시험 응시하기</span>
         ) : null}

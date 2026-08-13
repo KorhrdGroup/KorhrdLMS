@@ -10,7 +10,16 @@ import { startCertificatePaymentAction } from '@/features/payments/payapp/payapp
  * 결제 결과는 화면이 아니라 서버 통보(/api/payapp/feedback)로 확정됩니다.
  * 그래서 여기서는 "결제했다"고 단정하지 않고 결제창으로 보내기만 합니다.
  */
-export default function PayButton({ applicationId }: { applicationId: string }) {
+export default function PayButton({
+  applicationId,
+  className = 'btn btn--primary btn--lg btn--block',
+  label = '발급비 결제하기',
+}: {
+  applicationId: string;
+  /** 완료 화면처럼 버튼 줄 안에 들어갈 때 모양을 바꿉니다 */
+  className?: string;
+  label?: string;
+}) {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -38,12 +47,12 @@ export default function PayButton({ applicationId }: { applicationId: string }) 
     <>
       {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
       <button
-        className="btn btn--primary btn--lg btn--block"
+        className={className}
         type="button"
         onClick={pay}
         disabled={isPending}
       >
-        {isPending ? '결제창 여는 중…' : '발급비 결제하기'}
+        {isPending ? '결제창 여는 중…' : label}
       </button>
     </>
   );

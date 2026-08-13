@@ -720,3 +720,238 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   padding-right: 38px;
   cursor: pointer;
 }
+
+/* 발급신청 완료 — 입금 안내 줄 (2026-08-12, 디자인 요청)
+   같은 목록의 배송지·배송예정·발급형태는 확인용 정보지만, 이 줄만 실제로 할 일
+   (입금)입니다. 전달본이 선택·강조에 쓰는 연블루(--blue-soft)를 깔고 가운데로
+   모아 다른 줄과 구분합니다.
+
+   .next-list li 는 flex + align-items:center 라 글자가 왼쪽에 붙습니다.
+   가운데로 세우려면 주축(가로) 정렬도 함께 바꿔야 합니다. */
+.next-list li.next-list__pay {
+  justify-content: center;
+  background: var(--blue-soft);
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* 발급신청 완료 — 버튼 두 개를 한 줄에 (2026-08-12, 디자인 요청)
+   위아래로 쌓여 있던 것을 흰색 왼쪽 · 남색 오른쪽으로 나란히 둡니다.
+   좁은 화면에서는 두 글자씩이 아니라 문장이라 한 줄에 무리하지 않고 쌓입니다. */
+.complete__cta {
+  display: flex;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+.complete__cta .btn { flex: 1 }
+/* 모바일에서는 쌓되 남색(지금 할 일)이 위로 옵니다 — 세로로 놓이면 위가
+   먼저 읽히는 자리입니다. column-reverse 라 마크업 순서는 그대로 두고
+   보이는 차례만 뒤집습니다 (2026-08-12, 디자인 요청). */
+@media (max-width: 560px) {
+  .complete__cta { flex-direction: column-reverse }
+}
+
+/* 수강신청 — 검색바와 필터 버튼을 한 줄로, 스크롤해도 위에 붙게
+   (2026-08-12, 디자인 요청)
+
+   전달본은 검색바(.m-search)가 제목 위, 필터 버튼(.filter-toggle)이 제목 아래
+   따로 있었습니다. 둘 다 '무엇을 볼지 고르는' 도구라 한 줄로 모으고, 목록을
+   내리는 동안에도 손에 닿게 헤더 아래에 붙여 둡니다.
+
+   검색바는 넓은 화면에서도 함께 보여 줍니다. 필터 버튼만 좁은 화면 전용입니다
+   (넓은 화면에는 사이드바가 펼쳐져 있습니다). */
+.course-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  position: sticky;
+  top: var(--header-h);
+  z-index: 40;
+  background: var(--surface-sunken);
+  padding: var(--s-3) 0;
+  margin-bottom: var(--s-3);
+  transition: top .25s ease;
+}
+.course-bar .m-search { flex: 1; min-width: 0; margin-bottom: 0 }
+
+/* 입력칸 안 지우기 버튼 (2026-08-12, 디자인 요청)
+   Figma button_top 64:5454 — 회색 동그라미(Atomic/Mono/200 #E4E4E4) 안에 회색
+   ✕(Atomic/Mono/600 #656565), 아주 옅은 그림자. 두 색 다 사이트 토큰과 같은
+   값이라 --line · --muted 를 그대로 씁니다.
+
+   ✕ 는 글자가 아니라 시안에서 받은 아이콘 파일입니다(글꼴마다 모양이 다릅니다).
+   색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다 — 사이트가 셰브론에
+   쓰는 방식과 같습니다.
+
+   크기는 시안 비율(아이콘 14 / ✕ 10)을 유지하며 입력칸에 맞춰 줄였습니다:
+   동그라미 20px · ✕ 10px.
+
+   type=search 가 브라우저마다 그리는 기본 ✕ 는 감춥니다(모양이 제각각입니다). */
+.m-search__clear,
+.search-field__clear {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0;
+  border-radius: var(--r-full);
+  background: var(--line);
+  box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+}
+.m-search__clear::before,
+.search-field__clear::before {
+  content: "";
+  width: 10px; height: 10px;
+  background-color: var(--muted);
+  -webkit-mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+  mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+}
+.m-search__clear[hidden],
+.search-field__clear[hidden] { display: none }
+.m-search input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
+
+/* 넓은 화면에서도 이 화면에서는 검색바를 보여 줍니다 (2026-08-12, 디자인 요청).
+   전달본은 헤더 검색과 겹친다고 감췄는데(.m-search{display:none}), 목록을 보며
+   바로 다시 찾는 자리라 헤더를 열지 않고 여기서 칠 수 있게 둡니다.
+
+   다만 자리는 제목 아래 한 줄이 아니라 **도구 줄(.toolbar)** 입니다. 한 줄을
+   따로 쓰면 폭이 남아 허전하고, 목록 바로 위에 놓으면 '무엇을 찾아 몇 개가
+   나왔는지'가 검색칸 → 결과 수 → 정렬 순으로 이어집니다.
+   좁은 화면은 그대로 고정 줄(.course-bar)에 둡니다 — 그쪽은 스크롤해도 손에
+   닿아야 하는 자리입니다. */
+.toolbar__search { display: none }
+
+@media (min-width: 981px) {
+  /* 좁은 화면용 고정 줄은 통째로 비웁니다 — 그 안의 둘 다 넓은 화면에서는
+     다른 곳에 있습니다(검색은 도구 줄로, 필터는 사이드바로). */
+  .course-bar { display: none }
+
+  .toolbar__search { display: block; flex: none; width: 280px; max-width: 100% }
+  .toolbar__search .m-search {
+    display: flex; align-items: center; gap: var(--s-2);
+    margin: 0; padding: 0 12px; height: 40px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+  }
+  .toolbar__search .m-search input {
+    flex: 1; min-width: 0; border: 0; background: none; padding: 0;
+    font-size: var(--fs-sm); color: var(--ink);
+  }
+  .toolbar__search .m-search input::placeholder { color: var(--disabled) }
+  .toolbar__search .m-search button { flex: none; display: flex; color: var(--ink-2); padding: 4px }
+
+  /* 검색칸과 결과 수를 한 덩어리로 붙이고, 정렬만 오른쪽 끝으로 보냅니다
+     (.sort-group 의 margin-left:auto 가 그 일을 이미 합니다). */
+  .toolbar { gap: var(--s-5) }
+  .toolbar__result { flex: none }
+}
+
+@media (max-width: 980px) {
+  .course-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    position: sticky;
+    top: var(--header-h);
+    z-index: 40;
+    /* 아래로 지나가는 카드가 비쳐 보이지 않게 페이지 바탕색을 깔고,
+       좌우 여백만큼 넓혀 컨테이너 가장자리까지 덮습니다. */
+    background: var(--surface-sunken);
+    padding: var(--s-3) 0;
+    margin-bottom: var(--s-3);
+    transition: top .25s ease;
+  }
+  /* 전달본의 아래 여백은 이제 줄이 가집니다 */
+  .course-bar .m-search { flex: 1; min-width: 0; margin-bottom: 0 }
+
+/* 입력칸 안 지우기 버튼 (2026-08-12, 디자인 요청)
+   Figma button_top 64:5454 — 회색 동그라미(Atomic/Mono/200 #E4E4E4) 안에 회색
+   ✕(Atomic/Mono/600 #656565), 아주 옅은 그림자. 두 색 다 사이트 토큰과 같은
+   값이라 --line · --muted 를 그대로 씁니다.
+
+   ✕ 는 글자가 아니라 시안에서 받은 아이콘 파일입니다(글꼴마다 모양이 다릅니다).
+   색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다 — 사이트가 셰브론에
+   쓰는 방식과 같습니다.
+
+   크기는 시안 비율(아이콘 14 / ✕ 10)을 유지하며 입력칸에 맞춰 줄였습니다:
+   동그라미 20px · ✕ 10px.
+
+   type=search 가 브라우저마다 그리는 기본 ✕ 는 감춥니다(모양이 제각각입니다). */
+.m-search__clear,
+.search-field__clear {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0;
+  border-radius: var(--r-full);
+  background: var(--line);
+  box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+}
+.m-search__clear::before,
+.search-field__clear::before {
+  content: "";
+  width: 10px; height: 10px;
+  background-color: var(--muted);
+  -webkit-mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+  mask: url("/korhrd/img/icon/close.svg") center / contain no-repeat;
+}
+.m-search__clear[hidden],
+.search-field__clear[hidden] { display: none }
+.m-search input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none }
+  /* 버튼은 글자만큼만 — 남는 자리는 검색바가 가집니다 */
+  .course-bar .filter-toggle { flex: none; width: auto }
+
+  /* 필터 아이콘 — 시안 tool/filter 332:8251.
+     색은 Atomic/Mono/400 #B2B2B2 = 사이트 토큰 --mono-400 과 같은 값입니다.
+     색을 토큰으로 정하려고 그림이 아니라 마스크로 씁니다. */
+  .filter-toggle__ico {
+    flex: none; width: 16px; height: 16px;
+    background-color: var(--mono-400);
+    -webkit-mask: url("/korhrd/img/icon/filter.svg") center / contain no-repeat;
+    mask: url("/korhrd/img/icon/filter.svg") center / contain no-repeat;
+  }
+
+  /* 고른 조건 수 — 사이드바 묶음 배지와 같은 모양입니다 */
+  .filter-toggle__count {
+    flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-sizing: border-box; min-width: 18px; height: 18px; padding: 0 5px;
+    border-radius: var(--r-full); background: var(--blue-soft); color: var(--blue);
+    font-size: var(--fs-2xs); font-weight: 700; line-height: 1;
+  }
+}
+
+/* 필터 시트 왼쪽 칸에도 고른 개수를 답니다 (2026-08-12, 디자인 요청).
+   다른 칸으로 옮겨도 어디에 무엇을 골라 뒀는지 보입니다. 칸이 왼쪽 정렬이라
+   배지는 오른쪽 끝에 붙입니다. */
+.fsheet__group { display: flex; align-items: center; gap: var(--s-3) }
+.fsheet__group-count {
+  flex: none; margin-left: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-sizing: border-box; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--r-full); background: var(--blue-soft); color: var(--blue);
+  font-size: var(--fs-2xs); font-weight: 700; line-height: 1;
+}
+
+/* 모바일은 한 줄을 검색바와 나눠 쓰므로 버튼을 더 좁힙니다 (2026-08-12, 디자인 요청).
+   좌우 여백을 14 → 10px 로 줄이고 조각 사이 간격도 좁혀, 남는 자리는 검색칸이
+   가져갑니다. */
+@media (max-width: 560px) {
+  .course-bar .filter-toggle { padding: 11px 10px; gap: var(--s-2) }
+}
+
+@media (max-width: 560px) {
+  /* 이 폭에서만 헤더가 스크롤에 숨습니다. 숨은 동안에는 줄이 그 자리를 대신
+     차지해 화면 맨 위에 붙습니다 — 강의 상세 탭바와 같은 처리입니다. */
+  .header.is-hidden ~ #main .course-bar { top: 0 }
+}
+
+/* 수강신청 목록 — 정가(취소선) 글자 키우기 (2026-08-12, 디자인 요청)
+   전달본은 넓은 화면에서 12px(--fs-xs) 이라 옆의 28px '0원' 에 눌려 잘 읽히지
+   않았습니다. 좁은 화면에서 이미 쓰고 있는 14px(--fs-sm) 로 맞춥니다 —
+   두 폭이 같은 크기가 되고, 취소선이라 여전히 '0원' 보다 뒤로 물러납니다. */
+.course-row__price del { font-size: var(--fs-sm) }
+
+/* 수강신청 목록 — '원' 은 어느 폭에서나 검정 (2026-08-12, 디자인 요청)
+   전달본은 좁은 화면에서만 단위를 --ink 로 빼 두고(responsive.css 560 블록),
+   넓은 화면에서는 숫자와 같은 남색이었습니다. 강조되는 것은 '0' 이라 단위는
+   뒤로 물러나는 게 맞습니다 — 모바일 처리를 넓은 화면에도 그대로 씁니다. */
+.course-row__price strong span { color: var(--ink) }
