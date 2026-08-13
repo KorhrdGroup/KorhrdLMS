@@ -77,8 +77,8 @@ export function AdminModal({
         ) : null}
 
         {footer ? (
-          {/* DialogFooter 기본값의 음수 마진(-mx-4 -mb-4)이 p-0 컨텐츠와 만나면
-              패딩을 잡아먹습니다 — mx-0 mb-0 으로 되돌립니다 */}
+          /* DialogFooter 기본값의 음수 마진(-mx-4 -mb-4)이 p-0 컨텐츠와 만나면
+             패딩을 잡아먹습니다 — mx-0 mb-0 으로 되돌립니다 */
           <DialogFooter className="mx-0 mb-0 shrink-0 border-t border-[#E5E7EB] bg-[#F9FAFB] px-6 py-4 sm:justify-end">
             {footer}
           </DialogFooter>
