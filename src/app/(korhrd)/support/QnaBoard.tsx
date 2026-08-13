@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
@@ -10,11 +9,12 @@ import type { SupportQnaItem } from '@/features/support-qna/services/support-qna
 
 /**
  * 1:1 문의 폼 + 나의 문의 내역.
- * 프로토타입 원본: korhrd-site/support.html #form (문의유형·이름·연락처·내용·동의)
+ * 프로토타입 원본: korhrd-site/support.html #form
  *
- * 저장은 기존 support-qna 서비스(board_posts)를 씁니다. 서비스가 받는 것은
- * title·content 둘뿐이라, 어드민 목록에서 알아보기 쉽도록 제목을
- * "[문의유형] 이름"으로 만들고 연락처는 본문 머리에 붙입니다.
+ * 원본의 이름·연락처 칸과 개인정보 동의는 뺐습니다 (2026-08-13, 디자인 요청) —
+ * 로그인해야 쓰는 폼이라 이름은 계정에서 오고, 새로 수집하는 개인정보가 없어
+ * 별도 동의도 필요 없습니다. 저장은 기존 support-qna 서비스(board_posts)를
+ * 쓰며, 어드민 목록에서 알아보기 쉽도록 제목을 "[문의유형] 이름"으로 만듭니다.
  */
 const TYPES = ['수강 관련', '시험·수료 관련', '자격증 발급 관련', '결제·환불 관련', '기타'];
 
@@ -29,10 +29,7 @@ export function QnaBoard({
 }) {
   const router = useRouter();
   const [qtype, setQtype] = useState(TYPES[0]);
-  const [name, setName] = useState(defaultName);
-  const [phone, setPhone] = useState('');
   const [body, setBody] = useState('');
-  const [agree, setAgree] = useState(false);
 
   const [open, setOpen] = useState<string | null>(null);
   const hydrated = useHydrated();
@@ -46,15 +43,14 @@ export function QnaBoard({
     setDone(false);
 
     startTransition(async () => {
+      /* 로그인해야 쓰는 폼이라 이름은 계정에서 옵니다 — 입력칸 없음 (2026-08-13) */
       const result = await createSupportQnaAction({
-        title: `[${qtype}] ${name.trim()}`,
-        content: `연락처: ${phone.trim()}\n\n${body.trim()}`,
+        title: `[${qtype}] ${defaultName}`,
+        content: body.trim(),
       });
 
       if (result.success) {
-        setPhone('');
         setBody('');
-        setAgree(false);
         setDone(true);
         router.refresh();
       } else {
@@ -71,7 +67,7 @@ export function QnaBoard({
       <div>
         <div className="section-head">
           <h2 id="form-title">1:1 문의하기</h2>
-          <p>답변은 등록하신 연락처로 안내해 드립니다.</p>
+          <p>답변은 아래 문의 내역에서 확인하실 수 있습니다.</p>
         </div>
 
         <div>
@@ -92,28 +88,6 @@ export function QnaBoard({
                 </div>
 
                 <div className="field">
-                  <label htmlFor="qname">
-                    이름 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <input
-                    id="qname" type="text" required autoComplete="name"
-                    value={name} onChange={(event) => setName(event.target.value)}
-                  />
-                </div>
-
-                <div className="field">
-                  <label htmlFor="qphone">
-                    연락처 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <input
-                    id="qphone" type="tel" required inputMode="numeric" placeholder="010-1234-5678"
-                    value={phone} onChange={(event) => setPhone(event.target.value)}
-                  />
-                </div>
-
-                <div className="field">
                   <label htmlFor="qbody">
                     문의 내용 <span className="req" aria-hidden="true">*</span>
                     <span className="sr-only">(필수)</span>
@@ -122,16 +96,6 @@ export function QnaBoard({
                     id="qbody" rows={5} required placeholder="문의하실 내용을 입력해 주세요"
                     value={body} onChange={(event) => setBody(event.target.value)}
                   />
-                </div>
-
-                <div className="agree">
-                  <input
-                    id="qagree" type="checkbox" required checked={agree}
-                    onChange={(event) => setAgree(event.target.checked)}
-                  />
-                  <label htmlFor="qagree">
-                    [필수] 개인정보 수집·이용에 동의합니다. (문의 응대 목적)
-                  </label>
                 </div>
 
                 {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
@@ -151,7 +115,6 @@ export function QnaBoard({
               <strong>로그인 후 이용하실 수 있습니다</strong>
               <ul>
                 <li>답변을 안내드리기 위해 로그인이 필요합니다.</li>
-                <li><Link href="/login?redirect=/support">로그인하러 가기</Link></li>
                 <li>급하신 경우 전화(02-2135-9249)나 카카오톡 상담을 이용해 주세요.</li>
               </ul>
             </div>
