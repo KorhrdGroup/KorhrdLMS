@@ -16,6 +16,6 @@ export default async function Page() {
   const items = member ? await getMySupportQnaList(member.id) : [];
 
   return (
-    <QnaBoard items={items} isLoggedIn={member !== null} defaultName={member?.name ?? ''} />
+    <QnaBoard items={items} isLoggedIn={member !== null} />
   );
 }
