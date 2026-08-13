@@ -146,13 +146,6 @@ export function ExamTaking({ exam }: { exam: ClassroomExamTaking }) {
                 : ''}
               {' '}남은 시간이 끝나면 자동 제출됩니다.
             </p>
-            {/* 불합격 후 재응시 — 지난 점수를 참고로 보여줍니다 */}
-            {exam.previousResult ? (
-              <p className="my-card__status my-card__status--fail">
-                지난 응시 {exam.previousResult.score}점 / {exam.previousResult.totalScore}점 · 불합격
-                — 이번에 제출하는 답안으로 다시 채점됩니다.
-              </p>
-            ) : null}
           </div>
         </form>
       </section>

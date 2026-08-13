@@ -32,11 +32,13 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
   const ended = enrollment.status === 'expired' || enrollment.status === 'issued';
 
   /* 카드 아무 곳이나 눌러도 강의실로 들어갑니다 — 안의 버튼·링크를 눌렀을 때는
-     그 동작(시험 응시 등)이 우선이므로 카드 이동은 건너뜁니다. */
+     그 동작(시험 응시 등)이 우선이므로 카드 이동은 건너뜁니다.
+     비활성 버튼은 pointer-events:none 이라 클릭이 카드까지 내려옵니다. 버튼 칸
+     전체를 제외해야 '누를 수 없는 버튼'을 눌렀는데 강의실로 가는 일이 없습니다. */
   const canEnter = Boolean(courseCode) && enrollment.status !== 'issued';
   const handleCardClick = (event: React.MouseEvent<HTMLElement>) => {
     if (!canEnter) return;
-    if ((event.target as HTMLElement).closest('a, button')) return;
+    if ((event.target as HTMLElement).closest('a, button, .my-card__actions')) return;
     router.push(`/lecture/${courseCode}`);
   };
 
@@ -75,19 +77,18 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
           )
         )}
 
-        {courseCode ? (
-          /* 합격 등 응시 이력이 있으면 성적 확인 화면으로 보냅니다.
-             단 불합격은 재응시가 우선이라 시험 화면으로 보냅니다 — 지난 성적은
-             그 화면 카드에 함께 표시됩니다. */
-          enrollment.score !== undefined && enrollment.status !== 'fail' ? (
-            <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}/result`}>
-              시험성적 확인
-            </Link>
-          ) : (
-            <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}`}>
-              시험 응시하기
-            </Link>
-          )
+        {/* 합격 등 응시 이력이 있으면 성적 확인 화면으로 보냅니다.
+            단 불합격은 재응시가 우선이라 시험 화면으로 보냅니다 — 지난 성적은
+            그 화면 카드에 함께 표시됩니다. 응시가 불가한 상태(진도율 미달 등)면
+            버튼을 비활성으로 둡니다. */}
+        {courseCode && enrollment.score !== undefined && enrollment.status !== 'fail' ? (
+          <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}/result`}>
+            시험성적 확인
+          </Link>
+        ) : courseCode && s.canExam ? (
+          <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}`}>
+            시험 응시하기
+          </Link>
         ) : !ended ? (
           <span className="btn btn--block" aria-disabled="true">시험 응시하기</span>
         ) : null}

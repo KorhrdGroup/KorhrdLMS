@@ -261,8 +261,6 @@ export async function getClassroomExamTaking(
       totalScore,
       questions: questions.map(toQuestion),
       submittedResult: activeSubmission ? toSubmittedResult(activeSubmission) : null,
-      // 재응시로 문제 화면이 다시 열린 경우, 지난 응시 점수를 하단에 참고로 보여줍니다.
-      previousResult: !activeSubmission && submission ? toSubmittedResult(submission) : null,
     },
   };
 }

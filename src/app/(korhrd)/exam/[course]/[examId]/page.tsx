@@ -60,7 +60,6 @@ const PREVIEW_FAIL_EXAM = (course: string, examId: string): ClassroomExamTakingD
     },
   ],
   submittedResult: null,
-  previousResult: { score: 52, totalScore: 100, isPassed: false, submittedAt: '2026-08-12' },
 });
 
 export default async function Page({ params, searchParams }: PageProps) {
