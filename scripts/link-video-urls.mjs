@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = "/Users/korhrd/Desktop/한직훈";
-const BASE_URL = "https://pub-9a68f6a216c94dd887caa254f2dd4130.r2.dev";
+const BASE_URL = "https://videokorhrd.com";
 const OUT_DIR = path.join(process.cwd(), "scripts", "out");
 
 const nfc = (s) => s.normalize("NFC");

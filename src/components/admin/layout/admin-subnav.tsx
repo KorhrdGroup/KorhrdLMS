@@ -19,8 +19,8 @@ export function AdminSubNav() {
   }
 
   return (
-    <div className="no-print shrink-0 border-b border-[#E5E7EB] bg-white px-4 sm:px-6">
-      <nav className="flex gap-1 overflow-x-auto py-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="no-print shrink-0 border-b border-[#E5E7EB] bg-white px-4 sm:px-6 lg:px-8">
+      <nav className="flex gap-1.5 overflow-x-auto py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {activeNav.group.children.map((child) => {
           const isActive = child === activeNav.child;
 
@@ -29,11 +29,12 @@ export function AdminSubNav() {
               key={`${activeNav.group.label}-${child.label}`}
               href={child.href}
               className={cn(
-                "inline-flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-all duration-150",
+                "inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30 focus-visible:outline-none",
                 isActive
-                  ? "bg-[#EFF6FF] text-[#3B82F6]"
-                  : "text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#111827]",
+                  ? "bg-[#EAF2FF] font-semibold text-[#2563EB]"
+                  : "text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#111827]",
               )}
+              aria-current={isActive ? "page" : undefined}
             >
               {child.label}
               {child.implemented === false ? (

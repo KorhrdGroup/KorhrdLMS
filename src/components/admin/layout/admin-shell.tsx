@@ -84,18 +84,20 @@ export function AdminPageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
+        "flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between",
         className,
       )}
     >
-      <div>
-        <h1 className="text-2xl font-bold text-[#111827]">{title}</h1>
+      <div className="min-w-0">
+        <h1 className="text-xl font-bold tracking-[-0.02em] text-[#111827] sm:text-2xl">
+          {title}
+        </h1>
         {description ? (
-          <p className="mt-1 text-sm text-[#6B7280]">{description}</p>
+          <p className="mt-1 max-w-3xl text-sm leading-6 text-[#64748B]">{description}</p>
         ) : null}
       </div>
       {actions ? (
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
+        <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
           {actions}
         </div>
       ) : null}

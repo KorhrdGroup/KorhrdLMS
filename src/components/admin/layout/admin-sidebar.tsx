@@ -17,7 +17,7 @@ type AdminSidebarProps = {
   onNavigate?: () => void;
 };
 
-const SIDEBAR_WIDTH_EXPANDED = "w-[220px]";
+const SIDEBAR_WIDTH_EXPANDED = "w-[240px]";
 const SIDEBAR_WIDTH_COLLAPSED = "w-16";
 
 /**
@@ -75,7 +75,7 @@ export function AdminSidebar({
         ) : null}
       </div>
 
-      <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-2.5">
         {isFullAccessRole(adminUser.role) ? (
           <>
             <SidebarLink
@@ -127,12 +127,13 @@ function SidebarLink({
       onClick={onNavigate}
       title={collapsed ? label : undefined}
       className={cn(
-        "flex items-center gap-2.5 rounded-md text-[13px] leading-none font-medium tracking-[-0.01em] transition-all duration-150",
-        collapsed ? "mx-auto size-9 justify-center" : "px-2.5 py-2.5",
+        "flex items-center gap-2.5 rounded-lg text-[13px] leading-none font-medium tracking-[-0.01em] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#3B82F6]/30 focus-visible:outline-none",
+        collapsed ? "mx-auto size-10 justify-center" : "px-3 py-2.5",
         active
-          ? "bg-[#EFF6FF] text-[#3B82F6]"
-          : "text-[#374151] hover:bg-[#F3F4F6] hover:text-[#111827]",
+          ? "bg-[#EAF2FF] font-semibold text-[#2563EB]"
+          : "text-[#475569] hover:bg-[#F1F5F9] hover:text-[#111827]",
       )}
+      aria-current={active ? "page" : undefined}
     >
       <Icon className="size-4 shrink-0" />
       {!collapsed ? <span className="truncate">{label}</span> : null}

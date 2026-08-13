@@ -1,3 +1,4 @@
+import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -39,7 +40,9 @@ export async function GET(
     return new Response("자료를 찾을 수 없습니다.", { status: 404 });
   }
 
-  const upstream = await fetch(row.file_url, { cache: "no-store" });
+  const upstream = await fetch(signProtectedMediaUrl(row.file_url) ?? row.file_url, {
+    cache: "no-store",
+  });
   if (!upstream.ok || !upstream.body) {
     return new Response("파일을 가져오지 못했습니다.", { status: 502 });
   }

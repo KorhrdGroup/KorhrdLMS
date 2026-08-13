@@ -6,6 +6,7 @@ import type {
   ClassroomMaterialItem,
   ClassroomMaterialList,
 } from "@/features/classroom-materials/types/classroom-material.types";
+import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
 import { createClient } from "@/lib/supabase/server";
 
 function toClassroomItem(material: Material, seq: number): ClassroomMaterialItem {
@@ -15,7 +16,8 @@ function toClassroomItem(material: Material, seq: number): ClassroomMaterialItem
     title: material.title,
     content: material.description,
     fileName: material.fileName,
-    fileUrl: material.fileUrl,
+    // 학생 미리보기 직링크에는 만료시각 서명을 붙입니다 (주소 유출 대비)
+    fileUrl: signProtectedMediaUrl(material.fileUrl),
     isCommon: material.courseId === null,
     createdBy: "관리자",
     createdAt: material.createdAt.slice(0, 10),
