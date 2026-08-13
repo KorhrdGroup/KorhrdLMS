@@ -11,6 +11,7 @@ import type {
   ClassroomLectureDetail,
   ClassroomLectureStatus,
 } from "@/features/classroom-lectures/types/classroom-lecture.types";
+import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
 import { createClient } from "@/lib/supabase/server";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
@@ -151,7 +152,8 @@ async function fetchPublishedSessions(
     order: index + 1,
     title: session.title,
     durationMinutes: session.duration_minutes,
-    videoUrl: session.video_url,
+    // 학생에게 내려가는 영상 주소는 만료시각 서명을 붙입니다 (주소 유출 대비)
+    videoUrl: signProtectedMediaUrl(session.video_url),
     videoDurationSeconds: session.video_duration_seconds,
   }));
 }

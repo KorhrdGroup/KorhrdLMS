@@ -132,3 +132,19 @@ rclone purge "r2:lms-video/인형극공연지도사/인형극공연_원본"
 - 과정 목록 스냅샷: `scripts/db-courses.json`
 - 신규 과정 등록: `supabase/migrations/20260723000001_add_new_video_courses.sql`
 - 차시 수 보정: `supabase/migrations/20260723000002_fix_lecture_session_counts.sql`
+
+## 8단계 — 서명 URL 보호 (2026-08-13 구축)
+
+주소가 유출돼도 유효기간(기본 6시간)이 지나면 재생되지 않도록 서명을 강제합니다.
+
+- LMS: `src/lib/r2/signed-url.ts` 가 `videokorhrd.com` 주소에 `?ex=<만료초>&sig=<HMAC>` 를 붙임.
+  적용 지점: 학생 강의재생·학습자료실, 교안 다운로드 API, 관리자 영상 미리보기.
+  비밀키 `VIDEO_URL_SIGNING_SECRET` (.env.local + Vercel) — 없으면 서명 없이 원본 반환(무해).
+- Cloudflare Worker: `cloudflare/video-gate` 가 videokorhrd.com/* 를 가로채 서명 검증.
+  `/professors/` 는 공개(교수 사진). Range(영상 탐색) 지원.
+- 배포 순서 (이 순서면 무중단):
+  1. Vercel에 `VIDEO_URL_SIGNING_SECRET` 등록 + 재배포 (서명 붙지만 아직 검증 안 함)
+  2. `cd cloudflare/video-gate && npx wrangler secret put SIGNING_SECRET && npx wrangler deploy`
+  3. R2 → lms-video → Settings → r2.dev 공개 접근 비활성화
+- 주의: 서명은 DB에 저장하면 안 됨 — 관리자 자료(learning_materials) 수정 모달은 URL을
+  재저장하므로 관리자 자료 read 경로는 서명하지 않는다.

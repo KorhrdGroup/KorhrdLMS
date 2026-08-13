@@ -7,6 +7,7 @@ import type {
   SessionMoveDirection,
   SetLectureSessionVideoInput,
 } from "@/features/lectures/types/lecture-curriculum.types";
+import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
 
@@ -44,7 +45,9 @@ function toSession(row: SessionRow): LectureSession {
     order: row.session_order,
     title: row.title,
     durationMinutes: row.duration_minutes,
-    videoUrl: row.video_url,
+    // 관리자 미리보기용 서명 주소. 저장 경로는 업로드 결과/외부 URL 입력만 쓰므로
+    // 서명된 주소가 DB로 되돌아가지 않습니다.
+    videoUrl: signProtectedMediaUrl(row.video_url),
     videoSource: row.video_source,
     videoFileName: row.video_file_name,
     videoDurationSeconds: row.video_duration_seconds,

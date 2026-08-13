@@ -1,0 +1,15 @@
+# videokorhrd.com(R2 lms-video) 서명 검증 게이트.
+# 배포: cloudflare/video-gate 에서
+#   npx wrangler secret put SIGNING_SECRET   (LMS의 VIDEO_URL_SIGNING_SECRET 와 같은 값)
+#   npx wrangler deploy
+name = "video-gate"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+routes = [
+  { pattern = "videokorhrd.com/*", zone_name = "videokorhrd.com" },
+]
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "lms-video"
