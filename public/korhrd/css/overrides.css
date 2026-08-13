@@ -980,7 +980,13 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    보였습니다. ① 응시 자격(출석 60% 지점까지 찬 막대) ② 합격 점수(출석 40 +
    시험 60 누적, 60점 자리에 합격선). 색·간격은 전달본 토큰만 씁니다 —
    막대 짜임은 lec-progress(track 위 fill)와 같은 문법입니다. */
-.pass-viz { display: grid; gap: var(--s-7); max-width: 640px }
+.pass-viz { display: grid; gap: var(--s-4); max-width: 640px; margin: 0 auto }
+/* 막대 하나가 흰 카드 하나 — 위 취득 4단계 카드(.step)와 같은 옷입니다.
+   가운데 정렬은 컨테이너(margin:auto)가 맡습니다 (2026-08-13, 디자인 요청) */
+.pass-viz__row {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: var(--pad-card-y) var(--pad-card);
+}
 .pass-viz__head {
   display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4);
   margin-bottom: var(--s-2); font-size: var(--fs-sm);
