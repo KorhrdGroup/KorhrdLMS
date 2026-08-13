@@ -154,10 +154,12 @@ export function QnaBoard({
                         aria-controls={`qna-${item.id}`}
                         onClick={() => setOpen(open === item.id ? null : item.id)}
                       >
-                        <span className={`badge badge--${item.status === 'answered' ? 'pass' : 'info'}`}>
+                        {/* 접수는 파랑(학습중과 같은 톤) — 배지 너비는 overrides.css 가
+                            답변완료와 같게 맞춥니다. 제목은 남는 폭을 다 갖고 왼쪽 정렬. */}
+                        <span className={`badge badge--${item.status === 'answered' ? 'pass' : 'learning'}`}>
                           {item.status === 'answered' ? '답변완료' : '접수'}
                         </span>
-                        {' '}{item.title}
+                        <span className="qna-item-title">{item.title}</span>
                         <span className="arrow" aria-hidden="true">⌄</span>
                       </button>
                       {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid).
