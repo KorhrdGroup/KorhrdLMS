@@ -74,7 +74,7 @@ export default function Page() {
               <span className="pass-bar__rest">전체 강의</span>
             </div>
             <p className="pass-viz__note">
-              강의 수강률 60%를 넘기면 시험 응시가 바로 가능합니다.
+              강의 수강률 60%를 넘기면 시험 응시가 바로 가능하며, 수강률에 따라 출석점수가 달라집니다.(40점 만점)
             </p>
           </div>
 
