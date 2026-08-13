@@ -25,7 +25,7 @@ export default function NotFoundContent() {
         <p className="errpage__links">
           <Link href="/jobs">취업 길찾기</Link>
           <Link href="/reviews">합격후기</Link>
-          <Link href="/notice">공지사항</Link>
+          <Link href="/support">공지사항</Link>
           <Link href="/support">고객센터</Link>
         </p>
       </section>

@@ -16,7 +16,6 @@ export default function Footer() {
           <div>
             <p className="footer__links">
               <Link href="/about">교육원 소개</Link>
-              <Link href="/process">취득 절차</Link>
               <Link href="/support">고객센터</Link>
               <Link href="/terms">이용약관</Link>
               <Link href="/privacy">개인정보처리방침</Link>

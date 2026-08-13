@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { figma, figmaClass } from "@/components/home/home-design";
-import { NoticePagination } from "@/components/notice/NoticePagination";
+import { NoticePagination } from "@/components/shared/NoticePagination";
 import type { ClassroomMaterialItem } from "@/features/classroom-materials/types/classroom-material.types";
 import { cn } from "@/lib/utils";
 

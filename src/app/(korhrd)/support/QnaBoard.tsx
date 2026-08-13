@@ -62,14 +62,17 @@ export function QnaBoard({
   };
 
   return (
-    <section className="section" id="form" aria-labelledby="form-title">
-      <div className="container">
-        <div className="section-head content">
+    /* 고객센터 안쪽 칸에 들어갑니다 — 예전에는 화면 폭을 다 쓰는 띠(.section)에
+       제 컨테이너까지 두르고 있었는데, 이제 레이아웃이 그 자리를 잡아 줍니다
+       (2026-08-12, 사이드바 구조로 바뀌면서). */
+    <section id="form" aria-labelledby="form-title">
+      <div>
+        <div className="section-head">
           <h2 id="form-title">1:1 문의하기</h2>
           <p>답변은 등록하신 연락처로 안내해 드립니다.</p>
         </div>
 
-        <div className="content">
+        <div>
           {isLoggedIn ? (
             <form className="form-card" onSubmit={handleSubmit}>
               <div className="form" style={{ maxWidth: 'none' }}>

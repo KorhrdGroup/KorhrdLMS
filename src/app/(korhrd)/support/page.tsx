@@ -1,83 +1,74 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { getMySupportQnaList } from '@/features/support-qna/services/support-qna.service';
-import { getMockableStudentMember } from '@/lib/mock-auth-server';
+import { getPublishedNoticesForSite } from '@/features/notice-management/services/notice-student-view.service';
 
-import SupportFaq from './SupportFaq';
-import { QnaBoard } from './QnaBoard';
+import { NoticeFilter } from './NoticeFilter';
+import { NoticePagination } from './NoticePagination';
 
 export const metadata: Metadata = {
-  title: '고객센터 — 한평생 직업훈련',
-  description: '한평생 직업훈련 고객센터 1:1 문의',
+  title: '공지사항 — 한평생 직업훈련',
+  description: '한평생 직업훈련 공지사항',
+};
+
+const PER_PAGE = 10;
+
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 /**
- * 고객센터.
- * 프로토타입 원본: korhrd-site/support.html — 상단 3블록·FAQ·문의폼 구성을 그대로 씁니다.
- * (문의 내역 목록만 우리 쪽에서 덧붙인 것입니다)
+ * 고객센터 › 공지사항.
+ *
+ * 마크업은 korhrd 디자인(notice.html), 데이터는 어드민 공지 DB입니다.
+ * 고정 공지는 '공지' 배지가 붙고 번호 대신 맨 위에 옵니다(서비스가 그렇게 정렬해 줍니다).
+ *
+ * 2026-08-12 — /notice 에 있던 목록을 고객센터 안으로 옮겼습니다 (디자인 요청).
+ * 글 하나를 여는 화면(/notice/{id})은 그대로 둡니다 — 밖에서 걸린 링크가 있습니다.
  */
-export default async function Page() {
-  const member = await getMockableStudentMember();
-  const items = member ? await getMySupportQnaList(member.id) : [];
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
+  const page = Math.max(1, Number.parseInt(rawPage ?? '1', 10) || 1);
+  const cat = Array.isArray(params.cat) ? params.cat[0] : params.cat;
+
+  const all = await getPublishedNoticesForSite();
+  // 분류 탭 — "전체"(cat 없음)면 모두, 아니면 해당 분류만. 고정 공지는 항상 남깁니다.
+  const notices = cat ? all.filter((n) => n.pinned || n.category === cat) : all;
+  const totalPages = Math.max(1, Math.ceil(notices.length / PER_PAGE));
+  const current = Math.min(page, totalPages);
+  const slice = notices.slice((current - 1) * PER_PAGE, current * PER_PAGE);
 
   return (
-    <>
-      <div className="container">
-        <nav className="breadcrumb" aria-label="현재 위치">
-          <ol>
-            <li><Link href="/">홈</Link></li>
-            <li aria-current="page">고객센터</li>
-          </ol>
-        </nav>
-
-        <div className="page-head"><h1>고객센터</h1></div>
-
-        <div className="support-grid">
-          <div className="tel-box">
-            <p className="tel-box__q">궁금한 점이 있으신가요?</p>
-            <p className="tel-box__t">전화 상담 문의</p>
-            <p className="tel-box__n"><a href="tel:0221359249">02-2135-9249</a></p>
-            <p className="tel-box__h">
-              운영시간 평일 10:00~18:00<br />
-              점심시간 12:00~14:00 · 금/토/일/공휴일 휴무
-            </p>
-          </div>
-
-          {/* 실시간 카카오톡 상담 배너 (Figma card_cs) */}
-          <a className="kakao-box" href="https://pf.kakao.com/_NHfxfb" target="_blank" rel="noopener">
-            <span className="kakao-box__txt">
-              <span className="kakao-box__q">통화가 어려우신가요?</span>
-              <span className="kakao-box__t">실시간 카카오톡 상담</span>
-            </span>
-            <span className="kakao-box__ico" aria-hidden="true">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/kakao-bubble.png" alt="" />
-            </span>
-          </a>
-
-          <a className="support-card" href="#form">
-            <span className="ph ph--icon" aria-hidden="true" />
-            <b>1:1 문의</b>
-            <span>남겨주시면 순차적으로 답변드립니다</span>
-          </a>
-        </div>
+    <section>
+      <div className="toolbar">
+        <p className="toolbar__result">전체 <b>{notices.length}</b>건</p>
+        <NoticeFilter />
       </div>
 
-      <section className="section section--white" aria-labelledby="faq-title">
-        <div className="container">
-          <div className="section-head content"><h2 id="faq-title">자주 묻는 질문</h2></div>
-          <div className="content">
-            <SupportFaq />
-          </div>
-        </div>
-      </section>
+      {/* 번호 칸 클래스는 반드시 .no 입니다 — CSS(account.css)가 `.board .no`에
+          걸려 있어 다른 이름을 쓰면 칸 폭(40px)·정렬이 사라집니다 */}
+      <ul className="board">
+        {slice.map((notice) => (
+          <li key={notice.id}>
+            {notice.pinned ? (
+              <span className="badge badge--best">공지</span>
+            ) : (
+              <span className="no">{notice.no}</span>
+            )}
+            <Link className="tit" href={`/notice/${notice.id}`}>{notice.title}</Link>
+            <span className="date">
+              <span className="date__cent">{notice.date.slice(0, 2)}</span>
+              {notice.date.slice(2)}
+            </span>
+          </li>
+        ))}
+        {slice.length === 0 ? (
+          <li><span className="tit">등록된 공지가 없습니다.</span></li>
+        ) : null}
+      </ul>
 
-      <QnaBoard
-        items={items}
-        isLoggedIn={member !== null}
-        defaultName={member?.name ?? ''}
-      />
-    </>
+      <NoticePagination current={current} total={totalPages} />
+    </section>
   );
 }
