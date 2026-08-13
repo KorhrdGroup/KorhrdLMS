@@ -23,14 +23,17 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
 
       <div className="page-head"><h1>고객센터</h1></div>
 
-      {/* 자격증 발급신청·나의 강의실이 쓰는 것과 같은 좌측 메뉴 짜임입니다 */}
-      <div className="layout-side mt-5">
+      {/* 자격증 발급신청·나의 강의실이 쓰는 것과 같은 좌측 메뉴 짜임입니다.
+          support-layout — 좁은 화면에서 상담 블록을 본문 아래로 내리는 순서 규칙이
+          걸립니다 (overrides.css) */}
+      <div className="layout-side support-layout mt-5">
         <aside>
           <SupportNav />
 
-          {/* 상담 3블록은 메뉴 아래에 붙입니다 (2026-08-12, 디자인 요청).
+          {/* 상담 블록은 메뉴 아래에 붙입니다 (2026-08-12, 디자인 요청).
               어느 화면에서 헤매다 들어와도 전화·카카오로 바로 갈 수 있어야 해서
-              레이아웃에 두되, 본문 위를 가로로 막지 않게 옆 칸으로 내렸습니다. */}
+              레이아웃에 두되, 본문 위를 가로로 막지 않게 옆 칸으로 내렸습니다.
+              좁은 화면에서는 탭·본문 뒤, 페이지 맨 아래로 갑니다 (2026-08-13). */}
           <div className="support-grid support-grid--side">
             <div className="tel-box">
               <p className="tel-box__t">전화 상담 문의</p>

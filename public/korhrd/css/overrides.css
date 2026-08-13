@@ -1048,3 +1048,21 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 @media (max-width: 560px) {
   .side-tabs { grid-template-columns: repeat(2, 1fr) }
 }
+
+/* 고객센터 상담 블록 — 좁은 화면에서는 페이지 맨 아래로 (2026-08-13, 디자인 요청)
+   980 이하에서 사이드바가 본문 위로 쌓이면 탭과 본문 사이에 상담 블록이 끼어,
+   정작 보러 온 내용이 한 화면 아래로 밀렸습니다. aside 를 display:contents 로
+   풀어 탭 → 본문 → 상담 순으로 재배열합니다 (강의실 좁은 화면과 같은 수법).
+   태블릿(561~980)에서는 전화·카카오를 위아래가 아니라 양옆으로 나란히 둡니다. */
+@media (max-width: 980px) {
+  .support-layout > aside { display: contents }
+  .support-layout > aside > .side-tabs { order: 1 }
+  .support-layout > div { order: 2 }
+  .support-layout > aside > .support-grid--side {
+    order: 3; margin-top: 0;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .support-layout > aside > .support-grid--side { grid-template-columns: 1fr }
+}
