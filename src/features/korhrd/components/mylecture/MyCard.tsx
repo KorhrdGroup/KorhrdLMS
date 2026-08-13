@@ -87,7 +87,7 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
           </Link>
         ) : courseCode && s.canExam ? (
           <Link className="btn btn--ghost btn--block" href={`/exam/${courseCode}`}>
-            시험 응시하기
+            {enrollment.status === 'fail' ? '시험 재응시' : '시험 응시하기'}
           </Link>
         ) : !ended ? (
           <span className="btn btn--block" aria-disabled="true">시험 응시하기</span>
