@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
@@ -151,7 +150,6 @@ export function QnaBoard({
               <strong>로그인 후 이용하실 수 있습니다</strong>
               <ul>
                 <li>답변을 안내드리기 위해 로그인이 필요합니다.</li>
-                <li><Link href="/login?redirect=/support">로그인하러 가기</Link></li>
                 <li>급하신 경우 전화(02-2135-9249)나 카카오톡 상담을 이용해 주세요.</li>
               </ul>
             </div>
