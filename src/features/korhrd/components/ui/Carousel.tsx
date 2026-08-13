@@ -63,8 +63,16 @@ export default function Carousel({
       count = Math.ceil((el.scrollWidth - 1) / width);
     }
 
-    setPages(Math.max(1, Math.min(50, count)));
-    setPage(Math.round(el.scrollLeft / width));
+    const pagesCount = Math.max(1, Math.min(50, count));
+    setPages(pagesCount);
+    /* 트랙이 화면의 정수배가 아니면(마지막 페이지가 반쪽) 끝까지 밀어도
+       round 로는 마지막 페이지 번호가 안 나옵니다 — 끝에 닿았으면 마지막으로. */
+    const maxScroll = el.scrollWidth - width;
+    setPage(
+      maxScroll > 0 && el.scrollLeft >= maxScroll - 1
+        ? pagesCount - 1
+        : Math.round(el.scrollLeft / width),
+    );
   }, [pageBy]);
 
   useEffect(() => {

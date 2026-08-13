@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import Carousel from '@/features/korhrd/components/ui/Carousel';
+
 export const metadata: Metadata = {
   title: '취득 과정 — 한평생 직업훈련',
   description: '자격증 취득 4단계와 수료 · 합격 기준',
@@ -42,9 +44,12 @@ export default function Page() {
           <h2>자격증 취득, 4단계면 됩니다</h2>
           <p>신청부터 발급까지 전 과정 온라인 · 교육기간 6주</p>
         </div>
-        <ol className="step-grid">
+        {/* 좁은 화면에서는 옆으로 넘겨 봅니다(appendix.css의 .step-grid 스와이프).
+            넘길 수 있다는 표식이 없어 잘린 것처럼 보여, 직업 길찾기와 같은
+            점(dot) 캐러셀로 감쌉니다. 다 들어가는 넓은 화면에서는 점이 숨습니다. */}
+        <Carousel className="step-grid" label="자격증 취득 4단계" dotsLabel="단계 목록 이동">
           {STEPS.map((s) => (
-            <li className="step" key={s.title}>
+            <div className="step" key={s.title}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="step__ico" src={s.ico} alt="" aria-hidden="true" />
               <div className="step__head">
@@ -52,9 +57,9 @@ export default function Page() {
                 <span className="step__dur">{s.dur}</span>
               </div>
               <p>{s.desc}</p>
-            </li>
+            </div>
           ))}
-        </ol>
+        </Carousel>
       </section>
 
       <section className="mt-7">
