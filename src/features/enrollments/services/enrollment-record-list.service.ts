@@ -1,20 +1,23 @@
+import { getEnrollmentExamPercent } from "@/features/classroom-exams/services/classroom-exam.service";
+import { getClassroomCourseProgressRate } from "@/features/classroom-lectures/services/classroom-lecture.service";
 import {
   ENROLLMENT_LIST_SELECT,
   type EnrollmentSearchField,
 } from "@/features/enrollments/constants";
 import {
   deriveLearningStatus,
-  getMockAssignmentStatus,
-  getMockCompletion,
-  getMockExamStatus,
   getMockInstructorName,
-  getMockProgressRate,
 } from "@/features/enrollments/lib/enrollment-mock-signals";
 import type {
   EnrollmentListItem,
   EnrollmentLearningStatus,
   EnrollmentRecordListItem,
 } from "@/features/enrollments/types/enrollment.types";
+import {
+  calculateGrade,
+  deriveGradeCompletion,
+} from "@/features/grades/lib/grade-calculator";
+import { getAttendanceOverride } from "@/features/grades/repositories/grade.repository";
 import { getTotalPages } from "@/lib/shared/list-query";
 import { createClient } from "@/lib/supabase/server";
 
@@ -36,20 +39,29 @@ export type EnrollmentRecordListResult = {
   totalPages: number;
 };
 
-function enrich(row: EnrollmentListItem): EnrollmentRecordListItem {
+/**
+ * 진도율·시험점수·수료여부를 성적관리(grade-list.service)와 같은 실제 데이터로
+ * 계산합니다: 진도율은 lecture_progress 기준(관리자 보정값 우선), 시험점수는
+ * exam_submissions 응시 기록, 수료는 출석 40% + 시험 60% 가중 합산 60점 이상.
+ * 과제 기능은 사용하지 않으므로 과제 상태는 항상 "-"입니다.
+ */
+async function enrich(row: EnrollmentListItem): Promise<EnrollmentRecordListItem> {
   const learningStatus = deriveLearningStatus(row.status, row.end_date);
-  const progressRate = getMockProgressRate(row.id, learningStatus);
-  const examStatus = getMockExamStatus(row.id, learningStatus);
-  const assignmentStatus = getMockAssignmentStatus(row.id, learningStatus);
+  const progressRate =
+    getAttendanceOverride(row.id) ??
+    (await getClassroomCourseProgressRate(row.id, row.course.id));
+  const examPercent = await getEnrollmentExamPercent(row.id);
+  const { isPassed } = calculateGrade({ attendanceRate: progressRate, examPercent });
 
   return {
     ...row,
     instructorName: getMockInstructorName(row.course.id),
     learningStatus,
     progressRate,
-    examStatus,
-    assignmentStatus,
-    isCompleted: getMockCompletion(learningStatus, progressRate, examStatus),
+    examPercent,
+    examStatus: examPercent === null ? "미응시" : `${examPercent}점`,
+    assignmentStatus: "-",
+    isCompleted: deriveGradeCompletion(learningStatus, isPassed),
   };
 }
 
@@ -73,7 +85,7 @@ export async function getEnrollmentRecordsForMember(
     throw new Error(error.message);
   }
 
-  return ((data ?? []) as EnrollmentListItem[]).map(enrich);
+  return Promise.all(((data ?? []) as EnrollmentListItem[]).map(enrich));
 }
 
 export async function getEnrollmentRecordsForCourse(
@@ -97,7 +109,7 @@ export async function getEnrollmentRecordsForCourse(
     throw new Error(error.message);
   }
 
-  return ((data ?? []) as EnrollmentListItem[]).map(enrich);
+  return Promise.all(((data ?? []) as EnrollmentListItem[]).map(enrich));
 }
 
 export async function getEnrollmentRecordList(
@@ -140,19 +152,24 @@ export async function getEnrollmentRecordList(
     throw new Error(error.message);
   }
 
-  const enriched = ((data ?? []) as EnrollmentListItem[]).map(enrich);
+  const rows = (data ?? []) as EnrollmentListItem[];
 
+  // 학습상태는 status/end_date만으로 파생되므로 페이지네이션 전에 걸러내고,
+  // 진도·시험 실데이터 조회(행당 2쿼리)는 현재 페이지 분량만 수행합니다.
   const filtered =
     query.learningStatus === "all"
-      ? enriched
-      : enriched.filter((item) => item.learningStatus === query.learningStatus);
+      ? rows
+      : rows.filter(
+          (row) => deriveLearningStatus(row.status, row.end_date) === query.learningStatus,
+        );
 
   const total = filtered.length;
   const from = (query.page - 1) * query.pageSize;
   const to = from + query.pageSize;
+  const pageRows = filtered.slice(from, to);
 
   return {
-    data: filtered.slice(from, to),
+    data: await Promise.all(pageRows.map(enrich)),
     total,
     page: query.page,
     pageSize: query.pageSize,

@@ -65,15 +65,17 @@ export type EnrollmentListItem = {
 export type EnrollmentLearningStatus = "in_progress" | "ended" | "stopped";
 
 /**
- * 진도율/시험/과제/수료여부는 아직 실제 학습 로그·시험관리·과제관리가
- * 회원 단위로 연동되지 않아 enrollment id 기반의 결정적 Mock 값으로 계산합니다.
- * 추후 진도 로그, exam-management, assignment-management가 member_id로
- * 연동되면 이 필드들만 실 데이터 조회로 교체하면 됩니다.
+ * 진도율(lecture_progress)·시험점수(exam_submissions)·수료여부는 성적관리와
+ * 같은 실제 데이터로 계산합니다. 담당교수만 아직 Mock이며, 과제 기능은
+ * 사용하지 않아 과제 상태는 항상 "-"입니다.
  */
 export type EnrollmentRecordListItem = EnrollmentListItem & {
   instructorName: string;
   learningStatus: EnrollmentLearningStatus;
   progressRate: number;
+  /** 수료시험 백분율 점수. 미응시면 null */
+  examPercent: number | null;
+  /** 화면 표시용 시험 상태 라벨 — "미응시" 또는 "NN점" */
   examStatus: string;
   assignmentStatus: string;
   isCompleted: boolean;

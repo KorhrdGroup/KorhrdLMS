@@ -40,21 +40,33 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
     const [enrollments, grades, { data: courseRows }] = await Promise.all([
       getEnrollmentRecordsForMember(id),
       getGradeRecordsForMember(id),
-      // 수강신청 대행에 쓸 노출 중 과정 목록
+      // 수강신청 대행에 쓸 노출 중 과정 목록 (분야 필터용 카테고리 포함)
       supabase
         .from("courses")
-        .select("id, name")
+        .select("id, name, categoryRef:course_categories ( name )")
         .eq("status", "active")
         .is("deleted_at", null)
         .order("name"),
     ]);
+
+    const courseOptions = (
+      (courseRows ?? []) as unknown as {
+        id: string;
+        name: string;
+        categoryRef: { name: string } | null;
+      }[]
+    ).map((row) => ({
+      id: row.id,
+      name: row.name,
+      category: row.categoryRef?.name ?? null,
+    }));
 
     return (
       <MemberDetailView
         member={result.member}
         enrollments={enrollments}
         grades={grades}
-        courseOptions={courseRows ?? []}
+        courseOptions={courseOptions}
       />
     );
   } catch (error) {
