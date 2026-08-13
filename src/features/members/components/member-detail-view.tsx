@@ -6,7 +6,9 @@ import { useState } from "react";
 
 import type { EnrollmentRecordListItem } from "@/features/enrollments/types/enrollment.types";
 import type { GradeListItem } from "@/features/grades/types/grade.types";
+import { MemberDeletedBadge } from "@/features/members/components/member-deleted-badge";
 import { MemberDetailSummaryCard } from "@/features/members/components/member-detail-summary-card";
+import { MemberStatusBadge } from "@/features/members/components/member-status-badge";
 import { MemberEditModal } from "@/features/members/components/member-edit-modal";
 import {
   MemberEnrollmentsPanel,
@@ -15,16 +17,14 @@ import {
 import { MemberGradesPanel } from "@/features/members/components/member-grades-panel";
 import { M } from "@/features/members/lib/member-design";
 import type { MemberDetail } from "@/features/members/types/member-detail.types";
+import { formatDate } from "@/lib/shared/format-date";
 
 const MEMBER_DETAIL_TABS = [
   { id: "basic", label: "기본정보" },
   { id: "enrollments", label: "수강정보" },
   { id: "grades", label: "성적정보" },
   { id: "payments", label: "결제내역" },
-  { id: "consultations", label: "상담기록" },
   { id: "exams", label: "시험관리" },
-  { id: "certificates", label: "자격증" },
-  { id: "activity", label: "활동로그" },
 ] as const;
 
 type MemberDetailViewProps = {
@@ -40,6 +40,63 @@ function EmptyTabPanel() {
     <div style={{ minHeight: 220, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
       준비 중입니다.
     </div>
+  );
+}
+
+function BasicInfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div style={{ display: "flex", borderBottom: `1px solid ${M.line}` }}>
+      <dt
+        style={{
+          flex: "0 0 140px",
+          padding: "13px 16px",
+          fontSize: 13,
+          color: M.mute,
+          background: "#F9FAFB",
+        }}
+      >
+        {label}
+      </dt>
+      <dd style={{ flex: 1, padding: "13px 16px", fontSize: 13.5, fontWeight: 500, color: M.ink, margin: 0 }}>
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+function MemberBasicInfoPanel({ member }: { member: MemberDetail }) {
+  return (
+    <dl
+      style={{
+        margin: 0,
+        border: `1px solid ${M.line}`,
+        borderBottom: "none",
+        borderRadius: 10,
+        overflow: "hidden",
+        maxWidth: 720,
+      }}
+    >
+      <BasicInfoRow label="이름" value={member.name} />
+      <BasicInfoRow label="아이디" value={member.loginId} />
+      <BasicInfoRow label="이메일" value={member.email ?? "—"} />
+      <BasicInfoRow label="연락처" value={member.phone ?? "—"} />
+      <BasicInfoRow
+        label="상태"
+        value={
+          member.deletedAt !== null ? (
+            <MemberDeletedBadge />
+          ) : (
+            <MemberStatusBadge status={member.status} />
+          )
+        }
+      />
+      <BasicInfoRow label="담당자" value={member.managerName ?? "—"} />
+      <BasicInfoRow label="가입일" value={formatDate(member.joinedAt)} />
+      <BasicInfoRow
+        label="탈퇴일"
+        value={member.deletedAt ? formatDate(member.deletedAt) : "—"}
+      />
+    </dl>
   );
 }
 
@@ -149,7 +206,9 @@ export function MemberDetailView({ member, enrollments, grades, courseOptions }:
 
       {/* 패널 */}
       <div style={{ paddingTop: 20 }}>
-        {activeTab === "enrollments" ? (
+        {activeTab === "basic" ? (
+          <MemberBasicInfoPanel member={member} />
+        ) : activeTab === "enrollments" ? (
           <MemberEnrollmentsPanel
             memberId={member.id}
             enrollments={enrollments}
