@@ -93,7 +93,7 @@ export function cardStatus(e: Enrollment, extendCount = 0): CardStatus {
     return {
       badge: { tone: 'fail', label: `불합격 · ${e.score}점` },
       tone: 'fail',
-      message: '시험 응시하기를 눌러 성적을 확인하고 합격에 도전해보세요!',
+      message: '시험 재응시를 눌러 성적을 확인하고 합격에 도전해보세요!',
       canExam: true, canIssue: false, canExtend: false,
     };
   }

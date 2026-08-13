@@ -81,7 +81,6 @@ export default async function Page({ params }: PageProps) {
             이 점수를 덮어써 합격이 풀릴 수 있어, 할 이유가 없는 버튼입니다.
             (제출한 시험만 나오고, 다시 제출하면 이 점수를 덮어씁니다) */}
         <div className="result-cta">
-          <Link className="btn btn--ghost btn--lg" href="/mylecture">이전으로</Link>
           {retakeExams.map((exam) => (
             <form action={startExamRetakeAction} key={exam.id}>
               <input type="hidden" name="courseCode" value={data.courseCode} />
@@ -99,7 +98,7 @@ export default async function Page({ params }: PageProps) {
               자격증 신청 바로가기
             </Link>
           ) : (
-            <Link className="btn btn--primary btn--lg" href={`/exam/${data.courseCode}`}>시험 목록으로</Link>
+            <Link className="btn btn--primary btn--lg" href="/mylecture">나의 강의실로</Link>
           )}
         </div>
 

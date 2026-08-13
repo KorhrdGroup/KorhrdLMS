@@ -1072,3 +1072,16 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
 @media (max-width: 560px) {
   .support-layout > aside > .support-grid--side { grid-template-columns: 1fr }
 }
+
+/* 1:1 문의 — 문의 유형 옆에 문의 제목 칸 (2026-08-13, 디자인 요청)
+   원본 .support-grid(유형·이름·연락처 3칸)는 이름·연락처가 빠지며 안 쓰게 됐고,
+   유형(좁게)·제목(넓게) 두 칸을 한 줄에 둡니다. 좁은 화면에서는 세로로 쌓습니다. */
+.qna-grid { display: grid; grid-template-columns: 1fr 2fr; gap: var(--s-5) }
+@media (max-width: 980px) { .qna-grid { grid-template-columns: 1fr } }
+
+/* 1:1 문의 내역 — 제목 왼쪽 정렬, 상태 배지 너비 통일 (2026-08-13, 디자인 요청)
+   .faq__q 가 space-between 이라 제목(익명 flex 항목)이 가운데에 떠 있었습니다.
+   제목이 남는 폭을 다 갖게 해 배지 옆에 붙이고, '접수'(2자)도 '답변완료'(4자)와
+   같은 너비의 배지가 되도록 고정 폭 + 가운데 정렬을 줍니다. */
+.faq--wide .faq__q .qna-item-title { flex: 1; min-width: 0; text-align: left }
+.faq--wide .faq__q .badge { flex: none; width: 66px; justify-content: center }

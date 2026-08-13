@@ -14,21 +14,21 @@ import type { SupportQnaItem } from '@/features/support-qna/services/support-qna
  * 원본의 이름·연락처 칸과 개인정보 동의는 뺐습니다 (2026-08-13, 디자인 요청) —
  * 로그인해야 쓰는 폼이라 이름은 계정에서 오고, 새로 수집하는 개인정보가 없어
  * 별도 동의도 필요 없습니다. 저장은 기존 support-qna 서비스(board_posts)를
- * 쓰며, 어드민 목록에서 알아보기 쉽도록 제목을 "[문의유형] 이름"으로 만듭니다.
+ * 쓰며, 제목은 "[문의유형] 문의 제목"으로 저장합니다 — 아래 문의 내역과
+ * 어드민 목록이 같은 문자열을 그대로 보여줍니다.
  */
 const TYPES = ['수강 관련', '시험·수료 관련', '자격증 발급 관련', '결제·환불 관련', '기타'];
 
 export function QnaBoard({
   items,
   isLoggedIn,
-  defaultName,
 }: {
   items: SupportQnaItem[];
   isLoggedIn: boolean;
-  defaultName: string;
 }) {
   const router = useRouter();
   const [qtype, setQtype] = useState(TYPES[0]);
+  const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
 
   const [open, setOpen] = useState<string | null>(null);
@@ -43,13 +43,13 @@ export function QnaBoard({
     setDone(false);
 
     startTransition(async () => {
-      /* 로그인해야 쓰는 폼이라 이름은 계정에서 옵니다 — 입력칸 없음 (2026-08-13) */
       const result = await createSupportQnaAction({
-        title: `[${qtype}] ${defaultName}`,
+        title: `[${qtype}] ${subject.trim()}`,
         content: body.trim(),
       });
 
       if (result.success) {
+        setSubject('');
         setBody('');
         setDone(true);
         router.refresh();
@@ -74,17 +74,32 @@ export function QnaBoard({
           {isLoggedIn ? (
             <form className="form-card" onSubmit={handleSubmit}>
               <div className="form" style={{ maxWidth: 'none' }}>
-                <div className="field">
-                  <label htmlFor="qtype">
-                    문의 유형 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <select
-                    id="qtype" required value={qtype}
-                    onChange={(event) => setQtype(event.target.value)}
-                  >
-                    {TYPES.map((t) => <option key={t}>{t}</option>)}
-                  </select>
+                {/* 유형·제목을 한 줄에 — 좁은 화면에서는 세로로 쌓입니다 (overrides.css .qna-grid) */}
+                <div className="qna-grid">
+                  <div className="field">
+                    <label htmlFor="qtype">
+                      문의 유형 <span className="req" aria-hidden="true">*</span>
+                      <span className="sr-only">(필수)</span>
+                    </label>
+                    <select
+                      id="qtype" required value={qtype}
+                      onChange={(event) => setQtype(event.target.value)}
+                    >
+                      {TYPES.map((t) => <option key={t}>{t}</option>)}
+                    </select>
+                  </div>
+
+                  <div className="field">
+                    <label htmlFor="qsubject">
+                      문의 제목 <span className="req" aria-hidden="true">*</span>
+                      <span className="sr-only">(필수)</span>
+                    </label>
+                    <input
+                      id="qsubject" type="text" required maxLength={60}
+                      placeholder="문의 제목을 입력해 주세요"
+                      value={subject} onChange={(event) => setSubject(event.target.value)}
+                    />
+                  </div>
                 </div>
 
                 <div className="field">
@@ -139,10 +154,12 @@ export function QnaBoard({
                         aria-controls={`qna-${item.id}`}
                         onClick={() => setOpen(open === item.id ? null : item.id)}
                       >
-                        <span className={`badge badge--${item.status === 'answered' ? 'pass' : 'info'}`}>
+                        {/* 접수는 파랑(학습중과 같은 톤) — 배지 너비는 overrides.css 가
+                            답변완료와 같게 맞춥니다. 제목은 남는 폭을 다 갖고 왼쪽 정렬. */}
+                        <span className={`badge badge--${item.status === 'answered' ? 'pass' : 'learning'}`}>
                           {item.status === 'answered' ? '답변완료' : '접수'}
                         </span>
-                        {' '}{item.title}
+                        <span className="qna-item-title">{item.title}</span>
                         <span className="arrow" aria-hidden="true">⌄</span>
                       </button>
                       {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid).
