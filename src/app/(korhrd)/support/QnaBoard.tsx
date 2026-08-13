@@ -28,8 +28,6 @@ export function QnaBoard({
 }) {
   const router = useRouter();
   const [qtype, setQtype] = useState(TYPES[0]);
-  const [name, setName] = useState(defaultName);
-  const [phone, setPhone] = useState('');
   const [body, setBody] = useState('');
   const [agree, setAgree] = useState(false);
 
@@ -45,13 +43,13 @@ export function QnaBoard({
     setDone(false);
 
     startTransition(async () => {
+      /* 로그인해야 쓰는 폼이라 이름은 계정에서 옵니다 — 입력칸 없음 (2026-08-13) */
       const result = await createSupportQnaAction({
-        title: `[${qtype}] ${name.trim()}`,
-        content: `연락처: ${phone.trim()}\n\n${body.trim()}`,
+        title: `[${qtype}] ${defaultName}`,
+        content: body.trim(),
       });
 
       if (result.success) {
-        setPhone('');
         setBody('');
         setAgree(false);
         setDone(true);
@@ -70,7 +68,7 @@ export function QnaBoard({
       <div>
         <div className="section-head">
           <h2 id="form-title">1:1 문의하기</h2>
-          <p>답변은 등록하신 연락처로 안내해 드립니다.</p>
+          <p>답변은 아래 문의 내역에서 확인하실 수 있습니다.</p>
         </div>
 
         <div>
@@ -88,28 +86,6 @@ export function QnaBoard({
                   >
                     {TYPES.map((t) => <option key={t}>{t}</option>)}
                   </select>
-                </div>
-
-                <div className="field">
-                  <label htmlFor="qname">
-                    이름 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <input
-                    id="qname" type="text" required autoComplete="name"
-                    value={name} onChange={(event) => setName(event.target.value)}
-                  />
-                </div>
-
-                <div className="field">
-                  <label htmlFor="qphone">
-                    연락처 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <input
-                    id="qphone" type="tel" required inputMode="numeric" placeholder="010-1234-5678"
-                    value={phone} onChange={(event) => setPhone(event.target.value)}
-                  />
                 </div>
 
                 <div className="field">
