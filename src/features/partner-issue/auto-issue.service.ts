@@ -28,6 +28,9 @@ export type AutoIssueInput = {
   addressDetail?: string | null;
   postalCode?: string | null;
   photoUrl?: string | null;
+  /** 오피스에서 이미 결제(카드 10만원)된 건이면 true — 발급신청을 결제완료로 만들고
+      결제관리(course_payments)에도 기록합니다. */
+  paid?: boolean;
   /** 오피스에 적힌 신청 자격증 이름들 (예: "노인심리상담사1급") */
   certificates: string[];
 };
@@ -305,7 +308,10 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
       if (error) warnings.push(`시험 반영 실패: ${error.message}`);
     }
 
-    /* ---------- 6) 자격증 발급신청 (미결제) ---------- */
+    /* ---------- 6) 자격증 발급신청 ----------
+       오피스에서 이미 결제(카드 10만원)하고 넘어온 건은 결제완료로 만들고,
+       아니면 미결제로 둡니다. */
+    const paid = Boolean(input.paid);
     const { data: existingApp } = await supabase
       .from("certificate_applications")
       .select("id, payment_status")
@@ -314,28 +320,72 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
       .is("deleted_at", null)
       .maybeSingle();
 
+    let applicationId = existingApp?.id as string | undefined;
+
     if (!existingApp) {
-      const { error } = await supabase.from("certificate_applications").insert({
-        member_id: member.id,
-        course_id: course.id,
-        certificate_kind: "course_completion",
-        certificate_name: `${course.name} 자격증`,
-        member_login_id: member.login_id,
-        applicant_name: name,
-        birth_date: birthIso,
-        phone,
-        postal_code: input.postalCode?.trim() || null,
-        address: input.address?.trim() || null,
-        address_detail: input.addressDetail?.trim() || null,
-        photo_url: input.photoUrl?.trim() || null,
-        issuance_cost: CERTIFICATE_ISSUANCE_COST,
-        actual_payment_amount: CERTIFICATE_ISSUANCE_COST,
-        payment_status: "unpaid",
-        delivery_status: "pending",
-        memo: "학점연계 자동발급 (오피스)",
-        applied_at: today,
-      });
+      const { data: createdApp, error } = await supabase
+        .from("certificate_applications")
+        .insert({
+          member_id: member.id,
+          course_id: course.id,
+          certificate_kind: "course_completion",
+          certificate_name: `${course.name} 자격증`,
+          member_login_id: member.login_id,
+          applicant_name: name,
+          birth_date: birthIso,
+          phone,
+          postal_code: input.postalCode?.trim() || null,
+          address: input.address?.trim() || null,
+          address_detail: input.addressDetail?.trim() || null,
+          photo_url: input.photoUrl?.trim() || null,
+          issuance_cost: CERTIFICATE_ISSUANCE_COST,
+          actual_payment_amount: CERTIFICATE_ISSUANCE_COST,
+          payment_method: paid ? ("card" as const) : null,
+          payment_status: paid ? ("paid" as const) : ("unpaid" as const),
+          paid_at: paid ? new Date().toISOString() : null,
+          delivery_status: "pending",
+          memo: "학점연계 자동발급 (오피스)",
+          applied_at: today,
+        })
+        .select("id")
+        .single();
       if (error) warnings.push(`발급신청 생성 실패: ${error.message}`);
+      applicationId = createdApp?.id;
+    } else if (paid && existingApp.payment_status === "unpaid") {
+      // 이미 만들어 둔 미결제 신청이 있으면 결제완료로 올립니다
+      const { error } = await supabase
+        .from("certificate_applications")
+        .update({ payment_status: "paid", payment_method: "card", paid_at: new Date().toISOString() })
+        .eq("id", existingApp.id);
+      if (error) warnings.push(`결제완료 처리 실패: ${error.message}`);
+    }
+
+    /* 결제완료 건은 결제관리(course_payments)에도 기록합니다 — 어드민 수기 확인과
+       같은 규칙(pg_order_id = cert-<신청id>)이라 중복 없이 한 건만 유지됩니다. */
+    if (paid && applicationId) {
+      const orderId = `cert-${applicationId}`;
+      const { data: existingPayment } = await supabase
+        .from("course_payments")
+        .select("id")
+        .eq("pg_order_id", orderId)
+        .is("deleted_at", null)
+        .maybeSingle();
+
+      if (!existingPayment) {
+        const { error } = await supabase.from("course_payments").insert({
+          member_id: member.id,
+          course_id: course.id,
+          amount: CERTIFICATE_ISSUANCE_COST,
+          payment_method: "card",
+          status: "paid",
+          payment_date: today,
+          product_name: `${course.name} 자격증 발급비`,
+          pg_order_id: orderId,
+          approved_at: new Date().toISOString(),
+          memo: "자격증 발급비 (학점연계 자동발급, 오피스 카드결제)",
+        });
+        if (error) warnings.push(`결제관리 기록 실패: ${error.message}`);
+      }
     }
 
     results.push({
