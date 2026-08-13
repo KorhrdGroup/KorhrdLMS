@@ -60,7 +60,7 @@ export default function Page() {
       <section className="mt-7">
         <div className="section-head">
           <h2>수료 · 합격 기준</h2>
-          <p>숫자만 보면 시험 같지만, 강의를 꾸준히 들으셨다면 무리 없이 넘는 기준입니다.</p>
+          <p>출석과 시험, 어렵지 않게 정리했어요.</p>
         </div>
         <div className="pass-viz">
           {/* ① 응시 자격 — 출석 60% 지점까지 채워진 막대 */}
@@ -101,7 +101,7 @@ export default function Page() {
         </div>
 
         <div className="guide-box">
-          <strong>막상 해보면 어렵지 않습니다</strong>
+          <strong>그래도 걱정되시나요?</strong>
           <ul>
             {REASSURANCES.map((text) => (
               <li key={text}>{text}</li>
