@@ -974,3 +974,45 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    따로 노는 두 덩어리로 보입니다. 한 짝으로 붙입니다.
    메인의 전화 박스는 안내 줄을 그대로 두므로 사이드바 안에서만 바꿉니다. */
 .support-grid--side .tel-box__t { margin: 0 0 2px }
+
+/* 고객센터 취득 과정 — 수료·합격 기준을 막대 그래프 둘로 (2026-08-13, 디자인 요청)
+   링 네 개는 숫자만 보여줄 뿐 '출석이 합격 점수의 3분의 2' 라는 구조가 안
+   보였습니다. ① 응시 자격(출석 60% 지점까지 찬 막대) ② 합격 점수(출석 40 +
+   시험 60 누적, 60점 자리에 합격선). 색·간격은 전달본 토큰만 씁니다 —
+   막대 짜임은 lec-progress(track 위 fill)와 같은 문법입니다. */
+.pass-viz { display: grid; gap: var(--s-7); max-width: 640px }
+.pass-viz__head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4);
+  margin-bottom: var(--s-2); font-size: var(--fs-sm);
+}
+.pass-viz__head > b { color: var(--ink); font-weight: 700 }
+.pass-viz__head > span { color: var(--muted) }
+.pass-viz__head > span b { color: var(--blue); font-weight: 700 }
+/* 합격선 라벨이 막대 위에 얹히므로 그만큼 띄웁니다 */
+.pass-bar {
+  position: relative; display: flex; height: 32px; margin-top: 26px;
+  border-radius: var(--r-full); background: var(--surface-alt); overflow: visible;
+}
+.pass-bar__seg {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; font-style: normal; font-size: var(--fs-xs); font-weight: 700;
+  white-space: nowrap;
+}
+.pass-bar__seg--att { background: var(--navy); color: #fff; border-radius: var(--r-full) 0 0 var(--r-full) }
+.pass-bar__seg--exam { background: var(--blue-soft); color: var(--navy); border-radius: 0 var(--r-full) var(--r-full) 0 }
+/* ① 막대는 출석 한 조각뿐이라 오른쪽도 둥글게, 남은 트랙에 흐린 라벨 */
+.pass-bar > .pass-bar__seg--att:last-of-type { border-radius: var(--r-full) }
+.pass-bar__rest {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-xs); color: var(--mono-400); white-space: nowrap;
+}
+/* 합격선 — 세로 눈금 + 위에 라벨. left 는 마크업이 지정합니다 */
+.pass-bar__line { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--ink); border-radius: 1px }
+.pass-bar__line::after {
+  content: attr(data-label); position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: var(--fs-2xs); font-weight: 700; color: var(--ink); white-space: nowrap;
+}
+.pass-viz__note { margin-top: var(--s-3); font-size: var(--fs-sm); color: var(--muted); line-height: 1.7 }
+@media (max-width: 560px) {
+  .pass-bar { height: 28px }
+}

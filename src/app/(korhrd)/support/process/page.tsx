@@ -13,28 +13,24 @@ const STEPS = [
   { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 14일', desc: <>상장형·카드형 자격증으로<br />발급 가능합니다.</> },
 ];
 
-/** 수료 · 합격 기준 — 같은 화면에 있던 네 가지 조건입니다.
+/** 수료 · 합격 기준 — 링 네 개 대신 가로 막대 둘로 풉니다 (2026-08-13, 디자인 요청).
  *
- * 숫자는 그대로 두되 설명은 "채워야 할 관문" 이 아니라 "이 정도면 된다" 로
- * 읽히게 적습니다 (2026-08-13, 디자인 요청). 근거는 모두 실제 규칙입니다 —
- * 합격 판정은 출석 40% + 시험 60% 가중 합산 총점 60점 이상
- * (grades/lib/grade-calculator.ts — 학생 성적 화면·관리자 성적관리가 공유),
- * 진도 60% = 응시 자격, 시험은 객관식(classroom-exam.types 의 choices),
- * 불합격 시 6주 안에 재응시 가능하고 최신 점수만 남습니다
- * (classroom-exam.service startExamRetake). */
-const REQUIREMENTS = [
-  { label: '온라인 강의', pct: '60%', value: '60%', desc: <>전체 강의의 60%만 들으면<br />시험을 보실 수 있습니다</> },
-  { label: '합격 점수', pct: '60%', value: '60점', desc: <>출석 점수(최대 40점)와<br />시험 점수를 합친 총점입니다</> },
-  { label: '발급 신청', pct: '100%', value: '7일', desc: <>합격하시면 7일 안에<br />발급을 신청해 주세요</> },
-  { label: '교육 기간', pct: '100%', value: '6주', desc: <>이 안에는 몇 번이든<br />다시 응시할 수 있습니다</> },
-];
+ * ① 응시 자격: 출석 60% 지점까지 채워진 막대 — "여기까지만 들으면 된다"
+ * ② 합격 점수: 출석 40점 + 시험 60점을 한 막대에 쌓고 60점 자리에 합격선 —
+ *    출석만으로 합격선의 3분의 2가 채워지는 게 눈에 보입니다.
+ * 발급 신청 7일·교육 기간 6주 링은 뺐습니다(FAQ 가 안내합니다).
+ *
+ * 근거는 모두 실제 규칙입니다 — 합격 판정은 출석 40% + 시험 60% 가중 합산
+ * 총점 60점 이상(grades/lib/grade-calculator.ts — 학생 성적 화면·관리자
+ * 성적관리가 공유), 진도 60% = 응시 자격, 시험은 객관식, 불합격 시 6주 안에
+ * 재응시 가능하고 최신 점수만 남습니다(classroom-exam.service). */
 
-/** 숫자 밑에 붙는 안심 문단 — 네 숫자가 왜 부담이 아닌지 풀어 줍니다 */
+/** 그래프 밑에 붙는 안심 문단 — 막대가 말한 것(점수 구성)은 반복하지 않습니다 */
 const REASSURANCES = [
-  '합격 점수 60점에는 출석 점수가 포함됩니다. 강의를 다 들으면 출석 40점이 먼저 채워져, 시험에서는 문제의 3분의 1만 맞아도 합격선을 넘습니다.',
   '시험은 객관식이고, 강의에서 다룬 범위 안에서만 출제됩니다. 강의를 들으셨다면 충분히 풀 수 있는 수준입니다.',
-  '한 번에 합격하지 못해도 괜찮습니다. 교육 기간 안에는 다시 응시할 수 있고, 기록에는 최신 점수만 남습니다.',
+  '한 번에 합격하지 못해도 괜찮습니다. 교육 기간(6주) 안에는 다시 응시할 수 있고, 기록에는 최신 점수만 남습니다.',
   '시험은 60분 동안 PC·모바일로 언제 어디서든 응시할 수 있습니다.',
+  '합격하신 뒤 7일 안에 발급을 신청하시면 됩니다.',
 ];
 
 /** 고객센터 › 취득 과정 (2026-08-12, 디자인 요청으로 이 자리에 들어왔습니다) */
@@ -66,14 +62,42 @@ export default function Page() {
           <h2>수료 · 합격 기준</h2>
           <p>숫자만 보면 시험 같지만, 강의를 꾸준히 들으셨다면 무리 없이 넘는 기준입니다.</p>
         </div>
-        <div className="req-grid">
-          {REQUIREMENTS.map((r) => (
-            <div className="req" key={r.label}>
-              <p className="req__label">{r.label}</p>
-              <p className="ring" style={{ '--pct': r.pct } as React.CSSProperties}><span>{r.value}</span></p>
-              <p className="req__desc">{r.desc}</p>
+        <div className="pass-viz">
+          {/* ① 응시 자격 — 출석 60% 지점까지 채워진 막대 */}
+          <div className="pass-viz__row">
+            <div className="pass-viz__head">
+              <b>시험 응시 자격</b>
+              <span>강의 출석 <b>60%</b></span>
             </div>
-          ))}
+            <div className="pass-bar" role="img" aria-label="전체 강의의 60%를 들으면 시험에 응시할 수 있습니다">
+              <i className="pass-bar__seg pass-bar__seg--att" style={{ width: '60%' }}>출석 60%</i>
+              <span className="pass-bar__rest">전체 강의</span>
+            </div>
+            <p className="pass-viz__note">
+              전체 강의의 60%까지만 들으면 시험을 보실 수 있습니다. 더 들을수록 아래 출석 점수도 함께 올라갑니다.
+            </p>
+          </div>
+
+          {/* ② 합격 점수 — 출석 40 + 시험 60 을 한 막대에 쌓고 60점 자리에 합격선 */}
+          <div className="pass-viz__row">
+            <div className="pass-viz__head">
+              <b>합격 점수</b>
+              <span>총점 <b>60점</b> 이상</span>
+            </div>
+            <div
+              className="pass-bar"
+              role="img"
+              aria-label="출석 점수 최대 40점과 시험 점수 최대 60점을 합쳐 총점 60점 이상이면 합격입니다"
+            >
+              <i className="pass-bar__seg pass-bar__seg--att" style={{ width: '40%' }}>출석 40점</i>
+              <i className="pass-bar__seg pass-bar__seg--exam" style={{ width: '60%' }}>시험 60점</i>
+              <span className="pass-bar__line" style={{ left: '60%' }} data-label="합격선 60점" aria-hidden="true" />
+            </div>
+            <p className="pass-viz__note">
+              강의를 다 들으면 출석 점수 40점이 먼저 채워집니다. 남은 20점만 시험에서 받으면 되니,
+              문제의 3분의 1만 맞아도 합격선을 넘습니다.
+            </p>
+          </div>
         </div>
 
         <div className="guide-box">
