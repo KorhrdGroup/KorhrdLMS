@@ -350,6 +350,8 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
           address: input.address?.trim() || null,
           address_detail: input.addressDetail?.trim() || null,
           photo_url: input.photoUrl?.trim() || null,
+          // 오피스에서 사진 없이 넘어온 건은 "사진없이 발급"을 기본 체크합니다
+          issue_without_photo: !(input.photoUrl?.trim()),
           issuance_cost: CERTIFICATE_ISSUANCE_COST,
           actual_payment_amount: CERTIFICATE_ISSUANCE_COST,
           payment_method: paid ? ("card" as const) : null,

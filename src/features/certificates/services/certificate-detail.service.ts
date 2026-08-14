@@ -24,6 +24,7 @@ type CertificateDetailRow = {
   address: string | null;
   address_detail: string | null;
   photo_url: string | null;
+  issue_without_photo: boolean;
   issuance_cost: number;
   actual_payment_amount: number;
   payment_method: PaymentMethod | null;
@@ -53,6 +54,7 @@ function mapCertificateDetail(row: CertificateDetailRow): CertificateDetail {
     addressDetail: row.address_detail,
     // R2(videokorhrd.com) 사진은 서명해야 열립니다 — 다른 출처(Supabase 등)는 그대로 통과
     photoUrl: signProtectedMediaUrl(row.photo_url),
+    issueWithoutPhoto: row.issue_without_photo,
     issuanceCost: row.issuance_cost,
     actualPaymentAmount: row.actual_payment_amount,
     paymentMethod: row.payment_method,

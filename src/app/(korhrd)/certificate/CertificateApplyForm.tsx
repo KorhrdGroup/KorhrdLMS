@@ -220,7 +220,7 @@ export function CertificateApplyForm({
               <li style={{ gridColumn: 'auto' }}>발급 금액 : {won(data.issuanceCost)} (협회 자격증 발급비용 · 택배비 포함 / 집체교육 진행 시 200,000원)</li>
               <li style={{ gridColumn: 'auto' }}>본 교육원의 자격증은 한국직업능력개발원에 등록된 자격과정으로, 지정기관 등록의 제공인력(교강사) 자격요건으로도 사용 가능합니다</li>
               <li style={{ gridColumn: 'auto' }}>자격증 발급은 한국직업능력개발원 정식 자격등록번호를 부여하여 한국직업능력교육협회 명의로 발급됩니다</li>
-              <li style={{ gridColumn: 'auto' }}>증명사진을 첨부하셔야 카드형 자격증에 사진이 첨부됩니다. 미첨부시 사진 없이 자격증만 발급됩니다</li>
+              <li style={{ gridColumn: 'auto' }}>사진(선택)을 첨부하면 카드형 자격증에 넣어 드립니다. 셀카도 가능하며, 없으면 사진 없이 발급됩니다</li>
             </ul>
           </div>
 
@@ -282,29 +282,42 @@ export function CertificateApplyForm({
 
               <p className="notice mt-4">
                 <span>
-                  <b>합격 후 7일이 지나면 해당 과목이 초기화되어 발급 신청이 불가합니다.</b>
+                  <b>합격 후 14일이 지나면 해당 과목이 초기화되어 발급 신청이 불가합니다.</b>
                   기한 내에 신청해 주세요.
                 </span>
               </p>
             </div>
 
-            {/* ========================== 증명사진 ========================== */}
+            {/* ============== 카드형 자격증 사진 (선택사항 — 부담 없는 톤) ============== */}
             <div className="card mt-3">
-              <h2 className="card__title">증명사진 첨부</h2>
+              <h2 className="card__title">
+                카드형 자격증 사진 첨부{' '}
+                <span style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--muted)' }}>(선택사항)</span>
+              </h2>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                {['📱 셀카 가능', '👕 복장 자유', '⚖️ 자격증 효력과 무관'].map((tag) => (
+                  <span
+                    key={tag}
+                    style={{ padding: '4px 10px', borderRadius: '999px', background: '#EFF6FF', color: '#2563EB', fontSize: '12px', fontWeight: 600 }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
               <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                 <div style={{ width: '80px', flexShrink: 0, textAlign: 'center' }}>
                   {photoPreview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={photoPreview} alt="증명사진 미리보기"
+                      src={photoPreview} alt="자격증 사진 미리보기"
                       style={{ width: '80px', height: '107px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }}
                     />
                   ) : (
-                    <span className="ph ph--cert" aria-hidden="true">사진<small>3 × 4cm</small></span>
+                    <span className="ph ph--cert" aria-hidden="true">사진<small>선택</small></span>
                   )}
                 </div>
                 <div className="field" style={{ flex: 1, minWidth: '220px' }}>
-                  <label htmlFor="photo">증명사진 파일 <span className="hint">(선택 · JPG/PNG, 5MB 이하)</span></label>
+                  <label htmlFor="photo">사진 파일 <span className="hint">(JPG/PNG, 5MB 이하)</span></label>
                   <input
                     id="photo" type="file" accept="image/png,image/jpeg"
                     onChange={(event) => {
@@ -315,7 +328,8 @@ export function CertificateApplyForm({
                     }}
                   />
                   <p style={{ fontSize: '11.5px', color: 'var(--faint)', marginTop: '7px' }}>
-                    미첨부시 사진 없이 자격증만 발급됩니다.
+                    카드형 자격증에 넣을 사진입니다. 증명사진이 아니어도 괜찮아요 —{' '}
+                    없으면 사진 없이 깔끔하게 발급됩니다.
                   </p>
                 </div>
               </div>

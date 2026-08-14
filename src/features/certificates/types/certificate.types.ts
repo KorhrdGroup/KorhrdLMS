@@ -11,6 +11,8 @@ export type CertificateListQuery = {
   page: number;
   pageSize: number;
   certificateKind: CertificateKind | "";
+  /** 자격증명(certificate_name) 필터 — 빈 값이면 전체 */
+  certName: string;
   quickPeriod: CertificateQuickPeriod;
   startDate: string;
   endDate: string;
@@ -30,6 +32,8 @@ export type CertificateListItem = {
   address: string | null;
   addressDetail: string | null;
   photoUrl: string | null;
+  /** 사진 없이 발급 확정 여부 */
+  issueWithoutPhoto: boolean;
   issuanceCost: number;
   actualPaymentAmount: number;
   /** 결제방법. null 이면 무통장입금 안내 상태입니다. */
@@ -52,6 +56,8 @@ export type CertificateDetail = {
   address: string | null;
   addressDetail: string | null;
   photoUrl: string | null;
+  /** 사진 없이 발급 확정 여부 */
+  issueWithoutPhoto: boolean;
   issuanceCost: number;
   actualPaymentAmount: number;
   paymentMethod: PaymentMethod | null;

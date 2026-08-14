@@ -25,6 +25,8 @@ type CertificateListTableProps = {
   onTogglePaid?: (item: CertificateListItem, paid: boolean) => void;
   /** 배송 체크박스 토글 — 켜면 발송완료, 끄면 발송예정 */
   onToggleShipped?: (item: CertificateListItem, shipped: boolean) => void;
+  /** 사진 없는 건의 "사진없이 발급합니다" 체크 토글 */
+  onToggleNoPhoto?: (item: CertificateListItem, noPhoto: boolean) => void;
 };
 
 const th: CSSProperties = {
@@ -55,9 +57,38 @@ const iconBtn: CSSProperties = {
   whiteSpace: "nowrap",
 };
 
-function CertificatePhotoCell({ item }: { item: CertificateListItem }) {
+function CertificatePhotoCell({
+  item,
+  onToggleNoPhoto,
+}: {
+  item: CertificateListItem;
+  onToggleNoPhoto?: (item: CertificateListItem, noPhoto: boolean) => void;
+}) {
   if (!item.photoUrl) {
-    return <span style={{ fontSize: 12, color: M.mute }}>사진 없음</span>;
+    // 사진이 없는 건은 목록에서 바로 "사진없이 발급" 체크로 확정할 수 있습니다
+    return (
+      <label
+        style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}
+        title="체크하면 사진 없이 발급을 확정합니다"
+      >
+        <input
+          type="checkbox"
+          checked={item.issueWithoutPhoto}
+          onChange={(event) => onToggleNoPhoto?.(item, event.target.checked)}
+          style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#3182F6" }}
+        />
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+            color: item.issueWithoutPhoto ? "#3182F6" : M.mute,
+          }}
+        >
+          사진없이 발급
+        </span>
+      </label>
+    );
   }
 
   return (
@@ -94,6 +125,7 @@ export function CertificateListTable({
   onDeleteClick,
   onTogglePaid,
   onToggleShipped,
+  onToggleNoPhoto,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -144,7 +176,7 @@ export function CertificateListTable({
                   {formatFullAddress(item.postalCode, item.address, item.addressDetail)}
                 </td>
                 <td style={{ ...td, textAlign: "center" }}>
-                  <CertificatePhotoCell item={item} />
+                  <CertificatePhotoCell item={item} onToggleNoPhoto={onToggleNoPhoto} />
                 </td>
                 <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                   {formatCertificateAmount(item.issuanceCost)}

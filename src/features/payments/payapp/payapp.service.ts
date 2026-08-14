@@ -82,17 +82,40 @@ export async function startCertificatePayment(
     return { success: false, message: "연락처가 없어 결제를 진행할 수 없습니다. 회원정보를 확인해주세요." };
   }
 
+  // 여러 자격증을 한 번에 신청한 경우 미결제 건 전체를 **한 번에 합산 결제**합니다.
+  // (신청 폼이 과목별로 신청 건을 따로 만들기 때문에, 단건 결제로는 첫 건만
+  // 청구되는 문제가 있었습니다 — 2026-08-14)
+  const { data: unpaidRows, error: unpaidError } = await supabase
+    .from("certificate_applications")
+    .select("id, certificate_name, actual_payment_amount")
+    .eq("member_id", memberId)
+    .in("payment_status", ["unpaid", "partial"])
+    .is("deleted_at", null);
+
+  if (unpaidError) {
+    throw new Error(unpaidError.message);
+  }
+
+  const bundle = (unpaidRows ?? []) as { id: string; certificate_name: string; actual_payment_amount: number }[];
+  const others = bundle.filter((row) => row.id !== application.id);
+  const totalAmount =
+    application.actual_payment_amount +
+    others.reduce((sum, row) => sum + row.actual_payment_amount, 0);
+  const bundleIds = [application.id, ...others.map((row) => row.id)];
+  const bundleName =
+    others.length > 0
+      ? `${application.certificate_name} 외 ${others.length}건`
+      : application.certificate_name;
+
   // 지정된 테스트 계정만 소액으로 결제창을 엽니다(PayApp에 테스트 서버가 없어서).
   // 일반 회원은 이 분기를 타지 않으므로 청구액이 바뀔 일이 없습니다.
   const isTestAccount =
     config.testLoginId !== null && application.member_login_id === config.testLoginId;
-  const price = isTestAccount ? config.testAmount! : application.actual_payment_amount;
+  const price = isTestAccount ? config.testAmount! : totalAmount;
 
   const result = await requestPayAppPayment(config, {
     applicationId: application.id,
-    goodName: isTestAccount
-      ? `[테스트] ${application.certificate_name}`
-      : application.certificate_name,
+    goodName: isTestAccount ? `[테스트] ${bundleName}` : bundleName,
     price,
     recvPhone: application.phone,
     buyerName: application.applicant_name,
@@ -102,12 +125,13 @@ export async function startCertificatePayment(
     return result;
   }
 
-  // 결제요청번호를 먼저 저장해 둬야, 통보가 왔을 때 어느 신청 건인지 대조할 수 있습니다.
+  // 결제요청번호를 묶음의 **모든 신청 건**에 저장해 둬야, 통보가 왔을 때
+  // 이 결제로 함께 처리할 건들을 찾을 수 있습니다.
   if (result.mulNo) {
     await supabase
       .from("certificate_applications")
       .update({ payapp_mul_no: result.mulNo })
-      .eq("id", application.id);
+      .in("id", bundleIds);
   }
 
   return { success: true, payUrl: result.payUrl };
@@ -181,15 +205,16 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
     )
     .is("deleted_at", null);
 
-  const { data, error } = applicationId
-    ? await query.eq("id", applicationId).maybeSingle()
-    : await query.eq("payapp_mul_no", mulNo!).maybeSingle();
+  // 합산 결제는 같은 mul_no 가 여러 신청 건에 저장되므로 **목록으로** 조회합니다.
+  const { data, error } = mulNo
+    ? await query.eq("payapp_mul_no", mulNo)
+    : await query.eq("id", applicationId!);
 
   if (error) {
     throw new Error(error.message);
   }
 
-  const application = data as {
+  type ApplicationRow = {
     id: string;
     actual_payment_amount: number;
     payment_status: PaymentStatus;
@@ -197,7 +222,9 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
     member_id: string;
     course_id: string | null;
     certificate_name: string;
-  } | null;
+  };
+  const applications = (data ?? []) as ApplicationRow[];
+  const application = applications[0];
 
   if (!application) {
     return { ok: false, reason: "신청 내역을 찾을 수 없습니다." };
@@ -209,10 +236,11 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   const update: Database["public"]["Tables"]["certificate_applications"]["Update"] = {};
 
   // 테스트 계정은 소액으로 결제창을 열었으므로, 대조할 금액도 테스트 금액입니다.
+  const bundleTotal = applications.reduce((sum, row) => sum + row.actual_payment_amount, 0);
   const expectedAmount =
     config.testLoginId !== null && application.member_login_id === config.testLoginId
       ? config.testAmount!
-      : application.actual_payment_amount;
+      : bundleTotal;
 
   if (payState === PAY_STATE.paid) {
     // 결제된 금액이 청구액과 다르면 자동으로 완료 처리하지 않습니다.
@@ -246,7 +274,7 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   const { error: updateError } = await supabase
     .from("certificate_applications")
     .update(update)
-    .eq("id", application.id);
+    .in("id", applications.map((row) => row.id));
 
   if (updateError) {
     throw new Error(updateError.message);
@@ -258,8 +286,11 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   try {
     await syncCoursePaymentRecord(supabase, {
       memberId: application.member_id,
-      courseId: application.course_id,
-      certificateName: application.certificate_name,
+      courseId: application.course_id ?? applications.find((row) => row.course_id)?.course_id ?? null,
+      certificateName:
+        applications.length > 1
+          ? `${application.certificate_name} 외 ${applications.length - 1}건`
+          : application.certificate_name,
       amount: Number.isFinite(paidAmount) ? paidAmount : expectedAmount,
       paymentStatus: update.payment_status ?? null,
       paymentMethod: update.payment_method ?? null,

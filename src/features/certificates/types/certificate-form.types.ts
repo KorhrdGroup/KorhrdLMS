@@ -5,6 +5,7 @@ export type CertificateUpdateInput = {
   deliveryStatus?: CertificateDeliveryStatus;
   paymentStatus?: PaymentStatus;
   photoUrl?: string;
+  issueWithoutPhoto?: boolean;
 };
 
 export type CertificateMutationResult =

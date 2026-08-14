@@ -22,7 +22,8 @@ export function validateCertificateUpdateInput(
     input.actualPaymentAmount === undefined &&
     input.deliveryStatus === undefined &&
     input.paymentStatus === undefined &&
-    input.photoUrl === undefined
+    input.photoUrl === undefined &&
+    input.issueWithoutPhoto === undefined
   ) {
     return { success: false, message: "변경할 항목이 없습니다." };
   }
@@ -110,6 +111,14 @@ export async function updateCertificateApplication(
 
   if (input.photoUrl !== undefined) {
     payload.photo_url = emptyToNull(normalize(input.photoUrl));
+    // 사진이 새로 올라오면 "사진없이 발급" 체크는 자동 해제합니다
+    if (payload.photo_url) {
+      payload.issue_without_photo = false;
+    }
+  }
+
+  if (input.issueWithoutPhoto !== undefined) {
+    payload.issue_without_photo = input.issueWithoutPhoto;
   }
 
   const { data, error } = await supabase

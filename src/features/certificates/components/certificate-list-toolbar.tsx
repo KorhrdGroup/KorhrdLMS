@@ -7,15 +7,7 @@ import { useTransition } from "react";
 
 import { M } from "@/features/courses/lib/course-design";
 import { exportCertificateApplicationsAction } from "@/features/certificates/actions/certificate.actions";
-import {
-  CERTIFICATE_KIND_FILTER_OPTIONS,
-  CERTIFICATE_KIND_LABELS,
-  CERTIFICATE_QUICK_PERIOD_OPTIONS,
-} from "@/features/certificates/constants";
-import {
-  buildCertificateListQueryString,
-  resolveQuickPeriodRange,
-} from "@/features/certificates/lib/certificate-list-query";
+import { buildCertificateListQueryString } from "@/features/certificates/lib/certificate-list-query";
 import type { CertificateListQuery } from "@/features/certificates/types/certificate.types";
 
 const inputBox: CSSProperties = {
@@ -40,10 +32,12 @@ const labelText: CSSProperties = {
 
 type CertificateListToolbarProps = {
   query: CertificateListQuery;
+  /** 필터 드롭다운용 자격증명 목록 */
+  certNames: string[];
   onExportError?: (message: string) => void;
 };
 
-export function CertificateListToolbar({ query, onExportError }: CertificateListToolbarProps) {
+export function CertificateListToolbar({ query, certNames, onExportError }: CertificateListToolbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isExporting, startExport] = useTransition();
@@ -59,28 +53,18 @@ export function CertificateListToolbar({ query, onExportError }: CertificateList
   function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const certificateKind = String(formData.get("certificateKind") ?? "").trim();
+    const certName = String(formData.get("certName") ?? "").trim();
     const startDate = String(formData.get("startDate") ?? "").trim();
     const endDate = String(formData.get("endDate") ?? "").trim();
     const search = String(formData.get("search") ?? "").trim();
 
     navigate({
       page: 1,
-      certificateKind: certificateKind as CertificateListQuery["certificateKind"],
+      certName,
       quickPeriod: "",
       startDate,
       endDate,
       search,
-    });
-  }
-
-  function handleQuickPeriodClick(quickPeriod: CertificateListQuery["quickPeriod"]) {
-    const range = resolveQuickPeriodRange(quickPeriod);
-    navigate({
-      page: 1,
-      quickPeriod,
-      startDate: range.startDate,
-      endDate: range.endDate,
     });
   }
 
@@ -116,44 +100,14 @@ export function CertificateListToolbar({ query, onExportError }: CertificateList
     >
       <label>
         <span style={labelText}>자격증 종류</span>
-        <select name="certificateKind" defaultValue={query.certificateKind} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
+        <select name="certName" defaultValue={query.certName} disabled={isPending} style={{ ...inputBox, cursor: "pointer" }}>
           <option value="">전체</option>
-          {CERTIFICATE_KIND_FILTER_OPTIONS.map((value) => (
-            <option key={value} value={value}>
-              {CERTIFICATE_KIND_LABELS[value]}
+          {certNames.map((name) => (
+            <option key={name} value={name}>
+              {name}
             </option>
           ))}
         </select>
-      </label>
-
-      <label style={{ gridColumn: "1 / -1" }}>
-        <span style={labelText}>기간 빠른검색</span>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {CERTIFICATE_QUICK_PERIOD_OPTIONS.map((option) => {
-            const active = query.quickPeriod === option.value;
-            return (
-              <button
-                key={option.value}
-                type="button"
-                disabled={isPending}
-                onClick={() => handleQuickPeriodClick(option.value)}
-                style={{
-                  height: 34,
-                  padding: "0 14px",
-                  borderRadius: 8,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: isPending ? "wait" : "pointer",
-                  background: active ? M.accent : "#fff",
-                  color: active ? "#fff" : M.text,
-                  border: active ? "none" : `1px solid ${M.border}`,
-                }}
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
       </label>
 
       <label>

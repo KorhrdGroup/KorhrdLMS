@@ -52,11 +52,18 @@ export async function getCertificateApplicationReceipt(
     return null;
   }
 
-  const payableAmount = row.actual_payment_amount;
+  // 여러 자격증을 한 번에 신청하면 신청 건이 과목별로 따로 생기므로,
+  // 입금 안내는 본인의 **미결제 건 전체**를 합산해 보여줍니다 (2026-08-14).
+  const { sumAmount, bundleCount } = await sumUnpaidApplications(memberId, row);
+  const payableAmount = row.payment_status === "paid" ? row.actual_payment_amount : sumAmount;
+  const certificateName =
+    bundleCount > 1 && row.payment_status !== "paid"
+      ? `${row.certificate_name} 외 ${bundleCount - 1}건`
+      : row.certificate_name;
 
   return {
     id: row.id,
-    certificateName: row.certificate_name,
+    certificateName,
     applicantName: row.applicant_name,
     appliedAt: row.applied_at,
     issuanceCost: row.issuance_cost,
@@ -67,5 +74,25 @@ export async function getCertificateApplicationReceipt(
     fullAddress: formatFullAddress(row.postal_code, row.address, row.address_detail),
     needsDeposit: payableAmount > 0 && row.payment_status !== "paid",
     isCardPayment: row.payment_method === "card",
+  };
+}
+
+/** 본인의 미결제(unpaid·partial) 신청 건 합계 — 완료 화면 입금 안내용 */
+async function sumUnpaidApplications(
+  memberId: string,
+  anchor: { id: string; actual_payment_amount: number; payment_status: PaymentStatus },
+): Promise<{ sumAmount: number; bundleCount: number }> {
+  const { listUnpaidCertificateApplicationAmounts } = await import(
+    "@/features/certificate-applications/repositories/certificate-application-receipt.repository"
+  );
+  const rows = await listUnpaidCertificateApplicationAmounts(memberId);
+  const others = rows.filter((row) => row.id !== anchor.id);
+  const anchorAmount =
+    anchor.payment_status === "unpaid" || anchor.payment_status === "partial"
+      ? anchor.actual_payment_amount
+      : 0;
+  return {
+    sumAmount: anchorAmount + others.reduce((sum, row) => sum + row.actual_payment_amount, 0),
+    bundleCount: (anchorAmount > 0 ? 1 : 0) + others.length,
   };
 }

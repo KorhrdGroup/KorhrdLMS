@@ -81,3 +81,22 @@ export async function findLatestCertificateApplicationReceipt(
 
   return (data as CertificateApplicationReceiptRow | null) ?? null;
 }
+
+/** 본인의 미결제(unpaid·partial) 신청 건 금액 목록 — 완료 화면 입금 안내 합산용 */
+export async function listUnpaidCertificateApplicationAmounts(
+  memberId: string,
+): Promise<{ id: string; actual_payment_amount: number }[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("certificate_applications")
+    .select("id, actual_payment_amount")
+    .eq("member_id", memberId)
+    .in("payment_status", ["unpaid", "partial"])
+    .is("deleted_at", null);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as { id: string; actual_payment_amount: number }[];
+}

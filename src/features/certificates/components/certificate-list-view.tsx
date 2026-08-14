@@ -21,9 +21,11 @@ import type { PaginatedResult } from "@/lib/shared/list-query";
 type CertificateListViewProps = {
   result: PaginatedResult<CertificateListItem>;
   query: CertificateListQuery;
+  /** 필터 드롭다운용 자격증명 목록 */
+  certNames: string[];
 };
 
-export function CertificateListView({ result, query }: CertificateListViewProps) {
+export function CertificateListView({ result, query, certNames }: CertificateListViewProps) {
   const router = useRouter();
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailApplicationId, setDetailApplicationId] = useState<string | null>(null);
@@ -111,6 +113,7 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
 
       <CertificateListToolbar
         query={query}
+        certNames={certNames}
         onExportError={(message) => {
           setSuccessMessage(null);
           setErrorMessage(message);
@@ -133,6 +136,13 @@ export function CertificateListView({ result, query }: CertificateListViewProps)
             item,
             { deliveryStatus: shipped ? "shipped" : "pending" },
             shipped ? "발송완료 처리했습니다." : "발송예정으로 되돌렸습니다.",
+          )
+        }
+        onToggleNoPhoto={(item, noPhoto) =>
+          handleQuickUpdate(
+            item,
+            { issueWithoutPhoto: noPhoto },
+            noPhoto ? "사진 없이 발급으로 표시했습니다." : "사진 없이 발급 표시를 해제했습니다.",
           )
         }
       />
