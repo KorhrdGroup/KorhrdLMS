@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { buildKakaoAuthUrl, getKakaoConfig } from "@/lib/auth/kakao";
+import { getRequestOrigin } from "@/lib/auth/request-origin";
 
 /**
  * 카카오 로그인 시작 — 카카오 인증 화면으로 보냅니다.
@@ -14,7 +15,7 @@ export const KAKAO_STATE_COOKIE = "kakao_oauth_state";
 export const KAKAO_REDIRECT_COOKIE = "kakao_oauth_redirect";
 
 export async function GET(request: Request) {
-  const config = getKakaoConfig(new URL(request.url).origin);
+  const config = getKakaoConfig(getRequestOrigin(request));
   if (!config) {
     redirect("/login?social=unavailable");
   }

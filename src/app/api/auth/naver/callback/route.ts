@@ -8,6 +8,7 @@ import {
   getNaverConfig,
   toBirthDate,
 } from "@/lib/auth/naver";
+import { getRequestOrigin } from "@/lib/auth/request-origin";
 
 import { NAVER_REDIRECT_COOKIE, NAVER_STATE_COOKIE } from "../start/route";
 
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
   // 위조 요청 차단 — 우리가 보낸 state 와 같아야 합니다
   if (!savedState || savedState !== state) fail("failed");
 
-  const config = getNaverConfig(new URL(request.url).origin);
+  const config = getNaverConfig(getRequestOrigin(request));
   if (!config) fail("unavailable");
 
   const accessToken = await exchangeNaverCode(config, code, state);
