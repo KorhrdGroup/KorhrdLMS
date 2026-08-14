@@ -111,6 +111,10 @@ export async function updateCertificateApplication(
 
   if (input.photoUrl !== undefined) {
     payload.photo_url = emptyToNull(normalize(input.photoUrl));
+    // 사진이 새로 올라오면 "사진없이 발급" 체크는 자동 해제합니다
+    if (payload.photo_url) {
+      payload.issue_without_photo = false;
+    }
   }
 
   if (input.issueWithoutPhoto !== undefined) {

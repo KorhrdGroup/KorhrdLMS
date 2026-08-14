@@ -375,6 +375,8 @@ export async function submitCertificateApplication(
     address: emptyToNull(input.address),
     address_detail: emptyToNull(input.addressDetail),
     photo_url: emptyToNull(input.photoUrl),
+    // 사진 없이 신청하면 "사진없이 발급"을 기본 체크합니다 (어드민에서 해제 가능)
+    issue_without_photo: !emptyToNull(input.photoUrl),
     issuance_cost: CERTIFICATE_ISSUANCE_COST,
     actual_payment_amount: finalPaymentAmount,
     payment_method: input.paymentMethod,
