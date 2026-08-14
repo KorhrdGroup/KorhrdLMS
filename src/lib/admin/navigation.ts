@@ -110,6 +110,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "공지사항", href: "/admin/notices" },
       { label: "1:1 상담", href: "/admin/boards/consultation" },
       { label: "합격후기", href: "/admin/boards/reviews" },
+      { label: "배너관리", href: "/admin/banners" },
     ],
   },
   {

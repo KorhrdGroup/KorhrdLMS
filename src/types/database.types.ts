@@ -1341,6 +1341,42 @@ export type Database = {
           },
         ]
       }
+      home_banners: {
+        Row: {
+          alt: string
+          created_at: string
+          deleted_at: string | null
+          id: string
+          image_url: string
+          is_published: boolean
+          link_url: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          alt?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          image_url: string
+          is_published?: boolean
+          link_url?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          image_url?: string
+          is_published?: boolean
+          link_url?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       issuing_agencies: {
         Row: {
           address: string | null

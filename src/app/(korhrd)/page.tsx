@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { listPublishedHomeBanners } from '@/features/banner-management/services/banner-management.service';
 import { getMyLectureData } from '@/features/korhrd/lib/my-lecture-data';
 import { listCourseReviews } from '@/features/korhrd/services/course-review.service';
 import { getLiveFeed } from '@/features/korhrd/services/live-feed.service';
@@ -59,6 +60,8 @@ const NATCERT_SITE = 'https://barosocial.vercel.app/';
 
 export default async function HomePage() {
   const homeReviews = (await listCourseReviews()).slice(0, 3);
+  /* 어드민 배너관리에서 등록한 배너. 없으면 컴포넌트가 기본 배너로 폴백합니다 */
+  const banners = await listPublishedHomeBanners().catch(() => []);
   // 실제 수강완료·발급완료 내역. 티커는 최소 몇 줄이 있어야 자연스러워
   // 아직 기록이 적으면 아예 감춥니다(LiveTicker 자리 자체를 비움).
   const liveFeed = await getLiveFeed();
@@ -92,7 +95,9 @@ export default async function HomePage() {
       <div className="hero-band">
         <section className="hero container" aria-label="주요 안내">
           <div className="hero__grid">
-            <BannerCarousel />
+            <BannerCarousel
+              slides={banners.map((b) => ({ src: b.imageUrl, alt: b.alt, href: b.linkUrl }))}
+            />
             <LoginBox learning={learning} />
           </div>
         </section>
