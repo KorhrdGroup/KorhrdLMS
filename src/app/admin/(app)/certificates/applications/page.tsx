@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 
 import { CertificateListView } from "@/features/certificates/components/certificate-list-view";
 import { parseCertificateListQuery } from "@/features/certificates/lib/certificate-list-query";
-import { getCertificateList } from "@/features/certificates/services/certificate-list.service";
+import {
+  getCertificateList,
+  listCertificateNames,
+} from "@/features/certificates/services/certificate-list.service";
 
 export const metadata: Metadata = {
   title: "발급신청",
@@ -19,10 +22,14 @@ export default async function CertificateApplicationsPage({
   const query = parseCertificateListQuery(params);
 
   let result: Awaited<ReturnType<typeof getCertificateList>> | null = null;
+  let certNames: string[] = [];
   let errorMessage: string | null = null;
 
   try {
-    result = await getCertificateList(query);
+    [result, certNames] = await Promise.all([
+      getCertificateList(query),
+      listCertificateNames(),
+    ]);
   } catch (error) {
     errorMessage =
       error instanceof Error ? error.message : "자격증 신청 목록을 불러오지 못했습니다.";
@@ -40,5 +47,5 @@ export default async function CertificateApplicationsPage({
     );
   }
 
-  return <CertificateListView result={result} query={query} />;
+  return <CertificateListView result={result} query={query} certNames={certNames} />;
 }

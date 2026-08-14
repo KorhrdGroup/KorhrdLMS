@@ -29,6 +29,7 @@ type CertificateListRow = {
   address: string | null;
   address_detail: string | null;
   photo_url: string | null;
+  issue_without_photo: boolean;
   issuance_cost: number;
   actual_payment_amount: number;
   payment_method: PaymentMethod | null;
@@ -51,6 +52,7 @@ function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
     addressDetail: row.address_detail,
     // R2(videokorhrd.com) 사진은 서명해야 열립니다 — 다른 출처(Supabase 등)는 그대로 통과
     photoUrl: signProtectedMediaUrl(row.photo_url),
+    issueWithoutPhoto: row.issue_without_photo,
     issuanceCost: row.issuance_cost,
     actualPaymentAmount: row.actual_payment_amount,
     paymentMethod: row.payment_method,
@@ -88,6 +90,10 @@ export function applyCertificateListFilters<
 
   if (query.certificateKind) {
     builder = builder.eq("certificate_kind", query.certificateKind);
+  }
+
+  if (query.certName) {
+    builder = builder.eq("certificate_name", query.certName);
   }
 
   if (query.deliveryStatus) {
@@ -143,4 +149,17 @@ export async function getCertificateList(
     pageSize: query.pageSize,
     totalPages: getTotalPages(total, query.pageSize),
   };
+}
+
+/** 필터 드롭다운용 — 신청 내역에 존재하는 자격증명 목록(가나다순) */
+export async function listCertificateNames(): Promise<string[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("certificate_applications")
+    .select("certificate_name")
+    .is("deleted_at", null);
+
+  if (error) throw new Error(error.message);
+  const names = new Set((data ?? []).map((row) => row.certificate_name));
+  return Array.from(names).sort((a, b) => a.localeCompare(b, "ko"));
 }

@@ -57,7 +57,13 @@ const iconBtn: CSSProperties = {
 
 function CertificatePhotoCell({ item }: { item: CertificateListItem }) {
   if (!item.photoUrl) {
-    return <span style={{ fontSize: 12, color: M.mute }}>사진 없음</span>;
+    return item.issueWithoutPhoto ? (
+      <span style={{ display: "inline-block", padding: "3px 8px", borderRadius: 6, background: "#EFF6FF", color: "#3182F6", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>
+        사진없이 발급
+      </span>
+    ) : (
+      <span style={{ fontSize: 12, color: M.mute }}>사진 없음</span>
+    );
   }
 
   return (

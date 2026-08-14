@@ -335,6 +335,30 @@ export function CertificateDetailModal({
               ) : null}
               </div>
             </div>
+            {/* 사진이 없어도 발급을 진행하기로 확정한 건 표시 — 체크 즉시 저장됩니다 */}
+            <label className="mt-3 flex w-fit cursor-pointer items-center gap-2 text-sm text-[#374151]">
+              <input
+                type="checkbox"
+                checked={detail.issueWithoutPhoto}
+                onChange={async (event) => {
+                  const checked = event.target.checked;
+                  setDetail({ ...detail, issueWithoutPhoto: checked });
+                  const result = await updateCertificateApplicationAction(detail.id, {
+                    issueWithoutPhoto: checked,
+                  });
+                  if (!result.success) {
+                    setDetail({ ...detail, issueWithoutPhoto: !checked });
+                    onUpdated?.(result.message);
+                    return;
+                  }
+                  onUpdated?.(
+                    checked ? "사진 없이 발급으로 표시했습니다." : "사진 없이 발급 표시를 해제했습니다.",
+                  );
+                }}
+                className="h-4 w-4 accent-[#3182F6]"
+              />
+              사진 없이 발급합니다
+            </label>
           </section>
 
           <div className="space-y-3 border-t border-[#E5E7EB] pt-3">

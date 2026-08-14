@@ -364,6 +364,7 @@ export type Database = {
           delivery_status: Database["public"]["Enums"]["certificate_delivery_status"]
           id: string
           issuance_cost: number
+          issue_without_photo: boolean
           issued_at: string | null
           member_id: string
           member_login_id: string
@@ -394,6 +395,7 @@ export type Database = {
           delivery_status?: Database["public"]["Enums"]["certificate_delivery_status"]
           id?: string
           issuance_cost?: number
+          issue_without_photo?: boolean
           issued_at?: string | null
           member_id: string
           member_login_id: string
@@ -424,6 +426,7 @@ export type Database = {
           delivery_status?: Database["public"]["Enums"]["certificate_delivery_status"]
           id?: string
           issuance_cost?: number
+          issue_without_photo?: boolean
           issued_at?: string | null
           member_id?: string
           member_login_id?: string

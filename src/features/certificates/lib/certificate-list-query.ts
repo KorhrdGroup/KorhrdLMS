@@ -10,6 +10,7 @@ export function createDefaultCertificateListQuery(): CertificateListQuery {
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE,
     certificateKind: "",
+    certName: "",
     quickPeriod: "",
     startDate: "",
     endDate: "",
@@ -27,6 +28,7 @@ export function parseCertificateListQuery(
     page: base.page,
     pageSize: base.pageSize,
     certificateKind: parseCertificateKind(searchParams.certificateKind),
+    certName: parseStringParam(searchParams.certName),
     quickPeriod: parseQuickPeriod(searchParams.quickPeriod),
     startDate: parseStringParam(searchParams.startDate),
     endDate: parseStringParam(searchParams.endDate),
@@ -43,6 +45,7 @@ export function buildCertificateListQueryString(
     page: params.page ?? base?.page ?? 1,
     pageSize: params.pageSize ?? base?.pageSize ?? DEFAULT_PAGE_SIZE,
     certificateKind: params.certificateKind ?? base?.certificateKind ?? "",
+    certName: params.certName ?? base?.certName ?? "",
     quickPeriod: params.quickPeriod ?? base?.quickPeriod ?? "",
     startDate: params.startDate ?? base?.startDate ?? "",
     endDate: params.endDate ?? base?.endDate ?? "",
@@ -57,6 +60,7 @@ export function buildCertificateListQueryString(
     query.set("pageSize", String(merged.pageSize));
   }
   if (merged.certificateKind) query.set("certificateKind", merged.certificateKind);
+  if (merged.certName) query.set("certName", merged.certName);
   if (merged.quickPeriod) query.set("quickPeriod", merged.quickPeriod);
   if (merged.startDate) query.set("startDate", merged.startDate);
   if (merged.endDate) query.set("endDate", merged.endDate);

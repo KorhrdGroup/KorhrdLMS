@@ -22,7 +22,8 @@ export function validateCertificateUpdateInput(
     input.actualPaymentAmount === undefined &&
     input.deliveryStatus === undefined &&
     input.paymentStatus === undefined &&
-    input.photoUrl === undefined
+    input.photoUrl === undefined &&
+    input.issueWithoutPhoto === undefined
   ) {
     return { success: false, message: "변경할 항목이 없습니다." };
   }
@@ -110,6 +111,10 @@ export async function updateCertificateApplication(
 
   if (input.photoUrl !== undefined) {
     payload.photo_url = emptyToNull(normalize(input.photoUrl));
+  }
+
+  if (input.issueWithoutPhoto !== undefined) {
+    payload.issue_without_photo = input.issueWithoutPhoto;
   }
 
   const { data, error } = await supabase
