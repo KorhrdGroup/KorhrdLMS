@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { Fragment, useEffect, useState } from 'react';
 import { JOB_GROUPS, jobsOfGroup } from '@/features/korhrd/data/jobs';
+import { findCourse } from '@/features/korhrd/data/courses';
+import type { Job } from '@/features/korhrd/lib/types';
 import JobGroupCard from '@/features/korhrd/components/job/JobGroupCard';
 import JobCard from '@/features/korhrd/components/job/JobCard';
 import Carousel from '@/features/korhrd/components/ui/Carousel';
@@ -38,13 +40,29 @@ function FlowSteps() {
   );
 }
 
-export default function JobsClient({ initialGroup }: { initialGroup?: string }) {
+export default function JobsClient({ initialGroup, visibleCodes }: {
+  initialGroup?: string;
+  /** 어드민에서 노출 중인 과정 코드. null이면(조회 실패) 카탈로그 전체 기준 */
+  visibleCodes?: string[] | null;
+}) {
+  /* 연결된 과정이 카탈로그에 있고 노출 중인 직업만 보여줍니다 —
+     비노출 과정의 직업이 목록에 뜨지 않게 (2026-08-14) */
+  const isJobVisible = (job: Job) => {
+    const course = findCourse(job.course);
+    if (!course) return false;
+    return !visibleCodes || visibleCodes.includes(course.code);
+  };
+
+  /* 보여줄 직업이 하나도 없는 직업군은 카드 자체를 숨깁니다 */
+  const visibleGroups = JOB_GROUPS.filter((g) => jobsOfGroup(g.key).some(isJobVisible));
+  const groupList = visibleGroups.length > 0 ? visibleGroups : JOB_GROUPS;
+
   const [current, setCurrent] = useState(
-    () => JOB_GROUPS.find((g) => g.key === initialGroup)?.key ?? JOB_GROUPS[0].key,
+    () => groupList.find((g) => g.key === initialGroup)?.key ?? groupList[0].key,
   );
 
-  const group = JOB_GROUPS.find((g) => g.key === current)!;
-  const jobs = jobsOfGroup(current);
+  const group = groupList.find((g) => g.key === current) ?? groupList[0];
+  const jobs = jobsOfGroup(group.key).filter(isJobVisible);
 
   /* 980px 이하에서는 .job-flow 가 display:block 이 되어 여섯 단계가 줄바꿈됩니다.
      원본과 같이 단계를 한 벌 더 복제한 트랙으로 감싸 한 줄로 굴립니다 —
@@ -100,8 +118,8 @@ export default function JobsClient({ initialGroup }: { initialGroup?: string }) 
             스크롤바는 감춰져 있어 dot 이 없으면 뒤쪽 직업군이 있는 줄 모르고 지나칩니다.
             데스크톱은 5열 그리드라 넘칠 게 없어 dot 이 저절로 숨겨집니다. */}
         <Carousel className="job-groups" label="직업군 선택" dotsLabel="직업군 목록 이동">
-          {JOB_GROUPS.map((g) => (
-            <JobGroupCard key={g.key} group={g} active={g.key === current} onSelect={() => select(g.key)} />
+          {groupList.map((g) => (
+            <JobGroupCard key={g.key} group={g} active={g.key === group.key} onSelect={() => select(g.key)} />
           ))}
         </Carousel>
 
