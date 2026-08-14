@@ -25,8 +25,6 @@ type CertificateListTableProps = {
   onTogglePaid?: (item: CertificateListItem, paid: boolean) => void;
   /** 배송 체크박스 토글 — 켜면 발송완료, 끄면 발송예정 */
   onToggleShipped?: (item: CertificateListItem, shipped: boolean) => void;
-  /** 사진 없는 건의 "사진없이 발급합니다" 체크 토글 */
-  onToggleNoPhoto?: (item: CertificateListItem, noPhoto: boolean) => void;
 };
 
 const th: CSSProperties = {
@@ -57,37 +55,13 @@ const iconBtn: CSSProperties = {
   whiteSpace: "nowrap",
 };
 
-function CertificatePhotoCell({
-  item,
-  onToggleNoPhoto,
-}: {
-  item: CertificateListItem;
-  onToggleNoPhoto?: (item: CertificateListItem, noPhoto: boolean) => void;
-}) {
+function CertificatePhotoCell({ item }: { item: CertificateListItem }) {
   if (!item.photoUrl) {
-    // 사진이 없는 건은 목록에서 바로 "사진없이 발급" 체크로 확정할 수 있습니다
+    // 사진이 없으면 자동으로 "사진없이 발급"으로 처리합니다 (오피스·학생 신청 공통)
     return (
-      <label
-        style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer" }}
-        title="체크하면 사진 없이 발급을 확정합니다"
-      >
-        <input
-          type="checkbox"
-          checked={item.issueWithoutPhoto}
-          onChange={(event) => onToggleNoPhoto?.(item, event.target.checked)}
-          style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#3182F6" }}
-        />
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 600,
-            whiteSpace: "nowrap",
-            color: item.issueWithoutPhoto ? "#3182F6" : M.mute,
-          }}
-        >
-          사진없이 발급
-        </span>
-      </label>
+      <span style={{ display: "inline-block", padding: "3px 8px", borderRadius: 6, background: "#EFF6FF", color: "#3182F6", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>
+        사진없이 발급
+      </span>
     );
   }
 
@@ -125,7 +99,6 @@ export function CertificateListTable({
   onDeleteClick,
   onTogglePaid,
   onToggleShipped,
-  onToggleNoPhoto,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -176,7 +149,7 @@ export function CertificateListTable({
                   {formatFullAddress(item.postalCode, item.address, item.addressDetail)}
                 </td>
                 <td style={{ ...td, textAlign: "center" }}>
-                  <CertificatePhotoCell item={item} onToggleNoPhoto={onToggleNoPhoto} />
+                  <CertificatePhotoCell item={item} />
                 </td>
                 <td style={{ ...td, textAlign: "right", color: M.ink, fontWeight: 600 }}>
                   {formatCertificateAmount(item.issuanceCost)}

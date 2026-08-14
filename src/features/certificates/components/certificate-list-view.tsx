@@ -138,13 +138,6 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
             shipped ? "발송완료 처리했습니다." : "발송예정으로 되돌렸습니다.",
           )
         }
-        onToggleNoPhoto={(item, noPhoto) =>
-          handleQuickUpdate(
-            item,
-            { issueWithoutPhoto: noPhoto },
-            noPhoto ? "사진 없이 발급으로 표시했습니다." : "사진 없이 발급 표시를 해제했습니다.",
-          )
-        }
       />
 
       <div style={{ marginTop: 20 }}>
