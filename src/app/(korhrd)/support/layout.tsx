@@ -49,7 +49,7 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
                 --sm 은 전달본이 '좁은 사이드바(210px)용' 으로 만들어 둔 변형입니다. */}
             <a
               className="kakao-box kakao-box--sm"
-              href="https://pf.kakao.com/_NHfxfb"
+              href="https://pf.kakao.com/_NHfxfb/chat"
               target="_blank"
               rel="noopener"
             >

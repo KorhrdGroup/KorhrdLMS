@@ -19,7 +19,7 @@ function addDays(dateString: string, days: number) {
  * 저장합니다. 민간자격증 LMS는 반(class) 배정이나 관리자 승인 단계 없이, 과정등록만
  * 되어 있으면(status = active) 신청 즉시 학습이 가능해야 하기 때문입니다.
  * - start_date: 신청일(오늘)
- * - end_date: 신청일 + 과정 수강기간(courses.default_duration_days, 없으면 51일 — 신청 당일 D-50 표시)
+ * - end_date: 신청일 + 과정 수강기간(courses.default_duration_days, 없으면 31일 — 신청 당일 D-30 표시)
  * - payment_status: 무료수강 과정이면 결제 없이 바로 "paid"(완료) 처리, 유료 과정은 "unpaid"로
  *   저장(실제 결제 연동은 별도 플로우).
  */

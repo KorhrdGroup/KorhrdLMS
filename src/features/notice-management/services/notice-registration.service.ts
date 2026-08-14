@@ -28,10 +28,7 @@ export function validateNoticeInput(
     return { field: "title", message: "제목을 입력해주세요." };
   }
 
-  if (!normalize(input.content)) {
-    return { field: "content", message: "내용을 입력해주세요." };
-  }
-
+  // 내용은 선택 입력입니다. 이미지·첨부만으로 공지하는 경우가 있어 비워둘 수 있습니다.
   return {
     title: normalize(input.title),
     content: normalize(input.content),

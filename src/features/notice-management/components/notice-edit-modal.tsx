@@ -201,7 +201,6 @@ export function NoticeEditModal({
           <EnrollmentFormField
             label="내용 (에디터, Rich Text는 추후 적용 예정)"
             htmlFor="edit-notice-content"
-            required
             error={fieldErrors.content}
           >
             <EnrollmentFormTextarea

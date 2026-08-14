@@ -164,7 +164,7 @@ export default async function HomePage() {
             </div>
 
             {/* 실시간 카카오톡 상담 배너 (Figma card_cs) */}
-            <a className="kakao-box" href="https://pf.kakao.com/_NHfxfb" target="_blank" rel="noopener">
+            <a className="kakao-box" href="https://pf.kakao.com/_NHfxfb/chat" target="_blank" rel="noopener">
               <span className="kakao-box__txt">
                 <span className="kakao-box__q">통화가 어려우신가요?</span>
                 <span className="kakao-box__t">실시간 카카오톡 상담</span>

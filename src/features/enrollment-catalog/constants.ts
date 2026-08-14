@@ -14,7 +14,7 @@ export const ENROLLMENT_CATALOG_ALL_CATEGORY_ID = "all";
  * 민간자격증 LMS는 반(class) 없이 신청 즉시 확정되므로, 수강 종료일(end_date)을
  * 신청일 기준으로 바로 계산하는 데 사용합니다.
  */
-export const DEFAULT_ENROLLMENT_DURATION_DAYS = 51;
+export const DEFAULT_ENROLLMENT_DURATION_DAYS = 31;
 
 export const ENROLLMENT_CATALOG_UNCATEGORIZED_LABEL = "미분류";
 

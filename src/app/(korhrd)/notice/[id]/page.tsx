@@ -46,9 +46,12 @@ export default async function Page({ params }: PageProps) {
           </p>
         </div>
 
-        <div className="article__body" style={{ whiteSpace: "pre-line" }}>
-          {notice.body}
-        </div>
+        {/* 내용 없이 이미지·첨부만 있는 공지는 본문 영역(최소 높이·여백)을 아예 그리지 않습니다 */}
+        {notice.body.trim() ? (
+          <div className="article__body" style={{ whiteSpace: "pre-line" }}>
+            {notice.body}
+          </div>
+        ) : null}
 
         {/* 본문 이미지 — 어드민 "본문 이미지" 필드. 첨부파일(다운로드)과 별개입니다.
             어드민이 링크를 설정했으면 클릭 시 그 주소로 이동합니다. */}
