@@ -96,8 +96,16 @@ export default function Carousel({
     const t = setInterval(() => {
       const el = trackRef.current;
       if (!el) return;
-      const next = (Math.round(el.scrollLeft / el.clientWidth) + 1) % pages;
-      el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
+      /* 페이지 판정과 목표 위치 둘 다 끝을 붙잡습니다 — 트랙이 화면의 정수배가
+         아니면 round 만으로는 마지막 페이지에서 제자리를 맴돌며 멈춥니다. */
+      const width = el.clientWidth;
+      const maxScroll = el.scrollWidth - width;
+      const current =
+        maxScroll > 0 && el.scrollLeft >= maxScroll - 1
+          ? pages - 1
+          : Math.round(el.scrollLeft / width);
+      const next = (current + 1) % pages;
+      el.scrollTo({ left: Math.min(next * width, maxScroll), behavior: 'smooth' });
     }, autoMs);
     return () => clearInterval(t);
   }, [autoMs, pages]);

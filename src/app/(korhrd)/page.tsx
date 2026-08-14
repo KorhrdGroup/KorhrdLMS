@@ -123,9 +123,12 @@ export default async function HomePage() {
       {/* ======================= 목적 · 연령 선택 ======================= */}
       <section className="section section--white" aria-labelledby="goal-title">
         <div className="container">
-          <div className="section-head content">
-            <h2 id="goal-title">어떤 목적으로 자격증을 찾으세요?</h2>
-            <p>목적과 연령을 고르면 맞는 과정을 바로 추천해 드립니다.</p>
+          <div className="section-head section-head--row content">
+            <div>
+              <h2 id="goal-title">어떤 목적으로 자격증을 찾으세요?</h2>
+              <p>목적과 연령을 고르면 맞는 과정을 바로 추천해 드립니다.</p>
+            </div>
+            <Link className="section-head__more" href="/courses">과정 전체 보러가기 →</Link>
           </div>
           <GoalPicker />
         </div>
