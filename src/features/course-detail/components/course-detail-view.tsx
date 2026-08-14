@@ -169,7 +169,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                 <div><span className="tag">강의 형태</span><b>{course.info.format}</b></div>
                 <div><span className="tag">강의 시간</span><b>{course.info.duration}</b></div>
                 <div><span className="tag">수업 방식</span><b>{course.info.method}</b></div>
-                <div><span className="tag">자격증 발급비</span><b>{won(course.info.certFee)}</b></div>
+                <div><span className="tag">자격증 발급비</span><b>별도</b></div>
                 <div><span className="tag">주무부처</span><b>{course.ministry}</b></div>
                 <div><span className="tag">합격 기준</span><b>{course.sticky.passCriteria}</b></div>
               </div>
