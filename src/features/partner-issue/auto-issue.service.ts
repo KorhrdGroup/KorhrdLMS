@@ -114,6 +114,18 @@ function matchCourse(certName: string, courses: CourseRow[]): CourseRow | null {
   return courses.find((c) => norm(c.name).startsWith(key) || key.startsWith(norm(c.name))) ?? null;
 }
 
+/**
+ * 발급신청에 표시할 자격증명 — 오피스 표기(급수 포함)를 그대로 쓰고,
+ * 급수가 없으면 과정명의 급수를, 그것도 없으면 "1급"을 붙입니다.
+ * (예: 오피스 "노인심리상담사1급" → 그대로 / LMS 과정 "생활지원사" → "생활지원사1급")
+ */
+function certificateDisplayName(officeCertName: string, courseName: string): string {
+  const base = officeCertName.trim() || courseName.trim();
+  if (/[0-9]\s*급/.test(base)) return base;
+  if (/[0-9]\s*급/.test(courseName)) return courseName.trim();
+  return `${base}1급`;
+}
+
 export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResult> {
   const supabase = await createClient();
 
@@ -329,7 +341,7 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
           member_id: member.id,
           course_id: course.id,
           certificate_kind: "course_completion",
-          certificate_name: `${course.name} 자격증`,
+          certificate_name: certificateDisplayName(certName, course.name),
           member_login_id: member.login_id,
           applicant_name: name,
           birth_date: birthIso,
