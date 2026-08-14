@@ -16,13 +16,16 @@ const PROFILE_URL = "https://openapi.naver.com/v1/nid/me";
 
 export type NaverConfig = { clientId: string; clientSecret: string; callbackUrl: string };
 
-export function getNaverConfig(): NaverConfig | null {
+export function getNaverConfig(requestOrigin?: string): NaverConfig | null {
   const clientId = process.env.NAVER_CLIENT_ID?.trim();
   const clientSecret = process.env.NAVER_CLIENT_SECRET?.trim();
   if (!clientId || !clientSecret) return null;
 
   // 콜백 주소는 네이버에 등록한 값과 **문자 하나까지 같아야** 합니다.
+  // 접속한 도메인(requestOrigin)을 우선 사용 — korhrd.co.kr / www / vercel.app
+  // 어디로 들어와도 그 도메인으로 콜백이 돌아와 세션 쿠키가 어긋나지 않습니다.
   const base = (
+    requestOrigin ??
     process.env.NEXT_PUBLIC_SITE_URL ??
     process.env.NEXT_PUBLIC_BASE_URL ??
     "http://localhost:3000"

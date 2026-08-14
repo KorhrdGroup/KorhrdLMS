@@ -23,12 +23,15 @@ export type KakaoConfig = {
   callbackUrl: string;
 };
 
-export function getKakaoConfig(): KakaoConfig | null {
+export function getKakaoConfig(requestOrigin?: string): KakaoConfig | null {
   const restApiKey = process.env.KAKAO_REST_API_KEY?.trim();
   if (!restApiKey) return null;
 
   // Redirect URI 는 카카오에 등록한 값과 **문자 하나까지 같아야** 합니다.
+  // 접속한 도메인(requestOrigin)을 우선 사용 — korhrd.co.kr / www / vercel.app
+  // 어디로 들어와도 그 도메인으로 콜백이 돌아와 세션 쿠키가 어긋나지 않습니다.
   const base = (
+    requestOrigin ??
     process.env.NEXT_PUBLIC_SITE_URL ??
     process.env.NEXT_PUBLIC_BASE_URL ??
     "http://localhost:3000"

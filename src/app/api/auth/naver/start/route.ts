@@ -16,7 +16,7 @@ export const NAVER_STATE_COOKIE = "naver_oauth_state";
 export const NAVER_REDIRECT_COOKIE = "naver_oauth_redirect";
 
 export async function GET(request: Request) {
-  const config = getNaverConfig();
+  const config = getNaverConfig(new URL(request.url).origin);
   if (!config) {
     redirect("/login?social=unavailable");
   }

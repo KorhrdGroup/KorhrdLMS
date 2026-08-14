@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   // 위조 요청 차단 — 우리가 보낸 state 와 같아야 합니다
   if (!savedState || savedState !== state) fail("failed");
 
-  const config = getNaverConfig();
+  const config = getNaverConfig(new URL(request.url).origin);
   if (!config) fail("unavailable");
 
   const accessToken = await exchangeNaverCode(config, code, state);

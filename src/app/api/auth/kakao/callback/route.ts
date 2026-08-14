@@ -35,7 +35,7 @@ export async function GET(request: Request) {
   if (!code || !state) fail("failed");
   if (!savedState || savedState !== state) fail("failed");
 
-  const config = getKakaoConfig();
+  const config = getKakaoConfig(new URL(request.url).origin);
   if (!config) fail("unavailable");
 
   const accessToken = await exchangeKakaoCode(config, code);

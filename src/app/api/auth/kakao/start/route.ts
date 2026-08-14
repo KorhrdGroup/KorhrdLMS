@@ -14,7 +14,7 @@ export const KAKAO_STATE_COOKIE = "kakao_oauth_state";
 export const KAKAO_REDIRECT_COOKIE = "kakao_oauth_redirect";
 
 export async function GET(request: Request) {
-  const config = getKakaoConfig();
+  const config = getKakaoConfig(new URL(request.url).origin);
   if (!config) {
     redirect("/login?social=unavailable");
   }
