@@ -110,6 +110,7 @@ export function ReviewManagementView({ reviews }: { reviews: AdminCourseReview[]
           <AdminTable>
             <AdminTableHeader>
               <AdminTableRow className="hover:bg-transparent">
+                <AdminTableHead className="text-center">사진</AdminTableHead>
                 <AdminTableHead>제목</AdminTableHead>
                 <AdminTableHead>작성자</AdminTableHead>
                 <AdminTableHead>과정</AdminTableHead>
@@ -122,6 +123,26 @@ export function ReviewManagementView({ reviews }: { reviews: AdminCourseReview[]
             <AdminTableBody>
               {filtered.map((review) => (
                 <AdminTableRow key={review.id}>
+                  <AdminTableCell className="text-center">
+                    {review.photoUrl ? (
+                      <a
+                        href={review.photoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        title="사진 크게 보기"
+                        className="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-[#F9FAFB]"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={review.photoUrl}
+                          alt={`${review.title} 후기 사진`}
+                          className="h-full w-full object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <span className="text-xs text-[#C4C9D0]">—</span>
+                    )}
+                  </AdminTableCell>
                   <AdminTableCell className="max-w-[280px]">
                     <span className="block truncate font-medium text-[#111827]" title={review.title}>
                       {review.title}
