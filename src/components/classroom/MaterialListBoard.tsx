@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ComingSoonPopup } from "@/components/classroom/ComingSoonPopup";
 import { figma, figmaClass } from "@/components/home/home-design";
 import { NoticePagination } from "@/components/shared/NoticePagination";
 import type { ClassroomMaterialItem } from "@/features/classroom-materials/types/classroom-material.types";
@@ -14,6 +15,12 @@ export function MaterialListBoard({
 }) {
   return (
     <div className="min-w-0 flex-1">
+      {materials.length === 0 ? (
+        <ComingSoonPopup
+          title="교안 준비 중"
+          message={"이 과정의 교안(학습자료)은\n추후 오픈될 예정입니다."}
+        />
+      ) : null}
       <h2 className={cn(figma.typography.sectionTitle, "mb-4", figmaClass.textPrimary)}>학습자료실</h2>
 
       <div className={cn("overflow-x-auto border", figmaClass.roundedCard, figmaClass.borderDefault)}>
@@ -59,7 +66,7 @@ export function MaterialListBoard({
             {materials.length === 0 ? (
               <tr>
                 <td colSpan={3} className={cn("py-16 text-center text-[14px]", figmaClass.textPlaceholder)}>
-                  등록된 자료가 없습니다.
+                  교안은 추후 오픈될 예정입니다.
                 </td>
               </tr>
             ) : null}

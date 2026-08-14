@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { ClipboardList, Info } from "lucide-react";
 
+import { ComingSoonPopup } from "@/components/classroom/ComingSoonPopup";
+
 import {
   CLASSROOM_EXAM_STATUS_BADGE_CLASS,
   CLASSROOM_EXAM_STATUS_LABEL,
@@ -39,16 +41,22 @@ export function ExamListBoard({ slug, examList }: { slug: string; examList: Clas
       </p>
 
       {exams.length === 0 ? (
-        <div
-          className={cn(
-            "flex items-center justify-center border px-6 py-16 text-center text-[14px]",
-            figmaClass.roundedCard,
-            figmaClass.borderDefault,
-            figmaClass.textPlaceholder,
-          )}
-        >
-          등록된 시험이 존재하지 않습니다.
-        </div>
+        <>
+          <ComingSoonPopup
+            title="시험 준비 중"
+            message={"이 과정의 수료시험은\n추후 오픈될 예정입니다."}
+          />
+          <div
+            className={cn(
+              "flex items-center justify-center border px-6 py-16 text-center text-[14px]",
+              figmaClass.roundedCard,
+              figmaClass.borderDefault,
+              figmaClass.textPlaceholder,
+            )}
+          >
+            시험은 추후 오픈될 예정입니다.
+          </div>
+        </>
       ) : (
         <div className="flex flex-col gap-4">
           {exams.map((exam) => (
