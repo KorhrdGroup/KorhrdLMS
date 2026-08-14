@@ -155,7 +155,6 @@ export function NoticeRegistrationModal({
         <EnrollmentFormField
           label="내용 (에디터, Rich Text는 추후 적용 예정)"
           htmlFor="notice-content"
-          required
           error={fieldErrors.content}
         >
           <EnrollmentFormTextarea
