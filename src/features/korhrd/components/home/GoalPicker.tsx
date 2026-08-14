@@ -50,13 +50,6 @@ export default function GoalPicker() {
     [goal, activeAge, catalog],
   );
 
-  /* 더보기는 메인 카드와 달리 묶음 과정도 세어 목록 페이지와 개수를 맞춥니다 */
-  const moreCount = catalog.filter(
-    (c) => c.p.includes(goal) && (activeAge === '전체' || c.a.includes(activeAge)),
-  ).length;
-  const moreHref =
-    `/courses?purpose=${encodeURIComponent(goal)}` +
-    (activeAge === '전체' ? '' : `&age=${encodeURIComponent(activeAge)}`);
 
   return (
     <div className="content">
@@ -89,8 +82,9 @@ export default function GoalPicker() {
       </div>
 
       <p className="text-center mt-5">
-        <Link className="btn btn--ghost btn--quiet" href={moreHref}>
-          {goal}{activeAge === '전체' ? '' : ` · ${activeAge}`} 자격증 {moreCount}개 모두 보기 →
+        {/* 고른 조건을 들고 가지 않습니다 — 목록 전체로 (2026-08-14, 디자인 요청) */}
+        <Link className="btn btn--ghost btn--quiet" href="/courses">
+          과정 전체 보러가기 →
         </Link>
       </p>
     </div>
