@@ -41,6 +41,8 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <section>
+      <div className="section-head"><h2>공지사항</h2></div>
+
       <div className="toolbar">
         <p className="toolbar__result">전체 <b>{notices.length}</b>건</p>
         <NoticeFilter />

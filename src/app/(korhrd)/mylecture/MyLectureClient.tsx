@@ -86,7 +86,8 @@ export default function MyLectureClient({
 
       <div className="layout-side mt-5">
         <aside>
-          <div className="filter-group" role="tablist" aria-label="나의 강의실 메뉴">
+          {/* side-tabs — 좁은 화면에서 탭 격자로 바뀝니다 (overrides.css) */}
+          <div className="filter-group side-tabs" role="tablist" aria-label="나의 강의실 메뉴">
             {TABS.map(([key, label, count]) => (
               <button
                 key={key} className="side-nav__item" type="button" role="tab"

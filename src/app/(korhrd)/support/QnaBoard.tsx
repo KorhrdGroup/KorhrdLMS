@@ -1,39 +1,38 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
+import { useHydrated } from '@/features/korhrd/lib/useHydrated';
 import { createSupportQnaAction } from '@/features/support-qna/actions/support-qna.actions';
 import type { SupportQnaItem } from '@/features/support-qna/services/support-qna.service';
 
 /**
  * 1:1 문의 폼 + 나의 문의 내역.
- * 프로토타입 원본: korhrd-site/support.html #form (문의유형·이름·연락처·내용·동의)
+ * 프로토타입 원본: korhrd-site/support.html #form
  *
- * 저장은 기존 support-qna 서비스(board_posts)를 씁니다. 서비스가 받는 것은
- * title·content 둘뿐이라, 어드민 목록에서 알아보기 쉽도록 제목을
- * "[문의유형] 이름"으로 만들고 연락처는 본문 머리에 붙입니다.
+ * 원본의 이름·연락처 칸과 개인정보 동의는 뺐습니다 (2026-08-13, 디자인 요청) —
+ * 로그인해야 쓰는 폼이라 이름은 계정에서 오고, 새로 수집하는 개인정보가 없어
+ * 별도 동의도 필요 없습니다. 저장은 기존 support-qna 서비스(board_posts)를
+ * 쓰며, 제목은 "[문의유형] 문의 제목"으로 저장합니다 — 아래 문의 내역과
+ * 어드민 목록이 같은 문자열을 그대로 보여줍니다.
  */
 const TYPES = ['수강 관련', '시험·수료 관련', '자격증 발급 관련', '결제·환불 관련', '기타'];
 
 export function QnaBoard({
   items,
   isLoggedIn,
-  defaultName,
 }: {
   items: SupportQnaItem[];
   isLoggedIn: boolean;
-  defaultName: string;
 }) {
   const router = useRouter();
   const [qtype, setQtype] = useState(TYPES[0]);
-  const [name, setName] = useState(defaultName);
-  const [phone, setPhone] = useState('');
+  const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
-  const [agree, setAgree] = useState(false);
 
   const [open, setOpen] = useState<string | null>(null);
+  const hydrated = useHydrated();
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -45,14 +44,13 @@ export function QnaBoard({
 
     startTransition(async () => {
       const result = await createSupportQnaAction({
-        title: `[${qtype}] ${name.trim()}`,
-        content: `연락처: ${phone.trim()}\n\n${body.trim()}`,
+        title: `[${qtype}] ${subject.trim()}`,
+        content: body.trim(),
       });
 
       if (result.success) {
-        setPhone('');
+        setSubject('');
         setBody('');
-        setAgree(false);
         setDone(true);
         router.refresh();
       } else {
@@ -69,46 +67,39 @@ export function QnaBoard({
       <div>
         <div className="section-head">
           <h2 id="form-title">1:1 문의하기</h2>
-          <p>답변은 등록하신 연락처로 안내해 드립니다.</p>
+          <p>답변은 아래 문의 내역에서 확인하실 수 있습니다.</p>
         </div>
 
         <div>
           {isLoggedIn ? (
             <form className="form-card" onSubmit={handleSubmit}>
               <div className="form" style={{ maxWidth: 'none' }}>
-                <div className="field">
-                  <label htmlFor="qtype">
-                    문의 유형 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <select
-                    id="qtype" required value={qtype}
-                    onChange={(event) => setQtype(event.target.value)}
-                  >
-                    {TYPES.map((t) => <option key={t}>{t}</option>)}
-                  </select>
-                </div>
+                {/* 유형·제목을 한 줄에 — 좁은 화면에서는 세로로 쌓입니다 (overrides.css .qna-grid) */}
+                <div className="qna-grid">
+                  <div className="field">
+                    <label htmlFor="qtype">
+                      문의 유형 <span className="req" aria-hidden="true">*</span>
+                      <span className="sr-only">(필수)</span>
+                    </label>
+                    <select
+                      id="qtype" required value={qtype}
+                      onChange={(event) => setQtype(event.target.value)}
+                    >
+                      {TYPES.map((t) => <option key={t}>{t}</option>)}
+                    </select>
+                  </div>
 
-                <div className="field">
-                  <label htmlFor="qname">
-                    이름 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <input
-                    id="qname" type="text" required autoComplete="name"
-                    value={name} onChange={(event) => setName(event.target.value)}
-                  />
-                </div>
-
-                <div className="field">
-                  <label htmlFor="qphone">
-                    연락처 <span className="req" aria-hidden="true">*</span>
-                    <span className="sr-only">(필수)</span>
-                  </label>
-                  <input
-                    id="qphone" type="tel" required inputMode="numeric" placeholder="010-1234-5678"
-                    value={phone} onChange={(event) => setPhone(event.target.value)}
-                  />
+                  <div className="field">
+                    <label htmlFor="qsubject">
+                      문의 제목 <span className="req" aria-hidden="true">*</span>
+                      <span className="sr-only">(필수)</span>
+                    </label>
+                    <input
+                      id="qsubject" type="text" required maxLength={60}
+                      placeholder="문의 제목을 입력해 주세요"
+                      value={subject} onChange={(event) => setSubject(event.target.value)}
+                    />
+                  </div>
                 </div>
 
                 <div className="field">
@@ -120,16 +111,6 @@ export function QnaBoard({
                     id="qbody" rows={5} required placeholder="문의하실 내용을 입력해 주세요"
                     value={body} onChange={(event) => setBody(event.target.value)}
                   />
-                </div>
-
-                <div className="agree">
-                  <input
-                    id="qagree" type="checkbox" required checked={agree}
-                    onChange={(event) => setAgree(event.target.checked)}
-                  />
-                  <label htmlFor="qagree">
-                    [필수] 개인정보 수집·이용에 동의합니다. (문의 응대 목적)
-                  </label>
                 </div>
 
                 {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
@@ -149,7 +130,6 @@ export function QnaBoard({
               <strong>로그인 후 이용하실 수 있습니다</strong>
               <ul>
                 <li>답변을 안내드리기 위해 로그인이 필요합니다.</li>
-                <li><Link href="/login?redirect=/support">로그인하러 가기</Link></li>
                 <li>급하신 경우 전화(02-2135-9249)나 카카오톡 상담을 이용해 주세요.</li>
               </ul>
             </div>
@@ -174,14 +154,21 @@ export function QnaBoard({
                         aria-controls={`qna-${item.id}`}
                         onClick={() => setOpen(open === item.id ? null : item.id)}
                       >
-                        <span className={`badge badge--${item.status === 'answered' ? 'pass' : 'info'}`}>
+                        {/* 접수는 파랑(학습중과 같은 톤) — 배지 너비는 overrides.css 가
+                            답변완료와 같게 맞춥니다. 제목은 남는 폭을 다 갖고 왼쪽 정렬. */}
+                        <span className={`badge badge--${item.status === 'answered' ? 'pass' : 'learning'}`}>
                           {item.status === 'answered' ? '답변완료' : '접수'}
                         </span>
-                        {' '}{item.title}
+                        <span className="qna-item-title">{item.title}</span>
                         <span className="arrow" aria-hidden="true">⌄</span>
                       </button>
-                      {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid) */}
-                      <div className="faq__a" id={`qna-${item.id}`} hidden={open !== item.id}>
+                      {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid).
+                          hidden 은 첫 그림에서만 — display:none 이라 두면 여닫이가 뚝 끊깁니다 */}
+                      <div
+                        className="faq__a"
+                        id={`qna-${item.id}`}
+                        hidden={hydrated ? undefined : open !== item.id}
+                      >
                         <div className="faq__a-inner">
                           <div className="faq__a-pad">
                             <p style={{ whiteSpace: 'pre-line' }}>{item.content}</p>

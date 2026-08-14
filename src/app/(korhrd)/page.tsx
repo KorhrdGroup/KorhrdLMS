@@ -7,6 +7,7 @@ import { getLiveFeed } from '@/features/korhrd/services/live-feed.service';
 import { getMockableStudentMember } from '@/lib/mock-auth-server';
 import { getPublishedNoticesForSite } from '@/features/notice-management/services/notice-student-view.service';
 import { JOB_GROUPS } from '@/features/korhrd/data/jobs';
+import LoginNotice from '@/features/korhrd/components/layout/LoginNotice';
 import TrustStrip from '@/features/korhrd/components/home/TrustStrip';
 import BannerCarousel from '@/features/korhrd/components/home/BannerCarousel';
 import LoginBox from '@/features/korhrd/components/home/LoginBox';
@@ -85,6 +86,9 @@ export default async function HomePage() {
     <>
       <h1 className="sr-only">한평생 직업훈련 — 정식 등록 민간자격 온라인 교육기관</h1>
 
+      {/* 로그인 알림 팝업 — 메인에서만, 다음 행동(시험·재응시·발급·입금)이 남았을 때 */}
+      <LoginNotice />
+
       <TrustStrip />
 
       {/* 흰 배경 띠 — 배너·로그인 박스가 회색 바탕에 잠기지 않도록 화면 폭 전체를 흰색으로 깝니다 */}
@@ -124,9 +128,12 @@ export default async function HomePage() {
       {/* ======================= 목적 · 연령 선택 ======================= */}
       <section className="section section--white" aria-labelledby="goal-title">
         <div className="container">
-          <div className="section-head content">
-            <h2 id="goal-title">어떤 목적으로 자격증을 찾으세요?</h2>
-            <p>목적과 연령을 고르면 맞는 과정을 바로 추천해 드립니다.</p>
+          <div className="section-head section-head--row content">
+            <div>
+              <h2 id="goal-title">어떤 목적으로 자격증을 찾으세요?</h2>
+              <p>목적과 연령을 고르면 맞는 과정을 바로 추천해 드립니다.</p>
+            </div>
+            <Link className="section-head__more" href="/courses">과정 전체 보러가기 →</Link>
           </div>
           <GoalPicker />
         </div>
@@ -197,7 +204,7 @@ export default async function HomePage() {
               <h2 id="process-title">자격증 취득, 4단계면 됩니다</h2>
               <p>신청부터 발급까지 전 과정 온라인 · 교육기간 6주</p>
             </div>
-            <Link className="section-head__more" href="/support">더보기 →</Link>
+            <Link className="section-head__more" href="/support/process">더보기 →</Link>
           </div>
 
           {/* 좁은 화면에서는 세로로 쌓지 않고 가로 스와이프합니다 (styles/responsive.css) */}
@@ -311,7 +318,7 @@ export default async function HomePage() {
             <div>
               <div className="list-head">
                 <h2>자주 묻는 질문</h2>
-                <Link className="section-head__more" href="/support">더보기 →</Link>
+                <Link className="section-head__more" href="/support/faq">더보기 →</Link>
               </div>
 
               {/* 메인에서는 펼치지 않고 고객센터의 해당 문항으로 보냅니다 */}

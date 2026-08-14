@@ -955,3 +955,167 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    넓은 화면에서는 숫자와 같은 남색이었습니다. 강조되는 것은 '0' 이라 단위는
    뒤로 물러나는 게 맞습니다 — 모바일 처리를 넓은 화면에도 그대로 씁니다. */
 .course-row__price strong span { color: var(--ink) }
+
+/* 고객센터 상담 3블록 — 사이드 메뉴 아래로 (2026-08-12, 디자인 요청)
+   본문 위를 가로로 막고 있어서 네 화면 어디를 눌러도 상담 박스부터 지나야
+   했습니다. 옆 칸(210px)의 메뉴 아래로 내려 세로로 세웁니다.
+   전달본 .support-grid 는 3열이고 margin-bottom:8px 이라, 둘 다 덮습니다.
+   좁은 화면에서는 전달본이 이미 1열(account.css 980 블록)이라 폭 규칙은
+   같은 결과가 되고, 메뉴와 띄우는 간격만 남습니다. */
+.support-grid--side {
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+  margin: var(--s-5) 0 0;
+}
+
+/* 고객센터 전화 상담 박스 — 안내 줄을 빼고 이름·번호를 붙입니다
+   (2026-08-12, 디자인 요청). 전달본은 위에 '궁금한 점이 있으신가요?' 가 있다는
+   전제로 이름 위아래를 4px/8px 띄웠는데, 그 줄이 사라지면 이름과 번호가
+   따로 노는 두 덩어리로 보입니다. 한 짝으로 붙입니다.
+   메인의 전화 박스는 안내 줄을 그대로 두므로 사이드바 안에서만 바꿉니다. */
+.support-grid--side .tel-box__t { margin: 0 0 2px }
+
+/* 고객센터 취득 과정 — 수료·합격 기준을 막대 그래프 둘로 (2026-08-13, 디자인 요청)
+   링 네 개는 숫자만 보여줄 뿐 '출석이 합격 점수의 3분의 2' 라는 구조가 안
+   보였습니다. ① 응시 자격(출석 60% 지점까지 찬 막대) ② 합격 점수(출석 40 +
+   시험 60 누적, 60점 자리에 합격선). 색·간격은 전달본 토큰만 씁니다 —
+   막대 짜임은 lec-progress(track 위 fill)와 같은 문법입니다. */
+.pass-viz { display: grid; gap: var(--s-4) }
+/* 막대 하나가 흰 카드 하나 — 위 취득 4단계 카드(.step)와 같은 옷입니다.
+   폭은 본문 가득 씁니다 (2026-08-13, 디자인 요청) */
+.pass-viz__row {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: var(--pad-card-y) var(--pad-card);
+}
+.pass-viz__head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4);
+  margin-bottom: var(--s-2); font-size: var(--fs-sm);
+}
+.pass-viz__head > b { color: var(--ink); font-weight: 700 }
+.pass-viz__head > span { color: var(--muted) }
+.pass-viz__head > span b { color: var(--blue); font-weight: 700 }
+/* 합격선 라벨이 막대 위에 얹히므로 그만큼 띄웁니다 */
+.pass-bar {
+  position: relative; display: flex; height: 32px; margin-top: 26px;
+  border-radius: var(--r-full); background: var(--surface-alt); overflow: visible;
+}
+.pass-bar__seg {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; font-style: normal; font-size: var(--fs-xs); font-weight: 700;
+  white-space: nowrap;
+}
+.pass-bar__seg--att { background: var(--navy); color: #fff; border-radius: var(--r-full) 0 0 var(--r-full) }
+.pass-bar__seg--exam { background: var(--blue-soft); color: var(--navy); border-radius: 0 var(--r-full) var(--r-full) 0 }
+/* ① 막대는 출석 한 조각뿐이라 오른쪽도 둥글게, 남은 트랙에 흐린 라벨 */
+.pass-bar > .pass-bar__seg--att:last-of-type { border-radius: var(--r-full) }
+.pass-bar__rest {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-xs); color: var(--mono-400); white-space: nowrap;
+}
+/* 합격선 — 파란 점선 눈금 + 위에 파란 라벨. left 는 마크업이 지정합니다 */
+.pass-bar__line { position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 2px dashed var(--blue) }
+.pass-bar__line::after {
+  content: attr(data-label); position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: var(--fs-2xs); font-weight: 700; color: var(--blue); white-space: nowrap;
+}
+.pass-viz__note { margin-top: var(--s-3); font-size: var(--fs-sm); color: var(--muted); line-height: 1.7 }
+@media (max-width: 560px) {
+  .pass-bar { height: 28px }
+}
+
+/* 사이드 메뉴 — 좁은 화면에서는 세로 목록 대신 탭 격자 (2026-08-13, 디자인 요청)
+   980 이하에서 사이드바가 본문 위로 쌓이면, 세로 목록이 화면을 길게
+   차지했습니다. 옛 사이트의 게시판 탭처럼 격자로 눕힙니다 — 태블릿 4칸 한 줄,
+   모바일 2×2. 고객센터·나의 강의실·자격증 발급신청이 함께 씁니다
+   (항목이 둘뿐인 발급 메뉴는 --2 로 어느 폭에서나 2칸).
+   칸 나누는 선은 배경(--line)을 1px 틈으로 내보이는 방식이라 테두리가
+   겹치지 않습니다. 지금 보는 탭은 파랑 채움 + 흰 글자입니다. */
+@media (max-width: 980px) {
+  .side-tabs {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    padding: 0; background: var(--line); border: 1px solid var(--line);
+    border-radius: var(--r-md); overflow: hidden;
+  }
+  .side-tabs--2 { grid-template-columns: repeat(2, 1fr) }
+  .side-tabs .side-nav__item {
+    justify-content: center; text-align: center; white-space: nowrap;
+    margin: 0; border-radius: 0; padding: 12px 8px; background: var(--surface);
+  }
+  .side-tabs .side-nav__item + .side-nav__item { margin-top: 0 }
+  .side-tabs .side-nav__item:hover { background: var(--surface-sunken) }
+  .side-tabs .side-nav__item[aria-current="page"],
+  .side-tabs .side-nav__item[aria-selected="true"] { background: var(--blue); color: #fff }
+  /* 나의 강의실 탭의 개수 뱃지 — 파랑 채움 위에서는 흰색으로.
+     격자 칸이 가운데 정렬이라 margin-left:auto 로 밀지 않습니다 */
+  .side-tabs .side-nav__item .num { margin-left: 0 }
+  .side-tabs .side-nav__item[aria-selected="true"] .num,
+  .side-tabs .side-nav__item[aria-current="page"] .num { color: #fff }
+}
+@media (max-width: 560px) {
+  .side-tabs { grid-template-columns: repeat(2, 1fr) }
+}
+
+/* 고객센터 상담 블록 — 좁은 화면에서는 페이지 맨 아래로 (2026-08-13, 디자인 요청)
+   980 이하에서 사이드바가 본문 위로 쌓이면 탭과 본문 사이에 상담 블록이 끼어,
+   정작 보러 온 내용이 한 화면 아래로 밀렸습니다. aside 를 display:contents 로
+   풀어 탭 → 본문 → 상담 순으로 재배열합니다 (강의실 좁은 화면과 같은 수법).
+   태블릿(561~980)에서는 전화·카카오를 위아래가 아니라 양옆으로 나란히 둡니다. */
+@media (max-width: 980px) {
+  .support-layout > aside { display: contents }
+  .support-layout > aside > .side-tabs { order: 1 }
+  .support-layout > div { order: 2 }
+  .support-layout > aside > .support-grid--side {
+    order: 3; margin-top: 0;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .support-layout > aside > .support-grid--side { grid-template-columns: 1fr }
+}
+
+/* 1:1 문의 — 문의 유형 옆에 문의 제목 칸 (2026-08-13, 디자인 요청)
+   원본 .support-grid(유형·이름·연락처 3칸)는 이름·연락처가 빠지며 안 쓰게 됐고,
+   유형(좁게)·제목(넓게) 두 칸을 한 줄에 둡니다. 좁은 화면에서는 세로로 쌓습니다. */
+.qna-grid { display: grid; grid-template-columns: 1fr 2fr; gap: var(--s-5) }
+@media (max-width: 980px) { .qna-grid { grid-template-columns: 1fr } }
+
+/* 1:1 문의 내역 — 제목 왼쪽 정렬, 상태 배지 너비 통일 (2026-08-13, 디자인 요청)
+   .faq__q 가 space-between 이라 제목(익명 flex 항목)이 가운데에 떠 있었습니다.
+   제목이 남는 폭을 다 갖게 해 배지 옆에 붙이고, '접수'(2자)도 '답변완료'(4자)와
+   같은 너비의 배지가 되도록 고정 폭 + 가운데 정렬을 줍니다. */
+.faq--wide .faq__q .qna-item-title { flex: 1; min-width: 0; text-align: left }
+.faq--wide .faq__q .badge { flex: none; width: 66px; justify-content: center }
+
+/* 1:1 문의 내역 펼침 — 흰 바탕, 제목/내용/답변을 선으로 구분 (2026-08-13, 디자인 요청)
+   자주 묻는 질문과 공유하는 .faq__a 는 회색(surface-sunken) 바탕인데, 문의 내역은
+   내용·답변·날짜가 여러 단이라 흰 바탕에 선으로 나누는 쪽이 읽기 쉽습니다.
+   제목 줄과 내용 사이는 펼침 영역의 위 선이, 내용과 답변 사이는 <hr> 이 긋습니다. */
+.qna-list .faq__a { background: var(--surface) }
+.qna-list .faq__a-pad { border-top: 1px solid var(--line) }
+.qna-list .faq__a-pad hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  /* 패딩 밖까지 늘려 위 구분선과 같은 폭으로 */
+  margin: 14px -20px;
+}
+/* 문의일·답변일은 본문을 읽고 난 눈이 멈추는 오른쪽 끝에 둡니다.
+   공용 my-card__date 의 margin-bottom(16px)은 여기서는 빼야 마지막 줄 아래
+   여백이 패드(16px)만 남아 양옆(20px)과 비슷해 보입니다. */
+.qna-list .faq__a-pad .my-card__date { text-align: right; margin-bottom: 0 }
+
+/* 메인 목적 추천 — 넓은 화면에서도 옆으로 흐르는 캐러셀 (2026-08-14, 디자인 요청)
+   심리상담 × 60대처럼 딱 맞는 과정이 한둘뿐인 조합에서 화면이 비지 않게,
+   같은 목적의 과정을 겹쳐 많이 싣고 자동으로 넘깁니다. 좁은 화면(≤980)은
+   전달본 appendix.css 의 .card-grid 스와이프 규칙이 이미 처리하므로,
+   여기서는 넓은 화면만 4장씩 한 화면으로 눕힙니다. */
+@media (min-width: 981px) {
+  .card-carousel {
+    grid-template-columns: none; grid-auto-flow: column;
+    /* 한 화면에 정확히 4장 — 간격(--s-5) 3개를 빼고 4등분 */
+    grid-auto-columns: calc((100% - 3 * var(--s-5)) / 4);
+    overflow-x: auto; scroll-snap-type: x proximity;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .card-carousel::-webkit-scrollbar { display: none }
+  .card-carousel > * { scroll-snap-align: start }
+}

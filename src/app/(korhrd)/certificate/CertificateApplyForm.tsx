@@ -152,7 +152,7 @@ export function CertificateApplyForm({
 
         <div className="layout-side mt-5">
           <aside>
-            <nav className="filter-group" aria-label="발급 메뉴">
+            <nav className="filter-group side-tabs side-tabs--2" aria-label="발급 메뉴">
               <Link className="side-nav__item" href="/certificate" aria-current="page">발급 신청</Link>
               <Link className="side-nav__item" href="/certificate/status">발급 신청 현황</Link>
             </nav>
@@ -185,7 +185,7 @@ export function CertificateApplyForm({
 
       <div className="layout-side mt-5">
         <aside>
-          <nav className="filter-group" aria-label="발급 메뉴">
+          <nav className="filter-group side-tabs side-tabs--2" aria-label="발급 메뉴">
             <Link className="side-nav__item" href="/certificate" aria-current="page">발급 신청</Link>
             <Link className="side-nav__item" href="/certificate/status">발급 신청 현황</Link>
           </nav>

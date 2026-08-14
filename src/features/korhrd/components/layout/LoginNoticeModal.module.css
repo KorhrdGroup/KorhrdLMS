@@ -1,0 +1,93 @@
+/* 메인 알림 팝업 (2026-08-13, 디자인 요청)
+   모달 뼈대(.modal/.modal__panel)와 버튼(.btn)은 전달본 전역 CSS 를 그대로 쓰고,
+   버튼 줄·하단 줄만 여기서 입힙니다. 전역 overrides.css 는 다른 작업과 손이 자주
+   겹쳐서, 이 컴포넌트만 쓰는 규칙은 모듈로 분리했습니다. */
+
+.panel {
+  width: min(480px, 100%);
+  /* 내용이 길어도 화면을 넘지 않게 — 넘치면 팝업 안에서 스크롤합니다 */
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  /* 제목·안내·버튼·체크박스까지 전부 가운데 정렬 */
+  text-align: center;
+}
+
+/* 과정명 + 안내 문구를 담는 회색 상자 — 제목 아래 본문 영역을 채웁니다 */
+.box {
+  background: var(--surface-sunken);
+  border-radius: var(--r-md);
+  padding: 18px 16px;
+}
+.box b {
+  display: block;
+  /* 과정명은 안내 문구(fs-sm)보다 한 단계 크게 */
+  font-size: var(--fs-md);
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.box p {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* 안내 상자 아래, 내용 폭만큼만 차지하는 버튼 한 줄 —
+   상자→버튼, 버튼→체크박스 간격이 같도록 위아래 여백을 맞춥니다 */
+.cta {
+  margin: 18px 0;
+}
+.cta :global(.btn) {
+  padding: 11px 28px;
+  font-size: var(--fs-sm);
+}
+/* 글자 오른편의 화살표 — 강의실 '다음' 버튼과 같은 꼬리 달린 화살표
+   (overrides.css :root 의 --arr-tail-right 마스크)입니다.
+   currentColor 라 흰 글자를 따라 희게 나옵니다.
+   .btn 이 이미 inline-flex + gap 이라 가상 요소가 칸 하나를 차지합니다. */
+.cta :global(.btn)::after {
+  content: "";
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask: var(--arr-tail-right) center / contain no-repeat;
+  mask: var(--arr-tail-right) center / contain no-repeat;
+}
+
+/* 오른쪽 위 X — 체크박스를 켠 채로 닫아야 오늘 하루 숨겨집니다 */
+.close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--muted);
+  padding: 4px;
+}
+.close:hover {
+  color: var(--ink);
+}
+
+/* '오늘 하루 보지 않기' 줄 — 구분선 없이 버튼 아래에 붙습니다
+   (버튼과의 간격은 .cta 의 margin-bottom 이 담당합니다) */
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+}
+
+/* 체크박스만 클릭 대상입니다 — 글자는 안내라 커서·호버 효과를 주지 않습니다 */
+.check {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--blue);
+  cursor: pointer;
+}
+.today {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}

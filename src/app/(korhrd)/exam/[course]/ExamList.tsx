@@ -3,6 +3,8 @@
 import Link from 'next/link';
 
 import type { ClassroomExamList } from '@/features/classroom-exams/types/classroom-exam.types';
+import { ExamResultSections } from '@/features/classroom-grades/components/exam-result-sections';
+import type { ClassroomExamResultData } from '@/features/classroom-grades/services/classroom-exam-result.service';
 
 const STATUS_BADGE: Record<string, { tone: string; label: string }> = {
   locked: { tone: 'expired', label: '응시 불가' },
@@ -18,7 +20,11 @@ const STATUS_BADGE: Record<string, { tone: string; label: string }> = {
  * 기출문제(연습용)는 여기에 두지 않습니다. 채점 대상 시험과 헷갈리기 쉬워
  * 강의실 화면(학습자료 > 기출문제)에서만 풀도록 모았습니다.
  */
-export function ExamList({ data }: { data: ClassroomExamList }) {
+export function ExamList({ data, failResult }: {
+  data: ClassroomExamList;
+  /** 불합격 후 재응시인 경우의 성적 확인 본문 — 시험 카드 아래에 그대로 보여줍니다 */
+  failResult?: ClassroomExamResultData | null;
+}) {
   // 시안(exam.html)은 시험 1개 기준이라 제목이 "과정 시험 · 시험명", 정보가
   // 시험명·응시기간·문항수·시험시간 4칸입니다. 우리도 과정당 시험이 하나뿐이라
   // 그 형태를 그대로 쓰고, 시험이 없거나 둘 이상인 예외에서만 기존 3칸으로 돌아갑니다.
@@ -81,7 +87,7 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
              지난 점수를 보여주고 바로 다시 응시하게 합니다. */
           const retaking = exam.status === 'available' && exam.score !== null;
           const badge = retaking
-            ? { tone: 'pass', label: '재응시 가능' }
+            ? { tone: 'learning', label: '재응시 가능' } /* 파랑 — 학습중과 같은 톤 */
             : STATUS_BADGE[exam.status] ?? STATUS_BADGE.locked;
           return (
             <article className="my-card" key={exam.id}>
@@ -126,6 +132,14 @@ export function ExamList({ data }: { data: ClassroomExamList }) {
             </article>
           );
         })}
+
+        {/* 불합격 후 재응시 — 성적 확인 화면으로 따로 가지 않아도 되도록
+            지난 성적 내용을 카드 아래에 그대로 붙입니다 */}
+        {failResult ? (
+          <div className="mt-5">
+            <ExamResultSections data={failResult} />
+          </div>
+        ) : null}
       </section>
     </div>
   );

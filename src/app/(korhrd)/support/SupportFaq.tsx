@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { useHydrated } from '@/features/korhrd/lib/useHydrated';
+
 /**
  * 자주 묻는 질문 — 분류 토글 + 아코디언.
  * 프로토타입 원본: korhrd-site/support.html (main.js의 data-toggle-group · data-faq-q)
@@ -24,7 +26,7 @@ const FAQS: Array<{ id: string; cat: Category; q: string; a: string }> = [
     id: 's2',
     cat: '시험·수료',
     q: '수료 조건과 시험 기준이 어떻게 되나요?',
-    a: '온라인 강의 출석률 60% 이상을 채우면 시험에 응시할 수 있고, 시험은 100점 만점에 60점 이상이면 합격입니다.',
+    a: '온라인 강의 출석률 60% 이상을 채우면 시험에 응시할 수 있습니다. 합격은 출석 점수(최대 40점)와 시험 점수(최대 60점)를 합쳐 총점 60점 이상입니다 — 강의를 다 들으면 출석 40점이 그대로 채워집니다.',
   },
   {
     id: 's3',
@@ -63,6 +65,7 @@ const FAQS: Array<{ id: string; cat: Category; q: string; a: string }> = [
 export default function SupportFaq() {
   const [cat, setCat] = useState<(typeof CATEGORIES)[number]>('전체');
   const [open, setOpen] = useState<string>('s1');
+  const hydrated = useHydrated();
 
   /* 다른 화면에서 특정 문항으로 걸어 들어올 수 있게 합니다 — 메인 '자주 묻는 질문'
      이 /support#s3 처럼 문항을 지목합니다. 주소의 # 가 가리키는 문항을 펼치고
@@ -110,8 +113,9 @@ export default function SupportFaq() {
               {f.q}
               <span className="arrow" aria-hidden="true">⌄</span>
             </button>
-            {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid) */}
-            <div className="faq__a" id={f.id} hidden={open !== f.id}>
+            {/* 여백은 .faq__a-pad 가 담당합니다(.faq__a 는 여닫기용 grid).
+                hidden 은 첫 그림에서만 — display:none 이라 두면 여닫이가 뚝 끊깁니다 */}
+            <div className="faq__a" id={f.id} hidden={hydrated ? undefined : open !== f.id}>
               <div className="faq__a-inner">
                 <div className="faq__a-pad">{f.a}</div>
               </div>
