@@ -289,14 +289,14 @@ export function CertificateDetailModal({
               </button>
             ) : (
               <div className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-white">
-                <span className="px-1 text-center text-[10px] text-[#3182F6]">사진없이 발급</span>
+                <span className="px-1 text-center text-[10px] text-[#9CA3AF]">사진 없음</span>
               </div>
             )}
             <div className="flex flex-1 items-center justify-between gap-2">
               <p className="text-xs text-[#6B7280]">
                 {detail.photoUrl
                   ? "학생이 올린 증명사진입니다. 사진을 클릭하면 크게 보입니다."
-                  : "사진이 없어 사진 없이 발급됩니다. 필요하면 어드민이 직접 올릴 수 있습니다."}
+                  : "증명사진이 없습니다 — 어드민이 직접 올릴 수 있습니다."}
               </p>
               <div className="flex shrink-0 items-center gap-2">
               {/* 어드민 직접 업로드/교체 (JPG·PNG) */}
@@ -335,6 +335,30 @@ export function CertificateDetailModal({
               ) : null}
               </div>
             </div>
+            {/* 사진이 없어도 발급을 진행하기로 확정한 건 표시 — 체크 즉시 저장됩니다 */}
+            <label className="mt-3 flex w-fit cursor-pointer items-center gap-2 text-sm text-[#374151]">
+              <input
+                type="checkbox"
+                checked={detail.issueWithoutPhoto}
+                onChange={async (event) => {
+                  const checked = event.target.checked;
+                  setDetail({ ...detail, issueWithoutPhoto: checked });
+                  const result = await updateCertificateApplicationAction(detail.id, {
+                    issueWithoutPhoto: checked,
+                  });
+                  if (!result.success) {
+                    setDetail({ ...detail, issueWithoutPhoto: !checked });
+                    onUpdated?.(result.message);
+                    return;
+                  }
+                  onUpdated?.(
+                    checked ? "사진 없이 발급으로 표시했습니다." : "사진 없이 발급 표시를 해제했습니다.",
+                  );
+                }}
+                className="h-4 w-4 accent-[#3182F6]"
+              />
+              사진 없이 발급합니다
+            </label>
           </section>
 
           <div className="space-y-3 border-t border-[#E5E7EB] pt-3">
