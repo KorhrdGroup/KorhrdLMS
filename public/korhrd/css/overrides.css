@@ -1085,3 +1085,37 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
    같은 너비의 배지가 되도록 고정 폭 + 가운데 정렬을 줍니다. */
 .faq--wide .faq__q .qna-item-title { flex: 1; min-width: 0; text-align: left }
 .faq--wide .faq__q .badge { flex: none; width: 66px; justify-content: center }
+
+/* 1:1 문의 내역 펼침 — 흰 바탕, 제목/내용/답변을 선으로 구분 (2026-08-13, 디자인 요청)
+   자주 묻는 질문과 공유하는 .faq__a 는 회색(surface-sunken) 바탕인데, 문의 내역은
+   내용·답변·날짜가 여러 단이라 흰 바탕에 선으로 나누는 쪽이 읽기 쉽습니다.
+   제목 줄과 내용 사이는 펼침 영역의 위 선이, 내용과 답변 사이는 <hr> 이 긋습니다. */
+.qna-list .faq__a { background: var(--surface) }
+.qna-list .faq__a-pad { border-top: 1px solid var(--line) }
+.qna-list .faq__a-pad hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  /* 패딩 밖까지 늘려 위 구분선과 같은 폭으로 */
+  margin: 14px -20px;
+}
+/* 문의일·답변일은 본문을 읽고 난 눈이 멈추는 오른쪽 끝에 둡니다.
+   공용 my-card__date 의 margin-bottom(16px)은 여기서는 빼야 마지막 줄 아래
+   여백이 패드(16px)만 남아 양옆(20px)과 비슷해 보입니다. */
+.qna-list .faq__a-pad .my-card__date { text-align: right; margin-bottom: 0 }
+
+/* 메인 목적 추천 — 넓은 화면에서도 옆으로 흐르는 캐러셀 (2026-08-14, 디자인 요청)
+   심리상담 × 60대처럼 딱 맞는 과정이 한둘뿐인 조합에서 화면이 비지 않게,
+   같은 목적의 과정을 겹쳐 많이 싣고 자동으로 넘깁니다. 좁은 화면(≤980)은
+   전달본 appendix.css 의 .card-grid 스와이프 규칙이 이미 처리하므로,
+   여기서는 넓은 화면만 4장씩 한 화면으로 눕힙니다. */
+@media (min-width: 981px) {
+  .card-carousel {
+    grid-template-columns: none; grid-auto-flow: column;
+    /* 한 화면에 정확히 4장 — 간격(--s-5) 3개를 빼고 4등분 */
+    grid-auto-columns: calc((100% - 3 * var(--s-5)) / 4);
+    overflow-x: auto; scroll-snap-type: x proximity;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .card-carousel::-webkit-scrollbar { display: none }
+  .card-carousel > * { scroll-snap-align: start }
+}

@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { useVisibleCourses } from '@/features/korhrd/lib/visible-courses-context';
 import type { AgeBand, Course, Purpose } from '@/features/korhrd/lib/types';
 import CourseCard from '@/features/korhrd/components/course/CourseCard';
+import Carousel from '@/features/korhrd/components/ui/Carousel';
 import PillRow from '@/features/korhrd/components/ui/PillRow';
 
 /**
@@ -42,13 +43,20 @@ export default function GoalPicker() {
   /* 고른 연령대가 숨겨졌다면 '전체'로 되돌립니다 */
   const activeAge = visibleAges.includes(age) ? age : '전체';
 
-  const cards = useMemo(
-    () =>
-      catalog.filter((c) => single(c) && c.p.includes(goal) && (activeAge === '전체' || c.a.includes(activeAge)))
-        .sort((a, b) => (a.rank || 99) - (b.rank || 99) || a.n.localeCompare(b.n, 'ko'))
-        .slice(0, 4),
-    [goal, activeAge, catalog],
-  );
+  /* 고른 연령대와 맞는 과정을 앞에 세우고, 그 뒤를 같은 목적의 나머지 과정으로
+     채웁니다 (2026-08-14, 디자인 요청) — 심리상담 × 60대처럼 딱 맞는 과정이
+     한둘뿐인 조합에서 화면이 비어 보이지 않게, 연령이 겹쳐도 많이 보여줍니다.
+     연령 뱃지는 실제로 그 연령에 맞는 카드에만 답니다. */
+  const cards = useMemo(() => {
+    const byRank = (a: Course, b: Course) =>
+      (a.rank || 99) - (b.rank || 99) || a.n.localeCompare(b.n, 'ko');
+    const pool = catalog.filter((c) => single(c) && c.p.includes(goal));
+    const matched = pool
+      .filter((c) => activeAge === '전체' || c.a.includes(activeAge))
+      .sort(byRank);
+    const rest = activeAge === '전체' ? [] : pool.filter((c) => !matched.includes(c)).sort(byRank);
+    return [...matched, ...rest].slice(0, 12);
+  }, [goal, activeAge, catalog]);
 
 
   return (
@@ -69,17 +77,27 @@ export default function GoalPicker() {
         ))}
       </PillRow>
 
-      <div className="card-grid mt-5">
-        {cards.length > 0
-          ? cards.map((c) => (
+      {cards.length > 0 ? (
+        /* 자동으로 넘어가는 캐러셀 — 넓은 화면도 4장씩 옆으로 흐릅니다
+           (.card-carousel, overrides.css). 좁은 화면 스와이프는 전달본
+           appendix.css 의 .card-grid 규칙 그대로입니다. */
+        <div className="mt-5">
+          <Carousel className="card-grid card-carousel" pageBy="cards" autoMs={4000}
+                    label="추천 과정" dotsLabel="추천 과정 목록 이동">
+            {cards.map((c) => (
               <CourseCard
                 key={c.n} course={c}
-                /* 연령을 고른 상태면 뱃지도 그 연령으로 — 카드는 이미 그 조건으로 걸러진 것들입니다 */
-                ageLabel={activeAge === '전체' ? undefined : activeAge}
+                /* 연령을 고른 상태여도 채움 카드가 섞이므로, 실제 맞는 카드에만 답니다 */
+                ageLabel={activeAge !== '전체' && c.a.includes(activeAge) ? activeAge : undefined}
               />
-            ))
-          : <p className="empty-state">해당 조건의 과정이 없습니다.</p>}
-      </div>
+            ))}
+          </Carousel>
+        </div>
+      ) : (
+        <div className="card-grid mt-5">
+          <p className="empty-state">해당 조건의 과정이 없습니다.</p>
+        </div>
+      )}
 
       <p className="text-center mt-5">
         {/* 고른 조건을 들고 가지 않습니다 — 목록 전체로 (2026-08-14, 디자인 요청) */}
