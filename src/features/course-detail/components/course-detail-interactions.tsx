@@ -184,13 +184,37 @@ export function CourseDetailInteractions({ deadline }: { deadline: string }) {
     return () => handlers.forEach(({ button, handler }) => button.removeEventListener("click", handler));
   }, []);
 
-  // 하단 CTA 카운트다운
+  // 하단 CTA 카운트다운 — 매주 일요일 밤 12시(월요일 00:00)에 초기화되는
+  // 1주일 롤링 타이머입니다. deadline(고정 이벤트 종료일)이 이보다 가까우면
+  // 그 날짜를 우선합니다.
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-countdown]");
     if (!root) return;
 
-    const endsAt = new Date(deadline).getTime();
-    if (Number.isNaN(endsAt)) return;
+    const WEEK_MS = 7 * 86_400_000;
+    // 접속자 타임존과 무관하게 **한국시간(KST)** 일요일 밤 12시 기준으로 계산합니다
+    const KST_OFFSET_MS = 9 * 3_600_000;
+    const weeklyTarget = () => {
+      const nowKst = new Date(Date.now() + KST_OFFSET_MS);
+      // 0=일요일. 일요일 당일엔 오늘 밤 12시(+1일 00:00 KST)까지 남은 시간을 보여줍니다.
+      const daysToSundayMidnight = (8 - nowKst.getUTCDay()) % 7 || 7;
+      return (
+        Date.UTC(
+          nowKst.getUTCFullYear(),
+          nowKst.getUTCMonth(),
+          nowKst.getUTCDate() + daysToSundayMidnight,
+          0, 0, 0,
+        ) - KST_OFFSET_MS
+      );
+    };
+    const resolveTarget = () => {
+      const fixed = new Date(deadline).getTime();
+      const rolling = weeklyTarget();
+      return !Number.isNaN(fixed) && fixed > Date.now() && fixed - Date.now() <= WEEK_MS
+        ? fixed
+        : rolling;
+    };
+    let endsAt = resolveTarget();
 
     const slots = {
       d: root.querySelector<HTMLElement>("[data-cd-d]"),
@@ -200,6 +224,8 @@ export function CourseDetailInteractions({ deadline }: { deadline: string }) {
     };
 
     const tick = () => {
+      // 일요일 밤 12시가 지나면 다음 주 목표로 즉시 넘어갑니다
+      if (endsAt - Date.now() <= 0) endsAt = resolveTarget();
       const left = Math.max(0, endsAt - Date.now());
       const total = Math.floor(left / 1000);
       const value = {
