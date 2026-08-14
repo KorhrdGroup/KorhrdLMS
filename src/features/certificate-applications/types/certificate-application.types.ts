@@ -20,7 +20,7 @@ export type EligibleCertificateCourse = {
   applicationId: string | null;
   /** 합격일(마지막 시험 응시일). 응시 기록이 없으면 null입니다. */
   passedAt: string | null;
-  /** 발급 신청 기한 = 합격일 + 7일. 화면에서 빨강/주황으로 남은 기간을 알립니다. */
+  /** 발급 신청 기한 = 합격일 + 14일. 화면에서 빨강/주황으로 남은 기간을 알립니다. */
   applyDeadline: string | null;
   /**
    * 이 과정으로 자격증발급신청 시 자동 반영될 선납결제 금액(원)입니다. 사용 가능한

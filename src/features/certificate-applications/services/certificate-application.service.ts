@@ -119,7 +119,7 @@ async function getConfirmedEnrollmentsWithCourse(
  * 포함하지 않습니다(수강기간이 남아있어도 합격 기준만 충족하면 즉시 신청 가능).
  */
 /** 합격 후 자격증 발급을 신청할 수 있는 기간(일). 화면 안내문과 같은 값입니다. */
-const CERTIFICATE_APPLY_DEADLINE_DAYS = 7;
+const CERTIFICATE_APPLY_DEADLINE_DAYS = 14;
 
 const addDays = (iso: string, days: number) => {
   const date = new Date(`${iso.slice(0, 10)}T00:00:00`);
@@ -164,8 +164,8 @@ export async function getCertificateApplicationPageData(
       enrollment.course.id,
     );
 
-    // 합격일 = 마지막 시험 응시일. 신청 기한은 그로부터 7일입니다
-    // (화면 안내문 "합격 후 7일 이내 신청"과 같은 규칙).
+    // 합격일 = 마지막 시험 응시일. 신청 기한은 그로부터 14일입니다
+    // (화면 안내문 "합격 후 14일 이내 신청"과 같은 규칙).
     const submissions = await findSubmissionsForEnrollmentAcrossExams(supabase, enrollment.id);
     const passedAt =
       submissions
