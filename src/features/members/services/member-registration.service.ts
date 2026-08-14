@@ -1,3 +1,4 @@
+import { sendAlimtalk } from "@/lib/aligo/alimtalk";
 import { hashPassword } from "@/lib/shared/password";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
@@ -208,6 +209,15 @@ export async function createMember(
     }
 
     throw new Error(error.message);
+  }
+
+  // 회원가입 알림톡. 템플릿 검수 전이거나 발송에 실패해도 가입은 성공 처리합니다.
+  if (insertData.phone) {
+    await sendAlimtalk({
+      receivers: insertData.phone,
+      template: "SIGNUP",
+      vars: { 고객명: insertData.name },
+    }).catch((e) => console.error("[회원가입] 알림톡 발송 오류", e));
   }
 
   return { success: true, memberId: data.id };
