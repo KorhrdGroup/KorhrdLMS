@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useVisibleCourses } from '@/features/korhrd/lib/visible-courses-context';
 import type { AgeBand, Course, Purpose } from '@/features/korhrd/lib/types';
@@ -99,12 +98,8 @@ export default function GoalPicker() {
         </div>
       )}
 
-      <p className="text-center mt-5">
-        {/* 고른 조건을 들고 가지 않습니다 — 목록 전체로 (2026-08-14, 디자인 요청) */}
-        <Link className="btn btn--ghost btn--quiet" href="/courses">
-          과정 전체 보러가기 →
-        </Link>
-      </p>
+      {/* '과정 전체 보러가기' 는 섹션 머리말 오른쪽으로 옮겼습니다 (page.tsx,
+          2026-08-14, 디자인 요청 — 다른 섹션의 더보기와 같은 자리) */}
     </div>
   );
 }
