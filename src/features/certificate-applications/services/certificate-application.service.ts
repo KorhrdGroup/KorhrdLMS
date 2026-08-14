@@ -389,13 +389,32 @@ export async function submitCertificateApplication(
   try {
     const applicationId = await insertCertificateApplication(insertData);
 
-    // 신청서에 적은 생년월일을 회원정보에도 남깁니다. 회원가입에서는 받지 않아
-    // 비어 있는 회원이 많은데, 다음 신청 때 다시 적지 않아도 되게 합니다.
+    // 신청서에 적은 생년월일·배송정보를 회원정보에도 남깁니다. 회원가입에서는 받지
+    // 않아 비어 있는 회원이 많은데, 다음 신청 때 다시 적지 않아도 되게 합니다.
+    const profileUpdate: Database["public"]["Tables"]["members"]["Update"] = {};
     if (normalize(input.birthDate) !== (memberResult.profile.birthDate ?? "")) {
-      await supabase
-        .from("members")
-        .update({ birth_date: normalize(input.birthDate) })
-        .eq("id", memberId);
+      profileUpdate.birth_date = normalize(input.birthDate);
+    }
+    if (emptyToNull(input.phone) && normalize(input.phone) !== (memberResult.profile.phone ?? "")) {
+      profileUpdate.phone = normalize(input.phone);
+    }
+    if (
+      emptyToNull(input.postalCode) &&
+      normalize(input.postalCode) !== (memberResult.profile.postalCode ?? "")
+    ) {
+      profileUpdate.postal_code = normalize(input.postalCode);
+    }
+    if (emptyToNull(input.address) && normalize(input.address) !== (memberResult.profile.address ?? "")) {
+      profileUpdate.address = normalize(input.address);
+    }
+    if (
+      emptyToNull(input.addressDetail) &&
+      normalize(input.addressDetail) !== (memberResult.profile.addressDetail ?? "")
+    ) {
+      profileUpdate.address_detail = normalize(input.addressDetail);
+    }
+    if (Object.keys(profileUpdate).length > 0) {
+      await supabase.from("members").update(profileUpdate).eq("id", memberId);
     }
 
     if (availablePrepayment) {
