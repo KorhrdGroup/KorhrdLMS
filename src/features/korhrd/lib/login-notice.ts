@@ -40,13 +40,13 @@ const NOTICE_BY_KIND: Record<
   "cert-payment": {
     title: "자격증 발급 안내",
     message: "입금 확인 후 자격증 제작이 시작됩니다.",
-    href: "/certificate/status",
+    href: "/certificate",
     action: "입금 안내 보기",
   },
   "cert-apply": {
     title: "자격증 발급 안내",
     message: "합격했습니다! 자격증 발급을 신청하세요.",
-    href: "/mylecture",
+    href: "/certificate",
     action: "발급 신청하기",
   },
   "exam-retry": {
