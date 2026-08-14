@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { buildNaverAuthUrl, getNaverConfig } from "@/lib/auth/naver";
+import { getRequestOrigin } from "@/lib/auth/request-origin";
 
 /**
  * 네이버 로그인 시작 — 네이버 인증 화면으로 보냅니다.
@@ -16,7 +17,7 @@ export const NAVER_STATE_COOKIE = "naver_oauth_state";
 export const NAVER_REDIRECT_COOKIE = "naver_oauth_redirect";
 
 export async function GET(request: Request) {
-  const config = getNaverConfig(new URL(request.url).origin);
+  const config = getNaverConfig(getRequestOrigin(request));
   if (!config) {
     redirect("/login?social=unavailable");
   }

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { loginWithSocial, setStudentSession } from "@/features/auth/services/social-login.service";
 import { exchangeKakaoCode, fetchKakaoProfile, getKakaoConfig } from "@/lib/auth/kakao";
+import { getRequestOrigin } from "@/lib/auth/request-origin";
 
 import { KAKAO_REDIRECT_COOKIE, KAKAO_STATE_COOKIE } from "../start/route";
 
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
   if (!code || !state) fail("failed");
   if (!savedState || savedState !== state) fail("failed");
 
-  const config = getKakaoConfig(new URL(request.url).origin);
+  const config = getKakaoConfig(getRequestOrigin(request));
   if (!config) fail("unavailable");
 
   const accessToken = await exchangeKakaoCode(config, code);
