@@ -61,3 +61,46 @@
 @media (max-width: 560px) {
   .dprof__list li { justify-content: flex-start; text-align: left }
 }
+
+/* 이력서 배너 시안 교체 (2026-08-18, 디자인 요청 — resume-banner-v2.png)
+
+   새 시안은 자격증 줄이 비어 있는 투명 배너 한 장입니다. 옛 합성 이미지
+   (여백 13% · 하단 잠김) 전용이던 받침 박스와 모바일 확대를 끕니다 —
+   새 이미지는 글로우가 가장자리까지 차 있어 확대하면 잘리고, 받침을 두면
+   글로우 아래가 어둠에 잠깁니다. */
+.dresume__base { display: none }
+@media (max-width: 560px) {
+  .dresume .dresume__stage { margin-left: 0; margin-right: 0 }
+  .dresume__shot { width: 100%; max-width: none; margin-left: 0 }
+}
+
+/* 자격증 줄 — 이력서의 빈 '자격증' 칸 위에 얹습니다 (Figma 1025:2136).
+   흰 상자 · 파란 테두리(#0051FF) · 파란 글로우, 왼쪽에 연월·자격증명·주무부처,
+   오른쪽에 발행기관. 위치는 스테이지 비례(%)라 화면 폭이 변해도 칸을 따라갑니다. */
+.dresume__cert {
+  position: absolute; left: 8%; right: 8%; top: 52%; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  background: #fff; border: 1px solid #0051FF; border-radius: 10px;
+  padding: 30px 50px; box-shadow: 0 0 10px rgba(83, 166, 255, .7);
+  white-space: nowrap;
+}
+.dresume__cert-date { flex-shrink: 0; font-size: 18px; font-weight: 500; color: #656565 }
+.dresume__cert-name {
+  font-size: 20px; font-weight: 700; color: #010101;
+  /* 긴 자격증명은 줄이지 않고 말줄임 — 줄바꿈하면 상자 높이가 칸을 벗어납니다 */
+  min-width: 0; overflow: hidden; text-overflow: ellipsis;
+}
+.dresume__cert-name small { font-size: 18px; font-weight: 500; color: #656565; margin-left: 10px }
+.dresume__cert-issuer { flex-shrink: 0; font-size: 20px; font-weight: 700; color: #010101 }
+@media (max-width: 980px) {
+  .dresume__cert { padding: 16px 24px; gap: 14px }
+  .dresume__cert-date, .dresume__cert-name small { font-size: 14px }
+  .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
+}
+@media (max-width: 560px) {
+  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px }
+  .dresume__cert-date, .dresume__cert-name small { font-size: 10px }
+  .dresume__cert-name, .dresume__cert-issuer { font-size: 11px }
+  /* 좁은 폭에서는 주무부처를 접습니다 — 네 칸이 다 서면 이름이 말줄임으로 뭉개집니다 */
+  .dresume__cert-name small { display: none }
+}
