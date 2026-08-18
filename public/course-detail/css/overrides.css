@@ -67,7 +67,9 @@
    흰 상자 · 파란 테두리(#0051FF) · 파란 글로우, 왼쪽에 연월·자격증명·주무부처,
    오른쪽에 발행기관. 위치는 스테이지 비례(%)라 화면 폭이 변해도 칸을 따라갑니다. */
 .dresume__cert {
-  position: absolute; left: 8%; right: 8%; top: 52%; z-index: 2;
+  /* top 은 이미지의 '자격증' 글씨(~45%) 를 가리지 않는 자리 — 모바일 시안은
+     글씨가 더 위에 있어 52% 그대로 둡니다 (2026-08-18) */
+  position: absolute; left: 8%; right: 8%; top: 56%; z-index: 2;
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
   background: #fff; border: 1px solid #0051FF; border-radius: 10px;
   /* 시안은 30px — 실제 화면에서 줄이 뚱뚱해 보여 위아래만 좁혔습니다 (2026-08-18) */
@@ -88,7 +90,7 @@
   .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
 }
 @media (max-width: 560px) {
-  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px }
+  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 52% }
   .dresume__cert-date, .dresume__cert-name small { font-size: 10px }
   .dresume__cert-name, .dresume__cert-issuer { font-size: 11px }
   /* 좁은 폭에서는 주무부처를 접습니다 — 네 칸이 다 서면 이름이 말줄임으로 뭉개집니다 */
