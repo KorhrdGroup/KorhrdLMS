@@ -10,7 +10,7 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: "한평생직업훈련 LMS",
+  title: "한평생직업훈련",
   description: "한평생직업훈련 학습관리시스템",
   icons: {
     icon: "/favicon.ico",
