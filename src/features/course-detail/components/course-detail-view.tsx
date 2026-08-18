@@ -103,7 +103,11 @@ function artDirected(opts: {
 const CERT_SAMPLE = artDirected({
   alt: "상장형 자격증과 카드형 자격증 견본 예시",
   desktop: { src: ASSET("sample-certs.png"), width: 3600, height: 2028, sizes: "(max-width: 960px) 100vw, 920px" },
-  mobile: { src: ASSET("sample-certs-mobile.png"), width: 515, height: 1313, sizes: "100vw" },
+  /* 2026-08-18 — 515폭 원본은 레티나 폰에서 확대돼 흐렸습니다(표시 335 × 2 = 670 필요).
+     2배(1030×2629)로 다시 받았습니다. 파일명에 -2x 를 붙인 것은 캐시 때문입니다 —
+     /_next/image 는 소스 URL 로 캐시해서, 같은 이름으로 덮으면 CDN 이 옛 이미지를
+     계속 내보냅니다(실제로 dev 에서 옛 515폭이 그대로 나왔습니다). */
+  mobile: { src: ASSET("sample-certs-mobile-2x.png"), width: 1030, height: 2629, sizes: "100vw" },
 });
 
 /* 2026-08-18 시안 교체 — 자격증 줄이 비어 있는 새 배너(데스크탑·모바일 각 1장).
