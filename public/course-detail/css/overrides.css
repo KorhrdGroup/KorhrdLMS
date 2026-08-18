@@ -85,24 +85,24 @@
   /* 긴 자격증명은 줄이지 않고 말줄임 — 줄바꿈하면 상자 높이가 칸을 벗어납니다 */
   min-width: 0; overflow: hidden; text-overflow: ellipsis;
 }
-.dresume__cert-name small { font-size: 18px; font-weight: 500; color: #656565; margin-left: 10px }
 .dresume__cert-issuer { flex-shrink: 0; margin-left: auto; font-size: 20px; font-weight: 700; color: #010101 }
 @media (max-width: 980px) {
   .dresume__cert { padding: 16px 24px; gap: 14px }
-  .dresume__cert-date { margin-right: 16px }
-  .dresume__cert-date, .dresume__cert-name small { font-size: 14px }
+  .dresume__cert-date { margin-right: 16px; font-size: 14px }
   .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
 }
 @media (max-width: 560px) {
   /* 이미지가 132% 로 확대돼 이력서 카드가 화면보다 넓어지므로, 줄도 스테이지
      양끝까지 넓힙니다. 위치는 받침 박스와 넉넉히 떨어지게 올립니다 (2026-08-18) */
   .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 54%; left: 3%; right: 3% }
-  .dresume__cert-date { margin-right: 0 }
+  .dresume__cert-date { margin-right: 0; font-size: 10px }
   /* 받침 박스를 낮춥니다 — 전달본 32% 는 옛 시안 기준이라 새 이미지에서는
      이력서 아래를 너무 많이 덮습니다 (2026-08-18, 디자인 요청) */
   .dresume__base { height: 24% }
-  .dresume__cert-date, .dresume__cert-name small { font-size: 10px }
   .dresume__cert-name, .dresume__cert-issuer { font-size: 11px }
-  /* 좁은 폭에서는 주무부처를 접습니다 — 네 칸이 다 서면 이름이 말줄임으로 뭉개집니다 */
-  .dresume__cert-name small { display: none }
 }
+
+/* 히어로 주무부처 로고를 키웁니다 — 32 → 44px (2026-08-18, 디자인 요청).
+   과정명 위에 홀로 놓이는 마크라 32px 로는 부처를 알아보기 어려웠습니다. */
+.dhero__gov img { height: 44px }
+@media (max-width: 560px) { .dhero__gov img { height: 36px } }

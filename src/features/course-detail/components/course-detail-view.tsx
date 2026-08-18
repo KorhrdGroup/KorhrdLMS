@@ -446,10 +446,8 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                     이미지에 굽지 않아 과정마다 제 이름·주무부처가 들어갑니다 */}
                 <div className="dresume__cert">
                   <span className="dresume__cert-date">{CERT_DATE}</span>
-                  <span className="dresume__cert-name">
-                    {course.title} <small>{course.ministry}</small>
-                  </span>
-                  <span className="dresume__cert-issuer">발행기관: 한평생 직업훈련</span>
+                  <span className="dresume__cert-name">{course.title}</span>
+                  <span className="dresume__cert-issuer">주무부처: {course.ministry}</span>
                 </div>
               </div>
             </div>
