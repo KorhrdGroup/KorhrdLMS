@@ -87,8 +87,11 @@ function artDirected(opts: {
   /* 무료 플랜에서 이미지 최적화 한도가 차면 /_next/image 가 402 를 돌려줘 새 이미지가
      통째로 안 보인다 (2026-08-18 resume-banner-v2 실사고 — Pro 전환으로 해소).
      한도 문제가 재발하면 여기에 unoptimized: true 를 넣어 원본 직접 서빙으로 우회한다. */
-  const { props: desktopProps } = getImageProps({ alt: opts.alt, ...opts.desktop });
-  const { props: mobileProps } = getImageProps({ alt: opts.alt, ...opts.mobile });
+  /* quality 90 — 기본 75 는 이 시안들처럼 잔글씨가 많은 스크린샷형 이미지에서
+     글자 획이 뭉개집니다. 허용 목록은 next.config 의 images.qualities 에 있습니다.
+     (WebP 실측: 이력서 배너 2331폭 379 → 550KB, 자격증 견본 1920폭 79 → 135KB) */
+  const { props: desktopProps } = getImageProps({ alt: opts.alt, quality: 90, ...opts.desktop });
+  const { props: mobileProps } = getImageProps({ alt: opts.alt, quality: 90, ...opts.mobile });
   return {
     desktop: desktopProps.srcSet,
     desktopSizes: opts.desktop.sizes,
