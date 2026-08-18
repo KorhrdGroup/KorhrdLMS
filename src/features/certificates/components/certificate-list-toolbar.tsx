@@ -78,7 +78,11 @@ export function CertificateListToolbar({ query, certNames, onExportError }: Cert
           return;
         }
 
-        const blob = new Blob([result.csv], { type: "text/csv;charset=utf-8;" });
+        /* 서버 액션이 base64 로 넘겨준 .xlsx 를 파일로 되살립니다 */
+        const bytes = Uint8Array.from(atob(result.xlsxBase64), (c) => c.charCodeAt(0));
+        const blob = new Blob([bytes], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;

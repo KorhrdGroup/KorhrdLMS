@@ -1,6 +1,6 @@
 "use server";
 
-import { buildCertificateExportCsv } from "@/features/certificates/services/certificate-export.service";
+import { buildCertificateExportXlsx } from "@/features/certificates/services/certificate-export.service";
 import { getCertificateDetail } from "@/features/certificates/services/certificate-detail.service";
 import {
   deleteCertificateApplication,
@@ -38,16 +38,18 @@ export async function deleteCertificateApplicationAction(
 
 export async function exportCertificateApplicationsAction(
   query: CertificateListQuery,
-): Promise<{ success: true; csv: string; filename: string } | { success: false; message: string }> {
+): Promise<
+  { success: true; xlsxBase64: string; filename: string } | { success: false; message: string }
+> {
   try {
-    const csv = await buildCertificateExportCsv(query);
+    const xlsxBase64 = await buildCertificateExportXlsx(query);
     /* 서버는 UTC 라 new Date() 로 하면 한국시간 00~09시에 전날 날짜가 붙습니다 */
     const datePart = todayInKst().replaceAll("-", "");
 
     return {
       success: true,
-      csv,
-      filename: `자격증_${datePart}.csv`,
+      xlsxBase64,
+      filename: `자격증_${datePart}.xlsx`,
     };
   } catch (error) {
     return {
