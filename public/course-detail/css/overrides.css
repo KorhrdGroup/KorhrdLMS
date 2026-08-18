@@ -94,7 +94,9 @@
   .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
 }
 @media (max-width: 560px) {
-  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 60% }
+  /* 이미지가 132% 로 확대돼 이력서 카드가 화면보다 넓어지므로, 줄도 스테이지
+     양끝까지 넓힙니다. 위치는 받침 박스와 넉넉히 떨어지게 올립니다 (2026-08-18) */
+  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 54%; left: 3%; right: 3% }
   .dresume__cert-date { margin-right: 0 }
   /* 받침 박스를 낮춥니다 — 전달본 32% 는 옛 시안 기준이라 새 이미지에서는
      이력서 아래를 너무 많이 덮습니다 (2026-08-18, 디자인 요청) */
