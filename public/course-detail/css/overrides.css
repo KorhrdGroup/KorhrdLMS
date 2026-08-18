@@ -94,7 +94,11 @@
 @media (max-width: 560px) {
   /* 이미지가 132% 로 확대돼 이력서 카드가 화면보다 넓어지므로, 줄도 스테이지
      양끝까지 넓힙니다. 위치는 받침 박스와 넉넉히 떨어지게 올립니다 (2026-08-18) */
-  .dresume__cert { padding: 10px 12px; gap: 8px; border-radius: 10px; top: 54%; left: 3%; right: 3% }
+  /* 줄은 스테이지(컨테이너 폭)보다 넓혀 화면 양끝 가까이까지 씁니다 — 컨테이너
+     좌우 여백이 20px 이라 -12px 이면 화면에서 8px 띄운 자리입니다. 이미지가
+     150% 로 확대돼 뒤 이력서 카드가 더 넓으므로 줄도 그만큼 길어야 합니다.
+     넘치는 부분은 .dresume 의 overflow:hidden 이 잘라냅니다. */
+  .dresume__cert { padding: 10px 12px; gap: 8px; border-radius: 10px; top: 54%; left: -12px; right: -12px }
   .dresume__cert-date { margin-right: 0; font-size: 12px }
   /* 받침 박스를 낮춥니다 — 전달본 32% 는 옛 시안 기준이라 새 이미지에서는
      이력서 아래를 너무 많이 덮습니다 (2026-08-18, 디자인 요청) */
