@@ -1,3 +1,5 @@
+import ExcelJS from "exceljs";
+
 import { CERTIFICATE_EXPORT_SELECT } from "@/features/certificates/constants";
 import {
   formatFullAddress,
@@ -62,25 +64,14 @@ function mapExportRow(row: CertificateExportDbRow): CertificateExportRow {
 }
 
 /**
- * "2026-07-24" → ="2026년 7월 24일" (엑셀에서 글자 그대로 보이는 형태).
- *
- * 한국어 엑셀은 "2026-07-24" 는 물론 "2026년 7월 24일" 같은 한글 표기까지
- * CSV 를 여는 순간 날짜 값으로 바꿔 버려, 열이 좁으면 ###### 으로 보입니다.
- * ="…" 수식-텍스트로 감싸면 어떤 표기든 문자 그대로 남습니다.
+ * "2026-07-24" → "2026년 7월 24일".
+ * xlsx 에서는 글자(텍스트) 셀로 넣으므로 엑셀이 날짜로 바꾸지 못하고,
+ * 열 너비도 파일에 넣어 두어 ###### 으로 보일 일이 없습니다.
  */
 function formatAppliedAtKorean(appliedAt: string) {
   const [y, m, d] = appliedAt.split("-").map(Number);
   if (!y || !m || !d) return appliedAt;
-  return `="${y}년 ${m}월 ${d}일"`;
-}
-
-function escapeCsvValue(value: string | number | null | undefined) {
-  const text = value == null ? "" : String(value);
-  if (/[",\n]/.test(text)) {
-    return `"${text.replace(/"/g, '""')}"`;
-  }
-
-  return text;
+  return `${y}년 ${m}월 ${d}일`;
 }
 
 export async function getCertificateExportRows(
@@ -109,46 +100,50 @@ export async function getCertificateExportRows(
   return ((data ?? []) as CertificateExportDbRow[]).map(mapExportRow);
 }
 
-export async function buildCertificateExportCsv(query: CertificateListQuery) {
+/** 자격증신청 목록을 실제 엑셀 파일(.xlsx)로 만들어 base64 로 돌려줍니다. */
+export async function buildCertificateExportXlsx(query: CertificateListQuery) {
   const rows = await getCertificateExportRows(query);
-  const headers = [
-    "신청일",
-    "자격증종류",
-    "자격증명",
-    "아이디",
-    "이름",
-    "연락처",
-    "주소",
-    "발급비용",
-    "실결제금액",
-    "결제방법",
-    "결제정보",
-    "배송상태",
-    "메모",
+
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("자격증신청");
+
+  /* 열 너비를 파일에 넣어 두므로 ###### 으로 보일 일이 없습니다 */
+  sheet.columns = [
+    { header: "신청일", key: "appliedAt", width: 16 },
+    { header: "자격증종류", key: "kind", width: 12 },
+    { header: "자격증명", key: "name", width: 22 },
+    { header: "아이디", key: "loginId", width: 16 },
+    { header: "이름", key: "applicant", width: 10 },
+    { header: "연락처", key: "phone", width: 15 },
+    { header: "주소", key: "address", width: 46 },
+    { header: "발급비용", key: "cost", width: 10 },
+    { header: "실결제금액", key: "paid", width: 11 },
+    { header: "결제방법", key: "method", width: 10 },
+    { header: "결제정보", key: "paymentInfo", width: 14 },
+    { header: "배송상태", key: "delivery", width: 10 },
+    { header: "메모", key: "memo", width: 24 },
   ];
 
-  const lines = [
-    headers.join(","),
-    ...rows.map((row) =>
-      [
-        formatAppliedAtKorean(row.appliedAt),
-        getCertificateKindLabel(row.certificateKind),
-        row.certificateName,
-        row.memberLoginId,
-        row.applicantName,
-        row.phone ?? "",
-        row.fullAddress === "—" ? "" : row.fullAddress,
-        row.issuanceCost,
-        row.actualPaymentAmount,
-        row.paymentMethodLabel === "—" ? "" : row.paymentMethodLabel,
-        row.paymentInfo ?? "",
-        row.deliveryStatusLabel,
-        row.memo ?? "",
-      ]
-        .map(escapeCsvValue)
-        .join(","),
-    ),
-  ];
+  sheet.getRow(1).font = { bold: true };
 
-  return `\uFEFF${lines.join("\n")}`;
+  for (const row of rows) {
+    sheet.addRow({
+      appliedAt: formatAppliedAtKorean(row.appliedAt),
+      kind: getCertificateKindLabel(row.certificateKind),
+      name: row.certificateName,
+      loginId: row.memberLoginId,
+      applicant: row.applicantName,
+      phone: row.phone ?? "",
+      address: row.fullAddress === "—" ? "" : row.fullAddress,
+      cost: row.issuanceCost,
+      paid: row.actualPaymentAmount,
+      method: row.paymentMethodLabel === "—" ? "" : row.paymentMethodLabel,
+      paymentInfo: row.paymentInfo ?? "",
+      delivery: row.deliveryStatusLabel,
+      memo: row.memo ?? "",
+    });
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  return Buffer.from(buffer).toString("base64");
 }
