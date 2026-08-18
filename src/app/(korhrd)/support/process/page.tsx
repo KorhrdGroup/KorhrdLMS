@@ -1,18 +1,62 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
-import Carousel from '@/features/korhrd/components/ui/Carousel';
+import Carousel from "@/features/korhrd/components/ui/Carousel";
 
 export const metadata: Metadata = {
-  title: '취득 과정 — 한평생 직업훈련',
-  description: '자격증 취득 4단계와 수료 · 합격 기준',
+  title: "취득 과정 — 한평생 직업훈련",
+  description: "자격증 취득 4단계와 수료 · 합격 기준",
 };
 
 /** 자격증 취득 4단계 — 없어진 취득 절차 화면(korhrd-site/process.html)에 있던 것입니다 */
 const STEPS = [
-  { ico: '/step/1-apply.svg', title: '무료수강신청', dur: '약 3분', desc: <>원하는 과정들을 선택해<br />0원으로 신청합니다.</> },
-  { ico: '/step/2-learn.svg', title: '온라인 강의 수강', dur: '6주 이내', desc: <>PC·모바일로 약 20시간<br />강의를 수강합니다.</> },
-  { ico: '/step/3-exam.svg', title: '온라인 시험 응시', dur: '60분', desc: <>강의 수강 후 시험에<br />응시할 수 있습니다.</> },
-  { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 14일', desc: <>상장형·카드형 자격증으로<br />발급 가능합니다.</> },
+  {
+    ico: "/step/1-apply.svg",
+    title: "무료수강신청",
+    dur: "약 3분",
+    desc: (
+      <>
+        원하는 과정들을 선택해
+        <br />
+        0원으로 신청합니다.
+      </>
+    ),
+  },
+  {
+    ico: "/step/2-learn.svg",
+    title: "온라인 강의 수강",
+    dur: "6주 이내",
+    desc: (
+      <>
+        PC·모바일로 약 20시간
+        <br />
+        강의를 수강합니다.
+      </>
+    ),
+  },
+  {
+    ico: "/step/3-exam.svg",
+    title: "온라인 시험 응시",
+    dur: "60분",
+    desc: (
+      <>
+        강의 수강 후 시험에
+        <br />
+        응시할 수 있습니다.
+      </>
+    ),
+  },
+  {
+    ico: "/step/4-cert.svg",
+    title: "자격증 발급 신청",
+    dur: "배송 최대 14일",
+    desc: (
+      <>
+        상장형·카드형 자격증으로
+        <br />
+        발급 가능합니다.
+      </>
+    ),
+  },
 ];
 
 /** 수료 · 합격 기준 — 링 네 개 대신 가로 막대 둘로 풉니다 (2026-08-13, 디자인 요청).
@@ -29,10 +73,10 @@ const STEPS = [
 
 /** 그래프 밑에 붙는 안심 문단 — 막대가 말한 것(점수 구성)은 반복하지 않습니다 */
 const REASSURANCES = [
-  '시험은 객관식이며, 강의에서 다룬 범위 안에서만 출제되니 강의를 들으셨다면 충분히 합격 가능합니다.',
-  '한 번에 합격하지 못해도 괜찮습니다. 수강 기간(6주) 안에 언제든 다시 응시할 수 있으며, 기간이 만료되면 수강기간 연장 또한 바로 가능합니다.',
-  '시험은 60분 동안 PC·모바일로 언제 어디서든 응시할 수 있습니다.',
-  '합격하신 뒤 7일 안에 발급을 신청하시면 됩니다.',
+  "시험은 객관식이며, 강의에서 다룬 범위 안에서만 출제되니 강의를 들으셨다면 충분히 합격 가능합니다.",
+  "한 번에 합격하지 못해도 괜찮습니다. 수강 기간(6주) 안에 언제든 다시 응시할 수 있으며, 기간이 만료되면 수강기간 연장 또한 바로 가능합니다.",
+  "시험은 60분 동안 PC·모바일로 언제 어디서든 응시할 수 있습니다.",
+  "합격하신 뒤 자격증 발급 신청이 가능하며, 발급 후 자격증 효력이 생기며 이력서 기재 활용 및 활동이 가능합니다.",
 ];
 
 /** 고객센터 › 취득 과정 (2026-08-12, 디자인 요청으로 이 자리에 들어왔습니다) */
@@ -42,16 +86,25 @@ export default function Page() {
       <section>
         <div className="section-head">
           <h2>자격증 취득, 4단계면 됩니다</h2>
-          <p>신청부터 발급까지 전 과정 온라인 · 교육기간 6주</p>
+          <p>신청부터 발급까지 전 과정 온라인 · 교육기간 4주</p>
         </div>
         {/* 좁은 화면에서는 옆으로 넘겨 봅니다(appendix.css의 .step-grid 스와이프).
             넘길 수 있다는 표식이 없어 잘린 것처럼 보여, 직업 길찾기와 같은
             점(dot) 캐러셀로 감쌉니다. 다 들어가는 넓은 화면에서는 점이 숨습니다. */}
-        <Carousel className="step-grid" label="자격증 취득 4단계" dotsLabel="단계 목록 이동">
+        <Carousel
+          className="step-grid"
+          label="자격증 취득 4단계"
+          dotsLabel="단계 목록 이동"
+        >
           {STEPS.map((s) => (
             <div className="step" key={s.title}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="step__ico" src={s.ico} alt="" aria-hidden="true" />
+              <img
+                className="step__ico"
+                src={s.ico}
+                alt=""
+                aria-hidden="true"
+              />
               <div className="step__head">
                 <h3>{s.title}</h3>
                 <span className="step__dur">{s.dur}</span>
@@ -72,14 +125,26 @@ export default function Page() {
           <div className="pass-viz__row">
             <div className="pass-viz__head">
               <b>시험 응시 자격</b>
-              <span>강의 출석 <b>60%</b></span>
+              <span>
+                강의 출석 <b>60%</b>
+              </span>
             </div>
-            <div className="pass-bar" role="img" aria-label="전체 강의의 60%를 들으면 시험에 응시할 수 있습니다">
-              <i className="pass-bar__seg pass-bar__seg--att" style={{ width: '60%' }}>출석 60%</i>
+            <div
+              className="pass-bar"
+              role="img"
+              aria-label="전체 강의의 60%를 들으면 시험에 응시할 수 있습니다"
+            >
+              <i
+                className="pass-bar__seg pass-bar__seg--att"
+                style={{ width: "60%" }}
+              >
+                출석 60%
+              </i>
               <span className="pass-bar__rest">전체 강의</span>
             </div>
             <p className="pass-viz__note">
-              강의 수강률 60%를 넘기면 시험 응시가 바로 가능하며, 수강률에 따라 출석점수가 달라집니다.(40점 만점)
+              강의 수강률 60%를 넘기면 시험 응시가 바로 가능하며, 수강률에 따라
+              출석점수가 달라집니다.(40점 만점)
             </p>
           </div>
 
@@ -87,16 +152,33 @@ export default function Page() {
           <div className="pass-viz__row">
             <div className="pass-viz__head">
               <b>합격 점수</b>
-              <span>총점 <b>60점</b> 이상</span>
+              <span>
+                총점 <b>60점</b> 이상
+              </span>
             </div>
             <div
               className="pass-bar"
               role="img"
               aria-label="출석 점수 최대 40점과 시험 점수 최대 60점을 합쳐 총점 60점 이상이면 합격입니다"
             >
-              <i className="pass-bar__seg pass-bar__seg--att" style={{ width: '40%' }}>출석 40점</i>
-              <i className="pass-bar__seg pass-bar__seg--exam" style={{ width: '60%' }}>시험 60점</i>
-              <span className="pass-bar__line" style={{ left: '60%' }} data-label="합격선 60점" aria-hidden="true" />
+              <i
+                className="pass-bar__seg pass-bar__seg--att"
+                style={{ width: "40%" }}
+              >
+                출석 40점
+              </i>
+              <i
+                className="pass-bar__seg pass-bar__seg--exam"
+                style={{ width: "60%" }}
+              >
+                시험 60점
+              </i>
+              <span
+                className="pass-bar__line"
+                style={{ left: "60%" }}
+                data-label="합격선 60점"
+                aria-hidden="true"
+              />
             </div>
             <p className="pass-viz__note">
               합격 점수의 40%는 출석점수이며, 시험 점수는 60%를 차지합니다.
