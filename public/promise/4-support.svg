@@ -1,0 +1,8 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="parcel-check--issue-delivery-support">
+<rect id="Box" x="3" y="9" width="30" height="26" rx="3.4" fill="#B2CAFF"/>
+<path id="Ribbon" d="M15 9h6v26h-6z" fill="#2469FF"/>
+<circle id="Badge" cx="31" cy="31" r="7" fill="#2469FF"/>
+<path id="BadgeCheck" d="m27.7 31.2 2.3 2.3 4.4-4.7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

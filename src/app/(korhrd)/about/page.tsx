@@ -9,6 +9,33 @@
  */
 
 import Link from 'next/link';
+
+import NaverMap from './NaverMap';
+
+/** 약속 4가지 — 아이콘은 홈·취득 절차와 같은 파랑 2톤(#2469FF·#B2CAFF) SVG 입니다 */
+const PROMISES = [
+  {
+    ico: '/promise/1-official.svg',
+    title: '정식 등록 자격',
+    desc: '전 과정이 주무부처에 등록된 민간자격입니다. 등록번호를 직접 조회하실 수 있습니다.',
+  },
+  {
+    ico: '/promise/2-free.svg',
+    title: '수강료 0원',
+    desc: '수강료와 응시료는 전액 무료입니다. 부담 없이 도전하실 수 있습니다.',
+  },
+  {
+    ico: '/promise/3-online.svg',
+    title: '온라인 학습',
+    desc: 'PC·모바일로 언제 어디서나 수강하고, 시험까지 온라인으로 완료합니다.',
+  },
+  {
+    ico: '/promise/4-support.svg',
+    title: '발급까지 지원',
+    desc: '수강부터 자격증 발급·배송까지 전 과정을 책임지고 안내합니다.',
+  },
+];
+
 export default function Page() {
   return (
     <>
@@ -29,10 +56,13 @@ export default function Page() {
           <div className="container">
             <div className="section-head content"><h2 id="value-title">한평생 직업훈련의 약속</h2></div>
             <div className="content step-grid">
-              <div className="step" style={{ counterIncrement: 'none' }}><span className="ph ph--icon" aria-hidden="true"></span><h3>정식 등록 자격</h3><p>전 과정이 주무부처에 등록된 민간자격입니다. 등록번호를 직접 조회하실 수 있습니다.</p></div>
-              <div className="step"><span className="ph ph--icon" aria-hidden="true"></span><h3>수강료 0원</h3><p>수강료와 응시료는 전액 무료입니다. 부담 없이 도전하실 수 있습니다.</p></div>
-              <div className="step"><span className="ph ph--icon" aria-hidden="true"></span><h3>온라인 학습</h3><p>PC·모바일로 언제 어디서나 수강하고, 시험까지 온라인으로 완료합니다.</p></div>
-              <div className="step"><span className="ph ph--icon" aria-hidden="true"></span><h3>발급까지 지원</h3><p>수강부터 자격증 발급·배송까지 전 과정을 책임지고 안내합니다.</p></div>
+              {PROMISES.map((p) => (
+                <div className="step" key={p.title}>
+                  <img className="step__ico" src={p.ico} alt="" aria-hidden="true" />
+                  <h3>{p.title}</h3>
+                  <p>{p.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -41,7 +71,7 @@ export default function Page() {
           <div className="container">
             <div className="section-head content"><h2 id="map-title">오시는 길</h2></div>
             <div className="content">
-              <div className="ph" style={{ width: '100%', height: '360px', borderRadius: '8px' }} aria-hidden="true">지도 영역<small>Google / Naver Map 임베드</small></div>
+              <NaverMap />
               <table className="info-table mt-4">
                 <tbody>
                   <tr><th scope="row">주소</th><td>서울시 도봉구 창동 마들로13길 61 씨드큐브 905호</td></tr>

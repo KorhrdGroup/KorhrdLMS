@@ -1,0 +1,9 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="monitor-play-mobile--online-learning-anywhere">
+<rect id="Monitor" x="2" y="5" width="28" height="20" rx="3.6" fill="#B2CAFF"/>
+<path id="Stand" d="M14 25h4v4.6h5.6a1.6 1.6 0 0 1 0 3.2H8.4a1.6 1.6 0 0 1 0-3.2H14V25Z" fill="#B2CAFF"/>
+<path id="Play" d="M13.6 10.9 20 14.1c.9.5.9 1.8 0 2.2l-6.4 3.2c-.8.4-1.8-.2-1.8-1.1v-6.4c0-.9 1-1.5 1.8-1.1Z" fill="#2469FF"/>
+<rect id="Phone" x="24" y="17" width="12" height="20" rx="3" fill="#2469FF"/>
+<rect id="PhoneScreen" x="26" y="20.4" width="8" height="12" rx="1.2" fill="#B2CAFF"/>
+</g>
+</svg>
