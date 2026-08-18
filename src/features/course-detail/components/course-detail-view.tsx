@@ -84,11 +84,11 @@ function artDirected(opts: {
   desktop: { src: string; width: number; height: number; sizes: string };
   mobile: { src: string; width: number; height: number; sizes: string };
 }) {
-  /* unoptimized — Vercel 이미지 최적화 월 한도가 차면(/_next/image 402) 새로 추가한
-     이미지부터 통째로 안 보인다 (2026-08-18 resume-banner-v2 실사고). 이 배너들은
-     시안에서 내려받은 완성 PNG 라 변환 없이 원본을 그대로 내보낸다. */
-  const { props: desktopProps } = getImageProps({ alt: opts.alt, unoptimized: true, ...opts.desktop });
-  const { props: mobileProps } = getImageProps({ alt: opts.alt, unoptimized: true, ...opts.mobile });
+  /* 무료 플랜에서 이미지 최적화 한도가 차면 /_next/image 가 402 를 돌려줘 새 이미지가
+     통째로 안 보인다 (2026-08-18 resume-banner-v2 실사고 — Pro 전환으로 해소).
+     한도 문제가 재발하면 여기에 unoptimized: true 를 넣어 원본 직접 서빙으로 우회한다. */
+  const { props: desktopProps } = getImageProps({ alt: opts.alt, ...opts.desktop });
+  const { props: mobileProps } = getImageProps({ alt: opts.alt, ...opts.mobile });
   return {
     desktop: desktopProps.srcSet,
     desktopSizes: opts.desktop.sizes,
