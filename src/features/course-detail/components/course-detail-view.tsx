@@ -119,8 +119,11 @@ const RESUME_BANNER = artDirected({
      v2 는 2331 로 1.04x 라 빠듯했고, v3 는 3304 로 1.47x). 파일명을 v3 로 바꾼 것은
      /_next/image 가 소스 URL 로 캐시해 같은 이름으로 덮으면 옛 이미지가 계속
      나오기 때문입니다. 자격증 칸은 v2 와 같이 비어 있고 줄은 아래 마크업이 얹습니다. */
-  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 100vw, 1120px" },
-  mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "100vw" },
+  /* sizes 는 CSS 로 확대한 뒤의 실제 렌더 폭이어야 합니다 — 안 그러면 브라우저가
+     작은 후보를 골라 확대해 씁니다(overrides.css: 넓은 화면 134% · 모바일 150%).
+     컨테이너 좌우 여백 20px 을 감안해 넓은 화면은 134vw, 1160 초과부터는 1554px. */
+  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 134vw, 1554px" },
+  mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "150vw" },
 });
 
 /** 배너 자격증 줄의 발급 연월 — 항상 이번 달을 보여줍니다 (시안의 '2026.01' 자리) */
