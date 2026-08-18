@@ -47,6 +47,12 @@
 
    주무부처 칸에만 겁니다. 옆 칸(한국직업능력연구원)은 전달본 값(82%)이
    그대로 맞다고 확인받았습니다. */
+/* 여기에 더해, 높이 고정(height:62px)을 풀어야 비율이 지켜집니다 (2026-08-18).
+   전달본은 --gov 에 height:62px · max-width:none 을 줍니다. 가로가 아주 긴
+   로고(과학기술정보통신부 1314×264, 5:1)는 그 높이에서 폭이 309px 이라
+   위 max-width 상한에 걸리는데, 높이가 고정이라 가로만 잘려 눌려 보였습니다.
+   높이를 auto 로 풀고 max-height 로 재면 브라우저가 비율을 지킵니다. */
+.dcert__logo--gov img { width: auto; height: auto; max-width: 82%; max-height: 62px }
 @media (max-width: 560px) {
   .dcert__logo--gov img { max-width: 72%; max-height: 66% }
 }
@@ -85,24 +91,43 @@
   /* 긴 자격증명은 줄이지 않고 말줄임 — 줄바꿈하면 상자 높이가 칸을 벗어납니다 */
   min-width: 0; overflow: hidden; text-overflow: ellipsis;
 }
-.dresume__cert-name small { font-size: 18px; font-weight: 500; color: #656565; margin-left: 10px }
 .dresume__cert-issuer { flex-shrink: 0; margin-left: auto; font-size: 20px; font-weight: 700; color: #010101 }
 @media (max-width: 980px) {
   .dresume__cert { padding: 16px 24px; gap: 14px }
-  .dresume__cert-date { margin-right: 16px }
-  .dresume__cert-date, .dresume__cert-name small { font-size: 14px }
+  .dresume__cert-date { margin-right: 16px; font-size: 14px }
   .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
 }
 @media (max-width: 560px) {
   /* 이미지가 132% 로 확대돼 이력서 카드가 화면보다 넓어지므로, 줄도 스테이지
      양끝까지 넓힙니다. 위치는 받침 박스와 넉넉히 떨어지게 올립니다 (2026-08-18) */
-  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 54%; left: 3%; right: 3% }
-  .dresume__cert-date { margin-right: 0 }
+  /* 줄은 스테이지(컨테이너 폭)보다 넓혀 화면 양끝 가까이까지 씁니다 — 컨테이너
+     좌우 여백이 20px 이라 -12px 이면 화면에서 8px 띄운 자리입니다. 이미지가
+     150% 로 확대돼 뒤 이력서 카드가 더 넓으므로 줄도 그만큼 길어야 합니다.
+     넘치는 부분은 .dresume 의 overflow:hidden 이 잘라냅니다. */
+  .dresume__cert { padding: 10px 12px; gap: 8px; border-radius: 10px; top: 54%; left: -12px; right: -12px }
+  .dresume__cert-date { margin-right: 0; font-size: 12px }
   /* 받침 박스를 낮춥니다 — 전달본 32% 는 옛 시안 기준이라 새 이미지에서는
      이력서 아래를 너무 많이 덮습니다 (2026-08-18, 디자인 요청) */
   .dresume__base { height: 24% }
-  .dresume__cert-date, .dresume__cert-name small { font-size: 10px }
-  .dresume__cert-name, .dresume__cert-issuer { font-size: 11px }
-  /* 좁은 폭에서는 주무부처를 접습니다 — 네 칸이 다 서면 이름이 말줄임으로 뭉개집니다 */
-  .dresume__cert-name small { display: none }
+  .dresume__cert-name, .dresume__cert-issuer { font-size: 13px }
+}
+
+/* 히어로 주무부처 로고를 키웁니다 — 32 → 44px (2026-08-18, 디자인 요청).
+   과정명 위에 홀로 놓이는 마크라 32px 로는 부처를 알아보기 어려웠습니다. */
+.dhero__gov img { height: 44px }
+@media (max-width: 560px) { .dhero__gov img { height: 36px } }
+
+/* 모바일 이력서 이미지 확대 — 150% (2026-08-18, 디자인 요청)
+
+   전달본에 있던 모바일 확대(width:132% · margin-left:-16%)가 style.css 를
+   최신 확정본으로 받으면서 통째로 사라졌습니다(커밋 00bd060). 그래서 좁은
+   화면에서 이력서가 화면 폭에 딱 맞아 작아 보였습니다. 여기서 다시 확대하되,
+   새 시안 기준으로 132% 대신 150% 를 씁니다.
+
+   margin-left 는 넘친 폭의 절반이라 가운데 정렬은 그대로입니다. 스테이지
+   높이 = 이미지 높이라, 자격증 줄(top 54%)·받침(24%)의 상대 위치는 이미지가
+   커져도 함께 따라갑니다. 넘치는 좌우는 .dresume 의 overflow:hidden 이
+   잘라내므로 가로 스크롤은 생기지 않습니다. */
+@media (max-width: 560px) {
+  .dresume__shot { width: 150%; margin-left: -25% }
 }
