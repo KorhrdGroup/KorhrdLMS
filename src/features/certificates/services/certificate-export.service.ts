@@ -61,6 +61,17 @@ function mapExportRow(row: CertificateExportDbRow): CertificateExportRow {
   };
 }
 
+/**
+ * "2026-07-24" → "2026년 7월 24일".
+ * 엑셀이 날짜로 인식하면 열 너비에 따라 ###### 으로 보여서(수령자 문의),
+ * 한글 문자로 만들어 그대로 글자로 보이게 합니다.
+ */
+function formatAppliedAtKorean(appliedAt: string) {
+  const [y, m, d] = appliedAt.split("-").map(Number);
+  if (!y || !m || !d) return appliedAt;
+  return `${y}년 ${m}월 ${d}일`;
+}
+
 function escapeCsvValue(value: string | number | null | undefined) {
   const text = value == null ? "" : String(value);
   if (/[",\n]/.test(text)) {
@@ -118,7 +129,7 @@ export async function buildCertificateExportCsv(query: CertificateListQuery) {
     headers.join(","),
     ...rows.map((row) =>
       [
-        row.appliedAt,
+        formatAppliedAtKorean(row.appliedAt),
         getCertificateKindLabel(row.certificateKind),
         row.certificateName,
         row.memberLoginId,
