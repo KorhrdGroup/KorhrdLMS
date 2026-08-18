@@ -61,3 +61,48 @@
 @media (max-width: 560px) {
   .dprof__list li { justify-content: flex-start; text-align: left }
 }
+
+/* 자격증 줄 (2026-08-18, 디자인 요청 — 이력서 배너를 자격증 줄이 비어 있는
+   새 시안 resume-banner-v2(-mobile).png 로 교체하면서) — 이력서의 빈 '자격증' 칸 위에 얹습니다 (Figma 1025:2136).
+   흰 상자 · 파란 테두리(#0051FF) · 파란 글로우, 왼쪽에 연월·자격증명·주무부처,
+   오른쪽에 발행기관. 위치는 스테이지 비례(%)라 화면 폭이 변해도 칸을 따라갑니다. */
+.dresume__cert {
+  /* top 은 이미지의 '자격증' 글씨(~45%) 를 가리지 않는 자리 — 모바일 시안은
+     글씨가 더 위에 있어 52% 그대로 둡니다 (2026-08-18) */
+  position: absolute; left: 8%; right: 8%; top: 56%; z-index: 2;
+  /* 날짜·이름은 왼쪽에 붙여 세우고 발행기관만 오른쪽 끝으로 — space-between 은
+     이름을 한가운데로 밀어 날짜와 200px 넘게 벌어졌습니다. 시안(1025:2136)의
+     간격은 약 100px 입니다 (2026-08-18) */
+  display: flex; align-items: center; justify-content: flex-start; gap: 24px;
+  background: #fff; border: 1px solid #0051FF; border-radius: 10px;
+  /* 시안은 30px — 실제 화면에서 줄이 뚱뚱해 보여 위아래만 좁혔습니다 (2026-08-18) */
+  padding: 20px 50px; box-shadow: 0 0 10px rgba(83, 166, 255, .7);
+  white-space: nowrap;
+}
+.dresume__cert-date { flex-shrink: 0; margin-right: 76px; font-size: 18px; font-weight: 500; color: #656565 }
+.dresume__cert-name {
+  font-size: 20px; font-weight: 700; color: #010101;
+  /* 긴 자격증명은 줄이지 않고 말줄임 — 줄바꿈하면 상자 높이가 칸을 벗어납니다 */
+  min-width: 0; overflow: hidden; text-overflow: ellipsis;
+}
+.dresume__cert-name small { font-size: 18px; font-weight: 500; color: #656565; margin-left: 10px }
+.dresume__cert-issuer { flex-shrink: 0; margin-left: auto; font-size: 20px; font-weight: 700; color: #010101 }
+@media (max-width: 980px) {
+  .dresume__cert { padding: 16px 24px; gap: 14px }
+  .dresume__cert-date { margin-right: 16px }
+  .dresume__cert-date, .dresume__cert-name small { font-size: 14px }
+  .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
+}
+@media (max-width: 560px) {
+  /* 이미지가 132% 로 확대돼 이력서 카드가 화면보다 넓어지므로, 줄도 스테이지
+     양끝까지 넓힙니다. 위치는 받침 박스와 넉넉히 떨어지게 올립니다 (2026-08-18) */
+  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 54%; left: 3%; right: 3% }
+  .dresume__cert-date { margin-right: 0 }
+  /* 받침 박스를 낮춥니다 — 전달본 32% 는 옛 시안 기준이라 새 이미지에서는
+     이력서 아래를 너무 많이 덮습니다 (2026-08-18, 디자인 요청) */
+  .dresume__base { height: 24% }
+  .dresume__cert-date, .dresume__cert-name small { font-size: 10px }
+  .dresume__cert-name, .dresume__cert-issuer { font-size: 11px }
+  /* 좁은 폭에서는 주무부처를 접습니다 — 네 칸이 다 서면 이름이 말줄임으로 뭉개집니다 */
+  .dresume__cert-name small { display: none }
+}
