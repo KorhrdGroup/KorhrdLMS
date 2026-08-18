@@ -47,6 +47,12 @@
 
    주무부처 칸에만 겁니다. 옆 칸(한국직업능력연구원)은 전달본 값(82%)이
    그대로 맞다고 확인받았습니다. */
+/* 여기에 더해, 높이 고정(height:62px)을 풀어야 비율이 지켜집니다 (2026-08-18).
+   전달본은 --gov 에 height:62px · max-width:none 을 줍니다. 가로가 아주 긴
+   로고(과학기술정보통신부 1314×264, 5:1)는 그 높이에서 폭이 309px 이라
+   위 max-width 상한에 걸리는데, 높이가 고정이라 가로만 잘려 눌려 보였습니다.
+   높이를 auto 로 풀고 max-height 로 재면 브라우저가 비율을 지킵니다. */
+.dcert__logo--gov img { width: auto; height: auto; max-width: 82%; max-height: 62px }
 @media (max-width: 560px) {
   .dcert__logo--gov img { max-width: 72%; max-height: 66% }
 }
