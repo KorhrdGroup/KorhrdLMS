@@ -15,6 +15,7 @@ import type {
   CertificateListQuery,
   GetCertificateDetailResult,
 } from "@/features/certificates/types/certificate.types";
+import { todayInKst } from "@/lib/shared/kst-date";
 
 export async function getCertificateDetailAction(
   applicationId: string,
@@ -40,17 +41,13 @@ export async function exportCertificateApplicationsAction(
 ): Promise<{ success: true; csv: string; filename: string } | { success: false; message: string }> {
   try {
     const csv = await buildCertificateExportCsv(query);
-    const today = new Date();
-    const datePart = [
-      today.getFullYear(),
-      String(today.getMonth() + 1).padStart(2, "0"),
-      String(today.getDate()).padStart(2, "0"),
-    ].join("");
+    /* 서버는 UTC 라 new Date() 로 하면 한국시간 00~09시에 전날 날짜가 붙습니다 */
+    const datePart = todayInKst().replaceAll("-", "");
 
     return {
       success: true,
       csv,
-      filename: `certificate_applications_${datePart}.csv`,
+      filename: `자격증_${datePart}.csv`,
     };
   } catch (error) {
     return {
