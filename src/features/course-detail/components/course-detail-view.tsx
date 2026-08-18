@@ -100,15 +100,14 @@ const CERT_SAMPLE = artDirected({
   mobile: { src: ASSET("sample-certs-mobile.png"), width: 515, height: 1313, sizes: "100vw" },
 });
 
-/* 2026-08-18 시안 교체 — 자격증 줄이 빠진 투명 배너 한 장(모바일 별도 시안 없음).
+/* 2026-08-18 시안 교체 — 자격증 줄이 비어 있는 새 배너(데스크탑·모바일 각 1장).
    자격증 줄은 이미지에 굽지 않고 마크업(.dresume__cert)으로 얹습니다 —
    과정마다 실제 자격증명·주무부처가 들어갑니다 (Figma 1025:2136). */
-const RESUME_BANNER = {
-  src: ASSET("resume-banner-v2.png"),
-  width: 2331,
-  height: 1250,
-  sizes: "(max-width: 1160px) 100vw, 1120px",
-};
+const RESUME_BANNER = artDirected({
+  alt: "이력서에 자격증을 기재해 취업 경쟁력을 높인 예시",
+  desktop: { src: ASSET("resume-banner-v2.png"), width: 2331, height: 1250, sizes: "(max-width: 1160px) 100vw, 1120px" },
+  mobile: { src: ASSET("resume-banner-v2-mobile.png"), width: 2331, height: 1250, sizes: "100vw" },
+});
 
 /** 배너 자격증 줄의 발급 연월 — 항상 이번 달을 보여줍니다 (시안의 '2026.01' 자리) */
 const CERT_DATE = (() => {
@@ -437,11 +436,12 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                 이력서에 기재하고 <em>취업 경쟁력 UP</em>
               </h2>
               <div className="dresume__stage">
-                <Image
-                  {...RESUME_BANNER}
-                  className="dresume__shot"
-                  alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시"
-                />
+                {/* 모바일은 별도 시안을 씁니다 — 폭 분기(561px)는 스타일시트와 같은 자리 */}
+                <picture style={{ display: "block" }}>
+                  <source media="(min-width: 561px)" srcSet={RESUME_BANNER.desktop} sizes={RESUME_BANNER.desktopSizes} />
+                  <img {...RESUME_BANNER.imgProps} className="dresume__shot" alt="이력서에 자격증을 기재해 취업 경쟁력을 높인 예시" />
+                </picture>
+                <span className="dresume__base" aria-hidden="true" />
                 {/* 이력서의 빈 '자격증' 칸에 얹는 실제 자격증 줄 (Figma 1025:2136) —
                     이미지에 굽지 않아 과정마다 제 이름·주무부처가 들어갑니다 */}
                 <div className="dresume__cert">

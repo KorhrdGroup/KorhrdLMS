@@ -62,19 +62,8 @@
   .dprof__list li { justify-content: flex-start; text-align: left }
 }
 
-/* 이력서 배너 시안 교체 (2026-08-18, 디자인 요청 — resume-banner-v2.png)
-
-   새 시안은 자격증 줄이 비어 있는 투명 배너 한 장입니다. 옛 합성 이미지
-   (여백 13% · 하단 잠김) 전용이던 받침 박스와 모바일 확대를 끕니다 —
-   새 이미지는 글로우가 가장자리까지 차 있어 확대하면 잘리고, 받침을 두면
-   글로우 아래가 어둠에 잠깁니다. */
-.dresume__base { display: none }
-@media (max-width: 560px) {
-  .dresume .dresume__stage { margin-left: 0; margin-right: 0 }
-  .dresume__shot { width: 100%; max-width: none; margin-left: 0 }
-}
-
-/* 자격증 줄 — 이력서의 빈 '자격증' 칸 위에 얹습니다 (Figma 1025:2136).
+/* 자격증 줄 (2026-08-18, 디자인 요청 — 이력서 배너를 자격증 줄이 비어 있는
+   새 시안 resume-banner-v2(-mobile).png 로 교체하면서) — 이력서의 빈 '자격증' 칸 위에 얹습니다 (Figma 1025:2136).
    흰 상자 · 파란 테두리(#0051FF) · 파란 글로우, 왼쪽에 연월·자격증명·주무부처,
    오른쪽에 발행기관. 위치는 스테이지 비례(%)라 화면 폭이 변해도 칸을 따라갑니다. */
 .dresume__cert {
