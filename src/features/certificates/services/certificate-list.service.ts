@@ -129,7 +129,12 @@ export async function getCertificateList(
     .select(CERTIFICATE_LIST_SELECT, { count: "exact" })
     .is("deleted_at", null)
     .order("applied_at", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    /* 이관분 8,849건은 created_at 이 전부 이관 시각으로 같아, 여기까지만으로는
+       같은 날짜 안의 순서가 요청마다 뒤섞입니다(같은 사람 3건이 흩어져 보임).
+       옛 시스템 번호로 동점을 갈라 엑셀 원본과 같은 순서로 고정합니다. */
+    .order("legacy_no", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: false });
 
   builder = applyCertificateListFilters(builder, query);
 
