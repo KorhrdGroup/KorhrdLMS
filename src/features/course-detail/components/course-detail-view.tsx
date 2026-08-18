@@ -122,7 +122,7 @@ const RESUME_BANNER = artDirected({
   /* sizes 는 CSS 로 확대한 뒤의 실제 렌더 폭이어야 합니다 — 안 그러면 브라우저가
      작은 후보를 골라 확대해 씁니다(overrides.css: 넓은 화면 134% · 모바일 150%).
      컨테이너 좌우 여백 20px 을 감안해 넓은 화면은 134vw, 1160 초과부터는 1554px. */
-  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 134vw, 1554px" },
+  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 115vw, 1334px" },
   mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "150vw" },
 });
 
