@@ -87,8 +87,11 @@ function artDirected(opts: {
   /* 무료 플랜에서 이미지 최적화 한도가 차면 /_next/image 가 402 를 돌려줘 새 이미지가
      통째로 안 보인다 (2026-08-18 resume-banner-v2 실사고 — Pro 전환으로 해소).
      한도 문제가 재발하면 여기에 unoptimized: true 를 넣어 원본 직접 서빙으로 우회한다. */
-  const { props: desktopProps } = getImageProps({ alt: opts.alt, ...opts.desktop });
-  const { props: mobileProps } = getImageProps({ alt: opts.alt, ...opts.mobile });
+  /* quality 90 — 기본 75 는 이 시안들처럼 잔글씨가 많은 스크린샷형 이미지에서
+     글자 획이 뭉개집니다. 허용 목록은 next.config 의 images.qualities 에 있습니다.
+     (WebP 실측: 이력서 배너 2331폭 379 → 550KB, 자격증 견본 1920폭 79 → 135KB) */
+  const { props: desktopProps } = getImageProps({ alt: opts.alt, quality: 90, ...opts.desktop });
+  const { props: mobileProps } = getImageProps({ alt: opts.alt, quality: 90, ...opts.mobile });
   return {
     desktop: desktopProps.srcSet,
     desktopSizes: opts.desktop.sizes,
@@ -99,8 +102,16 @@ function artDirected(opts: {
 
 const CERT_SAMPLE = artDirected({
   alt: "상장형 자격증과 카드형 자격증 견본 예시",
-  desktop: { src: ASSET("sample-certs.png"), width: 3600, height: 2028, sizes: "(max-width: 960px) 100vw, 920px" },
-  mobile: { src: ASSET("sample-certs-mobile.png"), width: 515, height: 1313, sizes: "100vw" },
+  /* sizes 를 실제 표시 폭의 2배로 적어 둡니다 — 일부러입니다. 1배로 두면 920px
+     자리에 1080px 후보를 받아 브라우저가 0.85배로 줄여 그리는데, 이 어중간한
+     축소가 상장 본문 같은 잔선을 뭉갭니다. 2배(1840)를 받아 줄이면 같은 크기에서
+     훨씬 또렷합니다(슈퍼샘플링). 원본이 3600px 이라 여유도 충분합니다. */
+  desktop: { src: ASSET("sample-certs.png"), width: 3600, height: 2028, sizes: "(max-width: 960px) 200vw, 1840px" },
+  /* 2026-08-18 — 515폭 원본은 레티나 폰에서 확대돼 흐렸습니다(표시 335 × 2 = 670 필요).
+     2배(1030×2629)로 다시 받았습니다. 파일명에 -2x 를 붙인 것은 캐시 때문입니다 —
+     /_next/image 는 소스 URL 로 캐시해서, 같은 이름으로 덮으면 CDN 이 옛 이미지를
+     계속 내보냅니다(실제로 dev 에서 옛 515폭이 그대로 나왔습니다). */
+  mobile: { src: ASSET("sample-certs-mobile-2x.png"), width: 1030, height: 2629, sizes: "100vw" },
 });
 
 /* 2026-08-18 시안 교체 — 자격증 줄이 비어 있는 새 배너(데스크탑·모바일 각 1장).
@@ -108,8 +119,14 @@ const CERT_SAMPLE = artDirected({
    과정마다 실제 자격증명·주무부처가 들어갑니다 (Figma 1025:2136). */
 const RESUME_BANNER = artDirected({
   alt: "이력서에 자격증을 기재해 취업 경쟁력을 높인 예시",
-  desktop: { src: ASSET("resume-banner-v2.png"), width: 2331, height: 1250, sizes: "(max-width: 1160px) 100vw, 1120px" },
-  mobile: { src: ASSET("resume-banner-v2-mobile.png"), width: 2331, height: 1250, sizes: "100vw" },
+  /* 2026-08-18 v3 — 더 큰 원본으로 다시 받았습니다(레티나 데스크탑 필요치 2240px:
+     v2 는 2331 로 1.04x 라 빠듯했고, v3 는 3304 로 1.47x). 파일명을 v3 로 바꾼 것은
+     /_next/image 가 소스 URL 로 캐시해 같은 이름으로 덮으면 옛 이미지가 계속
+     나오기 때문입니다. 자격증 칸은 v2 와 같이 비어 있고 줄은 아래 마크업이 얹습니다. */
+  /* sizes 를 실제 렌더 폭의 2배로 적어 둡니다 — 슈퍼샘플링(위 CERT_SAMPLE 주석 참고).
+     모바일은 CSS 로 150% 확대하므로 그 2배인 300vw 입니다. */
+  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 200vw, 2240px" },
+  mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "300vw" },
 });
 
 /** 배너 자격증 줄의 발급 연월 — 항상 이번 달을 보여줍니다 (시안의 '2026.01' 자리) */
