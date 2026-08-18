@@ -35,7 +35,21 @@ export function ReferralLinkGenerator({ courses }: { courses: ReferralLinkCourse
   const [major, setMajor] = useState("네이버카페");
   const [minor, setMinor] = useState("");
   const [target, setTarget] = useState("/");
+  const [courseSearch, setCourseSearch] = useState("");
   const [copied, setCopied] = useState(false);
+
+  /* 과정 검색 — 공백 무시하고 과정명에 검색어가 들어 있으면 매칭 */
+  const matchedCourses = useMemo(() => {
+    const keyword = courseSearch.trim().replaceAll(" ", "");
+    if (!keyword) return [];
+    return courses
+      .filter((course) => course.name.replaceAll(" ", "").includes(keyword))
+      .slice(0, 30);
+  }, [courses, courseSearch]);
+
+  const selectedCourse = target.startsWith("/courses/")
+    ? courses.find((course) => `/courses/${course.code}` === target)
+    : undefined;
 
   const link = useMemo(() => {
     const cleanMinor = minor.trim().replaceAll("_", " ");
@@ -78,15 +92,85 @@ export function ReferralLinkGenerator({ courses }: { courses: ReferralLinkCourse
 
       <div style={{ marginBottom: 20 }}>
         <span style={labelStyle}>어느 페이지로 보낼까요?</span>
-        <select value={target} onChange={(e) => setTarget(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
-          <option value="/">홈 (첫 화면)</option>
-          <option value="/courses">수강신청 목록</option>
-          {courses.map((course) => (
-            <option key={course.code} value={`/courses/${course.code}`}>
-              과정 상세 — {course.name}
-            </option>
+        <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+          {[
+            { value: "/", label: "홈 (첫 화면)" },
+            { value: "/courses", label: "수강신청 목록" },
+          ].map((page) => (
+            <button
+              key={page.value}
+              type="button"
+              onClick={() => { setTarget(page.value); setCourseSearch(""); }}
+              style={{
+                padding: "9px 14px",
+                borderRadius: 8,
+                fontSize: 13.5,
+                fontWeight: 600,
+                cursor: "pointer",
+                border: `1px solid ${target === page.value ? "#3182F6" : M.border}`,
+                background: target === page.value ? "#EAF2FE" : "#fff",
+                color: target === page.value ? "#3182F6" : M.body,
+              }}
+            >
+              {page.label}
+            </button>
           ))}
-        </select>
+        </div>
+
+        {/* 과정 상세는 84개라 셀렉트로 고르기 어렵습니다 — 검색해서 클릭으로 고릅니다 */}
+        <input
+          value={courseSearch}
+          onChange={(e) => setCourseSearch(e.target.value)}
+          placeholder="과정 상세로 보내려면 과정명 검색 — 예: 방과후"
+          style={inputStyle}
+        />
+        {courseSearch.trim() ? (
+          <div
+            style={{
+              marginTop: 6,
+              border: `1px solid ${M.border}`,
+              borderRadius: 8,
+              maxHeight: 240,
+              overflowY: "auto",
+            }}
+          >
+            {matchedCourses.length === 0 ? (
+              <div style={{ padding: "12px 14px", fontSize: 13, color: M.mute }}>검색 결과가 없습니다.</div>
+            ) : (
+              matchedCourses.map((course) => {
+                const value = `/courses/${course.code}`;
+                const active = target === value;
+                return (
+                  <button
+                    key={course.code}
+                    type="button"
+                    onClick={() => setTarget(value)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      textAlign: "left",
+                      padding: "10px 14px",
+                      fontSize: 13.5,
+                      border: "none",
+                      borderBottom: `1px solid ${M.line}`,
+                      cursor: "pointer",
+                      background: active ? "#EAF2FE" : "#fff",
+                      color: active ? "#3182F6" : M.body,
+                      fontWeight: active ? 700 : 400,
+                    }}
+                  >
+                    {course.name}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        ) : null}
+        {selectedCourse ? (
+          <p style={{ fontSize: 12.5, color: "#3182F6", fontWeight: 600, marginTop: 8 }}>
+            선택된 과정: {selectedCourse.name}
+          </p>
+        ) : null}
       </div>
 
       <div style={{ borderTop: `1px solid ${M.line}`, paddingTop: 20 }}>
