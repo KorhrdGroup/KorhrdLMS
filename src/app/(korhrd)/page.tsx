@@ -179,8 +179,8 @@ export default async function HomePage() {
       <section className="section section--navy" aria-labelledby="trust-title">
         <div className="container">
           <div className="section-head content">
-            <h2 id="trust-title">숫자와 등록번호로 확인하는 한평생 직업훈련</h2>
-            <p>무료 과정일수록, 검증 가능한 근거로 말씀드립니다.</p>
+            <h2 id="trust-title">한평생 직업훈련이 쌓아온 신뢰의 기록</h2>
+            <p>누적 수강생부터 자격 과정까지, 확인 가능한 근거로 보여드립니다.</p>
           </div>
 
           <div className="content">
