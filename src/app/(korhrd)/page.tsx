@@ -55,8 +55,10 @@ const NATCERTS = [
   { img: '/natcert/korean.jpg', name: '한국어 교원' },
 ];
 
-/** 국가자격증 안내가 연결되는 곳 — 카드 넷과 아래 버튼이 모두 여기로 갑니다 */
-const NATCERT_SITE = 'https://barosocial.vercel.app/';
+/** 국가자격증 안내가 연결되는 곳 — 카드 넷과 아래 버튼이 모두 여기로 갑니다.
+    utm_source=hanjikhun 은 barosocial 폼이 오피스 문의 DB 에
+    유입경로 "한직훈_국가자격증" 으로 기록하는 약속 값입니다. */
+const NATCERT_SITE = 'https://barosocial.vercel.app/?utm_source=hanjikhun';
 
 export default async function HomePage() {
   const homeReviews = (await listCourseReviews()).slice(0, 3);
