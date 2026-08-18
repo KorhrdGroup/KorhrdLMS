@@ -67,7 +67,8 @@ export const CERTIFICATE_LIST_SELECT = `
   payment_status,
   delivery_status,
   applied_at,
-  created_at
+  created_at,
+  pinned_at
 ` as const;
 
 export const CERTIFICATE_DETAIL_SELECT = `

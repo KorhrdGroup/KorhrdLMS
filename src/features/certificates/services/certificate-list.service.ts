@@ -37,6 +37,7 @@ type CertificateListRow = {
   delivery_status: CertificateDeliveryStatus;
   applied_at: string;
   created_at: string;
+  pinned_at: string | null;
 };
 
 function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
@@ -60,6 +61,7 @@ function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
     deliveryStatus: row.delivery_status,
     appliedAt: row.applied_at,
     createdAt: row.created_at,
+    pinnedAt: row.pinned_at,
   };
 }
 
@@ -128,6 +130,8 @@ export async function getCertificateList(
     .from("certificate_applications")
     .select(CERTIFICATE_LIST_SELECT, { count: "exact" })
     .is("deleted_at", null)
+    /* 관리자가 고정한 건(입금 지연 등 놓치면 안 되는 건)이 항상 맨 위 */
+    .order("pinned_at", { ascending: false, nullsFirst: false })
     .order("applied_at", { ascending: false })
     .order("created_at", { ascending: false })
     /* 이관분 8,849건은 created_at 이 전부 이관 시각으로 같아, 여기까지만으로는

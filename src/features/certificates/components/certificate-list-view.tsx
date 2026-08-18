@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
-import { updateCertificateApplicationAction } from "@/features/certificates/actions/certificate.actions";
+import {
+  setCertificatePinnedAction,
+  updateCertificateApplicationAction,
+} from "@/features/certificates/actions/certificate.actions";
 import { M } from "@/features/courses/lib/course-design";
 import { CertificateDeleteConfirmModal } from "@/features/certificates/components/certificate-delete-confirm-modal";
 import { CertificateDetailModal } from "@/features/certificates/components/certificate-detail-modal";
@@ -55,6 +58,24 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
         return;
       }
       handleActionSuccess(`${item.applicantName} — ${doneMessage}`);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "처리에 실패했습니다.");
+    }
+  }
+
+  /** 입금 지연 건 등을 목록 맨 위로 고정/해제 */
+  async function handleTogglePin(item: CertificateListItem, pinned: boolean) {
+    setSuccessMessage(null);
+    setErrorMessage(null);
+    try {
+      const result = await setCertificatePinnedAction(item.id, pinned);
+      if (!result.success) {
+        setErrorMessage(result.message);
+        return;
+      }
+      handleActionSuccess(
+        `${item.applicantName} — ${pinned ? "목록 맨 위로 고정했습니다." : "고정을 해제했습니다."}`,
+      );
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "처리에 실패했습니다.");
     }
@@ -124,6 +145,7 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
         result={result}
         onDetailClick={handleDetailClick}
         onDeleteClick={handleDeleteClick}
+        onTogglePin={handleTogglePin}
         onTogglePaid={(item, paid) =>
           handleQuickUpdate(
             item,

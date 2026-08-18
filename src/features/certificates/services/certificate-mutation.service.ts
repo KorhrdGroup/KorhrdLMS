@@ -248,3 +248,35 @@ export async function deleteCertificateApplication(
 
   return { success: true, message: "신청 내역이 삭제되었습니다." };
 }
+
+/**
+ * 목록 상단 고정을 켜고 끕니다. 신청만 하고 입금을 미룬 건이 새 신청에 밀려
+ * 누락되지 않게, 관리자가 짚어 둔 건을 맨 위로 끌어올리는 용도입니다.
+ */
+export async function setCertificatePinned(
+  applicationId: string,
+  pinned: boolean,
+): Promise<CertificateMutationResult> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("certificate_applications")
+    .update({ pinned_at: pinned ? new Date().toISOString() : null })
+    .eq("id", applicationId)
+    .is("deleted_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!data) {
+    return { success: false, message: "신청 내역을 찾을 수 없습니다." };
+  }
+
+  return {
+    success: true,
+    message: pinned ? "목록 맨 위로 고정했습니다." : "고정을 해제했습니다.",
+  };
+}
