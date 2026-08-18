@@ -19,12 +19,16 @@ export function ReferralTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // utm 파라미터가 최우선, 없으면 리퍼러(어느 사이트에서 넘어왔는지)로 추정
-    const source =
-      formatReferralSource(new URLSearchParams(searchParams)) ??
-      formatReferrerFallback(document.referrer);
-    if (!source) return;
-    if (document.cookie.split("; ").some((c) => c.startsWith(`${REFERRAL_COOKIE}=`))) return;
+    /* 링크에 직접 붙인 꼬리표(?from=·utm)는 언제나 최신 값으로 덮어씁니다 —
+       "여주맘" 처럼 구체적인 값이 이전에 추정해 둔 "네이버카페" 에 가려지면 안 됩니다.
+       리퍼러 추정값은 그보다 약한 정보라, 쿠키가 비어 있을 때만 채웁니다. */
+    const explicit = formatReferralSource(new URLSearchParams(searchParams));
+    const hasCookie = document.cookie
+      .split("; ")
+      .some((c) => c.startsWith(`${REFERRAL_COOKIE}=`));
+
+    const source = explicit ?? (hasCookie ? null : formatReferrerFallback(document.referrer));
+    if (!source || (!explicit && hasCookie)) return;
 
     document.cookie = `${REFERRAL_COOKIE}=${encodeURIComponent(source)}; path=/; max-age=${REFERRAL_COOKIE_MAX_AGE}; samesite=lax`;
   }, [searchParams]);
