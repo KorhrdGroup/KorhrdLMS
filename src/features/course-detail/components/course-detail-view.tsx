@@ -102,7 +102,11 @@ function artDirected(opts: {
 
 const CERT_SAMPLE = artDirected({
   alt: "상장형 자격증과 카드형 자격증 견본 예시",
-  desktop: { src: ASSET("sample-certs.png"), width: 3600, height: 2028, sizes: "(max-width: 960px) 100vw, 920px" },
+  /* sizes 를 실제 표시 폭의 2배로 적어 둡니다 — 일부러입니다. 1배로 두면 920px
+     자리에 1080px 후보를 받아 브라우저가 0.85배로 줄여 그리는데, 이 어중간한
+     축소가 상장 본문 같은 잔선을 뭉갭니다. 2배(1840)를 받아 줄이면 같은 크기에서
+     훨씬 또렷합니다(슈퍼샘플링). 원본이 3600px 이라 여유도 충분합니다. */
+  desktop: { src: ASSET("sample-certs.png"), width: 3600, height: 2028, sizes: "(max-width: 960px) 200vw, 1840px" },
   /* 2026-08-18 — 515폭 원본은 레티나 폰에서 확대돼 흐렸습니다(표시 335 × 2 = 670 필요).
      2배(1030×2629)로 다시 받았습니다. 파일명에 -2x 를 붙인 것은 캐시 때문입니다 —
      /_next/image 는 소스 URL 로 캐시해서, 같은 이름으로 덮으면 CDN 이 옛 이미지를
@@ -119,11 +123,10 @@ const RESUME_BANNER = artDirected({
      v2 는 2331 로 1.04x 라 빠듯했고, v3 는 3304 로 1.47x). 파일명을 v3 로 바꾼 것은
      /_next/image 가 소스 URL 로 캐시해 같은 이름으로 덮으면 옛 이미지가 계속
      나오기 때문입니다. 자격증 칸은 v2 와 같이 비어 있고 줄은 아래 마크업이 얹습니다. */
-  /* sizes 는 CSS 로 확대한 뒤의 실제 렌더 폭이어야 합니다 — 안 그러면 브라우저가
-     작은 후보를 골라 확대해 씁니다(overrides.css: 넓은 화면 134% · 모바일 150%).
-     컨테이너 좌우 여백 20px 을 감안해 넓은 화면은 134vw, 1160 초과부터는 1554px. */
-  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 115vw, 1334px" },
-  mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "150vw" },
+  /* sizes 를 실제 렌더 폭의 2배로 적어 둡니다 — 슈퍼샘플링(위 CERT_SAMPLE 주석 참고).
+     모바일은 CSS 로 150% 확대하므로 그 2배인 300vw 입니다. */
+  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 200vw, 2240px" },
+  mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "300vw" },
 });
 
 /** 배너 자격증 줄의 발급 연월 — 항상 이번 달을 보여줍니다 (시안의 '2026.01' 자리) */
