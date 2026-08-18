@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
+import { Suspense } from "react";
+
+import { ReferralTracker } from "@/components/referral-tracker";
 
 import "./globals.css";
 
@@ -41,7 +44,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${notoSansKr.variable} h-full antialiased`}>
-      <body className="min-h-full font-sans">{children}</body>
+      <body className="min-h-full font-sans">
+        {/* 마케팅 링크(utm_source 등) 첫 방문을 쿠키로 남깁니다 — 회원가입 시 유입경로로 저장 */}
+        <Suspense fallback={null}>
+          <ReferralTracker />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }

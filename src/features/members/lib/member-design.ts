@@ -20,6 +20,6 @@ export const M = {
 
 /** 회원목록 표 컬럼 그리드(삭제회원 보기 여부에 따라 마지막 관리 열 추가). */
 export function memberGridColumns(showDeleted: boolean) {
-  const base = "36px 44px 110px 1fr 130px 1.3fr 1.2fr 100px 130px 70px";
+  const base = "36px 44px 110px 1fr 130px 1.3fr 1.2fr 110px 100px 130px 70px";
   return showDeleted ? `${base} 90px` : base;
 }

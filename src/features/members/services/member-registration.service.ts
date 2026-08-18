@@ -1,5 +1,8 @@
+import { cookies } from "next/headers";
+
 import { sendAlimtalk } from "@/lib/aligo/alimtalk";
 import { hashPassword } from "@/lib/shared/password";
+import { REFERRAL_COOKIE } from "@/lib/shared/referral-source";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
 
@@ -190,6 +193,8 @@ export async function createMember(
     occupation: emptyToNull(input.occupation),
     degree_purpose: emptyToNull(input.degreePurpose),
     referrer_login_id: emptyToNull(input.referrerLoginId),
+    // 마케팅 링크 첫 방문 때 ReferralTracker 가 남긴 유입경로 (없으면 null)
+    referral_source: await readReferralCookie(),
     status: "active",
   };
 
@@ -221,4 +226,15 @@ export async function createMember(
   }
 
   return { success: true, memberId: data.id };
+}
+
+/** 마케팅 유입경로 쿠키(hp_ref)를 읽습니다. 없거나 못 읽으면 null. */
+async function readReferralCookie(): Promise<string | null> {
+  try {
+    const value = (await cookies()).get(REFERRAL_COOKIE)?.value;
+    if (!value) return null;
+    return decodeURIComponent(value).slice(0, 120) || null;
+  } catch {
+    return null;
+  }
 }
