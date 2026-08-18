@@ -146,6 +146,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     module: "operations",
     children: [
       { label: "메시지센터", href: "/admin/others/message-center" },
+      { label: "유입 링크 생성기", href: "/admin/others/referral-links" },
       { label: "팝업관리", href: "/admin/others/notice-popups" },
       { label: "배너관리", href: "/admin/others/banners", implemented: false },
       { label: "시스템로그", href: "/admin/others/system-logs", implemented: false },
