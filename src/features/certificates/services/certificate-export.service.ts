@@ -80,7 +80,10 @@ export async function getCertificateExportRows(
     .select(CERTIFICATE_EXPORT_SELECT)
     .is("deleted_at", null)
     .order("applied_at", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    /* 목록 화면과 같은 순서 — 이관분은 created_at 이 같아 legacy_no 로 갈라야 합니다 */
+    .order("legacy_no", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: false });
 
   builder = applyCertificateListFilters(builder, query);
 
