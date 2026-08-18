@@ -115,8 +115,12 @@ const CERT_SAMPLE = artDirected({
    과정마다 실제 자격증명·주무부처가 들어갑니다 (Figma 1025:2136). */
 const RESUME_BANNER = artDirected({
   alt: "이력서에 자격증을 기재해 취업 경쟁력을 높인 예시",
-  desktop: { src: ASSET("resume-banner-v2.png"), width: 2331, height: 1250, sizes: "(max-width: 1160px) 100vw, 1120px" },
-  mobile: { src: ASSET("resume-banner-v2-mobile.png"), width: 2331, height: 1250, sizes: "100vw" },
+  /* 2026-08-18 v3 — 더 큰 원본으로 다시 받았습니다(레티나 데스크탑 필요치 2240px:
+     v2 는 2331 로 1.04x 라 빠듯했고, v3 는 3304 로 1.47x). 파일명을 v3 로 바꾼 것은
+     /_next/image 가 소스 URL 로 캐시해 같은 이름으로 덮으면 옛 이미지가 계속
+     나오기 때문입니다. 자격증 칸은 v2 와 같이 비어 있고 줄은 아래 마크업이 얹습니다. */
+  desktop: { src: ASSET("resume-banner-v3.png"), width: 3304, height: 1771, sizes: "(max-width: 1160px) 100vw, 1120px" },
+  mobile: { src: ASSET("resume-banner-v3-mobile.png"), width: 2945, height: 1579, sizes: "100vw" },
 });
 
 /** 배너 자격증 줄의 발급 연월 — 항상 이번 달을 보여줍니다 (시안의 '2026.01' 자리) */
