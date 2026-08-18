@@ -144,6 +144,16 @@ export function LecturePlayer({
     list.scrollTop = Math.max(0, list.scrollTop + delta);
   }, [session.order]);
 
+  /* 이미 완료로 처리된 차시의 id. 저장은 완료된 차시에도 매번 "completed" 를
+     돌려주므로, 이 값이 없으면 10초마다 router.refresh() 가 돌아 재생이 되감깁니다
+     (완료로 바뀌는 그 순간에만 목차·진도율을 새로 받으면 됩니다).
+     차시를 옮기면 그 차시의 상태로 다시 맞춥니다 — 이 화면은 차시가 바뀌어도
+     새로 마운트되지 않아서, 남겨 두면 다음 차시의 완료 표시가 안 붙습니다. */
+  const completedRef = useRef<string | null>(null);
+  useEffect(() => {
+    completedRef.current = session.status === 'completed' ? session.id : null;
+  }, [session.id, session.status]);
+
   const save = useCallback(
     async (currentTime: number, duration: number) => {
       if (!Number.isFinite(duration) || duration <= 0) return;
@@ -155,10 +165,13 @@ export function LecturePlayer({
       );
       if (result.success) {
         setPercent(result.progressPercent);
-        if (result.status === 'completed') router.refresh();
+        if (result.status === 'completed' && completedRef.current !== session.id) {
+          completedRef.current = session.id;
+          router.refresh();
+        }
       }
     },
-    [courseCode, session.order, router],
+    [courseCode, session.id, session.order, router],
   );
 
   /** 재생 위치가 바뀔 때마다 호출되지만 실제 저장은 10초에 한 번만 합니다 */
@@ -186,11 +199,17 @@ export function LecturePlayer({
     };
   }, [save]);
 
-  /* 이어보기 — 저장된 위치로 되돌립니다 */
+  /* 이어보기 — 저장된 위치로 되돌립니다.
+     차시당 딱 한 번만입니다. resumePositionSeconds 는 저장할 때마다 갱신되는 값이라,
+     페이지가 다시 그려질 때 이 자리로 또 옮기면 재생 중인 영상이 뒤로 튑니다. */
+  const resumedRef = useRef<string | null>(null);
   useEffect(() => {
     const el = videoRef.current;
+    if (!el || resumedRef.current === session.id) return;
+    resumedRef.current = session.id;
+
     const resume = session.resumePositionSeconds ?? 0;
-    if (el && resume > 0) {
+    if (resume > 0) {
       el.currentTime = resume;
       lastSavedRef.current = resume;
     }
