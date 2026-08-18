@@ -42,6 +42,8 @@ export type CertificateListItem = {
   deliveryStatus: CertificateDeliveryStatus;
   appliedAt: string;
   createdAt: string;
+  /** 관리자 상단 고정 시각. null 이면 고정 안 됨 */
+  pinnedAt: string | null;
 };
 
 export type CertificateDetail = {

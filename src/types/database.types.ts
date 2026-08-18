@@ -355,6 +355,7 @@ export type Database = {
           applicant_name: string
           application_status: Database["public"]["Enums"]["certificate_application_status"]
           applied_at: string
+          pinned_at: string | null
           birth_date: string | null
           certificate_kind: Database["public"]["Enums"]["certificate_kind"]
           certificate_name: string
@@ -386,6 +387,7 @@ export type Database = {
           applicant_name: string
           application_status?: Database["public"]["Enums"]["certificate_application_status"]
           applied_at: string
+          pinned_at?: string | null
           birth_date?: string | null
           certificate_kind: Database["public"]["Enums"]["certificate_kind"]
           certificate_name: string
@@ -417,6 +419,7 @@ export type Database = {
           applicant_name?: string
           application_status?: Database["public"]["Enums"]["certificate_application_status"]
           applied_at?: string
+          pinned_at?: string | null
           birth_date?: string | null
           certificate_kind?: Database["public"]["Enums"]["certificate_kind"]
           certificate_name?: string

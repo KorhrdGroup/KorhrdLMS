@@ -4,6 +4,7 @@ import { buildCertificateExportXlsx } from "@/features/certificates/services/cer
 import { getCertificateDetail } from "@/features/certificates/services/certificate-detail.service";
 import {
   deleteCertificateApplication,
+  setCertificatePinned,
   updateCertificateApplication,
 } from "@/features/certificates/services/certificate-mutation.service";
 import type {
@@ -58,4 +59,11 @@ export async function exportCertificateApplicationsAction(
         error instanceof Error ? error.message : "Excel 다운로드에 실패했습니다.",
     };
   }
+}
+
+export async function setCertificatePinnedAction(
+  applicationId: string,
+  pinned: boolean,
+): Promise<CertificateMutationResult> {
+  return setCertificatePinned(applicationId, pinned);
 }
