@@ -28,6 +28,7 @@ const HEADERS = [
   "연락처",
   "수강과정",
   "회원정보이력",
+  "유입경로",
   "가입일",
   "최근 로그인",
   "담당자",
@@ -152,6 +153,13 @@ export function MemberListTable({
               <MemberHistoryMemoCell memberId={member.id} memo={member.memo} />
             </span>
 
+            {/* 마케팅 유입경로 — 링크(utm_source)로 들어와 가입한 회원만 값이 있습니다 */}
+            <span
+              style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}
+              title={member.referral_source ?? undefined}
+            >
+              {member.referral_source ? member.referral_source.replace("_", " › ") : "—"}
+            </span>
             <span style={{ whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}>{formatDate(member.joined_at)}</span>
             <span style={{ whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}>{formatDateTime(member.last_login_at)}</span>
             <span style={{ whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}>{member.manager_name ?? "—"}</span>

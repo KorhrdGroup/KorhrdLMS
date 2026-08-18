@@ -1592,6 +1592,7 @@ export type Database = {
           id: string
           join_path: string | null
           joined_at: string
+          referral_source: string | null
           last_login_at: string | null
           login_id: string
           kakao_id: string | null
@@ -1626,6 +1627,7 @@ export type Database = {
           id?: string
           join_path?: string | null
           joined_at?: string
+          referral_source?: string | null
           last_login_at?: string | null
           login_id: string
           kakao_id?: string | null
@@ -1660,6 +1662,7 @@ export type Database = {
           id?: string
           join_path?: string | null
           joined_at?: string
+          referral_source?: string | null
           last_login_at?: string | null
           login_id?: string
           kakao_id?: string | null
@@ -2242,6 +2245,7 @@ export type MemberListItem = Pick<
   | "status"
   | "manager_name"
   | "joined_at"
+  | "referral_source"
   | "last_login_at"
   | "deleted_at"
   | "memo"

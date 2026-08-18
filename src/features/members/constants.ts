@@ -19,7 +19,7 @@ export const MEMBER_SEARCH_FIELD_LABELS = {
 } as const;
 
 export const MEMBER_LIST_SELECT =
-  "id, login_id, name, email, phone, status, manager_name, joined_at, last_login_at, deleted_at, memo" as const;
+  "id, login_id, name, email, phone, status, manager_name, joined_at, last_login_at, deleted_at, memo, referral_source" as const;
 
 export function isMemberDeleted(member: { deleted_at: string | null }) {
   return member.deleted_at !== null;

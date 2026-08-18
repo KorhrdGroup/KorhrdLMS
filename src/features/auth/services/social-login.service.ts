@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+import { REFERRAL_COOKIE } from "@/lib/shared/referral-source";
 import { STUDENT_SESSION_COOKIE } from "@/lib/student/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -114,6 +115,8 @@ export async function loginWithSocial(
       birth_date: profile.birthDate ?? null,
       status: "active",
       join_path: provider === "naver" ? "네이버 로그인" : "카카오 로그인",
+      // 마케팅 링크 첫 방문 때 ReferralTracker 가 남긴 유입경로 (없으면 null)
+      referral_source: await readReferralSourceCookie(),
       ...socialIdField(provider, profile.id),
       last_login_at: new Date().toISOString(),
     })
@@ -174,4 +177,15 @@ export async function setStudentSession(memberId: string) {
     path: "/",
     maxAge: 60 * 60 * 24,
   });
+}
+
+/** 마케팅 유입경로 쿠키(hp_ref)를 읽습니다. 없거나 못 읽으면 null. */
+async function readReferralSourceCookie(): Promise<string | null> {
+  try {
+    const value = (await cookies()).get(REFERRAL_COOKIE)?.value;
+    if (!value) return null;
+    return decodeURIComponent(value).slice(0, 120) || null;
+  } catch {
+    return null;
+  }
 }
