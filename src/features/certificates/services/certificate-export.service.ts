@@ -121,7 +121,6 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
     { header: "결제방법", key: "method", width: 10 },
     { header: "결제정보", key: "paymentInfo", width: 14 },
     { header: "배송상태", key: "delivery", width: 10 },
-    { header: "메모", key: "memo", width: 24 },
   ];
 
   sheet.getRow(1).font = { bold: true };
@@ -140,7 +139,6 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
       method: row.paymentMethodLabel === "—" ? "" : row.paymentMethodLabel,
       paymentInfo: row.paymentInfo ?? "",
       delivery: row.deliveryStatusLabel,
-      memo: row.memo ?? "",
     });
   }
 
