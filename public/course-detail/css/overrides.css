@@ -94,8 +94,11 @@
   .dresume__cert-name, .dresume__cert-issuer { font-size: 15px }
 }
 @media (max-width: 560px) {
-  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 52% }
+  .dresume__cert { padding: 8px 12px; gap: 8px; border-radius: 8px; top: 60% }
   .dresume__cert-date { margin-right: 0 }
+  /* 받침 박스를 낮춥니다 — 전달본 32% 는 옛 시안 기준이라 새 이미지에서는
+     이력서 아래를 너무 많이 덮습니다 (2026-08-18, 디자인 요청) */
+  .dresume__base { height: 24% }
   .dresume__cert-date, .dresume__cert-name small { font-size: 10px }
   .dresume__cert-name, .dresume__cert-issuer { font-size: 11px }
   /* 좁은 폭에서는 주무부처를 접습니다 — 네 칸이 다 서면 이름이 말줄임으로 뭉개집니다 */
