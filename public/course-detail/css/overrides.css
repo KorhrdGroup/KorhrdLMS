@@ -70,7 +70,8 @@
   position: absolute; left: 8%; right: 8%; top: 52%; z-index: 2;
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
   background: #fff; border: 1px solid #0051FF; border-radius: 10px;
-  padding: 30px 50px; box-shadow: 0 0 10px rgba(83, 166, 255, .7);
+  /* 시안은 30px — 실제 화면에서 줄이 뚱뚱해 보여 위아래만 좁혔습니다 (2026-08-18) */
+  padding: 20px 50px; box-shadow: 0 0 10px rgba(83, 166, 255, .7);
   white-space: nowrap;
 }
 .dresume__cert-date { flex-shrink: 0; font-size: 18px; font-weight: 500; color: #656565 }
