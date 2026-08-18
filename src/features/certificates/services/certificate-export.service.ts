@@ -62,14 +62,16 @@ function mapExportRow(row: CertificateExportDbRow): CertificateExportRow {
 }
 
 /**
- * "2026-07-24" → "2026년 7월 24일".
- * 엑셀이 날짜로 인식하면 열 너비에 따라 ###### 으로 보여서(수령자 문의),
- * 한글 문자로 만들어 그대로 글자로 보이게 합니다.
+ * "2026-07-24" → ="2026년 7월 24일" (엑셀에서 글자 그대로 보이는 형태).
+ *
+ * 한국어 엑셀은 "2026-07-24" 는 물론 "2026년 7월 24일" 같은 한글 표기까지
+ * CSV 를 여는 순간 날짜 값으로 바꿔 버려, 열이 좁으면 ###### 으로 보입니다.
+ * ="…" 수식-텍스트로 감싸면 어떤 표기든 문자 그대로 남습니다.
  */
 function formatAppliedAtKorean(appliedAt: string) {
   const [y, m, d] = appliedAt.split("-").map(Number);
   if (!y || !m || !d) return appliedAt;
-  return `${y}년 ${m}월 ${d}일`;
+  return `="${y}년 ${m}월 ${d}일"`;
 }
 
 function escapeCsvValue(value: string | number | null | undefined) {
