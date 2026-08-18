@@ -61,3 +61,50 @@
 @media (max-width: 560px) {
   .dprof__list li { justify-content: flex-start; text-align: left }
 }
+
+/* 헤더 두 줄 깨짐 (2026-08-18 문의)
+
+   공용 Header 는 메뉴(.gnb)와 검색·로그인(.header__util)을 .header__nav 로
+   감쌉니다. 확정 CSS(style.css)는 래퍼 없는 마크업 기준이라 이 래퍼가 일반
+   블록이 되어, 메뉴와 검색줄이 한 flex 칸 안에 두 줄로 쌓였습니다.
+   이전 상세 CSS 에 있던 보정(display:contents + 모바일 패널)을 되살립니다. */
+.header__nav { display: contents }
+
+@media (max-width: 980px) {
+  /* 햄버거가 여는 패널은 .gnb 가 아니라 래퍼 전체입니다 —
+     Header 컴포넌트가 is-open 을 .header__nav 에 답니다. */
+  .header__nav {
+    display: none; position: absolute; top: 100%; left: 0; right: 0;
+    padding: 8px; background: var(--surface);
+    border-bottom: 1px solid var(--line); box-shadow: 0 10px 24px rgba(0, 0, 0, .06);
+  }
+  .header__nav.is-open { display: block }
+
+  /* style.css 가 .gnb 자체를 패널로 띄우던 규칙을 되돌립니다 */
+  .gnb { display: flex; position: static; flex-direction: column; gap: 0; padding: 0; background: none }
+
+  .nav-toggle { margin-left: auto; order: 9 }
+
+  .header__util {
+    margin-left: 0; flex-direction: column; align-items: stretch; gap: 12px;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line);
+  }
+  /* 패널 안에서는 검색 버튼 라벨을 그대로 보여줍니다 */
+  .search-trigger { min-width: 0; width: 100%; padding: 12px 14px; justify-content: flex-start }
+  .search-trigger .txt { display: inline }
+
+  .header__auth { display: flex; gap: 12px }
+  .header__auth .util-link {
+    flex: 1; padding: 12px 14px; border-radius: var(--r-md);
+    background: var(--surface-sunken); text-align: center; font-weight: 700;
+  }
+  .header__auth .util-link--login,
+  .header__auth .util-link--strong { background: var(--navy); color: #fff }
+  .header__auth .util-link--join { background: var(--blue-soft); color: var(--ink-2) }
+}
+
+@media (max-width: 560px) {
+  /* style.css 560px 규칙(아이콘만 남기기)도 패널 안에서는 되돌립니다 */
+  .search-trigger { width: 100% }
+  .header__util .util-link + .util-link { display: revert }
+}
