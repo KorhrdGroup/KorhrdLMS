@@ -31,6 +31,11 @@ const SOURCE_LABELS: Record<string, string> = {
  * 예: ?utm_source=mamcafe&cafe_id=율하맘 → "맘카페_율하맘"
  */
 export function formatReferralSource(params: URLSearchParams): string | null {
+  // 실무용 단축 파라미터 — 어떤 주소든 뒤에 ?from=여주맘 만 붙이면 그대로 기록됩니다.
+  // 한글 그대로 쓰면 되고, utm 처럼 두 단계로 쓰려면 ?from=맘카페_여주맘 처럼 _ 로 잇습니다.
+  const from = params.get("from");
+  if (from?.trim()) return from.trim().slice(0, 60);
+
   const utmSource = params.get("utm_source");
   if (!utmSource) return null;
 
