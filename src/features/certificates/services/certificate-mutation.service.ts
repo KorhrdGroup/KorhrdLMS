@@ -262,7 +262,10 @@ export async function bumpCertificateApplication(
 
   const { data, error } = await supabase
     .from("certificate_applications")
-    .update({ applied_at: todayInKst() })
+    /* created_at 도 지금으로 — 같은 날짜 안 순서는 created_at 이 가르는데,
+       이관 건은 등록시각이 이관일로 남아 있어 오늘 신청들 아래에 깔립니다
+       (2026-08-19 "맨 최상단이 아님" 문의) */
+    .update({ applied_at: todayInKst(), created_at: new Date().toISOString() })
     .eq("id", applicationId)
     .is("deleted_at", null)
     .select("id")
