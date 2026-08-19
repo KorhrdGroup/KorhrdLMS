@@ -9,6 +9,7 @@ import { M } from "@/features/members/lib/member-design";
 import { MemberDeleteConfirmModal } from "@/features/members/components/member-delete-confirm-modal";
 import { MemberEditModal } from "@/features/members/components/member-edit-modal";
 import { MemberListTable } from "@/features/members/components/member-list-table";
+import { MemberOverviewModal } from "@/features/members/components/member-overview-modal";
 import { MemberListToolbar } from "@/features/members/components/member-list-toolbar";
 import { buildMemberPageHref } from "@/features/members/lib/member-list-query";
 import type { MemberListQuery } from "@/features/members/services/member-list.service";
@@ -30,6 +31,9 @@ export function MemberListView({ result, query }: MemberListViewProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  /* 이름 클릭 팝업 — 기본·수강·성적·결제·시험을 한 장에서 스크롤로 봅니다 */
+  const [overviewOpen, setOverviewOpen] = useState(false);
+  const [overviewMemberId, setOverviewMemberId] = useState<string | null>(null);
 
   const deletableSelectedIds = useMemo(
     () => getDeletableMemberIds(selectedIds, result.data),
@@ -48,6 +52,11 @@ export function MemberListView({ result, query }: MemberListViewProps) {
 
     setEditMemberId(member.id);
     setEditOpen(true);
+  }
+
+  function handleNameClick(member: MemberListRow) {
+    setOverviewMemberId(member.id);
+    setOverviewOpen(true);
   }
 
   function handleDeleted() {
@@ -101,6 +110,7 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         showDeleted={query.showDeleted === true}
         onSelectionChange={setSelectedIds}
         onMemberClick={handleMemberClick}
+        onNameClick={handleNameClick}
         onRestoreClick={handleRestoreClick}
       />
 
@@ -120,6 +130,11 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         open={editOpen}
         onOpenChange={setEditOpen}
         memberId={editMemberId}
+      />
+      <MemberOverviewModal
+        open={overviewOpen}
+        onOpenChange={setOverviewOpen}
+        memberId={overviewMemberId}
       />
       <MemberDeleteConfirmModal
         open={deleteOpen}

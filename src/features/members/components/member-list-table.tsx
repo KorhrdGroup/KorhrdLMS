@@ -19,6 +19,8 @@ type MemberListTableProps = {
   showDeleted?: boolean;
   onSelectionChange: (ids: string[]) => void;
   onMemberClick?: (member: MemberListRow) => void;
+  /** 이름 클릭 — 전체 정보 팝업(기본·수강·성적·결제·시험)을 엽니다 */
+  onNameClick?: (member: MemberListRow) => void;
   onRestoreClick?: (memberId: string) => void;
 };
 
@@ -40,6 +42,7 @@ export function MemberListTable({
   showDeleted = false,
   onSelectionChange,
   onMemberClick,
+  onNameClick,
   onRestoreClick,
 }: MemberListTableProps) {
   const pageIds = useMemo(() => result.data.map((member) => member.id), [result.data]);
@@ -132,13 +135,27 @@ export function MemberListTable({
               {deleted ? (
                 member.name
               ) : (
-                <Link
-                  href={`/admin/members/${member.id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{ color: M.ink, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3 }}
+                /* 이름 클릭 → 상세 페이지 이동 대신 전체 정보 팝업 (2026-08-19 요청) */
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNameClick?.(member);
+                  }}
+                  style={{
+                    padding: 0,
+                    border: "none",
+                    background: "none",
+                    font: "inherit",
+                    cursor: "pointer",
+                    color: M.ink,
+                    fontWeight: 600,
+                    textDecoration: "underline",
+                    textUnderlineOffset: 3,
+                  }}
                 >
                   {member.name}
-                </Link>
+                </button>
               )}
             </span>
 

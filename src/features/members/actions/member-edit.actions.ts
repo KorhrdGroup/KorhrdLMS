@@ -5,6 +5,10 @@ import {
   updateMember,
   updateMemberMemo,
 } from "@/features/members/services/member-edit.service";
+import {
+  getMemberOverview,
+  type GetMemberOverviewResult,
+} from "@/features/members/services/member-overview.service";
 import type {
   GetMemberForEditResult,
   MemberEditInput,
@@ -29,4 +33,10 @@ export async function updateMemberMemoAction(
   memo: string,
 ): Promise<MemberEditResult> {
   return updateMemberMemo(memberId, memo);
+}
+
+export async function getMemberOverviewAction(
+  memberId: string,
+): Promise<GetMemberOverviewResult> {
+  return getMemberOverview(memberId);
 }
