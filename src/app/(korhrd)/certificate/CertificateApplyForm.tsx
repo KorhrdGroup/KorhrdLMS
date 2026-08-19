@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { submitCertificateApplicationAction } from "@/features/certificate-applications/actions/certificate-application.actions";
+import { startCertificatePaymentAction } from "@/features/payments/payapp/payapp.actions";
 import { uploadCertificatePhotoFile } from "@/features/certificate-applications/lib/certificate-photo-upload.client";
 import type { CertificateApplicationPageData } from "@/features/certificate-applications/types/certificate-application.types";
 import PostcodeButton from "@/features/korhrd/components/form/PostcodeButton";
@@ -87,6 +88,9 @@ export function CertificateApplyForm({
   );
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /* 카드 결제창(팝업)이 떠 있는 동안 true — 결제가 끝나면 payment-done 콜백이
+     이 창을 완료 화면으로 옮기므로 여기서는 안내만 띄우고 기다립니다 */
+  const [waitingPayment, setWaitingPayment] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const toggle = (courseId: string) =>
@@ -118,12 +122,32 @@ export function CertificateApplyForm({
       return;
     }
 
+    /* 카드 결제는 클릭 "즉시" 빈 팝업을 열어 둡니다 — 서버 응답을 기다린 뒤
+       window.open 을 부르면 사용자 동작으로 안 쳐서 브라우저가 차단합니다.
+       주소는 신청 저장이 끝난 뒤 채웁니다. */
+    let popup: Window | null = null;
+    if (paymentMethod === "card") {
+      const w = 500;
+      const h = 700;
+      const left = (screen.width - w) / 2;
+      const top = (screen.height - h) / 2;
+      popup = window.open(
+        "",
+        "payapp_payment",
+        `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+      );
+      popup?.document.write(
+        '<p style="font:14px/1.6 sans-serif;text-align:center;margin-top:120px">결제창을 여는 중입니다…</p>',
+      );
+    }
+
     startTransition(async () => {
       let photoUrl = "";
       if (photo) {
         try {
           photoUrl = await uploadCertificatePhotoFile(photo);
         } catch {
+          popup?.close();
           setError(
             "증명사진 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.",
           );
@@ -147,10 +171,27 @@ export function CertificateApplyForm({
         });
 
         if (!result.success) {
+          popup?.close();
           setError(result.message);
           return;
         }
         if (!firstApplicationId) firstApplicationId = result.applicationId;
+      }
+
+      /* 카드 결제 — 미리 열어 둔 팝업에 PayApp 결제창을 채웁니다. 완료 화면으로
+         가지 않고 이 화면에서 기다립니다: 결제가 끝나면 payment-done 콜백이
+         이 창(opener)을 "결제가 완료됐어요" 화면(현황보기만 있는 모습)으로
+         옮겨 줍니다. 무통장입금은 기존대로 완료 화면에서 계좌 안내. */
+      if (paymentMethod === "card") {
+        const payment = await startCertificatePaymentAction(firstApplicationId);
+        if (payment.success && popup && !popup.closed) {
+          popup.location.href = payment.payUrl;
+          setWaitingPayment(true);
+          return;
+        }
+        popup?.close();
+        /* 팝업이 차단됐거나 결제창을 못 열었으면 완료 화면으로 —
+           거기 "결제하기" 버튼이 예비 경로입니다 */
       }
 
       // push 뒤에 refresh()를 부르면 이동이 끝나기 전에 현재 페이지를 다시 불러와
@@ -727,6 +768,45 @@ export function CertificateApplyForm({
           </form>
         </div>
       </div>
+
+      {/* 카드 결제창이 떠 있는 동안의 안내 — 결제가 끝나면 자동으로 이동합니다 */}
+      {waitingPayment ? (
+        <div
+          role="status"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 90,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(15, 23, 42, .55)",
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 14,
+              padding: "36px 40px",
+              maxWidth: 380,
+              textAlign: "center",
+              boxShadow: "0 24px 64px rgba(0,0,0,.28)",
+            }}
+          >
+            <p style={{ fontSize: 17, fontWeight: 700, marginBottom: 10 }}>
+              결제창에서 결제를 진행해 주세요
+            </p>
+            <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.7, marginBottom: 20 }}>
+              결제가 완료되면 이 화면이 자동으로 이동합니다.
+              <br />
+              결제창이 보이지 않으면 아래 버튼을 눌러 주세요.
+            </p>
+            <Link className="btn btn--primary btn--block" href="/certificate/status">
+              신청 현황에서 결제하기
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
