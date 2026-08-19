@@ -760,53 +760,19 @@ export function CertificateApplyForm({
                 className="btn btn--primary btn--lg"
                 type="submit"
                 style={{ minWidth: "280px" }}
-                disabled={isPending || checked.length === 0}
+                disabled={isPending || waitingPayment || checked.length === 0}
               >
-                {isPending ? "신청 중…" : "자격증 발급 신청하기"}
+                {waitingPayment
+                  ? "결제창에서 결제를 진행해 주세요…"
+                  : isPending
+                    ? "신청 중…"
+                    : "자격증 발급 신청하기"}
               </button>
             </p>
           </form>
         </div>
       </div>
 
-      {/* 카드 결제창이 떠 있는 동안의 안내 — 결제가 끝나면 자동으로 이동합니다 */}
-      {waitingPayment ? (
-        <div
-          role="status"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 90,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "rgba(15, 23, 42, .55)",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 14,
-              padding: "36px 40px",
-              maxWidth: 380,
-              textAlign: "center",
-              boxShadow: "0 24px 64px rgba(0,0,0,.28)",
-            }}
-          >
-            <p style={{ fontSize: 17, fontWeight: 700, marginBottom: 10 }}>
-              결제창에서 결제를 진행해 주세요
-            </p>
-            <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.7, marginBottom: 20 }}>
-              결제가 완료되면 이 화면이 자동으로 이동합니다.
-              <br />
-              결제창이 보이지 않으면 아래 버튼을 눌러 주세요.
-            </p>
-            <Link className="btn btn--primary btn--block" href="/certificate/status">
-              신청 현황에서 결제하기
-            </Link>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
