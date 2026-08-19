@@ -30,8 +30,13 @@ export type StartPaymentResult =
 
 export async function startCertificatePayment(
   memberId: string,
-  applicationId: string,
+  /** 이번에 결제할 신청 건들 — 첫 건이 대표(결제창 상품명·복귀 주소 기준)입니다 */
+  applicationIds: string[],
 ): Promise<StartPaymentResult> {
+  const applicationId = applicationIds[0];
+  if (!applicationId) {
+    return { success: false, message: "결제할 신청 건이 없습니다." };
+  }
   let config = getPayAppConfig();
   if (!config) {
     // 어느 값이 비었는지 알려줘야 배포 환경변수를 고칠 수 있습니다.
@@ -93,13 +98,15 @@ export async function startCertificatePayment(
     return { success: false, message: "연락처가 없어 결제를 진행할 수 없습니다. 회원정보를 확인해주세요." };
   }
 
-  // 여러 자격증을 한 번에 신청한 경우 미결제 건 전체를 **한 번에 합산 결제**합니다.
-  // (신청 폼이 과목별로 신청 건을 따로 만들기 때문에, 단건 결제로는 첫 건만
-  // 청구되는 문제가 있었습니다 — 2026-08-14)
+  // 여러 자격증을 한 번에 신청하면 신청 건이 과목별로 따로 생기므로, "이번에
+  // 넘어온 건들"만 합산해 한 번에 결제합니다. 회원의 다른 미결제 건까지 다
+  // 끌어오면 안 됩니다 — 예전 미결제 신청이 있던 회원이 1건을 새로 신청했는데
+  // 결제창에 40만원이 뜬 실사고 (2026-08-19).
   const { data: unpaidRows, error: unpaidError } = await supabase
     .from("certificate_applications")
     .select("id, certificate_name, actual_payment_amount")
     .eq("member_id", memberId)
+    .in("id", applicationIds)
     .in("payment_status", ["unpaid", "partial"])
     .is("deleted_at", null);
 

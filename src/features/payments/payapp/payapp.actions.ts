@@ -13,7 +13,8 @@ import { getMockableStudentMember } from "@/lib/mock-auth-server";
  * 여는 일이 없어야 하기 때문입니다. 금액도 서버가 DB에서 다시 읽습니다.
  */
 export async function startCertificatePaymentAction(
-  applicationId: string,
+  /** 한 건(id) 또는 이번에 같이 결제할 여러 건(id 배열) */
+  applicationIds: string | string[],
 ): Promise<StartPaymentResult> {
   const member = await getMockableStudentMember();
 
@@ -21,5 +22,6 @@ export async function startCertificatePaymentAction(
     return { success: false, message: "로그인이 필요합니다." };
   }
 
-  return startCertificatePayment(member.id, applicationId);
+  const ids = Array.isArray(applicationIds) ? applicationIds : [applicationIds];
+  return startCertificatePayment(member.id, ids);
 }
