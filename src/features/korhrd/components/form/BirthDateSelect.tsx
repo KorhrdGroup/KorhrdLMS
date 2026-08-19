@@ -1,11 +1,18 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 /**
  * 생년월일 입력 — 연 · 월 · 일 세 칸.
  *
  * 달력 입력(type="date")은 태어난 해까지 달을 몇십 번 넘겨야 해서 세 칸으로
  * 나눴습니다 (2026-08-12, 디자인 요청). 값은 예전과 같은 'YYYY-MM-DD' 한 줄로
  * 주고받으므로 서버·DB 쪽은 그대로입니다.
+ *
+ * 고른 조각(연도만 고른 상태 등)은 여기서 기억합니다 — 부모에게는 세 칸이
+ * 다 모였을 때만 완성된 날짜를 올리고, 하나라도 비면 빈 값을 올립니다.
+ * (전에는 부모가 돌려주는 값으로만 그려서, 연도 하나를 고르면 빈 값이 되어
+ *  선택이 즉시 풀렸습니다 — 2026-08-19 "생년월일 설정이 안 된다" 문의)
  *
  * 자격증에 인쇄되는 값이라 자격증 발급신청과 마이페이지 두 곳에서 같은 것을
  * 받습니다 — 그래서 컴포넌트로 빼 두었습니다.
@@ -38,12 +45,27 @@ export default function BirthDateSelect({
   onChange: (next: string) => void;
   required?: boolean;
 }) {
-  const year = value.slice(0, 4);
-  const month = value.slice(5, 7);
-  const day = value.slice(8, 10);
+  const [year, setYear] = useState(value.slice(0, 4));
+  const [month, setMonth] = useState(value.slice(5, 7));
+  const [day, setDay] = useState(value.slice(8, 10));
 
-  /** 세 조각이 다 모여야 날짜입니다. 하나라도 비면 빈 값으로 올려보냅니다. */
-  const emit = (y: string, m: string, d: string) => onChange(y && m && d ? `${y}-${m}-${d}` : '');
+  /* 부모가 완성된 값을 새로 내려주면(프로필 로드 등) 그걸 따라갑니다.
+     빈 값은 "아직 고르는 중"과 구분할 수 없어 조각을 지우지 않습니다. */
+  useEffect(() => {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      setYear(value.slice(0, 4));
+      setMonth(value.slice(5, 7));
+      setDay(value.slice(8, 10));
+    }
+  }, [value]);
+
+  /** 세 조각이 다 모였을 때만 완성된 날짜를 올립니다 */
+  const apply = (y: string, m: string, d: string) => {
+    setYear(y);
+    setMonth(m);
+    setDay(d);
+    onChange(y && m && d ? `${y}-${m}-${d}` : '');
+  };
 
   /* 2월로 옮겼는데 31일이 남아 있거나, 2월 29일을 골라 둔 채 평년으로 옮기면
      없는 날짜가 됩니다. 그 달의 마지막 날로 당깁니다. */
@@ -58,7 +80,7 @@ export default function BirthDateSelect({
       <select
         id={id} required={required} aria-label="태어난 해" style={{ flex: 1.4 }}
         value={year}
-        onChange={(event) => emit(event.target.value, month, clampDay(event.target.value, month))}
+        onChange={(event) => apply(event.target.value, month, clampDay(event.target.value, month))}
       >
         <option value="">연도</option>
         {BIRTH_YEARS.map((y) => <option key={y} value={y}>{y}년</option>)}
@@ -67,7 +89,7 @@ export default function BirthDateSelect({
       <select
         required={required} aria-label="태어난 달" style={{ flex: 1 }}
         value={month}
-        onChange={(event) => emit(year, event.target.value, clampDay(year, event.target.value))}
+        onChange={(event) => apply(year, event.target.value, clampDay(year, event.target.value))}
       >
         <option value="">월</option>
         {MONTHS.map((m) => <option key={m} value={m}>{Number(m)}월</option>)}
@@ -76,7 +98,7 @@ export default function BirthDateSelect({
       <select
         required={required} aria-label="태어난 날" style={{ flex: 1 }}
         value={day}
-        onChange={(event) => emit(year, month, event.target.value)}
+        onChange={(event) => apply(year, month, event.target.value)}
       >
         <option value="">일</option>
         {Array.from({ length: lastDayOf(year, month) }, (_, i) => pad2(i + 1))
