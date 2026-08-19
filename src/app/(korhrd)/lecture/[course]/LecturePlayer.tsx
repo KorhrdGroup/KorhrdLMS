@@ -385,7 +385,7 @@ export function LecturePlayer({
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="/korhrd/img/material/practice.svg" alt="" width={34} height={34} />
                     </span>
-                    기출문제
+                    기출문제<br />모의고사
                   </Link>
                 ) : (
                   <span aria-disabled="true">
@@ -393,7 +393,7 @@ export function LecturePlayer({
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="/korhrd/img/material/practice.svg" alt="" width={34} height={34} />
                     </span>
-                    기출문제
+                    기출문제<br />모의고사
                   </span>
                 )}
                   </div>
