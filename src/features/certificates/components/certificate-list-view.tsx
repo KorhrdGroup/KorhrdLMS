@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
 import {
-  setCertificatePinnedAction,
+  bumpCertificateApplicationAction,
   updateCertificateApplicationAction,
 } from "@/features/certificates/actions/certificate.actions";
 import { M } from "@/features/courses/lib/course-design";
@@ -14,7 +14,10 @@ import { CertificateDetailModal } from "@/features/certificates/components/certi
 import { CertificateListTable } from "@/features/certificates/components/certificate-list-table";
 import { CertificateListToolbar } from "@/features/certificates/components/certificate-list-toolbar";
 import { CERTIFICATE_DELIVERY_STATUS_LABELS } from "@/features/certificates/constants";
-import { buildCertificatePageHref } from "@/features/certificates/lib/certificate-list-query";
+import {
+  buildCertificateListQueryString,
+  buildCertificatePageHref,
+} from "@/features/certificates/lib/certificate-list-query";
 import type {
   CertificateListItem,
   CertificateListQuery,
@@ -63,19 +66,24 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
     }
   }
 
-  /** 입금 지연 건 등을 목록 맨 위로 고정/해제 */
-  async function handleTogglePin(item: CertificateListItem, pinned: boolean) {
+  /** 결제대기 건 끌어올리기 — 신청일을 오늘로 바꿔 맨 위로 (본사 2주 미확인 대응) */
+  async function handleBump(item: CertificateListItem) {
+    if (
+      !window.confirm(
+        `${item.applicantName} 님의 신청일을 오늘 날짜로 바꾸고 목록 맨 위로 끌어올릴까요?`,
+      )
+    ) {
+      return;
+    }
     setSuccessMessage(null);
     setErrorMessage(null);
     try {
-      const result = await setCertificatePinnedAction(item.id, pinned);
+      const result = await bumpCertificateApplicationAction(item.id);
       if (!result.success) {
         setErrorMessage(result.message);
         return;
       }
-      handleActionSuccess(
-        `${item.applicantName} — ${pinned ? "목록 맨 위로 고정했습니다." : "고정을 해제했습니다."}`,
-      );
+      handleActionSuccess(`${item.applicantName} — ${result.message}`);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "처리에 실패했습니다.");
     }
@@ -132,6 +140,43 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
         </div>
       ) : null}
 
+      {/* 분류 — 본사가 신청일 2주 지난 건은 확인하지 않아, 결제대기 학생만 모아
+          끌어올리기(신청일 갱신)로 처리할 수 있게 나눠 봅니다 (2026-08-19) */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+        {[
+          { value: "" as const, label: "전체 신청자" },
+          { value: "unpaid" as const, label: "결제대기 학생" },
+        ].map((tab) => {
+          const active = (query.paymentFilter || "") === tab.value;
+          return (
+            <button
+              key={tab.label}
+              type="button"
+              onClick={() =>
+                router.push(
+                  `/admin/certificates/applications${buildCertificateListQueryString(
+                    { paymentFilter: tab.value, page: 1 },
+                    query,
+                  )}`,
+                )
+              }
+              style={{
+                padding: "9px 16px",
+                borderRadius: 999,
+                fontSize: 13.5,
+                fontWeight: 600,
+                cursor: "pointer",
+                border: `1px solid ${active ? "#3182F6" : M.border}`,
+                background: active ? "#EAF2FE" : "#fff",
+                color: active ? "#3182F6" : M.body,
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       <CertificateListToolbar
         query={query}
         certNames={certNames}
@@ -145,7 +190,7 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
         result={result}
         onDetailClick={handleDetailClick}
         onDeleteClick={handleDeleteClick}
-        onTogglePin={handleTogglePin}
+        onBumpClick={handleBump}
         onTogglePaid={(item, paid) =>
           handleQuickUpdate(
             item,

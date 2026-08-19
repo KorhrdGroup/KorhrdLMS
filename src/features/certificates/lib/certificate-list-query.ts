@@ -16,6 +16,7 @@ export function createDefaultCertificateListQuery(): CertificateListQuery {
     endDate: "",
     search: "",
     deliveryStatus: "",
+    paymentFilter: "",
   };
 }
 
@@ -34,6 +35,7 @@ export function parseCertificateListQuery(
     endDate: parseStringParam(searchParams.endDate),
     search: parseStringParam(searchParams.search),
     deliveryStatus: parseDeliveryStatus(searchParams.deliveryStatus),
+    paymentFilter: searchParams.paymentFilter === "unpaid" ? "unpaid" : "",
   };
 }
 
@@ -51,6 +53,7 @@ export function buildCertificateListQueryString(
     endDate: params.endDate ?? base?.endDate ?? "",
     search: params.search ?? base?.search ?? "",
     deliveryStatus: params.deliveryStatus ?? base?.deliveryStatus ?? "",
+    paymentFilter: params.paymentFilter ?? base?.paymentFilter ?? "",
   };
 
   const query = new URLSearchParams();
@@ -66,6 +69,7 @@ export function buildCertificateListQueryString(
   if (merged.endDate) query.set("endDate", merged.endDate);
   if (merged.search) query.set("search", merged.search);
   if (merged.deliveryStatus) query.set("deliveryStatus", merged.deliveryStatus);
+  if (merged.paymentFilter) query.set("paymentFilter", merged.paymentFilter);
 
   const qs = query.toString();
   return qs ? `?${qs}` : "";

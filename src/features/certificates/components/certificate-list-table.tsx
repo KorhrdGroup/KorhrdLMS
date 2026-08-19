@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { Eye, Pin, PinOff, Trash2 } from "lucide-react";
+import { ArrowUpToLine, Eye, Trash2 } from "lucide-react";
 
 import {
   formatApplicantWithId,
@@ -27,8 +27,8 @@ type CertificateListTableProps = {
   onToggleShipped?: (item: CertificateListItem, shipped: boolean) => void;
   /** 사진 없는 건의 "사진없이 발급합니다" 체크 토글 */
   onToggleNoPhoto?: (item: CertificateListItem, noPhoto: boolean) => void;
-  /** 입금 지연 건 등을 목록 맨 위로 고정/해제 */
-  onTogglePin?: (item: CertificateListItem, pinned: boolean) => void;
+  /** 결제대기 건 끌어올리기 — 신청일을 오늘로 바꿔 맨 위로 올립니다 */
+  onBumpClick?: (item: CertificateListItem) => void;
 };
 
 const th: CSSProperties = {
@@ -128,7 +128,7 @@ export function CertificateListTable({
   onTogglePaid,
   onToggleShipped,
   onToggleNoPhoto,
-  onTogglePin,
+  onBumpClick,
 }: CertificateListTableProps) {
   if (result.data.length === 0) {
     return (
@@ -143,7 +143,7 @@ export function CertificateListTable({
       <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1280 }}>
         <thead>
           <tr style={{ borderTop: `1.5px solid ${M.ink}`, borderBottom: `1px solid ${M.line}` }}>
-            <th style={{ ...th, textAlign: "center", width: 44 }}>고정</th>
+            <th style={{ ...th, textAlign: "center", width: 64 }}>끌어올리기</th>
             <th style={{ ...th, textAlign: "center", width: 56 }}>번호</th>
             <th style={th}>자격증명</th>
             <th style={th}>신청자</th>
@@ -168,36 +168,34 @@ export function CertificateListTable({
                 key={item.id}
                 style={{
                   borderBottom: `1px solid ${M.line}`,
-                  // 고정 건은 연노랑, 입금 대기중 건은 핑크 배경
-                  background: item.pinnedAt
-                    ? "#FFF7DB"
-                    : item.paymentStatus === "unpaid"
-                      ? "#FFE9EF"
-                      : undefined,
+                  // 입금 대기중 건은 눈에 띄게 핑크 배경
+                  background: item.paymentStatus === "unpaid" ? "#FFE9EF" : undefined,
                 }}
               >
-                {/* 고정 — 입금 지연 건 등을 새 신청에 밀리지 않게 맨 위로 */}
+                {/* 끌어올리기 — 결제대기 건의 신청일을 오늘로 바꿔 맨 위로.
+                    본사가 신청일 2주 지난 건은 확인하지 않아, 뒤늦게 입금된 건은
+                    날짜를 갱신해 명단에 최신으로 실리게 합니다. */}
                 <td style={{ ...td, textAlign: "center" }}>
-                  <button
-                    type="button"
-                    onClick={() => onTogglePin?.(item, !item.pinnedAt)}
-                    title={item.pinnedAt ? "고정 해제" : "목록 맨 위로 고정"}
-                    style={{
-                      display: "inline-flex",
-                      padding: 6,
-                      borderRadius: 7,
-                      border: `1px solid ${item.pinnedAt ? "#F5C400" : M.border}`,
-                      background: item.pinnedAt ? "#FFEFAD" : "#fff",
-                      color: item.pinnedAt ? "#8a6d00" : M.mute,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {item.pinnedAt ? (
-                      <PinOff style={{ width: 14, height: 14 }} />
-                    ) : (
-                      <Pin style={{ width: 14, height: 14 }} />
-                    )}
-                  </button>
+                  {item.paymentStatus === "unpaid" ? (
+                    <button
+                      type="button"
+                      onClick={() => onBumpClick?.(item)}
+                      title="신청일을 오늘로 바꾸고 목록 맨 위로 끌어올립니다"
+                      style={{
+                        display: "inline-flex",
+                        padding: 6,
+                        borderRadius: 7,
+                        border: `1px solid ${M.border}`,
+                        background: "#fff",
+                        color: "#3182F6",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <ArrowUpToLine style={{ width: 14, height: 14 }} />
+                    </button>
+                  ) : (
+                    <span style={{ color: "#d1d5db" }}>—</span>
+                  )}
                 </td>
                 <td style={{ ...td, textAlign: "center", color: M.mute }}>{rowNumber}</td>
                 <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.certificateName}</td>
