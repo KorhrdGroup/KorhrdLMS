@@ -19,6 +19,8 @@ export type CertificateListQuery = {
   search: string;
   /** 상단 메뉴 "발급신청"/"승인관리" 바로가기(예: `?deliveryStatus=pending`)를 위한 선택적 필터입니다. */
   deliveryStatus: CertificateDeliveryStatus | "";
+  /** 분류 — "unpaid" 면 결제대기 학생만 봅니다 (2026-08-19, 본사 2주 미확인 대응) */
+  paymentFilter: "" | "unpaid";
 };
 
 export type CertificateListItem = {

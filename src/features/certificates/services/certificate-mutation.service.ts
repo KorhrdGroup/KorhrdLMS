@@ -3,6 +3,7 @@ import type {
   CertificateMutationResult,
   CertificateUpdateInput,
 } from "@/features/certificates/types/certificate-form.types";
+import { todayInKst } from "@/lib/shared/kst-date";
 import { createClient } from "@/lib/supabase/server";
 import type { CertificateDeliveryStatus, Database, PaymentStatus } from "@/types/database.types";
 
@@ -250,18 +251,18 @@ export async function deleteCertificateApplication(
 }
 
 /**
- * 목록 상단 고정을 켜고 끕니다. 신청만 하고 입금을 미룬 건이 새 신청에 밀려
- * 누락되지 않게, 관리자가 짚어 둔 건을 맨 위로 끌어올리는 용도입니다.
+ * 결제대기 건 끌어올리기 — 신청일을 처리한 날짜(오늘)로 바꿉니다.
+ * 본사(협회)가 신청일 2주 지난 건은 확인하지 않아, 뒤늦게 입금된 건은
+ * 신청일을 갱신해 목록 맨 위로 올리고 명단에도 최신 날짜로 실리게 합니다.
  */
-export async function setCertificatePinned(
+export async function bumpCertificateApplication(
   applicationId: string,
-  pinned: boolean,
 ): Promise<CertificateMutationResult> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("certificate_applications")
-    .update({ pinned_at: pinned ? new Date().toISOString() : null })
+    .update({ applied_at: todayInKst() })
     .eq("id", applicationId)
     .is("deleted_at", null)
     .select("id")
@@ -277,6 +278,6 @@ export async function setCertificatePinned(
 
   return {
     success: true,
-    message: pinned ? "목록 맨 위로 고정했습니다." : "고정을 해제했습니다.",
+    message: "신청일을 오늘로 바꾸고 목록 맨 위로 끌어올렸습니다.",
   };
 }

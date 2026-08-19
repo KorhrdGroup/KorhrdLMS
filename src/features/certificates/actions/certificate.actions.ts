@@ -3,8 +3,8 @@
 import { buildCertificateExportXlsx } from "@/features/certificates/services/certificate-export.service";
 import { getCertificateDetail } from "@/features/certificates/services/certificate-detail.service";
 import {
+  bumpCertificateApplication,
   deleteCertificateApplication,
-  setCertificatePinned,
   updateCertificateApplication,
 } from "@/features/certificates/services/certificate-mutation.service";
 import type {
@@ -61,9 +61,8 @@ export async function exportCertificateApplicationsAction(
   }
 }
 
-export async function setCertificatePinnedAction(
+export async function bumpCertificateApplicationAction(
   applicationId: string,
-  pinned: boolean,
 ): Promise<CertificateMutationResult> {
-  return setCertificatePinned(applicationId, pinned);
+  return bumpCertificateApplication(applicationId);
 }

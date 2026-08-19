@@ -89,7 +89,9 @@ export function LecturePlayer({
   const isOpen = (open: boolean | null) => (open !== null ? open : narrow === null ? true : !narrow);
 
   const tocExpanded = isOpen(tocOpen);
-  const materialExpanded = isOpen(materialOpen);
+  /* 학습자료는 화면 폭과 무관하게 기본 펼침 — 교안·기출문제가 눈에 띄어야
+     한다는 요청 (2026-08-19). 좁은 화면 기본 접힘은 강의목차에만 남습니다. */
+  const materialExpanded = materialOpen !== null ? materialOpen : true;
 
   /* 좁은 화면에서 목차는 바텀시트라, 열려 있는 동안은 뒤 화면이 밀려 내려가지
      않게 잠그고 Esc 로 닫습니다 (수강신청 필터 시트와 같은 처리). */
@@ -317,7 +319,8 @@ export function LecturePlayer({
 
           <aside className="lec-side" aria-label="학습 자료 및 강의 목차">
             {/* 학습자료 — 관리자 자료실에서 공개한 파일을 그대로 내려받습니다 */}
-            <div className="panel-card" data-open={panelState(materialOpen)}>
+            {/* 학습자료는 기본 펼침이라 CSS "auto" 를 거치지 않고 상태 그대로 씁니다 */}
+            <div className="panel-card" data-open={String(materialExpanded)}>
               <button
                 className="panel-toggle"
                 type="button"
