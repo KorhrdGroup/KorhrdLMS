@@ -156,6 +156,7 @@ export function CertificateApplyForm({
       }
 
       let firstApplicationId = "";
+      const createdIds: string[] = [];
       for (const courseId of checked) {
         const result = await submitCertificateApplicationAction({
           courseId,
@@ -176,6 +177,7 @@ export function CertificateApplyForm({
           return;
         }
         if (!firstApplicationId) firstApplicationId = result.applicationId;
+        createdIds.push(result.applicationId);
       }
 
       /* 카드 결제 — 미리 열어 둔 팝업에 PayApp 결제창을 채웁니다. 완료 화면으로
@@ -183,7 +185,8 @@ export function CertificateApplyForm({
          이 창(opener)을 "결제가 완료됐어요" 화면(현황보기만 있는 모습)으로
          옮겨 줍니다. 무통장입금은 기존대로 완료 화면에서 계좌 안내. */
       if (paymentMethod === "card") {
-        const payment = await startCertificatePaymentAction(firstApplicationId);
+        /* 이번에 만든 신청 건들만 합산 결제 — 예전 미결제 건이 딸려 오면 안 됩니다 */
+        const payment = await startCertificatePaymentAction(createdIds);
         if (payment.success && popup && !popup.closed) {
           popup.location.href = payment.payUrl;
           setWaitingPayment(true);
