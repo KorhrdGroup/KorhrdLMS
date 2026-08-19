@@ -39,13 +39,15 @@ const td: CSSProperties = {
   borderBottom: `1px solid ${M.line}`,
 };
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 style={{ fontSize: 15, fontWeight: 700, color: M.ink, margin: "28px 0 12px" }}>
-      {children}
-    </h3>
-  );
-}
+const OVERVIEW_TABS = [
+  { id: "basic", label: "기본정보" },
+  { id: "enrollments", label: "수강정보" },
+  { id: "grades", label: "성적정보" },
+  { id: "payments", label: "결제내역" },
+  { id: "exams", label: "시험관리" },
+] as const;
+
+type OverviewTabId = (typeof OVERVIEW_TABS)[number]["id"];
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -75,6 +77,7 @@ function EmptyNote({ children }: { children: React.ReactNode }) {
 export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOverviewModalProps) {
   const [overview, setOverview] = useState<MemberOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<OverviewTabId>("basic");
   const [impersonating, setImpersonating] = useState(false);
 
   /** 이 학생의 세션 쿠키를 심고 학생 화면을 새 탭으로 엽니다 (발급신청 대행용) */
@@ -100,6 +103,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
     let alive = true;
     setOverview(null);
     setError(null);
+    setActiveTab("basic");
     getMemberOverviewAction(memberId)
       .then((result) => {
         if (!alive) return;
@@ -144,7 +148,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
       <div
         style={{
           position: "relative",
-          width: "min(1080px, 94vw)",
+          width: "min(1320px, 96vw)",
           maxHeight: "90vh",
           display: "flex",
           flexDirection: "column",
@@ -200,8 +204,36 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
           </div>
         </div>
 
-        {/* 본문 — 전 섹션을 세로로 쌓고 스크롤 */}
-        <div style={{ overflowY: "auto", padding: "4px 20px 28px" }}>
+        {/* 탭 — 상세 페이지와 같은 다섯 갈래 */}
+        <div style={{ display: "flex", gap: 4, padding: "0 20px", borderBottom: `1px solid ${M.line}`, overflowX: "auto", flexShrink: 0 }}>
+          {OVERVIEW_TABS.map((tab) => {
+            const active = tab.id === activeTab;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  padding: "12px 14px",
+                  fontSize: 13.5,
+                  fontWeight: active ? 700 : 500,
+                  color: active ? M.ink : M.body,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                  borderBottom: active ? "2px solid #3182F6" : "2px solid transparent",
+                  marginBottom: -1,
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 본문 — 선택한 탭만 보여주고 안에서 스크롤 */}
+        <div style={{ overflowY: "auto", padding: "18px 20px 28px", minHeight: 340 }}>
           {error ? (
             <div style={{ margin: "20px 0", borderRadius: 8, background: "#fdecee", color: M.danger, padding: "12px 14px", fontSize: 13 }}>
               {error}
@@ -210,9 +242,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
             <div style={{ padding: "60px 0", textAlign: "center", fontSize: 13, color: M.mute }}>
               불러오는 중…
             </div>
-          ) : (
-            <>
-              <SectionTitle>기본정보</SectionTitle>
+          ) : activeTab === "basic" ? (
               <dl style={{ margin: 0, border: `1px solid ${M.line}`, borderBottom: "none", borderRadius: 10, overflow: "hidden" }}>
                 <InfoRow label="이름" value={member.name} />
                 <InfoRow label="아이디" value={member.loginId} />
@@ -221,19 +251,16 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                 <InfoRow label="담당자" value={member.managerName ?? "—"} />
                 <InfoRow label="가입일" value={formatDate(member.joinedAt)} />
               </dl>
-
-              <SectionTitle>수강정보</SectionTitle>
+          ) : activeTab === "enrollments" ? (
               <MemberEnrollmentsPanel
                 memberId={member.id}
                 enrollments={overview.enrollments}
                 courseOptions={overview.courseOptions}
               />
-
-              <SectionTitle>성적정보</SectionTitle>
+          ) : activeTab === "grades" ? (
               <MemberGradesPanel grades={overview.grades} />
-
-              <SectionTitle>결제내역</SectionTitle>
-              {overview.payments.length === 0 ? (
+          ) : activeTab === "payments" ? (
+              overview.payments.length === 0 ? (
                 <EmptyNote>결제 내역이 없습니다.</EmptyNote>
               ) : (
                 <div style={{ overflowX: "auto" }}>
@@ -260,10 +287,9 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                     </tbody>
                   </table>
                 </div>
-              )}
-
-              <SectionTitle>시험관리</SectionTitle>
-              {overview.exams.length === 0 ? (
+              )
+          ) : (
+              overview.exams.length === 0 ? (
                 <EmptyNote>시험 응시 내역이 없습니다.</EmptyNote>
               ) : (
                 <div style={{ overflowX: "auto" }}>
@@ -298,8 +324,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                     </tbody>
                   </table>
                 </div>
-              )}
-            </>
+              )
           )}
         </div>
       </div>
