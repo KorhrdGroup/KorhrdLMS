@@ -7,6 +7,8 @@ import {
   getPayAppConfig,
 } from "@/features/payments/payapp/payapp.config";
 import { todayInKst } from "@/lib/shared/kst-date";
+import { headers } from "next/headers";
+
 import { createClient } from "@/lib/supabase/server";
 import type { Database, PaymentStatus } from "@/types/database.types";
 
@@ -30,7 +32,7 @@ export async function startCertificatePayment(
   memberId: string,
   applicationId: string,
 ): Promise<StartPaymentResult> {
-  const config = getPayAppConfig();
+  let config = getPayAppConfig();
   if (!config) {
     // 어느 값이 비었는지 알려줘야 배포 환경변수를 고칠 수 있습니다.
     const missing = [
@@ -43,6 +45,15 @@ export async function startCertificatePayment(
       success: false,
       message: `결제 설정이 등록되지 않았습니다. (누락: ${missing.join(", ")}) 무통장입금 안내를 따라주세요.`,
     };
+  }
+
+  /* 결제 후 돌아올 주소는 지금 사용자가 접속한 도메인을 따라갑니다.
+     환경변수(siteUrl)에 옛 주소(korhrd-lms.vercel.app)가 남아 있으면 결제 후
+     다른 도메인으로 떨어져 세션이 없고 부모 창 이동도 어긋납니다
+     (2026-08-19 실사고 — www.korhrd.co.kr 에서 결제했는데 vercel.app 으로 복귀). */
+  const requestOrigin = await getRequestOrigin();
+  if (requestOrigin) {
+    config = { ...config, siteUrl: requestOrigin };
   }
 
   const supabase = await createClient();
@@ -365,4 +376,17 @@ async function syncCoursePaymentRecord(
   }
 
   await supabase.from("course_payments").insert(base);
+}
+
+/** 지금 요청이 들어온 도메인(프록시 뒤에서도 안전하게). 못 읽으면 null. */
+async function getRequestOrigin(): Promise<string | null> {
+  try {
+    const headerStore = await headers();
+    const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
+    if (!host) return null;
+    const proto = headerStore.get("x-forwarded-proto") ?? "https";
+    return `${proto}://${host}`;
+  } catch {
+    return null;
+  }
 }
