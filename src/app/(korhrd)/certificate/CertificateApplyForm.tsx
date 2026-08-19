@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { submitCertificateApplicationAction } from "@/features/certificate-applications/actions/certificate-application.actions";
+import { startCertificatePaymentAction } from "@/features/payments/payapp/payapp.actions";
 import { uploadCertificatePhotoFile } from "@/features/certificate-applications/lib/certificate-photo-upload.client";
 import type { CertificateApplicationPageData } from "@/features/certificate-applications/types/certificate-application.types";
 import PostcodeButton from "@/features/korhrd/components/form/PostcodeButton";
@@ -151,6 +152,25 @@ export function CertificateApplyForm({
           return;
         }
         if (!firstApplicationId) firstApplicationId = result.applicationId;
+      }
+
+      /* 카드 결제는 완료 화면을 거치지 않고 바로 PayApp 결제창을 띄웁니다
+         (무통장입금은 기존대로 완료 화면에서 계좌 안내).
+         결제창이 차단되거나 실패해도 완료 화면에 "발급비 결제하기" 버튼이
+         있으므로 이동은 똑같이 합니다. */
+      if (paymentMethod === "card") {
+        const payment = await startCertificatePaymentAction(firstApplicationId);
+        if (payment.success) {
+          const w = 500;
+          const h = 700;
+          const left = (screen.width - w) / 2;
+          const top = (screen.height - h) / 2;
+          window.open(
+            payment.payUrl,
+            "payapp_payment",
+            `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+          );
+        }
       }
 
       // push 뒤에 refresh()를 부르면 이동이 끝나기 전에 현재 페이지를 다시 불러와
