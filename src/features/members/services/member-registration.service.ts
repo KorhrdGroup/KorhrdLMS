@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 
 import { sendAlimtalk } from "@/lib/aligo/alimtalk";
 import { hashPassword } from "@/lib/shared/password";
+import { tryRestoreLegacyRecords } from "@/features/members/services/legacy-restore.service";
 import { REFERRAL_COOKIE } from "@/lib/shared/referral-source";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
@@ -215,6 +216,9 @@ export async function createMember(
 
     throw new Error(error.message);
   }
+
+  // 옛 시스템 수강자라면 이관된 신청·수강 이력을 자동으로 붙입니다 (실패해도 가입 계속)
+  await tryRestoreLegacyRecords(data.id);
 
   // 회원가입 알림톡. 템플릿 검수 전이거나 발송에 실패해도 가입은 성공 처리합니다.
   if (insertData.phone) {

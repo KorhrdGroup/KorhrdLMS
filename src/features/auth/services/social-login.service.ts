@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+import { tryRestoreLegacyRecords } from "@/features/members/services/legacy-restore.service";
 import { REFERRAL_COOKIE } from "@/lib/shared/referral-source";
 import { STUDENT_SESSION_COOKIE } from "@/lib/student/session";
 import { createClient } from "@/lib/supabase/server";
@@ -126,6 +127,9 @@ export async function loginWithSocial(
   if (error || !created) {
     return { success: false, message: "회원 정보를 만들지 못했습니다. 잠시 후 다시 시도해주세요." };
   }
+
+  // 옛 시스템 수강자라면 이관된 신청·수강 이력을 자동으로 붙입니다 (실패해도 가입 계속)
+  await tryRestoreLegacyRecords((created as { id: string }).id);
 
   return { success: true, memberId: (created as { id: string }).id, isNew: true };
 }

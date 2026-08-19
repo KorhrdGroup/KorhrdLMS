@@ -3,6 +3,7 @@ import { CERTIFICATE_ISSUANCE_COST } from "@/features/certificate-applications/c
 import { hashPassword } from "@/lib/shared/password";
 import { todayInKst } from "@/lib/shared/kst-date";
 import { createClient } from "@/lib/supabase/server";
+import { tryRestoreLegacyRecords } from "@/features/members/services/legacy-restore.service";
 
 /**
  * 한평생 오피스(학점연계 신청) → 한직훈 자동 발급.
@@ -188,6 +189,8 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
         if (error) throw new Error(`회원 생성 실패: ${error.message}`);
         member = created;
         memberCreated = true;
+        // 옛 시스템 수강자라면 이관된 신청·수강 이력을 자동으로 붙입니다
+        await tryRestoreLegacyRecords(created.id);
       } else if (existing.name === name) {
         member = existing; // 같은 사람이 같은 생년월일 아이디로 이미 가입돼 있음
       }
