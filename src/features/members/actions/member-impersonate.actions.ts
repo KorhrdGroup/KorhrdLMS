@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 import { ADMIN_SESSION_MARKER_COOKIE } from "@/features/admin-auth/constants";
 import { setStudentSession } from "@/features/auth/services/social-login.service";
-import { createClient } from "@/lib/supabase/server";
+import { createAuthClient, createClient } from "@/lib/supabase/server";
 
 export type ImpersonateMemberResult =
   | { success: true; memberName: string }
@@ -28,15 +28,18 @@ export async function impersonateMemberAction(
     return { success: false, message: "관리자만 사용할 수 있습니다." };
   }
 
-  const supabase = await createClient();
+  /* auth.* 는 쿠키를 읽는 인증용 클라이언트로만 — 조회용 createClient() 는
+     세션 쿠키를 안 읽어 getUser() 가 항상 null 이 됩니다 */
+  const authClient = await createAuthClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await authClient.auth.getUser();
   if (!user) {
     return { success: false, message: "관리자 로그인이 만료되었습니다. 다시 로그인해주세요." };
   }
 
   // 2) 대상 회원 확인
+  const supabase = await createClient();
   const { data: member, error } = await supabase
     .from("members")
     .select("id, name, status, deleted_at")

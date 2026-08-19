@@ -149,7 +149,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
         style={{
           position: "relative",
           width: "min(1320px, 96vw)",
-          maxHeight: "90vh",
+          height: "min(900px, 92vh)",
           display: "flex",
           flexDirection: "column",
           background: "#fff",
