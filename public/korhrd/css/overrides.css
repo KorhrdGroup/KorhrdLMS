@@ -938,11 +938,12 @@ main > .container:has(~ .cart-bar) { padding-bottom: var(--s-10) }
   .course-bar .filter-toggle { padding: 11px 10px; gap: var(--s-2) }
 }
 
-@media (max-width: 560px) {
-  /* 이 폭에서만 헤더가 스크롤에 숨습니다. 숨은 동안에는 줄이 그 자리를 대신
-     차지해 화면 맨 위에 붙습니다 — 강의 상세 탭바와 같은 처리입니다. */
-  .header.is-hidden ~ #main .course-bar { top: 0 }
-}
+/* 헤더 스크롤 숨기기 — 모든 화면 폭에서 동작 (2026-08-24, 디자인 요청)
+   responsive.css 는 560px 이하에서만 숨겼는데, 데스크탑에서도 아래로 스크롤하면
+   헤더가 올라가고 위로 올리면 다시 내려옵니다. Header.tsx 의 is-hidden 판정 로직은
+   이미 폭에 관계없이 동작하므로 CSS 만 열어 줍니다. */
+.header.is-hidden { transform: translateY(-100%) }
+.header.is-hidden ~ #main .course-bar { top: 0 }
 
 /* 수강신청 목록 — 정가(취소선) 글자 키우기 (2026-08-12, 디자인 요청)
    전달본은 넓은 화면에서 12px(--fs-xs) 이라 옆의 28px '0원' 에 눌려 잘 읽히지
