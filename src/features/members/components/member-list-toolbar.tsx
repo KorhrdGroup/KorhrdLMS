@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import type { CSSProperties } from "react";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
+import { exportMembersAction } from "@/features/members/actions/member-export.actions";
 import { M } from "@/features/members/lib/member-design";
 import {
   MEMBER_SEARCH_FIELD_LABELS,
@@ -57,6 +58,34 @@ export function MemberListToolbar({
     startTransition(() => {
       router.push(`/admin/members${buildListQueryString({ page: 1, showDeleted: checked }, query)}`);
     });
+  }
+
+  const [isExporting, setIsExporting] = useState(false);
+
+  /* 현재 검색·필터 그대로 전체를 .xlsx 로 내려받습니다 (자격증신청 엑셀과 같은 방식) */
+  async function handleExcelDownload() {
+    setIsExporting(true);
+    try {
+      const result = await exportMembersAction(query);
+      if (!result.success) {
+        window.alert(result.message);
+        return;
+      }
+      const bytes = Uint8Array.from(atob(result.xlsxBase64), (c) => c.charCodeAt(0));
+      const blob = new Blob([bytes], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = result.filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Excel 다운로드에 실패했습니다.");
+    } finally {
+      setIsExporting(false);
+    }
   }
 
   return (
@@ -133,7 +162,12 @@ export function MemberListToolbar({
               variant="outline"
             />
           ) : null}
-          <ActionButton label="Excel 다운로드" disabled title="준비 중" variant="outline" />
+          <ActionButton
+            label={isExporting ? "다운로드 중…" : "Excel 다운로드"}
+            onClick={handleExcelDownload}
+            disabled={isExporting}
+            variant="outline"
+          />
           <ActionButton label="문자발송" disabled title="준비 중" variant="accent" />
         </div>
       </div>

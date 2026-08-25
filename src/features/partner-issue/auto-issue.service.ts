@@ -182,6 +182,8 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
             address: input.address?.trim() || null,
             address_detail: input.addressDetail?.trim() || null,
             join_path: "학점연계 자동발급",
+            // 회원관리 유입경로 열에 학점연계로 표시 (2026-08-20 지시)
+            referral_source: "학점연계",
             status: "active",
           })
           .select("id, login_id, name")
