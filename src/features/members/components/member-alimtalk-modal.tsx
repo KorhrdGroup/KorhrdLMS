@@ -172,9 +172,9 @@ export function MemberAlimtalkModal({ open, onOpenChange, selectedIds, source }:
 
             <div style={{ fontSize: 13, color: M.body, marginBottom: 12 }}>
               발송 대상: <b style={{ color: M.ink }}>{targetCount === null ? "계산 중…" : `${targetCount}명`}</b>
-              {source ? (
-                <span style={{ color: M.mute }}> · {source === "office" ? "학점연계(오피스)" : "일반"} 회원 기준</span>
-              ) : null}
+              <div style={{ fontSize: 12, color: M.mute, marginTop: 4 }}>
+                학점연계(오피스) 가입 회원은 항상 발송 대상에서 제외됩니다.
+              </div>
             </div>
 
             <button

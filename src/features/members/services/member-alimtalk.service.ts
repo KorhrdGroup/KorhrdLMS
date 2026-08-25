@@ -39,11 +39,14 @@ async function resolveTargets(
     if (memberIds.length === 0) return [];
     const { data, error } = await supabase
       .from("members")
-      .select("id, name, phone")
+      .select("id, name, phone, join_path")
       .in("id", memberIds.slice(0, BULK_LIMIT))
       .is("deleted_at", null);
     if (error) throw new Error(error.message);
-    return (data ?? []) as TargetMember[];
+    // 오피스(학점연계 자동발급) 가입 회원은 체크해도 보내지 않습니다 (2026-08-20 지시)
+    return ((data ?? []) as (TargetMember & { join_path: string | null })[]).filter(
+      (member) => member.join_path !== "학점연계 자동발급",
+    );
   }
 
   /* ---------- 수강률 기준 — 회원별 과정 진도 계산 ---------- */
@@ -59,14 +62,15 @@ async function resolveTargets(
     .is("member.deleted_at", null)
     .eq("member.status", "active");
 
+  /* 오피스(학점연계 자동발급) 가입 회원에게는 알림톡을 보내지 않습니다
+     (2026-08-20 지시) — 목록 필터와 무관하게 항상 제외합니다. */
   if (source === "office") {
-    enrollmentQuery = enrollmentQuery.eq("member.join_path", "학점연계 자동발급");
-  } else if (source === "general") {
-    enrollmentQuery = enrollmentQuery.or(
-      "join_path.is.null,join_path.neq.학점연계 자동발급",
-      { referencedTable: "member" },
-    );
+    return [];
   }
+  enrollmentQuery = enrollmentQuery.or(
+    "join_path.is.null,join_path.neq.학점연계 자동발급",
+    { referencedTable: "member" },
+  );
 
   const { data: enrollmentRows, error: enrollmentError } = await enrollmentQuery;
   if (enrollmentError) throw new Error(enrollmentError.message);
