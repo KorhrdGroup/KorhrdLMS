@@ -3,12 +3,15 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 
 import { updateCertificateApplicationAction } from "@/features/certificates/actions/certificate.actions";
 import { getMemberOverviewAction } from "@/features/members/actions/member-edit.actions";
 import { impersonateMemberAction } from "@/features/members/actions/member-impersonate.actions";
-import { addManualBankTransferAction } from "@/features/members/actions/member-payment.actions";
+import {
+  addManualBankTransferAction,
+  deletePaymentRecordAction,
+} from "@/features/members/actions/member-payment.actions";
 import { MemberDeletedBadge } from "@/features/members/components/member-deleted-badge";
 import { MemberEnrollmentsPanel } from "@/features/members/components/member-enrollments-panel";
 import { MemberGradesPanel } from "@/features/members/components/member-grades-panel";
@@ -176,6 +179,19 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
       await reload();
     } catch (e) {
       setNotice(e instanceof Error ? e.message : "처리에 실패했습니다.");
+    }
+  }
+
+  /** 결제 기록 삭제 — 잘못 추가한 건 정리 */
+  async function handleDeletePayment(paymentId: string, label: string) {
+    if (!window.confirm(`"${label}" 결제 기록을 삭제할까요?`)) return;
+    setNotice(null);
+    try {
+      const result = await deletePaymentRecordAction(paymentId);
+      setNotice(result.message);
+      if (result.success) await reload();
+    } catch (e) {
+      setNotice(e instanceof Error ? e.message : "삭제에 실패했습니다.");
     }
   }
 
@@ -464,6 +480,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                         <th style={{ ...th, textAlign: "right" }}>금액</th>
                         <th style={{ ...th, textAlign: "center" }}>결제방법</th>
                         <th style={{ ...th, textAlign: "center" }}>상태</th>
+                        <th style={{ ...th, textAlign: "center", width: 56 }}>삭제</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -474,6 +491,20 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                           <td style={{ ...td, textAlign: "right" }}>{payment.amount.toLocaleString("ko-KR")}원</td>
                           <td style={{ ...td, textAlign: "center" }}>{getPaymentMethodLabel(payment.paymentMethod)}</td>
                           <td style={{ ...td, textAlign: "center" }}>{COURSE_PAYMENT_STATUS_LABELS[payment.status]}</td>
+                          <td style={{ ...td, textAlign: "center" }}>
+                            <button
+                              type="button"
+                              onClick={() => handleDeletePayment(payment.id, payment.courseName)}
+                              title="이 결제 기록을 삭제합니다"
+                              style={{
+                                display: "inline-flex", padding: 6, borderRadius: 7,
+                                border: "1px solid #f4c9cd", background: "#fff",
+                                color: M.danger, cursor: "pointer",
+                              }}
+                            >
+                              <Trash2 style={{ width: 14, height: 14 }} />
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>

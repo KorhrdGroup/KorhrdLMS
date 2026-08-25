@@ -63,3 +63,31 @@ export async function addManualBankTransferAction(input: {
 
   return { success: true, message: `${course.name} — 계좌이체 ${amount.toLocaleString("ko-KR")}원을 기록했습니다.` };
 }
+
+/** 결제 기록 삭제 (soft delete) — 잘못 추가한 건을 지웁니다 */
+export async function deletePaymentRecordAction(
+  paymentId: string,
+): Promise<ManualPaymentResult> {
+  const cookieStore = await cookies();
+  if (!cookieStore.get(ADMIN_SESSION_MARKER_COOKIE)) {
+    return { success: false, message: "관리자만 사용할 수 있습니다." };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_payments")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", paymentId)
+    .is("deleted_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return { success: false, message: `삭제에 실패했습니다: ${error.message}` };
+  }
+  if (!data) {
+    return { success: false, message: "결제 기록을 찾을 수 없습니다." };
+  }
+
+  return { success: true, message: "결제 기록을 삭제했습니다." };
+}
