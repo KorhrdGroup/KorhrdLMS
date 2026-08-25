@@ -127,3 +127,30 @@ export async function applyForCourse(
 
   return { success: true, enrollmentId: data.id };
 }
+
+/**
+ * 수강신청 완료 알림톡 (UK_3816). 여러 과목을 한 번에 신청해도 한 통만 보내도록
+ * 호출부(장바구니·바로신청)가 신청 루프가 끝난 뒤 한 번 부릅니다.
+ * 발송 실패는 신청 성공에 영향을 주지 않습니다.
+ */
+export async function sendEnrollmentDoneAlimtalk(memberId: string): Promise<void> {
+  try {
+    const supabase = await createClient();
+    const { data: member } = await supabase
+      .from("members")
+      .select("name, phone")
+      .eq("id", memberId)
+      .maybeSingle();
+
+    if (!member?.phone) return;
+
+    const { sendAlimtalk } = await import("@/lib/aligo/alimtalk");
+    await sendAlimtalk({
+      receivers: member.phone,
+      template: "ENROLLMENT_DONE",
+      vars: { 고객명: member.name },
+    });
+  } catch (error) {
+    console.error("[수강신청] 알림톡 발송 실패:", error);
+  }
+}

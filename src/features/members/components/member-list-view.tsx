@@ -9,6 +9,7 @@ import { M } from "@/features/members/lib/member-design";
 import { MemberDeleteConfirmModal } from "@/features/members/components/member-delete-confirm-modal";
 import { MemberEditModal } from "@/features/members/components/member-edit-modal";
 import { MemberListTable } from "@/features/members/components/member-list-table";
+import { MemberAlimtalkModal } from "@/features/members/components/member-alimtalk-modal";
 import { MemberOverviewModal } from "@/features/members/components/member-overview-modal";
 import { MemberListToolbar } from "@/features/members/components/member-list-toolbar";
 import { buildMemberPageHref } from "@/features/members/lib/member-list-query";
@@ -34,6 +35,7 @@ export function MemberListView({ result, query }: MemberListViewProps) {
   /* 이름 클릭 팝업 — 기본·수강·성적·결제·시험을 한 장에서 스크롤로 봅니다 */
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [overviewMemberId, setOverviewMemberId] = useState<string | null>(null);
+  const [alimtalkOpen, setAlimtalkOpen] = useState(false);
 
   const deletableSelectedIds = useMemo(
     () => getDeletableMemberIds(selectedIds, result.data),
@@ -95,6 +97,42 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         </div>
       </div>
 
+      {/* 가입 출처 분리 — 오피스(학점연계 자동발급) 가입과 일반 가입을 나눠 봅니다 */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+        {[
+          { value: "" as const, label: "전체" },
+          { value: "general" as const, label: "일반 회원" },
+          { value: "office" as const, label: "학점연계(오피스)" },
+        ].map((tab) => {
+          const active = (query.source ?? "") === tab.value;
+          return (
+            <button
+              key={tab.label}
+              type="button"
+              onClick={() => {
+                const params = new URLSearchParams();
+                if (query.search) params.set("search", query.search);
+                if (query.status) params.set("status", query.status);
+                if (tab.value) params.set("source", tab.value);
+                router.push(`/admin/members${params.toString() ? `?${params}` : ""}`);
+              }}
+              style={{
+                padding: "9px 16px",
+                borderRadius: 999,
+                fontSize: 13.5,
+                fontWeight: 600,
+                cursor: "pointer",
+                border: `1px solid ${active ? "#3182F6" : M.border}`,
+                background: active ? "#EAF2FE" : "#fff",
+                color: active ? "#3182F6" : M.body,
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       <MemberListToolbar
         query={query}
         selectedCount={selectedIds.length}
@@ -102,6 +140,7 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         restorableSelectedCount={restorableSelectedIds.length}
         onDeleteClick={() => setDeleteOpen(true)}
         onRestoreClick={() => handleRestoreClick()}
+        onAlimtalkClick={() => setAlimtalkOpen(true)}
       />
 
       <MemberListTable
@@ -135,6 +174,12 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         open={overviewOpen}
         onOpenChange={setOverviewOpen}
         memberId={overviewMemberId}
+      />
+      <MemberAlimtalkModal
+        open={alimtalkOpen}
+        onOpenChange={setAlimtalkOpen}
+        selectedIds={selectedIds}
+        source={query.source ?? ""}
       />
       <MemberDeleteConfirmModal
         open={deleteOpen}
