@@ -47,13 +47,16 @@ export function MemberListView({ result, query }: MemberListViewProps) {
     [selectedIds, result.data],
   );
 
+  /* 행 클릭도 이름 클릭과 같은 전체 정보 팝업 하나만 띄웁니다 —
+     수정 모달까지 겹쳐 뜨면 헷갈립니다 (2026-08-25 요청).
+     회원 수정은 팝업의 "전체 화면으로" > 회원 수정 버튼으로 갑니다. */
   function handleMemberClick(member: MemberListRow) {
     if (member.deleted_at) {
       return;
     }
 
-    setEditMemberId(member.id);
-    setEditOpen(true);
+    setOverviewMemberId(member.id);
+    setOverviewOpen(true);
   }
 
   function handleNameClick(member: MemberListRow) {
