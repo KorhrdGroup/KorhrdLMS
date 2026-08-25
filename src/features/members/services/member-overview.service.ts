@@ -6,7 +6,11 @@ import type { CourseOption } from "@/features/members/components/member-enrollme
 import { getMemberDetail } from "@/features/members/services/member-detail.service";
 import type { MemberDetail } from "@/features/members/types/member-detail.types";
 import { createClient } from "@/lib/supabase/server";
-import type { CoursePaymentStatus, PaymentMethod } from "@/types/database.types";
+import type {
+  CoursePaymentStatus,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/types/database.types";
 
 /** 회원 팝업(전체 보기)의 결제내역 한 줄 */
 export type MemberPaymentItem = {
@@ -16,6 +20,16 @@ export type MemberPaymentItem = {
   amount: number;
   paymentMethod: PaymentMethod;
   status: CoursePaymentStatus;
+};
+
+/** 회원 팝업 결제내역 탭 — 자격증 발급신청의 결제상태 한 줄 */
+export type MemberCertPaymentItem = {
+  id: string;
+  certificateName: string;
+  amount: number;
+  paymentMethod: PaymentMethod | null;
+  paymentStatus: PaymentStatus;
+  appliedAt: string;
 };
 
 /** 회원 팝업(전체 보기)의 시험 응시 한 줄 */
@@ -34,6 +48,8 @@ export type MemberOverview = {
   enrollments: EnrollmentRecordListItem[];
   grades: GradeListItem[];
   payments: MemberPaymentItem[];
+  /** 자격증 발급신청 결제상태 — 계좌이체(무통장) 대기 건이 여기서 보입니다 */
+  certPayments: MemberCertPaymentItem[];
   exams: MemberExamItem[];
   /** 수강정보 패널의 "수강신청 대행"에 쓰는 노출 중 과정 목록 */
   courseOptions: CourseOption[];
@@ -55,7 +71,7 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
   }
 
   const supabase = await createClient();
-  const [enrollments, grades, paymentRows, examRows, courseRows] = await Promise.all([
+  const [enrollments, grades, paymentRows, certRows, examRows, courseRows] = await Promise.all([
     getEnrollmentRecordsForMember(memberId),
     getGradeRecordsForMember(memberId),
     supabase
@@ -64,6 +80,12 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
       .eq("member_id", memberId)
       .is("deleted_at", null)
       .order("payment_date", { ascending: false }),
+    supabase
+      .from("certificate_applications")
+      .select("id, certificate_name, actual_payment_amount, payment_method, payment_status, applied_at")
+      .eq("member_id", memberId)
+      .is("deleted_at", null)
+      .order("applied_at", { ascending: false }),
     supabase
       .from("exam_submissions")
       .select(
@@ -82,6 +104,7 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
   ]);
 
   if (paymentRows.error) throw new Error(paymentRows.error.message);
+  if (certRows.error) throw new Error(certRows.error.message);
   if (examRows.error) throw new Error(examRows.error.message);
 
   const payments: MemberPaymentItem[] = (
@@ -100,6 +123,24 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
     amount: row.amount,
     paymentMethod: row.payment_method,
     status: row.status,
+  }));
+
+  const certPayments: MemberCertPaymentItem[] = (
+    (certRows.data ?? []) as unknown as Array<{
+      id: string;
+      certificate_name: string;
+      actual_payment_amount: number;
+      payment_method: PaymentMethod | null;
+      payment_status: PaymentStatus;
+      applied_at: string;
+    }>
+  ).map((row) => ({
+    id: row.id,
+    certificateName: row.certificate_name,
+    amount: row.actual_payment_amount,
+    paymentMethod: row.payment_method,
+    paymentStatus: row.payment_status,
+    appliedAt: row.applied_at,
   }));
 
   const exams: MemberExamItem[] = (
@@ -132,6 +173,6 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
 
   return {
     success: true,
-    overview: { member: detail.member, enrollments, grades, payments, exams, courseOptions },
+    overview: { member: detail.member, enrollments, grades, payments, certPayments, exams, courseOptions },
   };
 }
