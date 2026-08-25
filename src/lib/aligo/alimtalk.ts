@@ -50,11 +50,21 @@ export const ALIMTALK_TEMPLATES = {
       ],
     },
   },
-  /** 수강률 0% — 미수강 독려 */
-  PROGRESS_ZERO: { tplCode: "", message: "" },
+  /** 수강신청 완료 안내 — 검수 승인 후 tplCode·원문을 채우면 발송됩니다 */
+  ENROLLMENT_DONE: { tplCode: "", message: "" },
   /** 수강률 60% 미만 — 수강 독려 */
   PROGRESS_UNDER_60: { tplCode: "", message: "" },
+  /** 수강률 60% 이상 — 시험 응시 안내 */
+  PROGRESS_OVER_60: { tplCode: "", message: "" },
 } as const;
+
+/** 어드민 테스트 발송 화면에 보여줄 한글 이름 */
+export const ALIMTALK_TEMPLATE_LABELS: Record<AlimtalkTemplateKey, string> = {
+  SIGNUP: "회원가입 완료",
+  ENROLLMENT_DONE: "수강신청 완료",
+  PROGRESS_UNDER_60: "수강률 60% 미만 독려",
+  PROGRESS_OVER_60: "수강률 60% 이상 시험 안내",
+};
 
 export type AlimtalkTemplateKey = keyof typeof ALIMTALK_TEMPLATES;
 
