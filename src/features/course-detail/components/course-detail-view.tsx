@@ -589,7 +589,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
                 (주)한평생그룹 &nbsp; 대표 : 양병웅 &nbsp; 사업자등록번호 : 227-88-03196<br />
                 주소 : 서울시 도봉구 창동 마들로13길 61 씨드큐브 905호 &nbsp; 개인정보책임자 : 양병웅<br />
                 통신판매업신고 : 제24-도봉-0983호 &nbsp; 원격평생교육시설신고 (제 원격20-6호)<br />
-                자격취득 발급계좌 : 신한은행 140-015-773620 (주)한평생그룹
+                자격취득 발급계좌 : 신한은행 140-016-284987 (주)한평생그룹
               </address>
             </div>
             <div className="footer__side">

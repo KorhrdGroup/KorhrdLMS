@@ -81,7 +81,7 @@ function messageOf(item: MyCertificateApplicationItem) {
   }
   return {
     tone: 'info',
-    text: '입금이 확인되지 않았습니다. 신한 140-015-773620 (주)한평생그룹으로 본인 명의 입금해 주세요.',
+    text: '입금이 확인되지 않았습니다. 신한 140-016-284987 (주)한평생그룹으로 본인 명의 입금해 주세요.',
   };
 }
 

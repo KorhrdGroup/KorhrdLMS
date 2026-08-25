@@ -85,7 +85,7 @@ export default async function Page({ searchParams }: PageProps) {
               <li className="next-list__pay">
                 <span>
                   <b>입금하실 금액</b> {won(receipt.payableAmount)} (본인 명의 입금)<br />
-                  신한은행 140-015-773620 (주)한평생그룹
+                  신한은행 140-016-284987 (주)한평생그룹
                 </span>
               </li>
             ) : (
@@ -113,7 +113,7 @@ export default async function Page({ searchParams }: PageProps) {
               ) : (
                 /* 예금주까지 복사하면 뱅킹앱 붙여넣기에 걸리적거려 은행+계좌번호만 복사합니다 */
                 <CopyAccountButton
-                  text="신한은행 140-015-773620"
+                  text="신한은행 140-016-284987"
                   className="btn btn--primary btn--lg"
                   label="입금계좌 복사"
                 />
