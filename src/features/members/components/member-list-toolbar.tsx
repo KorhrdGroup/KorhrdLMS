@@ -19,6 +19,8 @@ type MemberListToolbarProps = {
   restorableSelectedCount: number;
   onDeleteClick?: () => void;
   onRestoreClick?: () => void;
+  /** 알림톡 발송 모달 열기 */
+  onAlimtalkClick?: () => void;
 };
 
 const inputBox: CSSProperties = {
@@ -39,6 +41,7 @@ export function MemberListToolbar({
   restorableSelectedCount,
   onDeleteClick,
   onRestoreClick,
+  onAlimtalkClick,
 }: MemberListToolbarProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -168,7 +171,7 @@ export function MemberListToolbar({
             disabled={isExporting}
             variant="outline"
           />
-          <ActionButton label="문자발송" disabled title="준비 중" variant="accent" />
+          <ActionButton label="알림톡 발송" onClick={onAlimtalkClick} variant="accent" />
         </div>
       </div>
 

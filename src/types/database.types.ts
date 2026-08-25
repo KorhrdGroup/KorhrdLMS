@@ -1099,6 +1099,7 @@ export type Database = {
           end_date: string
           id: string
           learning_completed_at: string | null
+          over60_alimtalk_sent_at: string | null
           manager_name: string | null
           member_id: string
           memo: string | null
@@ -1118,6 +1119,7 @@ export type Database = {
           end_date: string
           id?: string
           learning_completed_at?: string | null
+          over60_alimtalk_sent_at?: string | null
           manager_name?: string | null
           member_id: string
           memo?: string | null
@@ -1137,6 +1139,7 @@ export type Database = {
           end_date?: string
           id?: string
           learning_completed_at?: string | null
+          over60_alimtalk_sent_at?: string | null
           manager_name?: string | null
           member_id?: string
           memo?: string | null

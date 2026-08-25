@@ -18,21 +18,29 @@ export function parseMemberListQuery(
     ? searchParams.status[0]
     : searchParams.status;
 
+  const rawSource = Array.isArray(searchParams.source)
+    ? searchParams.source[0]
+    : searchParams.source;
+
   return {
     ...base,
     status: isMemberStatus(rawStatus) ? rawStatus : "",
+    source: rawSource === "office" || rawSource === "general" ? rawSource : "",
   };
 }
 
 export function buildMemberPageHref(page: number, query: MemberListQuery) {
   const base = buildListQueryString({ page }, query);
+  const extras: string[] = [];
+  if (query.status) extras.push(`status=${query.status}`);
+  if (query.source) extras.push(`source=${query.source}`);
 
-  if (!query.status) {
+  if (extras.length === 0) {
     return `/admin/members${base}`;
   }
 
   const separator = base ? "&" : "?";
-  return `/admin/members${base}${separator}status=${query.status}`;
+  return `/admin/members${base}${separator}${extras.join("&")}`;
 }
 
 function isMemberStatus(value: string | undefined): value is MemberStatus {

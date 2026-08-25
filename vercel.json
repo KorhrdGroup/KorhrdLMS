@@ -1,5 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "regions": ["icn1"],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "crons": [
+    {
+      "path": "/api/cron/alimtalk-under60",
+      "schedule": "0 1 * * 1"
+    }
+  ]
 }

@@ -1,6 +1,9 @@
 "use server";
 
-import { applyForCourse } from "@/features/enrollment-catalog/services/enrollment-application.service";
+import {
+  applyForCourse,
+  sendEnrollmentDoneAlimtalk,
+} from "@/features/enrollment-catalog/services/enrollment-application.service";
 import { createClient } from "@/lib/supabase/server";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
 
@@ -58,6 +61,11 @@ export async function applyCartAction(input: { courses: string[] }): Promise<Car
     } else {
       failed.push({ name, message: result.message });
     }
+  }
+
+  // 한 과목이라도 신청됐으면 완료 알림톡 한 통 (여러 과목이어도 한 번만)
+  if (applied.length > 0) {
+    await sendEnrollmentDoneAlimtalk(member.id);
   }
 
   return { success: true, applied, duplicated, failed };

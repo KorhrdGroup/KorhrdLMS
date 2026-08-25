@@ -13,7 +13,14 @@ import type { MemberListItem, MemberStatus } from "@/types/database.types";
  * `status`는 상단 메뉴의 "휴면회원"/"탈퇴회원" 바로가기(예: `?status=dormant`)를
  * 위한 선택적 필터입니다. 지정하지 않으면 기존과 동일하게 전체 상태를 조회합니다.
  */
-export type MemberListQuery = ListQuery & { status?: MemberStatus | "" };
+export type MemberListQuery = ListQuery & {
+  status?: MemberStatus | "";
+  /** 가입 출처 분리 — office: 오피스(학점연계 자동발급) / general: 그 외 (2026-08-20) */
+  source?: "" | "office" | "general";
+};
+
+/** 오피스 자동발급 가입의 join_path 표기 — auto-issue.service 와 짝 */
+const OFFICE_JOIN_PATH = "학점연계 자동발급";
 
 export async function getMemberList(
   query: MemberListQuery,
@@ -32,6 +39,12 @@ export async function getMemberList(
 
   if (query.status) {
     builder = builder.eq("status", query.status);
+  }
+
+  if (query.source === "office") {
+    builder = builder.eq("join_path", OFFICE_JOIN_PATH);
+  } else if (query.source === "general") {
+    builder = builder.or(`join_path.is.null,join_path.neq.${OFFICE_JOIN_PATH}`);
   }
 
   if (query.search) {

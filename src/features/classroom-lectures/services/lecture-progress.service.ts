@@ -65,6 +65,8 @@ export async function completeSession(
     await markEnrollmentLearningCompleted(enrollmentId);
   }
 
+  await maybeSendOver60Alimtalk(enrollmentId, completedCount, totalPublishedSessionCount);
+
   return { status: "completed", courseCompleted };
 }
 
@@ -102,6 +104,9 @@ export async function saveVideoProgress(
       await markEnrollmentLearningCompleted(enrollmentId);
     }
 
+    // 이 차시 완료로 과정 진도율이 60% 를 넘었으면 시험 안내 알림톡 (1회)
+    await maybeSendOver60Alimtalk(enrollmentId, completedCount, totalPublishedSessionCount);
+
     return { status: "completed", progressPercent: 100, courseCompleted };
   }
 
@@ -123,4 +128,52 @@ export async function getCourseProgressRate(
 
   const completedCount = await countCompletedByEnrollment(enrollmentId);
   return Math.round((completedCount / totalPublishedSessionCount) * 100);
+}
+
+/**
+ * 수강률 60% 도달 시험 안내 알림톡 (UK_3818) — 차시가 완료돼 과정 진도율이
+ * 60% 를 넘는 순간 한 번만 보냅니다. enrollments.over60_alimtalk_sent_at 을
+ * 마커로 써 재발송을 막고, 실패해도 진도 저장에는 영향을 주지 않습니다.
+ */
+async function maybeSendOver60Alimtalk(
+  enrollmentId: string,
+  completedCount: number,
+  totalPublishedSessionCount: number,
+): Promise<void> {
+  try {
+    if (totalPublishedSessionCount <= 0) return;
+    const rate = (completedCount / totalPublishedSessionCount) * 100;
+    if (rate < 60 || rate >= 100) return; // 수료(100%)는 별도 흐름
+
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+
+    // 마커를 먼저 선점(update ... is null)해 동시 저장에도 한 번만 나갑니다
+    const { data: claimed } = await supabase
+      .from("enrollments")
+      .update({ over60_alimtalk_sent_at: new Date().toISOString() })
+      .eq("id", enrollmentId)
+      .is("over60_alimtalk_sent_at", null)
+      .select("member_id")
+      .maybeSingle();
+    if (!claimed) return; // 이미 발송됨
+
+    const { data: member } = await supabase
+      .from("members")
+      .select("name, phone, join_path")
+      .eq("id", claimed.member_id)
+      .maybeSingle();
+    if (!member?.phone) return;
+    // 오피스(학점연계 자동발급) 가입 회원에게는 알림톡을 보내지 않습니다
+    if (member.join_path === "학점연계 자동발급") return;
+
+    const { sendAlimtalk } = await import("@/lib/aligo/alimtalk");
+    await sendAlimtalk({
+      receivers: member.phone,
+      template: "PROGRESS_OVER_60",
+      vars: { 고객명: member.name },
+    });
+  } catch (error) {
+    console.error("[진도] 60% 도달 알림톡 실패:", error);
+  }
 }

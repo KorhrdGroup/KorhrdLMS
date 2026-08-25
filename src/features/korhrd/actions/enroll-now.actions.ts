@@ -1,6 +1,9 @@
 "use server";
 
-import { applyForCourse } from "@/features/enrollment-catalog/services/enrollment-application.service";
+import {
+  applyForCourse,
+  sendEnrollmentDoneAlimtalk,
+} from "@/features/enrollment-catalog/services/enrollment-application.service";
 import { createClient } from "@/lib/supabase/server";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
 
@@ -49,6 +52,7 @@ export async function enrollCourseAction(input: { code: string }): Promise<CartA
 
   const result = await applyForCourse({ memberId: member.id, courseId: course.id });
   if (result.success) {
+    await sendEnrollmentDoneAlimtalk(member.id);
     return { success: true, applied: [course.name], duplicated: [], failed: [] };
   }
   if (result.code === "duplicate") {
