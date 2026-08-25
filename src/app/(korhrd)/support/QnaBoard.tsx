@@ -145,7 +145,9 @@ export function QnaBoard({
                   <ul><li>위 양식으로 문의를 남기시면 이곳에서 답변을 확인하실 수 있습니다.</li></ul>
                 </div>
               ) : (
-                <div className="faq faq--wide">
+                /* qna-list — 자주 묻는 질문(.faq--wide 공유)과 달리 펼침 영역을
+                   흰 바탕 + 구분선으로 그립니다 (overrides.css) */
+                <div className="faq faq--wide qna-list">
                   {items.map((item) => (
                     <div className="faq__item" key={item.id}>
                       <button
