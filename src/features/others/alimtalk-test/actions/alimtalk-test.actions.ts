@@ -35,6 +35,7 @@ export async function sendAlimtalkTestAction(input: {
     receivers: receiver,
     template: input.template,
     vars: input.vars,
+    log: { trigger: "admin_test", receiverName: input.vars["고객명"] ?? null },
   });
 
   return result.success

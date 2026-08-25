@@ -151,6 +151,7 @@ export async function sendEnrollmentDoneAlimtalk(memberId: string): Promise<void
       receivers: member.phone,
       template: "ENROLLMENT_DONE",
       vars: { 고객명: member.name },
+      log: { trigger: "auto_enrollment", memberId, receiverName: member.name },
     });
   } catch (error) {
     console.error("[수강신청] 알림톡 발송 실패:", error);

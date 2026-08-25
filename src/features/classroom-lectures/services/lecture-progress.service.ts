@@ -172,6 +172,7 @@ async function maybeSendOver60Alimtalk(
       receivers: member.phone,
       template: "PROGRESS_OVER_60",
       vars: { 고객명: member.name },
+      log: { trigger: "auto_over60", memberId: claimed.member_id, receiverName: member.name },
     });
   } catch (error) {
     console.error("[진도] 60% 도달 알림톡 실패:", error);

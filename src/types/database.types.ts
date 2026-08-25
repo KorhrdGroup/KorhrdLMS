@@ -183,6 +183,50 @@ export type Database = {
         }
         Relationships: []
       }
+      alimtalk_logs: {
+        Row: {
+          created_at: string
+          fail_reason: string | null
+          id: string
+          member_id: string | null
+          receiver_name: string | null
+          receiver_phone: string
+          success: boolean
+          template_key: string
+          trigger_source: string
+        }
+        Insert: {
+          created_at?: string
+          fail_reason?: string | null
+          id?: string
+          member_id?: string | null
+          receiver_name?: string | null
+          receiver_phone: string
+          success: boolean
+          template_key: string
+          trigger_source: string
+        }
+        Update: {
+          created_at?: string
+          fail_reason?: string | null
+          id?: string
+          member_id?: string | null
+          receiver_name?: string | null
+          receiver_phone?: string
+          success?: boolean
+          template_key?: string
+          trigger_source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alimtalk_logs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assignments: {
         Row: {
           class_id: string
