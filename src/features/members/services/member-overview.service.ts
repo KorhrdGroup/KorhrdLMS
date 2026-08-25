@@ -25,6 +25,7 @@ export type MemberPaymentItem = {
 /** 회원 팝업 결제내역 탭 — 자격증 발급신청의 결제상태 한 줄 */
 export type MemberCertPaymentItem = {
   id: string;
+  courseId: string | null;
   certificateName: string;
   amount: number;
   paymentMethod: PaymentMethod | null;
@@ -94,7 +95,7 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
       .order("payment_date", { ascending: false }),
     supabase
       .from("certificate_applications")
-      .select("id, certificate_name, actual_payment_amount, payment_method, payment_status, applied_at")
+      .select("id, course_id, certificate_name, actual_payment_amount, payment_method, payment_status, applied_at")
       .eq("member_id", memberId)
       .is("deleted_at", null)
       .order("applied_at", { ascending: false }),
@@ -146,6 +147,7 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
   const certPayments: MemberCertPaymentItem[] = (
     (certRows.data ?? []) as unknown as Array<{
       id: string;
+      course_id: string | null;
       certificate_name: string;
       actual_payment_amount: number;
       payment_method: PaymentMethod | null;
@@ -154,6 +156,7 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
     }>
   ).map((row) => ({
     id: row.id,
+    courseId: row.course_id,
     certificateName: row.certificate_name,
     amount: row.actual_payment_amount,
     paymentMethod: row.payment_method,
