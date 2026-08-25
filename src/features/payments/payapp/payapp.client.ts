@@ -50,6 +50,12 @@ export async function requestPayAppPayment(
     shopname: config.shopName,
     goodname: request.goodName,
     price: String(request.price),
+    /* 민간자격증 발급비는 **면세**입니다 — 전액을 면세금액으로 보내야
+       PayApp 이 부가세를 계산하지 않고, 현금영수증도 면세(TG02)로 발행됩니다.
+       (미입력 시 과세 처리되어 매출·세무가 어긋납니다, 2026-08-20 지시) */
+    amount_taxable: "0",
+    amount_taxfree: String(request.price),
+    amount_vat: "0",
     recvphone: request.recvPhone.replace(/\D/g, ""),
     feedbackurl: getFeedbackUrl(config),
     returnurl: getReturnUrl(config, request.applicationId),
