@@ -48,11 +48,14 @@ async function resolveTargets(
 
   /* ---------- 수강률 기준 — 회원별 과정 진도 계산 ---------- */
   // 1) 확정 수강 (탈퇴·삭제 회원 제외)
+  const todayKst = new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10);
   let enrollmentQuery = supabase
     .from("enrollments")
     .select("id, member_id, course_id, member:members!inner ( id, name, phone, deleted_at, status, join_path )")
     .eq("status", "confirmed")
     .is("deleted_at", null)
+    // 수강기간이 끝난 과정은 제외 — 기간 지난 분에게 매주 독려가 가면 안 됩니다
+    .gte("end_date", todayKst)
     .is("member.deleted_at", null)
     .eq("member.status", "active");
 
