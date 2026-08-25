@@ -100,9 +100,9 @@ export function MemberListView({ result, query }: MemberListViewProps) {
       {/* 가입 출처 분리 — 오피스(학점연계 자동발급) 가입과 일반 가입을 나눠 봅니다 */}
       <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
         {[
-          { value: "" as const, label: "전체" },
           { value: "general" as const, label: "일반 회원" },
           { value: "office" as const, label: "학점연계(오피스)" },
+          { value: "" as const, label: "전체" },
         ].map((tab) => {
           const active = (query.source ?? "") === tab.value;
           return (
