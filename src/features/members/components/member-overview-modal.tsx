@@ -21,6 +21,7 @@ import type { MemberOverview } from "@/features/members/services/member-overview
 import { COURSE_PAYMENT_STATUS_LABELS } from "@/features/payments/constants";
 import { getPaymentMethodLabel } from "@/features/payments/lib/payment-method.utils";
 import { formatDate, formatDateTime } from "@/lib/shared/format-date";
+import { ALIMTALK_TEMPLATE_LABELS, type AlimtalkTemplateKey } from "@/lib/aligo/templates";
 import { todayInKst } from "@/lib/shared/kst-date";
 
 type MemberOverviewModalProps = {
@@ -32,7 +33,18 @@ type MemberOverviewModalProps = {
 const OVERVIEW_TABS = [
   { id: "info", label: "회원정보" },
   { id: "payments", label: "결제내역" },
+  { id: "alimtalk", label: "알림톡 이력" },
 ] as const;
+
+/** 발송 이력 출처 한글 라벨 (운영관리 이력 화면과 동일) */
+const TRIGGER_LABELS: Record<string, string> = {
+  auto_signup: "가입 자동",
+  auto_enrollment: "수강신청 자동",
+  auto_over60: "60% 도달 자동",
+  cron_under60: "주간 독려",
+  admin_bulk: "일괄 발송",
+  admin_test: "테스트",
+};
 
 type OverviewTabId = (typeof OVERVIEW_TABS)[number]["id"];
 
@@ -405,7 +417,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                 </div>
               )}
             </>
-          ) : (
+          ) : activeTab === "payments" ? (
             <>
               <SectionTitle>자격증 발급신청 결제상태</SectionTitle>
               {overview.certPayments.length === 0 ? (
@@ -553,6 +565,46 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
               <p style={{ fontSize: 12.5, color: M.mute, marginTop: 8 }}>
                 발급신청 없이 입금만 들어온 경우 등, 결제 기록을 직접 남길 때 씁니다 (계좌이체 · 결제완료로 기록).
               </p>
+            </>
+          ) : (
+            <>
+              <SectionTitle>알림톡 발송 이력</SectionTitle>
+              {overview.alimtalkLogs.length === 0 ? (
+                <EmptyNote>이 회원에게 발송된 알림톡이 없습니다.</EmptyNote>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+                    <thead>
+                      <tr>
+                        <th style={th}>발송일시</th>
+                        <th style={th}>템플릿</th>
+                        <th style={th}>출처</th>
+                        <th style={{ ...th, textAlign: "center" }}>결과</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {overview.alimtalkLogs.map((log) => (
+                        <tr key={log.id}>
+                          <td style={{ ...td, whiteSpace: "nowrap" }}>{formatDateTime(log.createdAt)}</td>
+                          <td style={{ ...td, color: M.ink, fontWeight: 600 }}>
+                            {ALIMTALK_TEMPLATE_LABELS[log.templateKey as AlimtalkTemplateKey] ?? log.templateKey}
+                          </td>
+                          <td style={{ ...td, color: M.mute }}>{TRIGGER_LABELS[log.triggerSource] ?? log.triggerSource}</td>
+                          <td style={{ ...td, textAlign: "center", whiteSpace: "nowrap" }}>
+                            {log.success ? (
+                              <span style={{ color: "#12b76a", fontWeight: 700 }}>성공</span>
+                            ) : (
+                              <span style={{ color: M.danger, fontWeight: 700 }} title={log.failReason ?? undefined}>
+                                실패
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </>
           )}
         </div>
