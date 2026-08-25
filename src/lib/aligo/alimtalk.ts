@@ -20,7 +20,6 @@ export const ALIMTALK_TEMPLATES = {
   /** 회원가입 완료 안내 (UK_3817, 2026-08-20 재승인본 — 옛 UG_9893 대체) */
   SIGNUP: {
     tplCode: "UK_3817",
-    emphasizeTitle: "회원가입",
     message: `안녕하세요, #{고객명} 학습자님 회원가입이 완료되어 무료수강 가능한 상태입니다.
 
 ⭐️수강안내⭐️
@@ -54,7 +53,6 @@ export const ALIMTALK_TEMPLATES = {
   /** 수강신청 완료 안내 (UK_3816) */
   ENROLLMENT_DONE: {
     tplCode: "UK_3816",
-    emphasizeTitle: "수강신청 완료",
     message: `#{고객명} 학습자님, 수강신청이 완료되었습니다. 전문가로 가는 첫걸음을 이어가시길 응원드립니다.
 
 어렵게 결심하신 교육과정, 끝까지 완주하여 뜻깊은 스펙을 완성하시길 바랍니다.^^
@@ -80,7 +78,6 @@ export const ALIMTALK_TEMPLATES = {
   /** 수강률 60% 미만 — 수강 독려 (UK_3815) */
   PROGRESS_UNDER_60: {
     tplCode: "UK_3815",
-    emphasizeTitle: "수강률 60% 미만",
     message: `#{고객명} 학습자님, 전문가로서의 기반이 만들어지고 있습니다.
 
 조금만 더 이어가시면 충분히 수료까지 도달하실 수 있는 단계입니다. 끝까지 응원하겠습니다.^^
@@ -108,7 +105,6 @@ export const ALIMTALK_TEMPLATES = {
   /** 수강률 60% 이상 — 시험 응시 안내 (UK_3818) */
   PROGRESS_OVER_60: {
     tplCode: "UK_3818",
-    emphasizeTitle: "수강률 60% 이상",
     message: `#{고객명} 학습자님, 전문가로서의 기반이 거의 다 만들어졌습니다.
 
 현재 수강률이 60% 이상이 넘어 시험 응시가 가능합니다.
@@ -209,8 +205,6 @@ export async function sendAlimtalk({
   const tpl = ALIMTALK_TEMPLATES[template];
   const { tplCode, message } = tpl;
   const button = "button" in tpl ? tpl.button : null;
-  /* 강조표기형 템플릿은 승인된 강조 제목(emtitle)까지 함께 보내야 발송됩니다 */
-  const emphasizeTitle = "emphasizeTitle" in tpl ? tpl.emphasizeTitle : null;
   if (!tplCode || !message) {
     // 카카오 검수 승인 전 상태. 호출부는 실패로 취급하지 말고 넘어가면 됩니다.
     console.warn(`[알림톡] 템플릿 ${template} 검수 대기 중(코드 미기입) — 발송 스킵`);
@@ -237,7 +231,6 @@ export async function sendAlimtalk({
     payload[`receiver_${i + 1}`] = phone;
     payload[`subject_${i + 1}`] = subject ?? "알림";
     payload[`message_${i + 1}`] = body;
-    if (emphasizeTitle) payload[`emtitle_${i + 1}`] = emphasizeTitle;
     // 템플릿에 버튼이 있으면 버튼 구성까지 승인 내용과 일치해야 발송됩니다.
     if (button) payload[`button_${i + 1}`] = JSON.stringify(button);
   });
