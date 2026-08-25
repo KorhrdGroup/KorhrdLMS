@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { sendAlimtalkTestAction } from "@/features/others/alimtalk-test/actions/alimtalk-test.actions";
 import { M } from "@/features/courses/lib/course-design";
-import type { AlimtalkTemplateKey } from "@/lib/aligo/alimtalk";
+import type { AlimtalkTemplateKey } from "@/lib/aligo/templates";
 
 type TemplateOption = {
   key: AlimtalkTemplateKey;

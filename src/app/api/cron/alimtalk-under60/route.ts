@@ -25,6 +25,7 @@ export async function GET(request: Request) {
     mode: "progress_under",
     memberIds: [],
     source: "",
+    triggerSource: "cron_under60",
   });
 
   console.log(`[크론] 60% 미만 독려 알림톡: ${result.message}`);

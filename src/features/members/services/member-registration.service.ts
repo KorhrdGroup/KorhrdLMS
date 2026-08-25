@@ -226,6 +226,7 @@ export async function createMember(
       receivers: insertData.phone,
       template: "SIGNUP",
       vars: { 고객명: insertData.name },
+      log: { trigger: "auto_signup", memberId: data.id, receiverName: insertData.name },
     }).catch((e) => console.error("[회원가입] 알림톡 발송 오류", e));
   }
 

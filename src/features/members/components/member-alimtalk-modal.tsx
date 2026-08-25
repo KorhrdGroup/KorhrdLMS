@@ -14,7 +14,7 @@ import {
   ALIMTALK_TEMPLATE_LABELS,
   ALIMTALK_TEMPLATES,
   type AlimtalkTemplateKey,
-} from "@/lib/aligo/alimtalk";
+} from "@/lib/aligo/templates";
 
 type MemberAlimtalkModalProps = {
   open: boolean;

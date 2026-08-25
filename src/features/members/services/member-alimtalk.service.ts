@@ -151,6 +151,8 @@ export async function bulkSendMemberAlimtalk(input: {
   mode: AlimtalkTargetMode;
   memberIds: string[];
   source: "" | "office" | "general";
+  /** 발송 이력에 남길 출처 (기본 admin_bulk, 크론은 cron_under60) */
+  triggerSource?: string;
 }): Promise<BulkAlimtalkResult> {
   const targets = await resolveTargets(input.mode, input.memberIds, input.source);
 
@@ -172,6 +174,11 @@ export async function bulkSendMemberAlimtalk(input: {
       receivers: target.phone,
       template: input.template,
       vars: { 고객명: target.name },
+      log: {
+        trigger: input.triggerSource ?? "admin_bulk",
+        memberId: target.id,
+        receiverName: target.name,
+      },
     });
     if (result.success) sent += 1;
     else failed += 1;
