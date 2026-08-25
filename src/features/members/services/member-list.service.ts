@@ -17,7 +17,14 @@ export type MemberListQuery = ListQuery & {
   status?: MemberStatus | "";
   /** 가입 출처 분리 — office: 오피스(학점연계 자동발급) / general: 그 외 (2026-08-20) */
   source?: "" | "office" | "general";
+  /**
+   * 학습 상태 필터 (2026-08-25) — members_with_learning_status 뷰의 계산 컬럼.
+   * joined: 가입만 / learning: 수강중 / completed: 과정수료(발급 전) / issued: 자격증발급
+   */
+  learningStatus?: "" | MemberLearningStatus;
 };
+
+export type MemberLearningStatus = "joined" | "learning" | "completed" | "issued";
 
 /** 오피스 자동발급 가입의 join_path 표기 — auto-issue.service 와 짝 */
 const OFFICE_JOIN_PATH = "학점연계 자동발급";
@@ -28,10 +35,23 @@ export async function getMemberList(
   const supabase = await createClient();
   const { from, to } = getPaginationRange(query.page, query.pageSize);
 
+  // 학습 상태 필터가 있으면 계산 컬럼(learning_status)이 붙은 뷰에서 조회합니다.
+  // 뷰는 members의 모든 컬럼을 그대로 노출하므로 나머지 조건은 동일하게 동작합니다.
+  const table = query.learningStatus
+    ? ("members_with_learning_status" as "members")
+    : "members";
+
   let builder = supabase
-    .from("members")
+    .from(table)
     .select(MEMBER_LIST_SELECT, { count: "exact" })
     .order("joined_at", { ascending: false });
+
+  if (query.learningStatus) {
+    builder = builder.eq(
+      "learning_status" as never,
+      query.learningStatus as never,
+    );
+  }
 
   if (!query.showDeleted) {
     builder = builder.is("deleted_at", null);

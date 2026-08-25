@@ -116,6 +116,7 @@ export function MemberListView({ result, query }: MemberListViewProps) {
                 const params = new URLSearchParams();
                 if (query.search) params.set("search", query.search);
                 if (query.status) params.set("status", query.status);
+                if (query.learningStatus) params.set("learning", query.learningStatus);
                 if (tab.value) params.set("source", tab.value);
                 router.push(`/admin/members${params.toString() ? `?${params}` : ""}`);
               }}
@@ -123,6 +124,46 @@ export function MemberListView({ result, query }: MemberListViewProps) {
                 padding: "9px 16px",
                 borderRadius: 999,
                 fontSize: 13.5,
+                fontWeight: 600,
+                cursor: "pointer",
+                border: `1px solid ${active ? "#3182F6" : M.border}`,
+                background: active ? "#EAF2FE" : "#fff",
+                color: active ? "#3182F6" : M.body,
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 학습 상태 필터 — 가입만 한 학생부터 자격증 발급까지 단계별로 봅니다 (2026-08-25) */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 14, alignItems: "center", flexWrap: "wrap" }}>
+        <span style={{ fontSize: 12.5, color: M.mute, fontWeight: 600 }}>학습 상태</span>
+        {[
+          { value: "" as const, label: "전체" },
+          { value: "joined" as const, label: "가입학생" },
+          { value: "learning" as const, label: "수강중" },
+          { value: "completed" as const, label: "과정수료" },
+          { value: "issued" as const, label: "자격증발급" },
+        ].map((tab) => {
+          const active = (query.learningStatus ?? "") === tab.value;
+          return (
+            <button
+              key={tab.label}
+              type="button"
+              onClick={() => {
+                const params = new URLSearchParams();
+                if (query.search) params.set("search", query.search);
+                if (query.status) params.set("status", query.status);
+                if (query.source) params.set("source", query.source);
+                if (tab.value) params.set("learning", tab.value);
+                router.push(`/admin/members${params.toString() ? `?${params}` : ""}`);
+              }}
+              style={{
+                padding: "7px 14px",
+                borderRadius: 999,
+                fontSize: 13,
                 fontWeight: 600,
                 cursor: "pointer",
                 border: `1px solid ${active ? "#3182F6" : M.border}`,

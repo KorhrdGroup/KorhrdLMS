@@ -1,4 +1,7 @@
-import type { MemberListQuery } from "@/features/members/services/member-list.service";
+import type {
+  MemberLearningStatus,
+  MemberListQuery,
+} from "@/features/members/services/member-list.service";
 import { buildListQueryString, parseListQuery } from "@/lib/shared/list-query";
 import type { MemberStatus } from "@/types/database.types";
 
@@ -22,10 +25,15 @@ export function parseMemberListQuery(
     ? searchParams.source[0]
     : searchParams.source;
 
+  const rawLearning = Array.isArray(searchParams.learning)
+    ? searchParams.learning[0]
+    : searchParams.learning;
+
   return {
     ...base,
     status: isMemberStatus(rawStatus) ? rawStatus : "",
     source: rawSource === "office" || rawSource === "general" ? rawSource : "",
+    learningStatus: isLearningStatus(rawLearning) ? rawLearning : "",
   };
 }
 
@@ -34,6 +42,7 @@ export function buildMemberPageHref(page: number, query: MemberListQuery) {
   const extras: string[] = [];
   if (query.status) extras.push(`status=${query.status}`);
   if (query.source) extras.push(`source=${query.source}`);
+  if (query.learningStatus) extras.push(`learning=${query.learningStatus}`);
 
   if (extras.length === 0) {
     return `/admin/members${base}`;
@@ -45,4 +54,17 @@ export function buildMemberPageHref(page: number, query: MemberListQuery) {
 
 function isMemberStatus(value: string | undefined): value is MemberStatus {
   return !!value && (MEMBER_STATUS_VALUES as string[]).includes(value);
+}
+
+const LEARNING_STATUS_VALUES: MemberLearningStatus[] = [
+  "joined",
+  "learning",
+  "completed",
+  "issued",
+];
+
+function isLearningStatus(
+  value: string | undefined,
+): value is MemberLearningStatus {
+  return !!value && (LEARNING_STATUS_VALUES as string[]).includes(value);
 }
