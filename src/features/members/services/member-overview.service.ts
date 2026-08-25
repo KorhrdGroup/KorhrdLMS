@@ -32,6 +32,16 @@ export type MemberCertPaymentItem = {
   appliedAt: string;
 };
 
+/** 회원 팝업 알림톡 이력 한 줄 */
+export type MemberAlimtalkLogItem = {
+  id: string;
+  templateKey: string;
+  triggerSource: string;
+  success: boolean;
+  failReason: string | null;
+  createdAt: string;
+};
+
 /** 회원 팝업(전체 보기)의 시험 응시 한 줄 */
 export type MemberExamItem = {
   id: string;
@@ -51,6 +61,8 @@ export type MemberOverview = {
   /** 자격증 발급신청 결제상태 — 계좌이체(무통장) 대기 건이 여기서 보입니다 */
   certPayments: MemberCertPaymentItem[];
   exams: MemberExamItem[];
+  /** 이 회원에게 나간 알림톡 발송 이력 (최근 100건) */
+  alimtalkLogs: MemberAlimtalkLogItem[];
   /** 수강정보 패널의 "수강신청 대행"에 쓰는 노출 중 과정 목록 */
   courseOptions: CourseOption[];
 };
@@ -71,7 +83,7 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
   }
 
   const supabase = await createClient();
-  const [enrollments, grades, paymentRows, certRows, examRows, courseRows] = await Promise.all([
+  const [enrollments, grades, paymentRows, certRows, examRows, courseRows, alimtalkRows] = await Promise.all([
     getEnrollmentRecordsForMember(memberId),
     getGradeRecordsForMember(memberId),
     supabase
@@ -101,6 +113,12 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
       .eq("status", "active")
       .is("deleted_at", null)
       .order("name"),
+    supabase
+      .from("alimtalk_logs")
+      .select("id, template_key, trigger_source, success, fail_reason, created_at")
+      .eq("member_id", memberId)
+      .order("created_at", { ascending: false })
+      .limit(100),
   ]);
 
   if (paymentRows.error) throw new Error(paymentRows.error.message);
@@ -163,6 +181,24 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
     submittedAt: row.submitted_at,
   }));
 
+  const alimtalkLogs: MemberAlimtalkLogItem[] = (
+    (alimtalkRows.data ?? []) as unknown as Array<{
+      id: string;
+      template_key: string;
+      trigger_source: string;
+      success: boolean;
+      fail_reason: string | null;
+      created_at: string;
+    }>
+  ).map((row) => ({
+    id: row.id,
+    templateKey: row.template_key,
+    triggerSource: row.trigger_source,
+    success: row.success,
+    failReason: row.fail_reason,
+    createdAt: row.created_at,
+  }));
+
   const courseOptions: CourseOption[] = (
     (courseRows.data ?? []) as unknown as Array<{
       id: string;
@@ -173,6 +209,15 @@ export async function getMemberOverview(memberId: string): Promise<GetMemberOver
 
   return {
     success: true,
-    overview: { member: detail.member, enrollments, grades, payments, certPayments, exams, courseOptions },
+    overview: {
+      member: detail.member,
+      enrollments,
+      grades,
+      payments,
+      certPayments,
+      exams,
+      alimtalkLogs,
+      courseOptions,
+    },
   };
 }
