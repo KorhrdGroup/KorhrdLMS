@@ -219,7 +219,7 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   const query = supabase
     .from("certificate_applications")
     .select(
-      "id, actual_payment_amount, payment_status, member_login_id, member_id, course_id, certificate_name",
+      "id, actual_payment_amount, payment_status, member_login_id, member_id, course_id, certificate_name, applicant_name, phone",
     )
     .is("deleted_at", null);
 
@@ -240,6 +240,8 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
     member_id: string;
     course_id: string | null;
     certificate_name: string;
+    applicant_name: string;
+    phone: string | null;
   };
   const applications = (data ?? []) as ApplicationRow[];
   const application = applications[0];
@@ -318,7 +320,68 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
     console.error("[payapp] 결제관리 기록 실패:", error);
   }
 
+  /* 오피스 매출파일 자동 등록 — 카드로 결제 "완료"된 건만 보냅니다.
+     무통장·계좌이체는 입금 안 하는 경우가 많아 매출파일에 올리지 않습니다
+     (LMS 에만 남음). 실패해도 결제 처리에는 영향을 주지 않습니다. */
+  if (update.payment_status === "paid" && (update.payment_method ?? "card") === "card") {
+    try {
+      await notifyOfficeCertSale({
+        studentName: application.applicant_name,
+        phone: application.phone,
+        amount: Number.isFinite(paidAmount) ? paidAmount : expectedAmount,
+        certificateNames: applications.map((row) => row.certificate_name),
+        ref: mulNo ? `payapp:${mulNo}` : `certapp:${application.id}`,
+      });
+    } catch (error) {
+      console.error("[payapp] 오피스 매출파일 등록 실패:", error);
+    }
+  }
+
   return { ok: true };
+}
+
+/**
+ * 오피스(korhrd-group-db) 매출파일에 카드결제 건을 등록합니다.
+ * 분류 "후납" · 결제수단 "카드결제" 로 들어가고, 민간자격증 발급비라
+ * 오피스 쪽에서 비고에 면세(TG02)를 함께 남깁니다.
+ * OFFICE_API_URL / CERT_SALES_WEBHOOK_SECRET 이 없으면 조용히 건너뜁니다.
+ */
+async function notifyOfficeCertSale(input: {
+  studentName: string;
+  phone: string | null;
+  amount: number;
+  certificateNames: string[];
+  ref: string;
+}): Promise<void> {
+  const baseUrl = process.env.OFFICE_API_URL?.trim().replace(/\/+$/, "");
+  const secret = process.env.CERT_SALES_WEBHOOK_SECRET?.trim();
+  if (!baseUrl || !secret) return;
+
+  const paidDate = new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10); // KST
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch(`${baseUrl}/api/cert-sales/webhook`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-webhook-secret": secret },
+      body: JSON.stringify({
+        studentName: input.studentName,
+        phone: input.phone,
+        amount: input.amount,
+        paidDate,
+        certificateNames: input.certificateNames,
+        count: input.certificateNames.length,
+        ref: input.ref,
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      throw new Error(`오피스 응답 ${response.status}: ${await response.text()}`);
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 /**
