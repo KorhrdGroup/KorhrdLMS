@@ -26,4 +26,6 @@ export type MyActiveEnrollment = {
   learningStatus: ClassroomLearningStatus;
   /** lecture_progress 기준 실제 진도율(%) = 완료 차시 수 ÷ 전체 게시 차시 수 × 100. */
   progressRate: number;
+  /** 수강기간 연장 횟수 (1회당 30일, 최대 5회) */
+  extendCount: number;
 };

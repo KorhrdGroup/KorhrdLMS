@@ -14,12 +14,24 @@ import type { MemberListItem } from "@/types/database.types";
 export async function buildMemberExportXlsx(query: MemberListQuery): Promise<string> {
   const supabase = await createClient();
 
+  // 학습 상태 필터가 걸려 있으면 목록과 같은 뷰에서 조회합니다
+  const table = query.learningStatus
+    ? ("members_with_learning_status" as "members")
+    : "members";
+
   let builder = supabase
-    .from("members")
+    .from(table)
     .select(
       "id, login_id, name, email, phone, status, manager_name, joined_at, last_login_at, deleted_at, referral_source",
     )
     .order("joined_at", { ascending: false });
+
+  if (query.learningStatus) {
+    builder = builder.eq(
+      "learning_status" as never,
+      query.learningStatus as never,
+    );
+  }
 
   if (!query.showDeleted) {
     builder = builder.is("deleted_at", null);

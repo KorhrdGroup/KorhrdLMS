@@ -528,13 +528,34 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                 <select
                   value={manualCourseId}
-                  onChange={(e) => setManualCourseId(e.target.value)}
+                  onChange={(e) => {
+                    const cid = e.target.value;
+                    setManualCourseId(cid);
+                    if (cid) {
+                      const cert = overview.certPayments.find((cp) => cp.courseId === cid);
+                      if (cert && cert.amount > 0) setManualAmount(String(cert.amount));
+                    }
+                  }}
                   style={{ ...inputStyle, minWidth: 240, cursor: "pointer" }}
                 >
                   <option value="">과정 선택</option>
-                  {overview.courseOptions.map((course) => (
-                    <option key={course.id} value={course.id}>{course.name}</option>
-                  ))}
+                  {(() => {
+                    const appliedIds = new Set(overview.certPayments.map((cp) => cp.courseId).filter(Boolean));
+                    const applied = overview.courseOptions.filter((c) => appliedIds.has(c.id));
+                    const rest = overview.courseOptions.filter((c) => !appliedIds.has(c.id));
+                    return (
+                      <>
+                        {applied.length > 0 && (
+                          <optgroup label="이 회원의 신청 과정">
+                            {applied.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                          </optgroup>
+                        )}
+                        <optgroup label="전체 과정">
+                          {rest.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        </optgroup>
+                      </>
+                    );
+                  })()}
                 </select>
                 <input
                   value={manualAmount}

@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { withdrawMyAccountAction } from '@/features/members/actions/member-profile.actions';
-import { EXTEND_COUNT } from '@/features/korhrd/data/enrollments';
+import { extendMyEnrollmentAction } from '@/features/korhrd/actions/extend-enrollment.actions';
 import type { CourseReviewItem, ReviewableCourse } from '@/features/korhrd/services/course-review.service';
 import MyCard from '@/features/korhrd/components/mylecture/MyCard';
 import type { Enrollment } from '@/features/korhrd/lib/types';
@@ -50,9 +51,26 @@ export default function MyLectureClient({
   /** 내가 쓴 후기 */
   myReviews: CourseReviewItem[];
 }) {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>((initialTab as Tab) || 'active');
-  const [extend, setExtend] = useState<Record<string, number>>(EXTEND_COUNT);
   const [isWithdrawing, startWithdraw] = useTransition();
+  const [isExtending, startExtend] = useTransition();
+
+  /* 기간 연장 — 서버에서 end_date를 30일 미루고, 성공하면 화면 데이터를 새로 읽습니다 */
+  const handleExtend = (course: string) => {
+    const courseCode = courseCodeByName[course];
+    if (!courseCode || isExtending) return;
+    if (!window.confirm(`${course} 과정의 수강 기간을 30일 연장할까요?`)) return;
+    startExtend(async () => {
+      const result = await extendMyEnrollmentAction({ courseCode });
+      if (result.success) {
+        window.alert(`수강 기간이 ${result.endDate}까지로 연장되었습니다.`);
+        router.refresh();
+      } else {
+        window.alert(result.message);
+      }
+    });
+  };
 
   const handleWithdraw = () => {
     if (!window.confirm('정말 탈퇴하시겠어요?\n탈퇴하면 다시 로그인할 수 없습니다.')) return;
@@ -144,17 +162,16 @@ export default function MyLectureClient({
             {ENDED.map((e) => (
               <MyCard
                 key={e.course} enrollment={e} courseCode={courseCodeByName[e.course]}
-                extendCount={extend[e.course] ?? 0}
-                onExtend={(course) => setExtend((prev) => ({ ...prev, [course]: (prev[course] ?? 0) + 1 }))}
+                onExtend={handleExtend}
               />
             ))}
 
             <div className="guide-box">
               <strong>수강종료 안내</strong>
               <ul>
-                <li>수강 기간은 과정당 <b>최대 5회</b>까지 연장하실 수 있습니다</li>
+                <li>수강 기간은 횟수 제한 없이 연장하실 수 있습니다</li>
                 <li>1회 연장 시 수강 기간이 <b>30일</b> 연장됩니다</li>
-                <li>자격증을 수령 완료한 과정은 연장 대상에서 제외됩니다</li>
+                <li>자격증 발급이 완료된 과정도 기간을 연장해 복습하실 수 있습니다</li>
                 <li>기간을 연장하면 미수료·불합격 과정도 이어서 학습하거나 재응시할 수 있습니다</li>
               </ul>
             </div>

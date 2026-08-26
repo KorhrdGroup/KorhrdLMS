@@ -41,7 +41,9 @@ async function resolveTargets(
       .from("members")
       .select("id, name, phone, join_path")
       .in("id", memberIds.slice(0, BULK_LIMIT))
-      .is("deleted_at", null);
+      .is("deleted_at", null)
+      // 탈퇴회원은 체크되어 있어도 보내지 않습니다 (deleted_at 없이 status만 withdrawn인 회원 존재)
+      .eq("status", "active");
     if (error) throw new Error(error.message);
     // 오피스(학점연계 자동발급) 가입 회원은 체크해도 보내지 않습니다 (2026-08-20 지시)
     return ((data ?? []) as (TargetMember & { join_path: string | null })[]).filter(

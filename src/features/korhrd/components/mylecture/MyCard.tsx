@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Enrollment } from '@/features/korhrd/lib/types';
-import { cardStatus, MAX_EXTEND } from '@/features/korhrd/lib/myStatus';
+import { cardStatus } from '@/features/korhrd/lib/myStatus';
 
 /** 강의실 입장 버튼의 재생 아이콘 */
 const PlayIcon = () => (
@@ -20,22 +20,21 @@ const PlayIcon = () => (
  * 비활성 버튼은 <button disabled> 가 아니라 <span aria-disabled> 입니다.
  * 원래 자리에 링크가 오는 칸이라 크기를 맞추려고 그렇게 두었습니다.
  */
-export default function MyCard({ enrollment, courseCode, extendCount = 0, onExtend }: {
+export default function MyCard({ enrollment, courseCode, onExtend }: {
   enrollment: Enrollment;
   /** 강의실 입장 링크에 쓰는 과정코드(CRS-KH-xxxx). 없으면 버튼을 비활성으로 둡니다 */
   courseCode?: string;
-  extendCount?: number;
   onExtend?: (course: string) => void;
 }) {
   const router = useRouter();
-  const s = cardStatus(enrollment, extendCount);
+  const s = cardStatus(enrollment);
   const ended = enrollment.status === 'expired' || enrollment.status === 'issued';
 
   /* 카드 아무 곳이나 눌러도 강의실로 들어갑니다 — 안의 버튼·링크를 눌렀을 때는
      그 동작(시험 응시 등)이 우선이므로 카드 이동은 건너뜁니다.
      비활성 버튼은 pointer-events:none 이라 클릭이 카드까지 내려옵니다. 버튼 칸
      전체를 제외해야 '누를 수 없는 버튼'을 눌렀는데 강의실로 가는 일이 없습니다. */
-  const canEnter = Boolean(courseCode) && enrollment.status !== 'issued';
+  const canEnter = Boolean(courseCode);
   const handleCardClick = (event: React.MouseEvent<HTMLElement>) => {
     if (!canEnter) return;
     if ((event.target as HTMLElement).closest('a, button, .my-card__actions')) return;
@@ -66,15 +65,22 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
       </div>
 
       <div className="my-card__actions">
-        {/* 발급 완료 과정은 강의실에 들어갈 일이 없습니다 */}
-        {enrollment.status !== 'issued' && (
-          courseCode ? (
-            <Link className="btn btn--ghost btn--block" href={`/lecture/${courseCode}`}>
-              강의실 입장 <PlayIcon />
-            </Link>
-          ) : (
-            <span className="btn btn--block" aria-disabled="true">강의실 입장</span>
-          )
+        {/* 발급 완료 과정도 강의실에 다시 들어가 복습할 수 있습니다 */}
+        {courseCode ? (
+          <Link className="btn btn--ghost btn--block" href={`/lecture/${courseCode}`}>
+            {enrollment.status === 'issued' ? '복습하기' : '강의실 입장'} <PlayIcon />
+          </Link>
+        ) : (
+          <span className="btn btn--block" aria-disabled="true">
+            {enrollment.status === 'issued' ? '복습하기' : '강의실 입장'}
+          </span>
+        )}
+
+        {/* 발급 완료 과정도 기간 연장 대상입니다 (횟수 제한 없음) */}
+        {enrollment.status === 'issued' && (
+          <button className="btn btn--ghost btn--block" type="button" onClick={() => onExtend?.(enrollment.course)}>
+            연장하기
+          </button>
         )}
 
         {/* 합격 등 응시 이력이 있으면 성적 확인 화면으로 보냅니다.
@@ -106,10 +112,6 @@ export default function MyCard({ enrollment, courseCode, extendCount = 0, onExte
           <button className="btn btn--primary btn--block" type="button" onClick={() => onExtend?.(enrollment.course)}>
             기간 연장
           </button>
-        ) : ended ? (
-          <span className="btn btn--block" aria-disabled="true">
-            기간 연장 ({extendCount}/{MAX_EXTEND})
-          </span>
         ) : (
           <span className="btn btn--block" aria-disabled="true">자격증 발급 신청</span>
         )}

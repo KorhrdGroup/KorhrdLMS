@@ -45,6 +45,35 @@ export async function addManualBankTransferAction(input: {
     return { success: false, message: "과정을 찾을 수 없습니다." };
   }
 
+  const { data: existing } = await supabase
+    .from("course_payments")
+    .select("id")
+    .eq("member_id", input.memberId)
+    .eq("course_id", course.id)
+    .in("status", ["ready", "pending", "paid"])
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (existing) {
+    const { error } = await supabase
+      .from("course_payments")
+      .update({
+        amount,
+        payment_method: "bank_transfer",
+        status: "paid",
+        payment_date: paymentDate,
+        approved_at: new Date().toISOString(),
+        memo: "회원관리 팝업에서 수기 추가 (계좌이체)",
+      })
+      .eq("id", existing.id);
+
+    if (error) {
+      return { success: false, message: `수정에 실패했습니다: ${error.message}` };
+    }
+
+    return { success: true, message: `${course.name} — 기존 결제를 계좌이체 ${amount.toLocaleString("ko-KR")}원으로 갱신했습니다.` };
+  }
+
   const { error } = await supabase.from("course_payments").insert({
     member_id: input.memberId,
     course_id: course.id,

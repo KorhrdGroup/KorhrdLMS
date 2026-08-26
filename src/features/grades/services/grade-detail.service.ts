@@ -246,5 +246,13 @@ export async function updateGradeExam(
     }
   }
 
+  if (isPassed) {
+    // 어드민이 점수를 넣어 합격시킨 경우에도 합격 축하 알림톡을 보냅니다 (수강당 1회)
+    const { maybeSendExamPassAlimtalk } = await import(
+      "@/features/classroom-exams/services/classroom-exam.service"
+    );
+    await maybeSendExamPassAlimtalk(enrollmentId, "auto_exam_pass_admin");
+  }
+
   return { success: true, detail: await buildDetail(row) };
 }

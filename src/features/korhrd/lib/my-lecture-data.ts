@@ -119,6 +119,7 @@ export async function getMyLectureData(memberId: string): Promise<MyLectureData>
       progress: Math.round(row.progressRate),
       startDate,
       endDate,
+      extendCount: row.extendCount,
       // 카드 배지에 쓰는 점수는 시험 백분율이 아니라 **총점**입니다.
       // 시험 성적 확인 화면(/exam/[course]/result)이 보여주는 값과 같아야
       // 두 화면이 서로 다른 점수를 말하지 않습니다.
