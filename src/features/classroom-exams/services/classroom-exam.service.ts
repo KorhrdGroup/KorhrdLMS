@@ -284,6 +284,52 @@ function gradeQuestion(question: ExamQuestionRow, submittedAnswer: string | unde
 }
 
 /**
+ * 시험 합격 축하 알림톡 (UK_3820) — 합격 판정이 난 순간 수강당 한 번만 보냅니다.
+ * enrollments.pass_alimtalk_sent_at 을 마커로 써 재응시 재합격에도 재발송을 막고,
+ * 실패해도 시험 제출에는 영향을 주지 않습니다 (60% 도달 발송과 같은 패턴).
+ * 학생 제출(submitClassroomExam)과 어드민 점수 수정(updateGradeExam)이 함께 씁니다.
+ */
+export async function maybeSendExamPassAlimtalk(
+  enrollmentId: string,
+  trigger: string = "auto_exam_pass",
+): Promise<void> {
+  try {
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+
+    // 마커를 먼저 선점(update ... is null)해 동시 제출에도 한 번만 나갑니다
+    const { data: claimed } = await supabase
+      .from("enrollments")
+      .update({ pass_alimtalk_sent_at: new Date().toISOString() })
+      .eq("id", enrollmentId)
+      .is("pass_alimtalk_sent_at", null)
+      .select("member_id")
+      .maybeSingle();
+    if (!claimed) return; // 이미 발송됨
+
+    const { data: member } = await supabase
+      .from("members")
+      .select("name, phone, join_path, status, deleted_at")
+      .eq("id", claimed.member_id)
+      .maybeSingle();
+    if (!member?.phone) return;
+    // 탈퇴·삭제 회원에게는 보내지 않습니다
+    if (member.status !== "active" || member.deleted_at) return;
+    // 오피스(학점연계 자동발급) 가입 회원에게는 알림톡을 보내지 않습니다
+    if (member.join_path === "학점연계 자동발급") return;
+
+    const { sendAlimtalk } = await import("@/lib/aligo/alimtalk");
+    await sendAlimtalk({
+      receivers: member.phone,
+      template: "EXAM_PASS",
+      log: { trigger, memberId: claimed.member_id, receiverName: member.name },
+    });
+  } catch (error) {
+    console.error("[시험] 합격 알림톡 실패:", error);
+  }
+}
+
+/**
  * 시험 제출 처리입니다. 서버에서 다시 접근 권한/응시 자격/응시 기간을 검증한 뒤
  * 정답을 조회해 자동 채점하고, 결과를 `exam_submissions`에 upsert합니다.
  * 이미 제출한 시험을 다시 제출하면 최신 결과로 덮어씁니다(재응시 이력은 남기지 않음).
@@ -350,6 +396,10 @@ export async function submitClassroomExam(
     isPassed,
     answers,
   });
+
+  if (isPassed === true) {
+    await maybeSendExamPassAlimtalk(access.enrollmentId);
+  }
 
   return {
     success: true,

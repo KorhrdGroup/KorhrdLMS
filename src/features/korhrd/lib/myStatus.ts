@@ -7,10 +7,9 @@ import type { Enrollment } from './types';
  * 문구를 바꿔야 하면 데이터가 아니라 이 파일만 고치세요.
  *
  * 톤   ready 파랑 · pass 초록 · fail 빨강 · done 남색 · info 검정
- * 규칙 출석 60% 이상이면 시험 응시 가능 / 합격 후 7일 이내 발급 신청 / 연장 최대 5회
+ * 규칙 출석 60% 이상이면 시험 응시 가능 / 합격 후 7일 이내 발급 신청 / 연장 횟수 무제한
  */
 export const PASS_LINE = 60; // 출석·점수 합격선(%)
-export const MAX_EXTEND = 5;
 
 export type StatusTone = 'ready' | 'pass' | 'fail' | 'done' | 'info';
 export type BadgeTone = 'pass' | 'fail' | 'learning' | 'expired' | 'done';
@@ -30,28 +29,19 @@ const md = (iso: string) => {
   return `${Number(m)}월 ${Number(d)}일`;
 };
 
-export function cardStatus(e: Enrollment, extendCount = 0): CardStatus {
-  const extendable = extendCount < MAX_EXTEND;
-
+export function cardStatus(e: Enrollment): CardStatus {
   /* ---------- 수강종료 ---------- */
   if (e.status === 'issued') {
     return {
       badge: { tone: 'done', label: '자격증 발급 완료' },
       tone: 'done',
       message: '자격증 배송이 완료되었습니다.',
-      canExam: false, canIssue: false, canExtend: false, // 수령 완료 과정은 연장 대상이 아닙니다
+      canExam: false, canIssue: false, canExtend: true, // 발급 완료 과정도 연장해 복습할 수 있습니다
     };
   }
 
   if (e.status === 'expired') {
     const badge = { tone: 'expired' as const, label: '기간 만료' };
-    if (!extendable) {
-      return {
-        badge, tone: 'info',
-        message: `연장 가능한 횟수(${MAX_EXTEND}회)를 모두 사용하셨습니다. 추가 연장이 필요하면 고객센터로 연락해주세요.`,
-        canExam: false, canIssue: false, canExtend: false,
-      };
-    }
     /* 만료 시점의 상태에 따라 연장 후 무엇이 가능한지 안내가 달라집니다 */
     if (e.score !== undefined && e.score >= PASS_LINE) {
       return {

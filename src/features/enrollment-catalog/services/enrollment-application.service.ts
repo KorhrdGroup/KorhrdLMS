@@ -138,11 +138,13 @@ export async function sendEnrollmentDoneAlimtalk(memberId: string): Promise<void
     const supabase = await createClient();
     const { data: member } = await supabase
       .from("members")
-      .select("name, phone, join_path")
+      .select("name, phone, join_path, status, deleted_at")
       .eq("id", memberId)
       .maybeSingle();
 
     if (!member?.phone) return;
+    // 탈퇴·삭제 회원에게는 보내지 않습니다
+    if (member.status !== "active" || member.deleted_at) return;
     // 오피스(학점연계 자동발급) 가입 회원에게는 알림톡을 보내지 않습니다
     if (member.join_path === "학점연계 자동발급") return;
 

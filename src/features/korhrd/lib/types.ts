@@ -149,4 +149,6 @@ export interface Enrollment {
   passedAt?: string;
   /** 자격증 발급 신청 기한 */
   issueDeadline?: string;
+  /** 수강기간 연장 횟수 (1회당 30일, 최대 5회) */
+  extendCount?: number;
 }

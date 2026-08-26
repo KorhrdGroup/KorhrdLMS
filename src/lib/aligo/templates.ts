@@ -121,6 +121,27 @@ export const ALIMTALK_TEMPLATES = {
       ],
     },
   },
+  /** 시험 합격 축하 (UK_3820, 2026-08-26 승인 — 알리고 원문 그대로, 변수 없음) */
+  EXAM_PASS: {
+    tplCode: "UK_3820",
+    message: `합격 축하드립니다. 🥳🎉
+
+과정 수료되어 자격증 발급 가능하시고,
+발급 후 효력이 생겨 정식으로 활용 및 활동 가능하십니다.
+
+💡 본 자격증은 [한국직업능력연구원]에 정식 등록된 자격증으로, 취득 후 평생 활용 가능합니다.`,
+    button: {
+      button: [
+        {
+          name: "자격증 신청하러 가기",
+          linkType: "WL",
+          linkTypeName: "웹링크",
+          linkMo: "https://www.korhrd.co.kr/",
+          linkPc: "https://www.korhrd.co.kr/",
+        },
+      ],
+    },
+  },
 } as const;
 
 /** 어드민 테스트 발송 화면에 보여줄 한글 이름 */
@@ -129,6 +150,7 @@ export const ALIMTALK_TEMPLATE_LABELS: Record<AlimtalkTemplateKey, string> = {
   ENROLLMENT_DONE: "수강신청 완료",
   PROGRESS_UNDER_60: "수강률 60% 미만 독려",
   PROGRESS_OVER_60: "수강률 60% 이상 시험 안내",
+  EXAM_PASS: "시험 합격 축하",
 };
 
 export type AlimtalkTemplateKey = keyof typeof ALIMTALK_TEMPLATES;

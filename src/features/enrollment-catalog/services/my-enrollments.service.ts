@@ -66,6 +66,7 @@ const MY_ACTIVE_ENROLLMENT_SELECT = `
   end_date,
   status,
   manager_name,
+  extend_count,
   course:courses!inner (
     id,
     code,
@@ -79,6 +80,7 @@ type ActiveEnrollmentRow = {
   end_date: string;
   status: EnrollmentStatus;
   manager_name: string | null;
+  extend_count: number;
   course: { id: string; code: string; name: string };
 };
 
@@ -123,6 +125,7 @@ export async function getMyActiveEnrollments(memberId: string): Promise<MyActive
         learningStatus: learningStatus === "ended" ? "ended" : "in_progress",
         // lecture_progress 기준 실제 진도율(완료 차시 수 ÷ 전체 게시 차시 수).
         progressRate,
+        extendCount: row.extend_count,
       };
     }),
   );
