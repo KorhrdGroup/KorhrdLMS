@@ -61,6 +61,11 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
                 <img src="/kakao-bubble.png" alt="" />
               </span>
             </a>
+
+            {/* 평생교육이용권 결제 — 나이스페이 결제창으로 이동 (2026-08-31) */}
+            <Link className="btn btn--primary btn--block" href="/voucher">
+              평생교육이용권 결제
+            </Link>
           </div>
         </aside>
 

@@ -2025,6 +2025,62 @@ export type Database = {
         }
         Relationships: []
       }
+      voucher_payments: {
+        Row: {
+          amount: number
+          buyer_name: string
+          buyer_tel: string | null
+          created_at: string
+          id: string
+          member_id: string | null
+          moid: string
+          paid_at: string | null
+          pg_provider: string
+          result_code: string | null
+          result_msg: string | null
+          status: string
+          tid: string | null
+        }
+        Insert: {
+          amount: number
+          buyer_name: string
+          buyer_tel?: string | null
+          created_at?: string
+          id?: string
+          member_id?: string | null
+          moid: string
+          paid_at?: string | null
+          pg_provider?: string
+          result_code?: string | null
+          result_msg?: string | null
+          status?: string
+          tid?: string | null
+        }
+        Update: {
+          amount?: number
+          buyer_name?: string
+          buyer_tel?: string | null
+          created_at?: string
+          id?: string
+          member_id?: string | null
+          moid?: string
+          paid_at?: string | null
+          pg_provider?: string
+          result_code?: string | null
+          result_msg?: string | null
+          status?: string
+          tid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voucher_payments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
