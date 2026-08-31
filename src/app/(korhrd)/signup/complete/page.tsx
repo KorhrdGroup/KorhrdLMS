@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { COURSES } from '@/features/korhrd/data/courses';
+import KarrotTrackOnce from '@/features/korhrd/components/KarrotTrackOnce';
 
 export const metadata: Metadata = {
   title: '회원가입 완료 — 한평생 직업훈련',
@@ -19,6 +20,8 @@ export default function Page() {
   const courseCount = COURSES.length;
 
   return (
+    <>
+    <KarrotTrackOnce event="CompleteRegistration" />
     <div className="container">
       <div className="auth-wrap">
         <div className="complete" style={{ paddingTop: 40 }}>
@@ -36,5 +39,6 @@ export default function Page() {
         </div>
       </div>
     </div>
+  </>
   );
 }
