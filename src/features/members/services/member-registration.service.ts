@@ -95,11 +95,11 @@ export function validateMemberRegistrationInput(
     };
   }
 
-  // 파트너스 코드는 선택 입력 — 넣었다면 등록된 코드(STAR, 대소문자 무관)만 인정합니다
+  // 담당자 코드는 선택 입력 — 넣었다면 등록된 코드(STAR, 대소문자 무관)만 인정합니다
   if (normalize(input.partnerCode ?? "") && !VALID_PARTNER_CODES.has(normalize(input.partnerCode ?? "").toUpperCase())) {
     return {
       success: false,
-      message: "유효하지 않은 파트너스 코드입니다.",
+      message: "유효하지 않은 담당자 코드입니다.",
       field: "partnerCode",
     };
   }

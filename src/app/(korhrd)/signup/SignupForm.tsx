@@ -200,9 +200,9 @@ export function SignupForm() {
             </div>
 
             <div className="field">
-              <label htmlFor="partner-code">파트너스 코드 <span className="hint">(선택)</span></label>
+              <label htmlFor="partner-code">담당자 코드 <span className="hint">(선택)</span></label>
               <input
-                id="partner-code" type="text" placeholder="제휴 코드가 있다면 입력해주세요"
+                id="partner-code" type="text" placeholder="담당자 코드가 있다면 입력해주세요"
                 value={partnerCode} onChange={(event) => setPartnerCode(event.target.value)}
               />
             </div>
