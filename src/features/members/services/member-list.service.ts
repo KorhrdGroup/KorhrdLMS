@@ -16,8 +16,8 @@ import type { MemberListItem, MemberStatus } from "@/types/database.types";
  */
 export type MemberListQuery = ListQuery & {
   status?: MemberStatus | "";
-  /** 가입 출처 분리 — office: 오피스(학점연계 자동발급) / general: 그 외 (2026-08-20) */
-  source?: "" | "office" | "general";
+  /** 가입 출처 분리 — office: 오피스(학점연계 자동발급) / star: STAR 파트너 / general: 그 외 */
+  source?: "" | "office" | "general" | "star";
   /**
    * 학습 상태 필터 (2026-08-25) — members_with_learning_status 뷰의 계산 컬럼.
    * joined: 가입만 / learning: 수강중 / completed: 과정수료(발급 전) / issued: 자격증발급
@@ -69,6 +69,8 @@ export async function getMemberList(
 
   if (query.source === "office") {
     builder = builder.eq("join_path", OFFICE_JOIN_PATH);
+  } else if (query.source === "star") {
+    builder = builder.eq("partner_code", "STAR");
   } else if (query.source === "general") {
     builder = builder.or(`join_path.is.null,join_path.neq.${OFFICE_JOIN_PATH}`);
   }

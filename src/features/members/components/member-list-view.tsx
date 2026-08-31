@@ -107,6 +107,7 @@ export function MemberListView({ result, query, isBabyAdmin = false }: MemberLis
         {[
           { value: "general" as const, label: "일반 회원" },
           { value: "office" as const, label: "학점연계(오피스)" },
+          { value: "star" as const, label: "STAR 파트너" },
           { value: "" as const, label: "전체" },
         ].map((tab) => {
           const active = (query.source ?? "") === tab.value;

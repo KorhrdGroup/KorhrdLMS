@@ -32,7 +32,7 @@ export function parseMemberListQuery(
   return {
     ...base,
     status: isMemberStatus(rawStatus) ? rawStatus : "",
-    source: rawSource === "office" || rawSource === "general" ? rawSource : "",
+    source: rawSource === "office" || rawSource === "general" || rawSource === "star" ? rawSource : "",
     learningStatus: isLearningStatus(rawLearning) ? rawLearning : "",
   };
 }

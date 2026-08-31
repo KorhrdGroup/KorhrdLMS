@@ -31,7 +31,7 @@ type TargetMember = { id: string; name: string; phone: string | null };
 async function resolveTargets(
   mode: AlimtalkTargetMode,
   memberIds: string[],
-  source: "" | "office" | "general",
+  source: "" | "office" | "general" | "star",
 ): Promise<TargetMember[]> {
   const supabase = await createClient();
 
@@ -73,6 +73,9 @@ async function resolveTargets(
     "join_path.is.null,join_path.neq.학점연계 자동발급",
     { referencedTable: "member" },
   );
+  if (source === "star") {
+    enrollmentQuery = enrollmentQuery.eq("member.partner_code", "STAR");
+  }
 
   const { data: enrollmentRows, error: enrollmentError } = await enrollmentQuery;
   if (enrollmentError) throw new Error(enrollmentError.message);
@@ -152,7 +155,7 @@ export async function bulkSendMemberAlimtalk(input: {
   template: AlimtalkTemplateKey;
   mode: AlimtalkTargetMode;
   memberIds: string[];
-  source: "" | "office" | "general";
+  source: "" | "office" | "general" | "star";
   /** 발송 이력에 남길 출처 (기본 admin_bulk, 크론은 cron_under60) */
   triggerSource?: string;
 }): Promise<BulkAlimtalkResult> {
@@ -199,7 +202,7 @@ export async function bulkSendMemberAlimtalk(input: {
 export async function countMemberAlimtalkTargets(input: {
   mode: AlimtalkTargetMode;
   memberIds: string[];
-  source: "" | "office" | "general";
+  source: "" | "office" | "general" | "star";
 }): Promise<number> {
   const targets = await resolveTargets(input.mode, input.memberIds, input.source);
   return targets.length;
