@@ -24,6 +24,8 @@ export type AdminNavChild = {
   href: string;
   /** false 인 경우 아직 구현되지 않은 화면이며, 클릭 시 "준비중" 안내 페이지로 이동합니다. */
   implemented?: boolean;
+  /** 이 역할들에게는 메뉴를 숨깁니다 (예: 아기관리자에게 이용권결제 비노출) */
+  hideForRoles?: AdminRole[];
 };
 
 export type AdminNavGroup = {
@@ -125,7 +127,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     children: [
       { label: "전체결제", href: "/admin/payments/subjects" },
       { label: "선납결제", href: "/admin/payments/prepayments" },
-      { label: "이용권결제", href: "/admin/payments/vouchers" },
+      { label: "이용권결제", href: "/admin/payments/vouchers", hideForRoles: ["baby_admin"] },
     ],
   },
   {
@@ -212,8 +214,15 @@ const ALLOWED_MODULES_BY_ROLE: Record<AdminRole, AdminModule[] | "all"> = {
 
 export function getNavGroupsForRole(role: AdminRole): AdminNavGroup[] {
   const allowed = ALLOWED_MODULES_BY_ROLE[role];
-  if (allowed === "all") return adminNavGroups;
-  return adminNavGroups.filter((g) => allowed.includes(g.module));
+  const groups =
+    allowed === "all"
+      ? adminNavGroups
+      : adminNavGroups.filter((g) => allowed.includes(g.module));
+  // 역할별로 숨기는 소메뉴 반영
+  return groups.map((group) => ({
+    ...group,
+    children: group.children.filter((child) => !child.hideForRoles?.includes(role)),
+  }));
 }
 
 export function isModuleAllowed(role: AdminRole, module: AdminModule): boolean {
