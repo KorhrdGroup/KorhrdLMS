@@ -6,6 +6,7 @@ import { getGradeRecordsForMember } from "@/features/grades/services/grade-list.
 import { MemberDetailView } from "@/features/members/components/member-detail-view";
 import { getMemberDetail } from "@/features/members/services/member-detail.service";
 import { createClient } from "@/lib/supabase/server";
+import { BABY_ADMIN_PARTNER_CODE, isBabyAdmin } from "@/lib/admin/current-admin";
 
 type MemberDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -37,6 +38,19 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
     }
 
     const supabase = await createClient();
+
+    // 아기관리자는 STAR 회원만 볼 수 있고, 수강정보는 조회 전용입니다
+    const babyAdmin = await isBabyAdmin();
+    if (babyAdmin) {
+      const { data: scoped } = await supabase
+        .from("members")
+        .select("partner_code")
+        .eq("id", id)
+        .maybeSingle();
+      if (scoped?.partner_code !== BABY_ADMIN_PARTNER_CODE) {
+        notFound();
+      }
+    }
     const [enrollments, grades, { data: courseRows }] = await Promise.all([
       getEnrollmentRecordsForMember(id),
       getGradeRecordsForMember(id),
@@ -67,6 +81,7 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
         enrollments={enrollments}
         grades={grades}
         courseOptions={courseOptions}
+        readOnly={babyAdmin}
       />
     );
   } catch (error) {
