@@ -125,6 +125,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     children: [
       { label: "전체결제", href: "/admin/payments/subjects" },
       { label: "선납결제", href: "/admin/payments/prepayments" },
+      { label: "이용권결제", href: "/admin/payments/vouchers" },
     ],
   },
   {
