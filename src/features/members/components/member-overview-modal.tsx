@@ -295,7 +295,8 @@ export function MemberOverviewModal({ open, onOpenChange, memberId, readOnly = f
                 {impersonating ? "여는 중…" : "학생으로 로그인"}
               </button>
             ) : null}
-            {memberId ? (
+            {/* 아기관리자는 조회 전용 팝업으로 충분해 전체 화면 링크를 숨깁니다 */}
+            {memberId && !readOnly ? (
               <Link
                 href={`/admin/members/${memberId}`}
                 style={{
