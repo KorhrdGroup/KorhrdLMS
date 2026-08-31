@@ -2,6 +2,7 @@
 
 import { getNicepayConfig, nicepayEdiDate, signPaymentRequest } from "@/lib/nicepay/nicepay";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
+import { createClient } from "@/lib/supabase/server";
 
 export type VoucherPaymentPrepared = {
   success: true;
@@ -45,8 +46,22 @@ export async function prepareVoucherPaymentAction(input: {
   const { mid, merchantKey, isTest } = getNicepayConfig();
   const ediDate = nicepayEdiDate();
   const amt = String(amount);
-  // 주문번호에 회원 id 앞자리를 넣어 return 라우트에서 회원을 되찾습니다
   const moid = `voucher-${member.id}-${Date.now()}`;
+
+  // 결제 전에 주문을 먼저 기록(ready)합니다 — 모바일 결제창은 인증 콜백에
+  // 금액을 돌려주지 않을 수 있어, 승인 단계 금액은 이 기록에서 찾습니다.
+  const supabase = await createClient();
+  const { error: insertError } = await supabase.from("voucher_payments").insert({
+    member_id: member.id,
+    buyer_name: member.name,
+    amount,
+    status: "ready",
+    moid,
+  });
+  if (insertError) {
+    console.error("[나이스페이] 주문 기록 실패:", insertError.message);
+    return { success: false, message: "결제 준비에 실패했습니다. 잠시 후 다시 시도해주세요." };
+  }
 
   return {
     success: true,
