@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import KarrotTrackOnce from '@/features/korhrd/components/KarrotTrackOnce';
 
 export const metadata: Metadata = {
   title: '결제 완료 — 한평생 직업훈련',
@@ -29,6 +30,8 @@ export default async function Page({ searchParams }: PageProps) {
     : '/certificate/status';
 
   return (
+    <>
+    <KarrotTrackOnce event="Purchase" />
     <div className="container">
       <div className="auth-wrap" style={{ paddingTop: 80, textAlign: 'center' }}>
         <p className="complete__mark" aria-hidden="true">✓</p>
@@ -56,5 +59,6 @@ export default async function Page({ searchParams }: PageProps) {
         </noscript>
       </div>
     </div>
+  </>
   );
 }

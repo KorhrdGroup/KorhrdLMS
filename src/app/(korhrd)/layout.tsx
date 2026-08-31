@@ -1,4 +1,5 @@
 import Footer from "@/features/korhrd/components/layout/Footer";
+import KarrotPixel from '@/features/korhrd/components/KarrotPixel';
 import Header from "@/features/korhrd/components/layout/Header";
 import TabBar from "@/features/korhrd/components/layout/TabBar";
 import { BodyAuthFlag } from "@/features/korhrd/components/layout/BodyAuthFlag";
@@ -50,6 +51,7 @@ export default async function KorhrdLayout({ children }: { children: React.React
        내용이 짧은 화면에서 푸터가 위로 딸려 올라옵니다. */
     <div style={{ fontFamily: FONT_STACK, display: "contents" }}>
       <KorhrdStyleLinks />
+      <KarrotPixel />
       <a className="skip-link" href="#main">본문 바로가기</a>
       <KorhrdAuthProvider value={auth}>
         <CourseThumbProvider value={courseThumbs}>

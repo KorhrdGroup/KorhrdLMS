@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { trackKarrotEvent } from '@/lib/karrot-pixel.client';
 import { createPortal } from 'react-dom';
 
 /**
@@ -49,6 +50,12 @@ export default function EnrollDoneModal({
 
   // 포털 대상(document.body)은 클라이언트에서만 있습니다.
   useEffect(() => setMounted(true), []);
+
+  /* 당근 전환 추적 — 실제로 새 수강신청이 이뤄졌을 때만 보냅니다 */
+  const isNewApplied = (result?.applied.length ?? 0) > 0;
+  useEffect(() => {
+    if (isNewApplied) trackKarrotEvent('SubmitApplication');
+  }, [isNewApplied]);
 
   useEffect(() => {
     if (!open) return;
