@@ -15,6 +15,7 @@ const PAGE_SIZE = 20;
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
   paid: { label: "결제완료", bg: "#E7F9EF", color: "#22C55E" },
+  ready: { label: "시도중", bg: "#FFF6E5", color: "#FFB020" },
   failed: { label: "실패", bg: "#FEECEE", color: "#F04452" },
   canceled: { label: "취소", bg: "#F2F4F6", color: "#8B95A1" },
 };

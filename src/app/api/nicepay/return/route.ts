@@ -9,6 +9,9 @@ import { createClient } from "@/lib/supabase/server";
  * PC는 결제창 인증 후 우리 폼이 이 주소로 제출되고, 모바일은 나이스페이가
  * ReturnURL(이 주소)로 직접 POST 합니다. 여기서 승인 API(NextAppURL)까지
  * 성공해야 결제 완료입니다.
+ *
+ * 금액(Amt)은 나이스페이 콜백에 실려오지 않는 경우가 있어(모바일),
+ * 결제 준비 때 기록해 둔 voucher_payments(ready) 행에서 찾습니다.
  */
 
 export const dynamic = "force-dynamic";
@@ -33,18 +36,53 @@ export async function POST(request: Request) {
 
   const authResultCode = get("AuthResultCode");
   const moid = get("Moid");
-  const amt = get("Amt");
+
+  // 결제 준비 때 기록해 둔 주문 — 금액의 기준이자 위조 검증 수단입니다
+  const supabase = await createClient();
+  const { data: order } = await supabase
+    .from("voucher_payments")
+    .select("id, amount, status")
+    .eq("moid", moid)
+    .maybeSingle();
+
+  const amt = order ? String(order.amount) : get("Amt");
+
+  const markResult = async (
+    status: "paid" | "failed",
+    resultCode: string,
+    resultMsg: string,
+    tid: string,
+  ) => {
+    try {
+      if (order) {
+        await supabase
+          .from("voucher_payments")
+          .update({
+            status,
+            result_code: resultCode || null,
+            result_msg: resultMsg || null,
+            tid: tid || null,
+            paid_at: status === "paid" ? new Date().toISOString() : null,
+          })
+          .eq("id", order.id);
+      }
+    } catch (error) {
+      console.error("[나이스페이] 결제 기록 실패:", error);
+    }
+  };
 
   if (authResultCode !== "0000") {
-    await recordPayment({
-      moid,
-      amt,
-      status: "failed",
-      resultCode: authResultCode || "auth_fail",
-      resultMsg: get("AuthResultMsg") || "인증 실패",
-      tid: get("TxTid"),
-    });
+    await markResult("failed", authResultCode || "auth_fail", get("AuthResultMsg") || "인증 실패", get("TxTid"));
     fail("결제 인증에 실패했습니다. 다시 시도해주세요.");
+  }
+
+  if (!order) {
+    console.error("[나이스페이] 주문을 찾을 수 없음:", moid);
+    fail("주문 정보를 찾을 수 없습니다. 다시 시도해주세요.");
+  }
+  if (order.status === "paid") {
+    // 새로고침 등으로 콜백이 중복 도착 — 이미 완료된 결제는 그대로 성공 안내
+    redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}`);
   }
 
   const nextAppUrl = get("NextAppURL");
@@ -54,6 +92,7 @@ export async function POST(request: Request) {
 
   // 위조 방지 — NextAppURL은 반드시 나이스페이 도메인이어야 합니다
   if (!/^https:\/\/[a-z0-9.-]+\.nicepay\.co\.kr\//.test(nextAppUrl)) {
+    await markResult("failed", "bad_next_url", "승인 주소 비정상", txTid);
     fail("승인 주소가 올바르지 않습니다.");
   }
 
@@ -86,6 +125,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error("[나이스페이] 승인 요청 실패:", error);
+    await markResult("failed", "approve_error", "승인 요청 실패", txTid);
     fail("결제 승인 요청에 실패했습니다. 잠시 후 다시 시도해주세요.");
   }
 
@@ -93,14 +133,7 @@ export async function POST(request: Request) {
   // 카드 3001 · 계좌이체 4000 · 가상계좌 4100 · 휴대폰 A000
   const isPaid = ["3001", "4000", "4100", "A000"].includes(resultCode);
 
-  await recordPayment({
-    moid,
-    amt,
-    status: isPaid ? "paid" : "failed",
-    resultCode,
-    resultMsg: result.ResultMsg ?? "",
-    tid: result.TID ?? txTid,
-  });
+  await markResult(isPaid ? "paid" : "failed", resultCode, result.ResultMsg ?? "", result.TID ?? txTid);
 
   if (!isPaid) {
     console.error("[나이스페이] 승인 실패", resultCode, result.ResultMsg);
@@ -108,49 +141,4 @@ export async function POST(request: Request) {
   }
 
   redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}`);
-}
-
-/** 결제 이력 기록 — 실패해도 결제 흐름(redirect)은 막지 않습니다 */
-async function recordPayment(input: {
-  moid: string;
-  amt: string;
-  status: "paid" | "failed";
-  resultCode: string;
-  resultMsg: string;
-  tid: string;
-}): Promise<void> {
-  try {
-    // Moid 형식: voucher-<memberId>-<timestamp> — 회원을 되찾습니다
-    const memberId = /^voucher-([0-9a-f-]{36})-\d+$/.exec(input.moid)?.[1] ?? null;
-
-    const supabase = await createClient();
-    let buyerName = "회원";
-    let buyerTel: string | null = null;
-    if (memberId) {
-      const { data: member } = await supabase
-        .from("members")
-        .select("name, phone")
-        .eq("id", memberId)
-        .maybeSingle();
-      if (member) {
-        buyerName = member.name;
-        buyerTel = member.phone;
-      }
-    }
-
-    await supabase.from("voucher_payments").insert({
-      member_id: memberId,
-      buyer_name: buyerName,
-      buyer_tel: buyerTel,
-      amount: Number(input.amt) || 0,
-      status: input.status,
-      moid: input.moid || `unknown-${Date.now()}`,
-      tid: input.tid || null,
-      result_code: input.resultCode || null,
-      result_msg: input.resultMsg || null,
-      paid_at: input.status === "paid" ? new Date().toISOString() : null,
-    });
-  } catch (error) {
-    console.error("[나이스페이] 결제 기록 실패:", error);
-  }
 }
