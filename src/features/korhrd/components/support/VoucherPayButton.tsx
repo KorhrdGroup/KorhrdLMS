@@ -33,7 +33,7 @@ export default function VoucherPayButton() {
           src="/voucher-banner-icon.png"
           alt=""
           aria-hidden="true"
-          style={{ display: 'block', width: 44, height: 44, objectFit: 'contain', flexShrink: 0 }}
+          style={{ display: 'block', width: 34, height: 34, objectFit: 'contain', flexShrink: 0 }}
         />
       </button>
 
