@@ -39,7 +39,8 @@ export default async function Page({
   return (
     <div
       style={{
-        minHeight: '70vh',
+        // 헤더를 뺀 화면 전체 기준 정중앙
+        minHeight: 'calc(100vh - 180px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
