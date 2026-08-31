@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { MemberListView } from "@/features/members/components/member-list-view";
 import { parseMemberListQuery } from "@/features/members/lib/member-list-query";
 import { getMemberList } from "@/features/members/services/member-list.service";
+import { isBabyAdmin } from "@/lib/admin/current-admin";
 
 export const metadata: Metadata = {
   title: "회원 목록",
@@ -17,8 +18,8 @@ export default async function MembersPage({ searchParams }: MembersPageProps) {
   const query = parseMemberListQuery(params);
 
   try {
-    const result = await getMemberList(query);
-    return <MemberListView result={result} query={query} />;
+    const [result, babyAdmin] = await Promise.all([getMemberList(query), isBabyAdmin()]);
+    return <MemberListView result={result} query={query} isBabyAdmin={babyAdmin} />;
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "회원 목록을 불러오지 못했습니다.";
