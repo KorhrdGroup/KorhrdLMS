@@ -116,7 +116,7 @@ export async function POST(request: Request) {
   }
   if (order.status === "paid") {
     // 새로고침 등으로 콜백이 중복 도착 — 이미 완료된 결제는 그대로 성공 안내
-    redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}`);
+    redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}&moid=${encodeURIComponent(moid)}`);
   }
 
   const nextAppUrl = get("NextAppURL");
@@ -174,5 +174,5 @@ export async function POST(request: Request) {
     fail("결제 승인에 실패했습니다. 카드사 승인 결과를 확인해주세요.");
   }
 
-  redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}`);
+  redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}&moid=${encodeURIComponent(moid)}`);
 }
