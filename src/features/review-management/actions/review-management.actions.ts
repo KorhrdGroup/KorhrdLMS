@@ -3,10 +3,27 @@
 import { revalidatePath } from "next/cache";
 
 import {
+  createAdminCourseReview,
   deleteAdminCourseReview,
   updateAdminCourseReview,
   type AdminReviewMutationResult,
 } from "@/features/review-management/services/review-management.service";
+
+export async function createAdminCourseReviewAction(input: {
+  courseId: string;
+  authorName: string;
+  title: string;
+  body: string;
+  isPublished: boolean;
+  photoUrl?: string | null;
+}): Promise<AdminReviewMutationResult> {
+  const result = await createAdminCourseReview(input);
+  if (result.success) {
+    revalidatePath("/admin/boards/reviews");
+    revalidatePath("/reviews");
+  }
+  return result;
+}
 
 export async function updateAdminCourseReviewAction(
   reviewId: string,

@@ -82,6 +82,56 @@ export type AdminReviewMutationResult =
   | { success: true; message: string }
   | { success: false; message: string };
 
+/** 후기 추가 모달의 과정 선택지 */
+export type ReviewCourseOption = { id: string; name: string };
+
+export async function listReviewCourseOptions(): Promise<ReviewCourseOption[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id, name")
+    .is("deleted_at", null)
+    .order("name");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as ReviewCourseOption[];
+}
+
+/**
+ * 어드민이 후기를 직접 추가합니다 — member_id 없는 시드(홍보용) 글로 들어가며,
+ * 목록에는 "홍보용" 배지로 표시됩니다. 작성자 이름은 화면에 그대로 노출됩니다.
+ */
+export async function createAdminCourseReview(input: {
+  courseId: string;
+  authorName: string;
+  title: string;
+  body: string;
+  isPublished: boolean;
+  /** 자격증 사진 등 첨부 이미지 URL (선택) */
+  photoUrl?: string | null;
+}): Promise<AdminReviewMutationResult> {
+  const title = input.title.trim();
+  const body = input.body.trim();
+  const authorName = input.authorName.trim();
+  if (!input.courseId) return { success: false, message: "과정을 선택해주세요." };
+  if (!authorName) return { success: false, message: "작성자 이름을 입력해주세요." };
+  if (!title) return { success: false, message: "제목을 입력해주세요." };
+  if (!body) return { success: false, message: "내용을 입력해주세요." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("course_reviews").insert({
+    member_id: null,
+    author_name: authorName,
+    course_id: input.courseId,
+    title,
+    body,
+    is_published: input.isPublished,
+    photo_url: input.photoUrl ?? null,
+  });
+
+  if (error) return { success: false, message: `등록에 실패했습니다: ${error.message}` };
+  return { success: true, message: "후기를 추가했습니다." };
+}
+
 export async function updateAdminCourseReview(
   reviewId: string,
   input: { title: string; body: string; isPublished: boolean },

@@ -10,6 +10,7 @@ import {
   type PaginatedResult,
 } from "@/lib/shared/list-query";
 import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
+import { BABY_ADMIN_PARTNER_CODE, isBabyAdmin } from "@/lib/admin/current-admin";
 import { createClient } from "@/lib/supabase/server";
 import type {
   CertificateDeliveryStatus,
@@ -130,9 +131,15 @@ export async function getCertificateList(
   const supabase = await createClient();
   const { from, to } = getPaginationRange(query.page, query.pageSize);
 
+  // 아기관리자는 파트너스 코드(STAR) 회원의 신청만 봅니다 — 회원 조인을 붙여 거릅니다
+  const babyScoped = await isBabyAdmin();
+  const select = babyScoped
+    ? `${CERTIFICATE_LIST_SELECT}, member:members!inner ( partner_code )`
+    : CERTIFICATE_LIST_SELECT;
+
   let builder = supabase
     .from("certificate_applications")
-    .select(CERTIFICATE_LIST_SELECT, { count: "exact" })
+    .select(select, { count: "exact" })
     .is("deleted_at", null)
     .order("applied_at", { ascending: false })
     .order("created_at", { ascending: false })
@@ -142,6 +149,10 @@ export async function getCertificateList(
     .order("legacy_no", { ascending: false, nullsFirst: false })
     .order("id", { ascending: false });
 
+  if (babyScoped) {
+    builder = builder.eq("member.partner_code" as never, BABY_ADMIN_PARTNER_CODE as never);
+  }
+
   builder = applyCertificateListFilters(builder, query);
 
   const { data, count, error } = await builder.range(from, to);
@@ -150,7 +161,7 @@ export async function getCertificateList(
     throw new Error(error.message);
   }
 
-  const rows = (data ?? []) as CertificateListRow[];
+  const rows = (data ?? []) as unknown as CertificateListRow[];
   const total = count ?? 0;
 
   return {

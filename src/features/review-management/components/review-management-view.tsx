@@ -14,16 +14,31 @@ import {
   AdminTableRow,
 } from "@/components/admin/ui/admin-table";
 import {
+  createAdminCourseReviewAction,
   deleteAdminCourseReviewAction,
   updateAdminCourseReviewAction,
 } from "@/features/review-management/actions/review-management.actions";
-import type { AdminCourseReview } from "@/features/review-management/services/review-management.service";
+import type {
+  AdminCourseReview,
+  ReviewCourseOption,
+} from "@/features/review-management/services/review-management.service";
+import {
+  uploadCertificatePhotoFile,
+  validateCertificatePhotoFile,
+} from "@/features/certificate-applications/lib/certificate-photo-upload.client";
 
 /**
- * 어드민 게시판관리 > 합격후기 — 학생 후기게시판 글을 수정·공개/숨김·삭제합니다.
+ * 어드민 게시판관리 > 합격후기 — 학생 후기게시판 글을 추가·수정·공개/숨김·삭제합니다.
+ * 추가한 글은 member_id 없는 시드(홍보용) 글로 들어갑니다.
  * 삭제는 soft delete — 학생 화면에서만 사라지고 이력은 남습니다.
  */
-export function ReviewManagementView({ reviews }: { reviews: AdminCourseReview[] }) {
+export function ReviewManagementView({
+  reviews,
+  courseOptions,
+}: {
+  reviews: AdminCourseReview[];
+  courseOptions: ReviewCourseOption[];
+}) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<AdminCourseReview | null>(null);
@@ -33,6 +48,27 @@ export function ReviewManagementView({ reviews }: { reviews: AdminCourseReview[]
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  /* ---------- 후기 추가 모달 ---------- */
+  const [isCreating, setIsCreating] = useState(false);
+  const [newCourseId, setNewCourseId] = useState("");
+  const [newAuthorName, setNewAuthorName] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newBody, setNewBody] = useState("");
+  const [newPublished, setNewPublished] = useState(true);
+  const [newPhoto, setNewPhoto] = useState<File | null>(null);
+
+  function openCreate() {
+    setMessage(null);
+    setErrorMessage(null);
+    setNewCourseId("");
+    setNewAuthorName("");
+    setNewTitle("");
+    setNewBody("");
+    setNewPublished(true);
+    setNewPhoto(null);
+    setIsCreating(true);
+  }
 
   const filtered = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -84,14 +120,19 @@ export function ReviewManagementView({ reviews }: { reviews: AdminCourseReview[]
             학생 후기게시판 글을 수정·공개/숨김·삭제할 수 있습니다. 총 {reviews.length}건
           </p>
         </div>
-        <AdminInput
-          type="search"
-          variant="outline"
-          className="h-9 w-56"
-          placeholder="제목·작성자·과정 검색"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
+        <div className="flex items-center gap-2">
+          <AdminInput
+            type="search"
+            variant="outline"
+            className="h-9 w-56"
+            placeholder="제목·작성자·과정 검색"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+          <AdminButton type="button" onClick={openCreate}>
+            + 후기 추가
+          </AdminButton>
+        </div>
       </div>
 
       {message ? (
@@ -205,6 +246,148 @@ export function ReviewManagementView({ reviews }: { reviews: AdminCourseReview[]
           </AdminTable>
         </div>
       )}
+
+      {/* ===================== 추가 모달 ===================== */}
+      {isCreating ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[1200] flex items-center justify-center bg-[rgba(15,18,25,0.55)] p-4"
+          onClick={() => setIsCreating(false)}
+        >
+          <div
+            className="w-full max-w-[640px] rounded-xl bg-white p-6 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-base font-bold text-[#111827]">후기 추가</h2>
+              <button
+                type="button"
+                aria-label="닫기"
+                onClick={() => setIsCreating(false)}
+                className="text-lg text-[#9CA3AF]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6B7280]">과정</label>
+                <select
+                  value={newCourseId}
+                  onChange={(event) => setNewCourseId(event.target.value)}
+                  className="h-9 w-full rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827]"
+                >
+                  <option value="">과정 선택</option>
+                  {courseOptions.map((course) => (
+                    <option key={course.id} value={course.id}>
+                      {course.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6B7280]">작성자 이름</label>
+                <AdminInput
+                  variant="outline"
+                  placeholder="예: 김민지"
+                  value={newAuthorName}
+                  onChange={(event) => setNewAuthorName(event.target.value)}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6B7280]">제목</label>
+                <AdminInput
+                  variant="outline"
+                  value={newTitle}
+                  onChange={(event) => setNewTitle(event.target.value)}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6B7280]">내용</label>
+                <textarea
+                  value={newBody}
+                  onChange={(event) => setNewBody(event.target.value)}
+                  rows={8}
+                  className="w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-sm text-[#111827]"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6B7280]">
+                  사진 첨부 (선택 — JPG·PNG, 2MB 이하)
+                </label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
+                    if (file) {
+                      const problem = validateCertificatePhotoFile(file);
+                      if (problem) {
+                        setErrorMessage(problem);
+                        event.target.value = "";
+                        setNewPhoto(null);
+                        return;
+                      }
+                    }
+                    setErrorMessage(null);
+                    setNewPhoto(file);
+                  }}
+                  className="block w-full text-sm text-[#374151] file:mr-3 file:rounded-md file:border file:border-[#E5E7EB] file:bg-white file:px-3 file:py-1.5 file:text-xs file:text-[#374151]"
+                />
+                {newPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={URL.createObjectURL(newPhoto)}
+                    alt="첨부 사진 미리보기"
+                    className="mt-2 h-24 w-24 rounded-md border border-[#E5E7EB] object-cover"
+                  />
+                ) : null}
+              </div>
+              <label className="flex items-center gap-2 text-sm text-[#374151]">
+                <input
+                  type="checkbox"
+                  checked={newPublished}
+                  onChange={(event) => setNewPublished(event.target.checked)}
+                  className="h-4 w-4 accent-[#3182F6]"
+                />
+                학생 화면에 공개
+              </label>
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <AdminButton type="button" variant="outline" onClick={() => setIsCreating(false)}>
+                취소
+              </AdminButton>
+              <AdminButton
+                type="button"
+                disabled={isSaving}
+                onClick={async () => {
+                  const ok = await run(async () => {
+                    // 사진을 먼저 올리고 URL을 후기에 붙입니다 (학생 작성 화면과 같은 저장소)
+                    let photoUrl: string | undefined;
+                    if (newPhoto) {
+                      photoUrl = await uploadCertificatePhotoFile(newPhoto);
+                    }
+                    return createAdminCourseReviewAction({
+                      courseId: newCourseId,
+                      authorName: newAuthorName,
+                      title: newTitle,
+                      body: newBody,
+                      isPublished: newPublished,
+                      photoUrl,
+                    });
+                  });
+                  if (ok) setIsCreating(false);
+                }}
+              >
+                {isSaving ? "등록 중..." : "등록"}
+              </AdminButton>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* ===================== 수정 모달 ===================== */}
       {editing ? (

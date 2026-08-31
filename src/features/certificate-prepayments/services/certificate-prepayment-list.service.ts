@@ -9,6 +9,7 @@ import {
   getTotalPages,
   type PaginatedResult,
 } from "@/lib/shared/list-query";
+import { BABY_ADMIN_PARTNER_CODE, isBabyAdmin } from "@/lib/admin/current-admin";
 import { createClient } from "@/lib/supabase/server";
 import type { PaymentMethod, PaymentStatus } from "@/types/database.types";
 
@@ -69,6 +70,11 @@ export async function getCertificatePrepaymentList(
     .select(CERTIFICATE_PREPAYMENT_LIST_SELECT, { count: "exact" })
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
+
+  // 아기관리자는 파트너스 코드(STAR) 회원의 선납결제만 봅니다
+  if (await isBabyAdmin()) {
+    builder = builder.eq("member.partner_code", BABY_ADMIN_PARTNER_CODE);
+  }
 
   if (query.usage === "used") {
     builder = builder.not("used_at", "is", null);

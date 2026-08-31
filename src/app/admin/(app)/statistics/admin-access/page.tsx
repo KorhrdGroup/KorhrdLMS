@@ -5,7 +5,7 @@ import { parseAdminAccessListQuery } from "@/features/statistics/lib/admin-acces
 import { getAdminAccessList } from "@/features/statistics/services/admin-access-list.service";
 
 export const metadata: Metadata = {
-  title: "관리자 접속목록 | 통계/정보관리",
+  title: "관리자 접속목록 | 운영관리",
 };
 
 type AdminAccessPageProps = {

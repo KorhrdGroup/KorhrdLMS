@@ -94,7 +94,7 @@ export type CertificateDeliveryStatus =
   | "delivered"
   | "canceled";
 
-export type AdminType = "super_admin" | "admin" | "instructor" | "counselor";
+export type AdminType = "super_admin" | "admin" | "instructor" | "counselor" | "certificate_manager" | "baby_admin";
 
 export type MessageChannel =
   | "sms"
@@ -226,6 +226,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      alimtalk_weekly_settings: {
+        Row: {
+          enabled: boolean
+          hour: number
+          id: boolean
+          last_sent_date: string | null
+          updated_at: string
+          weekday: number
+        }
+        Insert: {
+          enabled?: boolean
+          hour?: number
+          id?: boolean
+          last_sent_date?: string | null
+          updated_at?: string
+          weekday?: number
+        }
+        Update: {
+          enabled?: boolean
+          hour?: number
+          id?: boolean
+          last_sent_date?: string | null
+          updated_at?: string
+          weekday?: number
+        }
+        Relationships: []
       }
       assignments: {
         Row: {
@@ -1663,6 +1690,7 @@ export type Database = {
           memo: string | null
           name: string
           naver_id: string | null
+          partner_code: string | null
           occupation: string | null
           password_hash: string | null
           phone: string | null
@@ -1698,6 +1726,7 @@ export type Database = {
           memo?: string | null
           name: string
           naver_id?: string | null
+          partner_code?: string | null
           occupation?: string | null
           password_hash?: string | null
           phone?: string | null
@@ -1733,6 +1762,7 @@ export type Database = {
           memo?: string | null
           name?: string
           naver_id?: string | null
+          partner_code?: string | null
           occupation?: string | null
           password_hash?: string | null
           phone?: string | null
@@ -2003,7 +2033,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      admin_type: "super_admin" | "admin" | "instructor" | "counselor"
+      admin_type: "super_admin" | "admin" | "instructor" | "counselor" | "certificate_manager" | "baby_admin"
       board_type: "consultation" | "notice" | "free" | "resource" | "faq"
       calendar_type: "solar" | "lunar"
       certificate_application_status:
@@ -2206,7 +2236,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      admin_type: ["super_admin", "admin", "instructor", "counselor"],
+      admin_type: ["super_admin", "admin", "instructor", "counselor", "certificate_manager", "baby_admin"],
       board_type: ["consultation", "notice", "free", "resource", "faq"],
       calendar_type: ["solar", "lunar"],
       certificate_application_status: [

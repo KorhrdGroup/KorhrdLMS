@@ -7,6 +7,9 @@ import { REFERRAL_COOKIE } from "@/lib/shared/referral-source";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
 
+/** 등록된 파트너스 코드 — 가입 시 이 코드만 인정합니다 (대문자 기준) */
+const VALID_PARTNER_CODES = new Set(["STAR"]);
+
 import type {
   LoginIdCheckResult,
   MemberRegistrationInput,
@@ -89,6 +92,15 @@ export function validateMemberRegistrationInput(
       success: false,
       message: "올바른 생년월일을 입력해주세요.",
       field: "birthDate",
+    };
+  }
+
+  // 파트너스 코드는 선택 입력 — 넣었다면 등록된 코드(STAR, 대소문자 무관)만 인정합니다
+  if (normalize(input.partnerCode ?? "") && !VALID_PARTNER_CODES.has(normalize(input.partnerCode ?? "").toUpperCase())) {
+    return {
+      success: false,
+      message: "유효하지 않은 파트너스 코드입니다.",
+      field: "partnerCode",
     };
   }
 
@@ -194,6 +206,10 @@ export async function createMember(
     occupation: emptyToNull(input.occupation),
     degree_purpose: emptyToNull(input.degreePurpose),
     referrer_login_id: emptyToNull(input.referrerLoginId),
+    // 파트너스 코드 — 대문자로 정규화해 저장 (star → STAR)
+    partner_code: normalize(input.partnerCode ?? "")
+      ? normalize(input.partnerCode ?? "").toUpperCase()
+      : null,
     // 마케팅 링크 첫 방문 때 ReferralTracker 가 남긴 유입경로 (없으면 null)
     referral_source: await readReferralCookie(),
     status: "active",
