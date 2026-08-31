@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import SupportNav from './SupportNav';
+import VoucherPayButton from '@/features/korhrd/components/support/VoucherPayButton';
 
 /**
  * 고객센터 묶음 — 공지사항 · 자주 묻는 질문 · 취득 과정 · 1:1 문의.
@@ -62,10 +63,8 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
               </span>
             </a>
 
-            {/* 평생교육이용권 결제 — 나이스페이 결제창으로 이동 (2026-08-31) */}
-            <Link className="btn btn--primary btn--block" href="/voucher">
-              평생교육이용권 결제
-            </Link>
+            {/* 평생교육이용권 결제 — 팝업으로 나이스페이 결제 폼을 띄웁니다 (2026-08-31) */}
+            <VoucherPayButton />
           </div>
         </aside>
 
