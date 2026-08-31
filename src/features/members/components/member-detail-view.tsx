@@ -33,6 +33,8 @@ type MemberDetailViewProps = {
   grades: GradeListItem[];
   /** 수강신청 대행에 쓸 노출 중 과정 목록 */
   courseOptions: CourseOption[];
+  /** 아기관리자 등 조회 전용 — 수강정보 조작을 숨깁니다 */
+  readOnly?: boolean;
 };
 
 function EmptyTabPanel() {
@@ -100,7 +102,7 @@ function MemberBasicInfoPanel({ member }: { member: MemberDetail }) {
   );
 }
 
-export function MemberDetailView({ member, enrollments, grades, courseOptions }: MemberDetailViewProps) {
+export function MemberDetailView({ member, enrollments, grades, courseOptions, readOnly = false }: MemberDetailViewProps) {
   const [activeTab, setActiveTab] = useState<(typeof MEMBER_DETAIL_TABS)[number]["id"]>("basic");
   const [editOpen, setEditOpen] = useState(false);
 
@@ -213,6 +215,7 @@ export function MemberDetailView({ member, enrollments, grades, courseOptions }:
             memberId={member.id}
             enrollments={enrollments}
             courseOptions={courseOptions}
+            readOnly={readOnly}
           />
         ) : activeTab === "grades" ? (
           <MemberGradesPanel grades={grades} />
