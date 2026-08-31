@@ -60,7 +60,17 @@ export default function VoucherPayForm() {
       set('BuyerName', prepared.buyerName);
       set('ReturnURL', `${window.location.origin}/api/nicepay/return`);
 
-      // PC: 인증이 끝나면 나이스페이가 이 콜백을 부릅니다 → 서버로 제출해 승인 진행
+      const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
+      if (isMobile) {
+        /* 모바일 — 나이스페이 모바일 전용 페이지로 전체 화면 이동합니다.
+           인증이 끝나면 나이스페이가 ReturnURL로 결과를 POST 합니다. */
+        form.action = 'https://web.nicepay.co.kr/v3/v3Payment.jsp';
+        form.submit();
+        return;
+      }
+
+      // PC: 레이어 팝업. 인증이 끝나면 나이스페이가 이 콜백을 부릅니다 → 서버로 제출해 승인 진행
+      form.action = '/api/nicepay/return';
       window.nicepaySubmit = () => form.submit();
       window.nicepayClose = () => setError('결제가 취소되었습니다.');
       window.goPay(form);
