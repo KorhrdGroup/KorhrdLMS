@@ -218,7 +218,7 @@ export function MemberDetailView({ member, enrollments, grades, courseOptions, r
             readOnly={readOnly}
           />
         ) : activeTab === "grades" ? (
-          <MemberGradesPanel grades={grades} />
+          <MemberGradesPanel grades={grades} readOnly={readOnly} />
         ) : (
           <EmptyTabPanel />
         )}

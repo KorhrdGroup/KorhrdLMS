@@ -15,9 +15,11 @@ import type { GradeListItem } from "@/features/grades/types/grade.types";
 
 type MemberGradesPanelProps = {
   grades: GradeListItem[];
+  /** 아기관리자 등 조회 전용 — 성적 상세(조작 화면) 링크를 숨깁니다 */
+  readOnly?: boolean;
 };
 
-export function MemberGradesPanel({ grades }: MemberGradesPanelProps) {
+export function MemberGradesPanel({ grades, readOnly = false }: MemberGradesPanelProps) {
   if (grades.length === 0) {
     return (
       <div className="flex min-h-[200px] items-center justify-center text-sm text-[#9CA3AF]">
@@ -68,14 +70,16 @@ export function MemberGradesPanel({ grades }: MemberGradesPanelProps) {
                 <GradeCompletionBadge isCompleted={item.isCompleted} />
               </AdminTableCell>
               <AdminTableCell>
-                <div className="flex justify-end">
-                  <Link
-                    href={`/admin/grades/${item.enrollmentId}`}
-                    className="text-sm text-[#3B82F6] hover:underline"
-                  >
-                    상세
-                  </Link>
-                </div>
+                {readOnly ? null : (
+                  <div className="flex justify-end">
+                    <Link
+                      href={`/admin/grades/${item.enrollmentId}`}
+                      className="text-sm text-[#3B82F6] hover:underline"
+                    >
+                      상세
+                    </Link>
+                  </div>
+                )}
               </AdminTableCell>
             </AdminTableRow>
           ))}

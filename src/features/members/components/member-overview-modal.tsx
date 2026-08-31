@@ -381,7 +381,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId, readOnly = f
               />
 
               <SectionTitle>성적정보</SectionTitle>
-              <MemberGradesPanel grades={overview.grades} />
+              <MemberGradesPanel grades={overview.grades} readOnly={readOnly} />
 
               <SectionTitle>시험관리</SectionTitle>
               {overview.exams.length === 0 ? (
