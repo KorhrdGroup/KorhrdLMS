@@ -23,16 +23,25 @@ function fail(message: string): never {
 }
 
 export async function POST(request: Request) {
-  let form: FormData;
+  /* 나이스페이는 본문을 EUC-KR(x-www-form-urlencoded)로 보낼 수 있어
+     request.formData()가 필드를 못 읽는 경우가 있다 — 원시 바이트를 받아
+     직접 디코드해 파싱한다. */
+  let params: URLSearchParams;
   try {
-    form = await request.formData();
-  } catch {
+    const raw = Buffer.from(await request.arrayBuffer());
+    const contentType = request.headers.get("content-type") ?? "";
+    const text = /euc-?kr|ksc/i.test(contentType)
+      ? (await import("iconv-lite")).default.decode(raw, "euc-kr")
+      : raw.toString("utf8");
+    params = new URLSearchParams(text);
+  } catch (error) {
+    console.error("[나이스페이] 콜백 본문 파싱 실패:", error);
     fail("결제 응답을 읽지 못했습니다.");
   }
-  const get = (key: string) => {
-    const value = form.get(key);
-    return typeof value === "string" ? value.trim() : "";
-  };
+  // 어떤 필드가 오는지 진단용 (값은 남기지 않음)
+  console.log("[나이스페이] 콜백 필드:", [...params.keys()].join(","), "/", request.headers.get("content-type"));
+
+  const get = (key: string) => (params.get(key) ?? "").trim();
 
   const authResultCode = get("AuthResultCode");
   const moid = get("Moid");
