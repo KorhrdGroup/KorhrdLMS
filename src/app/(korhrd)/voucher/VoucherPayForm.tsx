@@ -116,14 +116,14 @@ export default function VoucherPayForm() {
         style={{ display: 'none' }}
       >
         <input type="hidden" name="PayMethod" value="CARD" />
-        <input type="hidden" name="GoodsName" value="" />
-        <input type="hidden" name="Amt" value="" />
-        <input type="hidden" name="MID" value="" />
-        <input type="hidden" name="Moid" value="" />
-        <input type="hidden" name="BuyerName" value="" />
-        <input type="hidden" name="ReturnURL" value="" />
-        <input type="hidden" name="EdiDate" value="" />
-        <input type="hidden" name="SignData" value="" />
+        <input type="hidden" name="GoodsName" defaultValue="" />
+        <input type="hidden" name="Amt" defaultValue="" />
+        <input type="hidden" name="MID" defaultValue="" />
+        <input type="hidden" name="Moid" defaultValue="" />
+        <input type="hidden" name="BuyerName" defaultValue="" />
+        <input type="hidden" name="ReturnURL" defaultValue="" />
+        <input type="hidden" name="EdiDate" defaultValue="" />
+        <input type="hidden" name="SignData" defaultValue="" />
         <input type="hidden" name="CharSet" value="utf-8" />
         <input type="hidden" name="GoodsCl" value="1" />
       </form>
