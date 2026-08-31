@@ -22,7 +22,7 @@ type MemberAlimtalkModalProps = {
   /** 목록에서 체크한 회원 id 들 */
   selectedIds: string[];
   /** 현재 목록의 가입 출처 필터 — 수강률 대상 계산에도 같은 범위를 씁니다 */
-  source: "" | "office" | "general";
+  source: "" | "office" | "general" | "star";
 };
 
 const TARGET_OPTIONS: Array<{ mode: AlimtalkTargetMode; label: string; hint: string }> = [

@@ -21,7 +21,7 @@ async function requireAdmin(): Promise<boolean> {
 export async function countMemberAlimtalkTargetsAction(input: {
   mode: AlimtalkTargetMode;
   memberIds: string[];
-  source: "" | "office" | "general";
+  source: "" | "office" | "general" | "star";
 }): Promise<{ success: boolean; count: number; message?: string }> {
   if (!(await requireAdmin())) {
     return { success: false, count: 0, message: "관리자만 사용할 수 있습니다." };
@@ -34,7 +34,7 @@ export async function bulkSendMemberAlimtalkAction(input: {
   template: AlimtalkTemplateKey;
   mode: AlimtalkTargetMode;
   memberIds: string[];
-  source: "" | "office" | "general";
+  source: "" | "office" | "general" | "star";
 }): Promise<BulkAlimtalkResult> {
   // 아기관리자는 알림톡을 보낼 수 없습니다 (조회 전용)
   if (await isBabyAdmin()) {
