@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { PrivacyBody } from '@/features/korhrd/components/policy/PrivacyBody';
+import { TermsBody } from '@/features/korhrd/components/policy/TermsBody';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
@@ -24,8 +26,11 @@ export function SignupForm() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [partnerCode, setPartnerCode] = useState('');
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
+  /* 약관 팝업 — 'terms' | 'privacy' | null */
+  const [policyOpen, setPolicyOpen] = useState<'terms' | 'privacy' | null>(null);
 
   const [idCheck, setIdCheck] = useState<{ ok: boolean; text: string } | null>(null);
   const [verifiedId, setVerifiedId] = useState<string | null>(null);
@@ -33,6 +38,15 @@ export function SignupForm() {
   const [isPending, startTransition] = useTransition();
 
   const allAgreed = agree1 && agree2;
+
+  /* 휴대폰 번호 하이픈 자동 삽입 — 숫자만 남기고 010-1234-5678 형태로 */
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    if (digits.length <= 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  };
 
   const checkId = () => {
     setIdCheck(null);
@@ -78,6 +92,7 @@ export function SignupForm() {
           occupation: '',
           degreePurpose: '',
           referrerLoginId: '',
+          partnerCode,
         },
         true,
       );
@@ -172,7 +187,7 @@ export function SignupForm() {
               <input
                 id="phone" type="tel" required autoComplete="tel" inputMode="numeric"
                 placeholder="010-1234-5678" value={phone}
-                onChange={(event) => setPhone(event.target.value)}
+                onChange={(event) => setPhone(formatPhone(event.target.value))}
               />
             </div>
 
@@ -181,6 +196,14 @@ export function SignupForm() {
               <input
                 id="email" type="email" autoComplete="email" placeholder="수료증·안내 수신용"
                 value={email} onChange={(event) => setEmail(event.target.value)}
+              />
+            </div>
+
+            <div className="field">
+              <label htmlFor="partner-code">파트너스 코드 <span className="hint">(선택)</span></label>
+              <input
+                id="partner-code" type="text" placeholder="제휴 코드가 있다면 입력해주세요"
+                value={partnerCode} onChange={(event) => setPartnerCode(event.target.value)}
               />
             </div>
 
@@ -202,7 +225,15 @@ export function SignupForm() {
                 onChange={(event) => setAgree1(event.target.checked)}
               />
               <label htmlFor="agree1">
-                [필수] <Link href="/terms" style={{ textDecoration: 'underline' }}>이용약관</Link> 동의
+                [필수]{' '}
+                <button
+                  type="button"
+                  onClick={() => setPolicyOpen('terms')}
+                  style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  이용약관
+                </button>{' '}
+                동의
               </label>
             </div>
             <div className="agree" style={{ background: 'none', padding: '2px 4px' }}>
@@ -211,7 +242,15 @@ export function SignupForm() {
                 onChange={(event) => setAgree2(event.target.checked)}
               />
               <label htmlFor="agree2">
-                [필수] <Link href="/privacy" style={{ textDecoration: 'underline' }}>개인정보 수집·이용</Link> 동의
+                [필수]{' '}
+                <button
+                  type="button"
+                  onClick={() => setPolicyOpen('privacy')}
+                  style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  개인정보 수집·이용
+                </button>{' '}
+                동의
               </label>
             </div>
 
@@ -228,6 +267,61 @@ export function SignupForm() {
           <p className="auth-links">
             이미 회원이신가요? <Link href="/login">로그인</Link>
           </p>
+
+          {/* 이용약관·개인정보 팝업 — 본문은 /terms·/privacy 페이지와 같은 컴포넌트 */}
+          {policyOpen ? (
+            <div
+              role="dialog"
+              aria-modal="true"
+              onClick={() => setPolicyOpen(null)}
+              style={{
+                position: 'fixed', inset: 0, zIndex: 1200,
+                background: 'rgba(15,18,25,0.55)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+              }}
+            >
+              <div
+                onClick={(event) => event.stopPropagation()}
+                style={{
+                  width: '100%', maxWidth: 640, maxHeight: '80vh',
+                  background: '#fff', borderRadius: 12,
+                  display: 'flex', flexDirection: 'column', overflow: 'hidden',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #E5E8EB' }}>
+                  <strong style={{ fontSize: 16 }}>
+                    {policyOpen === 'terms' ? '이용약관' : '개인정보 수집·이용'}
+                  </strong>
+                  <button
+                    type="button" aria-label="닫기" onClick={() => setPolicyOpen(null)}
+                    style={{ background: 'none', border: 'none', fontSize: 18, color: '#8B95A1', cursor: 'pointer' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div style={{ overflowY: 'auto', padding: '4px 20px' }}>
+                  {policyOpen === 'terms' ? <TermsBody /> : <PrivacyBody />}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '12px 20px', borderTop: '1px solid #E5E8EB' }}>
+                  <button
+                    className="btn btn--ghost" type="button" onClick={() => setPolicyOpen(null)}
+                  >
+                    닫기
+                  </button>
+                  <button
+                    className="btn btn--primary" type="button"
+                    onClick={() => {
+                      if (policyOpen === 'terms') setAgree1(true);
+                      else setAgree2(true);
+                      setPolicyOpen(null);
+                    }}
+                  >
+                    동의합니다
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

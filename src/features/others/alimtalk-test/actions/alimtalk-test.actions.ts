@@ -11,6 +11,22 @@ import {
 
 export type AlimtalkTestResult = { success: boolean; message: string };
 
+/** 주간 독려 발송 설정 저장 — 관리자만 */
+export async function updateWeeklyAlimtalkSettingsAction(input: {
+  enabled: boolean;
+  weekday: number;
+  hour: number;
+}): Promise<AlimtalkTestResult> {
+  const cookieStore = await cookies();
+  if (!cookieStore.get(ADMIN_SESSION_MARKER_COOKIE)) {
+    return { success: false, message: "관리자만 사용할 수 있습니다." };
+  }
+  const { updateWeeklyAlimtalkSettings } = await import(
+    "@/features/others/alimtalk-test/services/weekly-alimtalk-settings.service"
+  );
+  return updateWeeklyAlimtalkSettings(input);
+}
+
 /** 어드민 알림톡 테스트 발송 — 관리자만, 등록된 템플릿으로만 보냅니다 */
 export async function sendAlimtalkTestAction(input: {
   template: AlimtalkTemplateKey;

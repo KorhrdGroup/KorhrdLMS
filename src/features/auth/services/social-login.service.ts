@@ -131,7 +131,21 @@ export async function loginWithSocial(
   // 옛 시스템 수강자라면 이관된 신청·수강 이력을 자동으로 붙입니다 (실패해도 가입 계속)
   await tryRestoreLegacyRecords((created as { id: string }).id);
 
-  return { success: true, memberId: (created as { id: string }).id, isNew: true };
+  // 회원가입 알림톡 — 일반 회원가입(member-registration.service)과 동일하게 보냅니다.
+  // 소셜 가입만 빠져 있어 수동 발송하던 문제를 고침 (2026-08-31). 실패해도 가입은 성공 처리.
+  const createdId = (created as { id: string }).id;
+  const memberName = (profile.name ?? "").trim() || "회원";
+  if (phone) {
+    const { sendAlimtalk } = await import("@/lib/aligo/alimtalk");
+    await sendAlimtalk({
+      receivers: phone,
+      template: "SIGNUP",
+      vars: { 고객명: memberName },
+      log: { trigger: "auto_signup", memberId: createdId, receiverName: memberName },
+    }).catch((e) => console.error("[소셜 가입] 알림톡 발송 오류", e));
+  }
+
+  return { success: true, memberId: createdId, isNew: true };
 }
 
 /**

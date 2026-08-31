@@ -23,6 +23,8 @@ export type MemberRegistrationInput = {
   occupation: string;
   degreePurpose: string;
   referrerLoginId: string;
+  /** 파트너스 코드 (선택 — 현재 STAR만 유효, 대소문자 무관) */
+  partnerCode?: string;
 };
 
 export type MemberRegistrationResult =

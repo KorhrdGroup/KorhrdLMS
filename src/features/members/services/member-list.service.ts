@@ -4,6 +4,7 @@ import {
   getTotalPages,
 } from "@/lib/shared/list-query";
 import { createClient } from "@/lib/supabase/server";
+import { BABY_ADMIN_PARTNER_CODE, isBabyAdmin } from "@/lib/admin/current-admin";
 import { MEMBER_LIST_SELECT } from "@/features/members/constants";
 import { getMemberCourseSummaries } from "@/features/members/services/member-course-summary.service";
 import type { MemberListRow } from "@/features/members/types/member-list.types";
@@ -51,6 +52,11 @@ export async function getMemberList(
       "learning_status" as never,
       query.learningStatus as never,
     );
+  }
+
+  // 아기관리자는 파트너스 코드(STAR) 회원만 봅니다
+  if (await isBabyAdmin()) {
+    builder = builder.eq("partner_code", BABY_ADMIN_PARTNER_CODE);
   }
 
   if (!query.showDeleted) {

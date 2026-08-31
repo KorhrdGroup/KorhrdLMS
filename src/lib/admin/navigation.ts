@@ -110,7 +110,6 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "공지사항", href: "/admin/notices" },
       { label: "1:1 상담", href: "/admin/boards/consultation" },
       { label: "합격후기", href: "/admin/boards/reviews" },
-      { label: "배너관리", href: "/admin/banners" },
     ],
   },
   {
@@ -137,7 +136,6 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "수강통계", href: "/admin/statistics/enrollments", implemented: false },
       { label: "시험통계", href: "/admin/statistics/exams", implemented: false },
       { label: "매출통계", href: "/admin/statistics/revenue", implemented: false },
-      { label: "접속로그", href: "/admin/statistics/admin-access" },
     ],
   },
   {
@@ -145,12 +143,10 @@ export const adminNavGroups: AdminNavGroup[] = [
     icon: Settings,
     module: "operations",
     children: [
-      { label: "메시지센터", href: "/admin/others/message-center" },
       { label: "유입 링크 생성기", href: "/admin/others/referral-links" },
       { label: "알림톡 테스트", href: "/admin/others/alimtalk-test" },
-      { label: "팝업관리", href: "/admin/others/notice-popups" },
-      { label: "배너관리", href: "/admin/others/banners", implemented: false },
-      { label: "시스템로그", href: "/admin/others/system-logs", implemented: false },
+      { label: "배너관리", href: "/admin/banners" },
+      { label: "접속로그", href: "/admin/statistics/admin-access" },
     ],
   },
 ];
@@ -198,7 +194,8 @@ export type AdminRole =
   | "admin"
   | "instructor"
   | "counselor"
-  | "certificate_manager";
+  | "certificate_manager"
+  | "baby_admin";
 
 const ALLOWED_MODULES_BY_ROLE: Record<AdminRole, AdminModule[] | "all"> = {
   super_admin: "all",
@@ -206,6 +203,10 @@ const ALLOWED_MODULES_BY_ROLE: Record<AdminRole, AdminModule[] | "all"> = {
   instructor: ["courses", "evaluation"],
   counselor: ["members", "boards"],
   certificate_manager: ["licenses"],
+  // 아기관리자 — 파트너(STAR) 회원만 관리하는 제한 관리자.
+  // 메뉴는 회원관리·자격증신청·결제관리만, 데이터 범위는 각 목록 서비스가
+  // getCurrentAdminRole()로 좁힙니다 (lib/admin/current-admin.ts).
+  baby_admin: ["members", "licenses", "payments"],
 };
 
 export function getNavGroupsForRole(role: AdminRole): AdminNavGroup[] {

@@ -5,6 +5,8 @@ export const ADMIN_TYPE_LABELS: Record<AdminType, string> = {
   admin: "관리자",
   instructor: "강사",
   counselor: "상담원",
+  certificate_manager: "자격증관리자",
+  baby_admin: "아기관리자",
 };
 
 export const ADMIN_TYPE_FILTER_OPTIONS = [

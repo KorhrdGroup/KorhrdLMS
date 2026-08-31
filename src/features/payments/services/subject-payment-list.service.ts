@@ -9,6 +9,7 @@ import {
   getTotalPages,
   type PaginatedResult,
 } from "@/lib/shared/list-query";
+import { BABY_ADMIN_PARTNER_CODE, isBabyAdmin } from "@/lib/admin/current-admin";
 import { createClient } from "@/lib/supabase/server";
 import type { CoursePaymentStatus, PaymentMethod } from "@/types/database.types";
 
@@ -88,6 +89,11 @@ export async function getSubjectPaymentList(
     .is("course.deleted_at", null)
     .order("payment_date", { ascending: false })
     .order("created_at", { ascending: false });
+
+  // 아기관리자는 파트너스 코드(STAR) 회원의 결제만 봅니다
+  if (await isBabyAdmin()) {
+    builder = builder.eq("member.partner_code", BABY_ADMIN_PARTNER_CODE);
+  }
 
   if (query.paymentMethod) {
     builder = builder.eq("payment_method", query.paymentMethod);
