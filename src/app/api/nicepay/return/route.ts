@@ -48,11 +48,36 @@ export async function POST(request: Request) {
 
   // 결제 준비 때 기록해 둔 주문 — 금액의 기준이자 위조 검증 수단입니다
   const supabase = await createClient();
-  const { data: order } = await supabase
-    .from("voucher_payments")
-    .select("id, amount, status")
-    .eq("moid", moid)
-    .maybeSingle();
+  let order: { id: string; amount: number; status: string } | null = null;
+  if (moid) {
+    const { data } = await supabase
+      .from("voucher_payments")
+      .select("id, amount, status")
+      .eq("moid", moid)
+      .maybeSingle();
+    order = data;
+  } else {
+    // 구버전 화면 등으로 Moid가 비어 오면 — 같은 브라우저 제출(PC 흐름)은 세션이
+    // 실려오므로, 그 회원의 가장 최근 시도중(ready) 주문으로 이어붙입니다.
+    try {
+      const { getStudentSessionMember } = await import("@/features/auth/services/student-login.service");
+      const member = await getStudentSessionMember();
+      if (member) {
+        const { data } = await supabase
+          .from("voucher_payments")
+          .select("id, amount, status")
+          .eq("member_id", member.id)
+          .eq("status", "ready")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        order = data;
+        if (order) console.log("[나이스페이] Moid 공백 — 세션 회원의 최근 주문으로 매칭:", order.id);
+      }
+    } catch (error) {
+      console.error("[나이스페이] 세션 폴백 실패:", error);
+    }
+  }
 
   const amt = order ? String(order.amount) : get("Amt");
 
