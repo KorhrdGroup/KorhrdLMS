@@ -33,6 +33,8 @@ type MemberEnrollmentsPanelProps = {
   enrollments: EnrollmentRecordListItem[];
   /** 수강신청 대행에 쓸 노출 중 과정 목록 */
   courseOptions: CourseOption[];
+  /** 아기관리자 등 조회 전용 — 대행·진도/점수 수정·취소를 숨깁니다 */
+  readOnly?: boolean;
 };
 
 const UNCATEGORIZED_LABEL = "미분류";
@@ -51,6 +53,7 @@ export function MemberEnrollmentsPanel({
   memberId,
   enrollments,
   courseOptions,
+  readOnly = false,
 }: MemberEnrollmentsPanelProps) {
   const router = useRouter();
   const [selectedCourseId, setSelectedCourseId] = useState("");
@@ -189,6 +192,7 @@ export function MemberEnrollmentsPanel({
   return (
     <div className="space-y-4">
       {/* ===================== 수강신청 대행 ===================== */}
+      {readOnly ? null : (
       <div className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-semibold text-[#111827]">수강신청 대행</span>
@@ -241,6 +245,7 @@ export function MemberEnrollmentsPanel({
           결제 없이 확정·결제완료 상태로 등록됩니다. 학생 화면에 바로 나타납니다.
         </p>
       </div>
+      )}
 
       {message ? (
         <p className="rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-3 py-2 text-sm text-[#059669]">{message}</p>
@@ -263,10 +268,10 @@ export function MemberEnrollmentsPanel({
                 <AdminTableHead>과정명</AdminTableHead>
                 <AdminTableHead>수강기간</AdminTableHead>
                 <AdminTableHead>상태</AdminTableHead>
-                <AdminTableHead>진도율 수정</AdminTableHead>
-                <AdminTableHead>시험점수 수정</AdminTableHead>
+                <AdminTableHead>{readOnly ? "진도율" : "진도율 수정"}</AdminTableHead>
+                <AdminTableHead>{readOnly ? "시험" : "시험점수 수정"}</AdminTableHead>
                 <AdminTableHead>수료여부</AdminTableHead>
-                <AdminTableHead className="text-right">관리</AdminTableHead>
+                {readOnly ? null : <AdminTableHead className="text-right">관리</AdminTableHead>}
               </AdminTableRow>
             </AdminTableHeader>
             <AdminTableBody>
@@ -286,6 +291,10 @@ export function MemberEnrollmentsPanel({
                       <EnrollmentLearningStatusBadge status={enrollment.learningStatus} />
                     </AdminTableCell>
                     <AdminTableCell>
+                      {readOnly ? (
+                        <span className="text-sm text-[#374151]">{enrollment.progressRate}%</span>
+                      ) : (
+                      <>
                       <div className="flex items-center gap-1.5">
                         <AdminInput
                           type="number"
@@ -316,8 +325,14 @@ export function MemberEnrollmentsPanel({
                       <p className="mt-1 text-[11px] text-[#9CA3AF]">
                         현재 {enrollment.progressRate}% · 입력하면 자동저장
                       </p>
+                      </>
+                      )}
                     </AdminTableCell>
                     <AdminTableCell>
+                      {readOnly ? (
+                        <span className="text-sm text-[#374151]">{enrollment.examStatus}</span>
+                      ) : (
+                      <>
                       <div className="flex items-center gap-1.5">
                         <AdminInput
                           type="number"
@@ -345,6 +360,8 @@ export function MemberEnrollmentsPanel({
                       <p className="mt-1 text-[11px] text-[#9CA3AF]">
                         현재 {enrollment.examStatus} · 60점 이상 자동 합격
                       </p>
+                      </>
+                      )}
                     </AdminTableCell>
                     <AdminTableCell>
                       {enrollment.isCompleted ? (
@@ -357,6 +374,7 @@ export function MemberEnrollmentsPanel({
                         </span>
                       )}
                     </AdminTableCell>
+                    {readOnly ? null : (
                     <AdminTableCell className="text-right">
                       <div className="inline-flex items-center gap-1.5">
                         <Link
@@ -378,6 +396,7 @@ export function MemberEnrollmentsPanel({
                         </button>
                       </div>
                     </AdminTableCell>
+                    )}
                   </AdminTableRow>
                 );
               })}

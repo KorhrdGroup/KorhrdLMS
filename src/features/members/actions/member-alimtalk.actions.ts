@@ -1,5 +1,7 @@
 "use server";
 
+import { isBabyAdmin } from "@/lib/admin/current-admin";
+
 import { cookies } from "next/headers";
 
 import { ADMIN_SESSION_MARKER_COOKIE } from "@/features/admin-auth/constants";
@@ -34,6 +36,10 @@ export async function bulkSendMemberAlimtalkAction(input: {
   memberIds: string[];
   source: "" | "office" | "general";
 }): Promise<BulkAlimtalkResult> {
+  // 아기관리자는 알림톡을 보낼 수 없습니다 (조회 전용)
+  if (await isBabyAdmin()) {
+    return { success: false, message: "조회 전용 계정이라 알림톡을 보낼 수 없습니다.", sent: 0, failed: 0, skipped: 0 };
+  }
   if (!(await requireAdmin())) {
     return { success: false, message: "관리자만 사용할 수 있습니다.", sent: 0, failed: 0, skipped: 0 };
   }

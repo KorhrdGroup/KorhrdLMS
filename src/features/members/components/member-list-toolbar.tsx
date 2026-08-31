@@ -171,7 +171,7 @@ export function MemberListToolbar({
             disabled={isExporting}
             variant="outline"
           />
-          <ActionButton label="알림톡 발송" onClick={onAlimtalkClick} variant="accent" />
+          {onAlimtalkClick ? <ActionButton label="알림톡 발송" onClick={onAlimtalkClick} variant="accent" /> : null}
         </div>
       </div>
 

@@ -24,9 +24,11 @@ import type { PaginatedResult } from "@/lib/shared/list-query";
 type MemberListViewProps = {
   result: PaginatedResult<MemberListRow>;
   query: MemberListQuery;
+  /** 아기관리자 — 알림톡 발송·조작 기능을 숨기고 조회만 허용 */
+  isBabyAdmin?: boolean;
 };
 
-export function MemberListView({ result, query }: MemberListViewProps) {
+export function MemberListView({ result, query, isBabyAdmin = false }: MemberListViewProps) {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [editOpen, setEditOpen] = useState(false);
@@ -184,7 +186,7 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         restorableSelectedCount={restorableSelectedIds.length}
         onDeleteClick={() => setDeleteOpen(true)}
         onRestoreClick={() => handleRestoreClick()}
-        onAlimtalkClick={() => setAlimtalkOpen(true)}
+        onAlimtalkClick={isBabyAdmin ? undefined : () => setAlimtalkOpen(true)}
       />
 
       <MemberListTable
@@ -218,6 +220,7 @@ export function MemberListView({ result, query }: MemberListViewProps) {
         open={overviewOpen}
         onOpenChange={setOverviewOpen}
         memberId={overviewMemberId}
+        readOnly={isBabyAdmin}
       />
       <MemberAlimtalkModal
         open={alimtalkOpen}

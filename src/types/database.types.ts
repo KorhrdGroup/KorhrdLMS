@@ -2338,6 +2338,7 @@ export type MemberListItem = Pick<
   | "manager_name"
   | "joined_at"
   | "referral_source"
+  | "partner_code"
   | "last_login_at"
   | "deleted_at"
   | "memo"

@@ -28,6 +28,8 @@ type MemberOverviewModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   memberId: string | null;
+  /** 아기관리자 등 조회 전용 — 수강정보 조작을 숨깁니다 */
+  readOnly?: boolean;
 };
 
 const OVERVIEW_TABS = [
@@ -99,7 +101,7 @@ function EmptyNote({ children }: { children: React.ReactNode }) {
  * [결제내역] 탭 — 자격증 신청 결제상태(계좌이체 대기 포함)와 결제 기록,
  *                수기 계좌이체 추가까지 여기서 처리합니다.
  */
-export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOverviewModalProps) {
+export function MemberOverviewModal({ open, onOpenChange, memberId, readOnly = false }: MemberOverviewModalProps) {
   const [overview, setOverview] = useState<MemberOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<OverviewTabId>("info");
@@ -374,6 +376,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId }: MemberOver
                 memberId={member.id}
                 enrollments={overview.enrollments}
                 courseOptions={overview.courseOptions}
+                readOnly={readOnly}
               />
 
               <SectionTitle>성적정보</SectionTitle>

@@ -170,12 +170,20 @@ export function MemberListTable({
               <MemberHistoryMemoCell memberId={member.id} memo={member.memo} />
             </span>
 
-            {/* 마케팅 유입경로 — 링크(utm_source)로 들어와 가입한 회원만 값이 있습니다 */}
+            {/* 마케팅 유입경로 — 링크(utm_source) 가입은 경로를, 파트너스 코드 가입은 코드를 보여줍니다 */}
             <span
               style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}
-              title={member.referral_source ?? undefined}
+              title={member.partner_code ?? member.referral_source ?? undefined}
             >
-              {member.referral_source ? member.referral_source.replace("_", " › ") : "—"}
+              {member.partner_code ? (
+                <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 6, background: "#EBF3FE", color: "#3182F6", fontSize: 11.5, fontWeight: 700 }}>
+                  {member.partner_code}
+                </span>
+              ) : member.referral_source ? (
+                member.referral_source.replace("_", " › ")
+              ) : (
+                "—"
+              )}
             </span>
             <span style={{ whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}>{formatDate(member.joined_at)}</span>
             <span style={{ whiteSpace: "nowrap", color: M.body, fontSize: 12.5 }}>{formatDateTime(member.last_login_at)}</span>
