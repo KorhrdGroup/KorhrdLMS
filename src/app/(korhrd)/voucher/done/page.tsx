@@ -23,7 +23,17 @@ export default async function Page({
       <div className="page-head"><h1>평생교육이용권 결제</h1></div>
 
       <div className="card" style={{ maxWidth: 520, padding: 32, textAlign: 'center' }}>
-        <p style={{ fontSize: 40, marginBottom: 8 }}>{ok ? '✅' : '❌'}</p>
+        {ok ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/voucher-complete-check.png"
+            alt=""
+            aria-hidden="true"
+            style={{ display: 'block', width: 72, height: 72, objectFit: 'contain', margin: '0 auto 12px' }}
+          />
+        ) : (
+          <p style={{ fontSize: 40, marginBottom: 8 }}>❌</p>
+        )}
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
           {ok ? '결제가 완료되었습니다' : '결제가 완료되지 않았습니다'}
         </h2>
