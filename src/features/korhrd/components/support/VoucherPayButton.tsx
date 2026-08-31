@@ -13,12 +13,28 @@ export default function VoucherPayButton() {
 
   return (
     <>
+      {/* 카카오톡 상담 배너와 같은 짜임 — 글 왼쪽 + 이용권 아이콘 오른쪽 */}
       <button
-        className="btn btn--primary btn--block"
         type="button"
         onClick={() => setOpen(true)}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 12, width: '100%', padding: 16,
+          background: '#EBF3FE', color: '#191F28',
+          border: 'none', borderRadius: 10, cursor: 'pointer',
+          textAlign: 'left',
+        }}
       >
-        평생교육이용권 결제
+        <span style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3, whiteSpace: 'nowrap' }}>
+          평생교육이용권 결제
+        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/voucher-banner-icon.png"
+          alt=""
+          aria-hidden="true"
+          style={{ display: 'block', width: 34, height: 34, objectFit: 'contain', flexShrink: 0 }}
+        />
       </button>
 
       {open ? (
