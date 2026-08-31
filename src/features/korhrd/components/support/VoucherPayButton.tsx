@@ -25,8 +25,8 @@ export default function VoucherPayButton() {
           textAlign: 'left',
         }}
       >
-        <span style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.3 }}>
-          평생교육이용권<br />결제
+        <span style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3, whiteSpace: 'nowrap' }}>
+          평생교육이용권 결제
         </span>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
