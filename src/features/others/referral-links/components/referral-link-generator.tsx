@@ -9,7 +9,7 @@ import { M } from "@/features/courses/lib/course-design";
 const SITE = "https://www.korhrd.co.kr";
 
 /** 대분류 후보 — 회원관리 유입경로의 앞부분이 됩니다 */
-const MAJORS = ["네이버카페", "당근", "인스타", "페이스북", "블로그", "유튜브", "지인소개"];
+const MAJORS = ["네이버카페", "네이버배너", "네이버파워링크", "당근", "인스타", "페이스북", "블로그", "유튜브", "지인소개"];
 
 export type ReferralLinkCourseOption = {
   code: string;
