@@ -58,14 +58,18 @@ export async function restoreLegacyRecordsForMember(memberId: string): Promise<v
 
   if (!member) return;
 
-  /* ---------- 1) 옛 신청 건 찾기 (미연결 이관분만) ---------- */
+  /* ---------- 1) 옛 신청 건 찾기 (미연결 이관분만) ----------
+     로그인ID(=생년월일 6자리)는 생일이 같은 다른 사람과 겹칠 수 있으므로
+     반드시 이름까지 함께 일치할 때만 붙입니다. (아이디만으로 매칭하면 생일이 같은
+     남의 이관 자격증신청이 통째로 딸려 오는 사고가 납니다.) */
   const { data: byLoginId } = await supabase
     .from("certificate_applications")
     .select("id, legacy_no, certificate_name, course_id, education_start_date, education_end_date, applied_at")
     .is("member_id", null)
     .not("legacy_no", "is", null)
     .is("deleted_at", null)
-    .eq("member_login_id", member.login_id);
+    .eq("member_login_id", member.login_id)
+    .eq("applicant_name", member.name);
 
   let matched = (byLoginId ?? []) as LegacyApplication[];
 

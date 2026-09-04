@@ -27,7 +27,7 @@ export async function createAdminCourseReviewAction(input: {
 
 export async function updateAdminCourseReviewAction(
   reviewId: string,
-  input: { title: string; body: string; isPublished: boolean },
+  input: { title: string; body: string; isPublished: boolean; createdAt?: string },
 ): Promise<AdminReviewMutationResult> {
   const result = await updateAdminCourseReview(reviewId, input);
   if (result.success) {

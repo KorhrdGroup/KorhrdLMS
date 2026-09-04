@@ -45,6 +45,7 @@ export function ReviewManagementView({
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
   const [editPublished, setEditPublished] = useState(true);
+  const [editCreatedAt, setEditCreatedAt] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -88,6 +89,7 @@ export function ReviewManagementView({
     setEditTitle(review.title);
     setEditBody(review.body);
     setEditPublished(review.isPublished);
+    setEditCreatedAt(review.createdAt); // 이미 YYYY-MM-DD 형식
   }
 
   async function run(task: () => Promise<{ success: boolean; message: string }>) {
@@ -431,6 +433,16 @@ export function ReviewManagementView({
                   className="w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-sm text-[#111827]"
                 />
               </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6B7280]">작성일</label>
+                <AdminInput
+                  variant="outline"
+                  type="date"
+                  className="w-44"
+                  value={editCreatedAt}
+                  onChange={(event) => setEditCreatedAt(event.target.value)}
+                />
+              </div>
               <label className="flex items-center gap-2 text-sm text-[#374151]">
                 <input
                   type="checkbox"
@@ -455,6 +467,7 @@ export function ReviewManagementView({
                       title: editTitle,
                       body: editBody,
                       isPublished: editPublished,
+                      createdAt: editCreatedAt,
                     }),
                   );
                   if (ok) setEditing(null);
