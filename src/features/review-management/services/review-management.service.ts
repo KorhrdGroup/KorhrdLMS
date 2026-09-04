@@ -134,17 +134,37 @@ export async function createAdminCourseReview(input: {
 
 export async function updateAdminCourseReview(
   reviewId: string,
-  input: { title: string; body: string; isPublished: boolean },
+  input: { title: string; body: string; isPublished: boolean; createdAt?: string },
 ): Promise<AdminReviewMutationResult> {
   const title = input.title.trim();
   const body = input.body.trim();
   if (!title) return { success: false, message: "제목을 입력해주세요." };
   if (!body) return { success: false, message: "내용을 입력해주세요." };
 
+  const patch: {
+    title: string;
+    body: string;
+    is_published: boolean;
+    created_at?: string;
+  } = { title, body, is_published: input.isPublished };
+
+  // 작성일 수정 — 'YYYY-MM-DD' 를 받으면 그 날짜 정오(KST)로 저장해 표시일이 밀리지 않게 합니다.
+  const createdAtRaw = input.createdAt?.trim();
+  if (createdAtRaw) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(createdAtRaw)) {
+      return { success: false, message: "작성일은 YYYY-MM-DD 형식이어야 합니다." };
+    }
+    const parsed = new Date(`${createdAtRaw}T12:00:00+09:00`);
+    if (Number.isNaN(parsed.getTime())) {
+      return { success: false, message: "작성일이 올바른 날짜가 아닙니다." };
+    }
+    patch.created_at = parsed.toISOString();
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("course_reviews")
-    .update({ title, body, is_published: input.isPublished })
+    .update(patch)
     .eq("id", reviewId)
     .is("deleted_at", null)
     .select("id")
