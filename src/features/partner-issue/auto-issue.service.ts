@@ -76,17 +76,53 @@ const COURSE_ALIASES: Record<string, string> = {
   독서논술지도사: "독서논술지도사1급",
 };
 
-/** "800203" → "1980-02-03". 두 자리 연도는 오늘 기준으로 1900/2000년대를 고릅니다. */
-function birthToIsoDate(birth6: string): string | null {
-  const digits = birth6.replace(/\D/g, "");
-  if (digits.length !== 6) return null;
-  const yy = Number(digits.slice(0, 2));
-  const mm = digits.slice(2, 4);
-  const dd = digits.slice(4, 6);
-  if (Number(mm) < 1 || Number(mm) > 12 || Number(dd) < 1 || Number(dd) > 31) return null;
-  const nowYY = new Date().getFullYear() % 100;
-  const century = yy > nowYY ? "19" : "20";
-  return `${century}${digits.slice(0, 2)}-${mm}-${dd}`;
+/**
+ * 오피스가 보내온 생년월일 문자열을 검증해서 ISO 날짜와 로그인용 6자리로 바꿉니다.
+ *
+ *   "800203" · "80-02-03"        → { iso: "1980-02-03", login6: "800203" }
+ *   "19800203" · "1980-02-03"    → { iso: "1980-02-03", login6: "800203" }
+ *   "198002"(년+월만) · "19803"  → null  (일자가 없거나 자릿수가 안 맞음)
+ *   "19800230"(2월 30일)         → null  (없는 날짜)
+ *
+ * 예전에는 무조건 앞 6자리만 잘라 YYMMDD 로 봤기 때문에, 오피스가 8자리로 보내면
+ * "19800203" → "198002" 가 되어 "19년 80월" 로 깨지고 생년월일이 빈 채로 저장됐습니다.
+ */
+function parseBirth(raw: string): { iso: string; login6: string } | null {
+  const digits = (raw ?? "").replace(/\D/g, "");
+
+  let year: number;
+  let month: number;
+  let day: number;
+
+  if (digits.length === 8) {
+    year = Number(digits.slice(0, 4));
+    month = Number(digits.slice(4, 6));
+    day = Number(digits.slice(6, 8));
+  } else if (digits.length === 6) {
+    // 두 자리 연도는 오늘 기준으로 1900/2000년대를 고릅니다.
+    const yy = Number(digits.slice(0, 2));
+    const nowYY = new Date().getFullYear() % 100;
+    year = Number(`${yy > nowYY ? "19" : "20"}${digits.slice(0, 2)}`);
+    month = Number(digits.slice(2, 4));
+    day = Number(digits.slice(4, 6));
+  } else {
+    return null;
+  }
+
+  // 실제로 존재하는 날짜인지 — 2월 30일, 13월 같은 값을 여기서 걸러냅니다.
+  const probe = new Date(Date.UTC(year, month - 1, day));
+  if (
+    probe.getUTCFullYear() !== year ||
+    probe.getUTCMonth() !== month - 1 ||
+    probe.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  if (year < 1900 || year > new Date().getFullYear()) return null;
+
+  const mm = String(month).padStart(2, "0");
+  const dd = String(day).padStart(2, "0");
+  return { iso: `${year}-${mm}-${dd}`, login6: `${String(year).slice(2)}${mm}${dd}` };
 }
 
 function formatPhone(raw: string): string {
@@ -132,12 +168,24 @@ export async function runAutoIssue(input: AutoIssueInput): Promise<AutoIssueResu
 
   const name = input.name.trim();
   const phone = formatPhone(input.phone);
-  const birthDigits = input.birthDate.replace(/\D/g, "").slice(0, 6);
-  const birthIso = birthToIsoDate(birthDigits);
 
-  if (!name || birthDigits.length !== 6) {
-    throw new Error("이름과 생년월일 6자리가 필요합니다.");
+  if (!name) {
+    throw new Error("이름이 필요합니다.");
   }
+
+  /* 생년월일이 형식에 안 맞으면 여기서 막습니다. 예전에는 조용히 빈 값으로 넘어가
+     생년월일 없는 발급신청이 만들어졌고(예: "198002" 처럼 일자 없이 보낸 경우),
+     자격증에 찍을 생년월일이 비어 아무도 모르게 누락됐습니다. */
+  const birth = parseBirth(input.birthDate);
+  if (!birth) {
+    throw new Error(
+      `생년월일 "${input.birthDate}" 의 형식이 올바르지 않습니다. ` +
+        `생년월일 8자리(19800203) 또는 6자리(800203)로 입력한 뒤 다시 시도해주세요. ` +
+        `— 자격증에 인쇄되는 값이라 비워 둘 수 없습니다.`,
+    );
+  }
+  const birthIso = birth.iso;
+  const birthDigits = birth.login6;
 
   /* ---------- 1) 회원 찾기/만들기 ---------- */
   // 같은 휴대폰 번호의 기존 회원이 있으면 그 계정을 그대로 씁니다 (아이디가 달라도).
