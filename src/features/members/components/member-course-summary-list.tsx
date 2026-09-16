@@ -27,7 +27,7 @@ export function MemberCourseSummaryList({ courses }: MemberCourseSummaryListProp
   }
 
   return (
-    <ul className="flex max-w-[190px] flex-col gap-1">
+    <ul className="flex max-w-[260px] flex-col gap-1">
       {courses.map((item) => (
         <li
           key={item.enrollmentId}
@@ -44,6 +44,18 @@ export function MemberCourseSummaryList({ courses }: MemberCourseSummaryListProp
           >
             {item.statusLabel}
           </span>
+          {/* 수료시험 제출 표시 — 채점 대기 건을 목록에서 바로 알아보게 (미제출은 표시 안 함) */}
+          {item.examSubmitted ? (
+            <span
+              className={cn(
+                "shrink-0 rounded px-1.5 py-0.5 font-medium whitespace-nowrap",
+                item.examPassed ? "bg-[#F0FDF4] text-[#059669]" : "bg-[#FEE2E2] text-[#EF4444]",
+              )}
+              title={item.examPassed ? "수료시험 합격" : "수료시험 제출됨 · 채점 필요"}
+            >
+              시험제출 {item.examScore ?? 0}점
+            </span>
+          ) : null}
         </li>
       ))}
     </ul>

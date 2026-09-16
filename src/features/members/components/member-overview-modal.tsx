@@ -396,6 +396,7 @@ export function MemberOverviewModal({ open, onOpenChange, memberId, readOnly = f
                         <th style={th}>시험명</th>
                         <th style={{ ...th, textAlign: "center" }}>점수</th>
                         <th style={{ ...th, textAlign: "center" }}>합격여부</th>
+                        <th style={{ ...th, textAlign: "right" }}>관리</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -413,6 +414,16 @@ export function MemberOverviewModal({ open, onOpenChange, memberId, readOnly = f
                             ) : (
                               <span style={{ color: M.danger, fontWeight: 700 }}>불합격</span>
                             )}
+                          </td>
+                          {/* 채점은 아기관리자도 해야 하는 일이라 readOnly 와 무관하게 보여줍니다
+                              (아기관리자는 전체 화면 링크가 없어 이 팝업이 유일한 진입점) */}
+                          <td style={{ ...td, textAlign: "right", whiteSpace: "nowrap" }}>
+                            <Link
+                              href={`/admin/members/${memberId}/exams/${exam.id}`}
+                              style={{ color: M.accent, fontWeight: 600, fontSize: 13 }}
+                            >
+                              채점하기
+                            </Link>
                           </td>
                         </tr>
                       ))}

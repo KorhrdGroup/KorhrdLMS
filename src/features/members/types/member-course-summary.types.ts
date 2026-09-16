@@ -14,4 +14,10 @@ export type MemberCourseSummaryItem = {
   certificateIssued: boolean;
   /** 목록에 그대로 표시할 라벨. 예: "진행중 60%" / "수강완료 100%" / "발급완료" */
   statusLabel: string;
+  /** 수료시험을 제출했는지 — 아기관리자가 "채점할 게 있구나"를 목록에서 바로 알 수 있게 */
+  examSubmitted: boolean;
+  /** 제출한 수료시험 점수(미제출이면 null) */
+  examScore: number | null;
+  /** 제출한 수료시험 합격 여부(미제출이면 null) */
+  examPassed: boolean | null;
 };

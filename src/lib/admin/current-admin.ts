@@ -37,3 +37,16 @@ export const BABY_ADMIN_PARTNER_CODE = "STAR";
 export async function isBabyAdmin(): Promise<boolean> {
   return (await getCurrentAdminRole()) === "baby_admin";
 }
+
+/** 현재 로그인한 관리자의 로그인ID(이메일) — "누가 처리했나"를 기록할 때 씁니다. */
+export async function getCurrentAdminLoginId(): Promise<string | null> {
+  try {
+    const auth = await createAuthClient();
+    const {
+      data: { user },
+    } = await auth.auth.getUser();
+    return user?.email ?? null;
+  } catch {
+    return null;
+  }
+}

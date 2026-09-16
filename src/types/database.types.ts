@@ -1313,6 +1313,9 @@ export type Database = {
           exam_id: string
           id: string
           is_passed: boolean | null
+          manual_graded_at: string | null
+          manual_graded_by: string | null
+          manual_grades: Json
           retake_allowed: boolean
           retake_allowed_at: string | null
           score: number
@@ -1327,6 +1330,9 @@ export type Database = {
           exam_id: string
           id?: string
           is_passed?: boolean | null
+          manual_graded_at?: string | null
+          manual_graded_by?: string | null
+          manual_grades?: Json
           retake_allowed?: boolean
           retake_allowed_at?: string | null
           score?: number
@@ -1341,6 +1347,9 @@ export type Database = {
           exam_id?: string
           id?: string
           is_passed?: boolean | null
+          manual_graded_at?: string | null
+          manual_graded_by?: string | null
+          manual_grades?: Json
           retake_allowed?: boolean
           retake_allowed_at?: string | null
           score?: number

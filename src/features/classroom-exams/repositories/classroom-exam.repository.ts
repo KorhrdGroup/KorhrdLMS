@@ -169,13 +169,17 @@ export async function upsertSubmission(
     // 재응시가 반영되면 관리자가 부여한 재시험 허용 상태는 초기화합니다(1회성 허용).
     retake_allowed: false,
     retake_allowed_at: null,
+    // 새 답안이 들어오면 이전 답안 기준의 관리자 정답 처리도 함께 초기화합니다.
+    manual_grades: {},
+    manual_graded_by: null,
+    manual_graded_at: null,
   };
 
   const { data, error } = await supabase
     .from("exam_submissions")
     .upsert(insertData, { onConflict: "enrollment_id,exam_id" })
     .select(
-      "id, enrollment_id, exam_id, score, total_score, is_passed, answers, submitted_at, retake_allowed, retake_allowed_at, created_at, updated_at",
+      "id, enrollment_id, exam_id, score, total_score, is_passed, answers, submitted_at, retake_allowed, retake_allowed_at, manual_grades, manual_graded_by, manual_graded_at, created_at, updated_at",
     )
     .single();
 

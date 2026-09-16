@@ -14,6 +14,8 @@ import {
   MemberEnrollmentsPanel,
   type CourseOption,
 } from "@/features/members/components/member-enrollments-panel";
+import { MemberExamsPanel } from "@/features/member-exam-grading/components/member-exams-panel";
+import type { MemberExamListItem } from "@/features/member-exam-grading/types/member-exam-grading.types";
 import { MemberGradesPanel } from "@/features/members/components/member-grades-panel";
 import { M } from "@/features/members/lib/member-design";
 import type { MemberDetail } from "@/features/members/types/member-detail.types";
@@ -30,6 +32,8 @@ const MEMBER_DETAIL_TABS = [
 type MemberDetailViewProps = {
   member: MemberDetail;
   enrollments: EnrollmentRecordListItem[];
+  /** 시험관리 탭 — 수강 과정별 수료시험 응시 상태 */
+  examSubmissions: MemberExamListItem[];
   grades: GradeListItem[];
   /** 수강신청 대행에 쓸 노출 중 과정 목록 */
   courseOptions: CourseOption[];
@@ -37,13 +41,6 @@ type MemberDetailViewProps = {
   readOnly?: boolean;
 };
 
-function EmptyTabPanel() {
-  return (
-    <div style={{ minHeight: 220, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: M.mute }}>
-      준비 중입니다.
-    </div>
-  );
-}
 
 function BasicInfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -102,7 +99,14 @@ function MemberBasicInfoPanel({ member }: { member: MemberDetail }) {
   );
 }
 
-export function MemberDetailView({ member, enrollments, grades, courseOptions, readOnly = false }: MemberDetailViewProps) {
+export function MemberDetailView({
+  member,
+  enrollments,
+  examSubmissions,
+  grades,
+  courseOptions,
+  readOnly = false,
+}: MemberDetailViewProps) {
   const [activeTab, setActiveTab] = useState<(typeof MEMBER_DETAIL_TABS)[number]["id"]>("basic");
   const [editOpen, setEditOpen] = useState(false);
 
@@ -220,7 +224,7 @@ export function MemberDetailView({ member, enrollments, grades, courseOptions, r
         ) : activeTab === "grades" ? (
           <MemberGradesPanel grades={grades} readOnly={readOnly} />
         ) : (
-          <EmptyTabPanel />
+          <MemberExamsPanel memberId={member.id} items={examSubmissions} />
         )}
       </div>
 
