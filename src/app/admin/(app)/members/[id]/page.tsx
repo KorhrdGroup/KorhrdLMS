@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { getEnrollmentRecordsForMember } from "@/features/enrollments/services/enrollment-record-list.service";
 import { getGradeRecordsForMember } from "@/features/grades/services/grade-list.service";
+import { listMemberExamSubmissions } from "@/features/member-exam-grading/services/member-exam-grading.service";
 import { MemberDetailView } from "@/features/members/components/member-detail-view";
 import { getMemberDetail } from "@/features/members/services/member-detail.service";
 import { createClient } from "@/lib/supabase/server";
@@ -51,9 +52,10 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
         notFound();
       }
     }
-    const [enrollments, grades, { data: courseRows }] = await Promise.all([
+    const [enrollments, grades, examSubmissions, { data: courseRows }] = await Promise.all([
       getEnrollmentRecordsForMember(id),
       getGradeRecordsForMember(id),
+      listMemberExamSubmissions(id),
       // 수강신청 대행에 쓸 노출 중 과정 목록 (분야 필터용 카테고리 포함)
       supabase
         .from("courses")
@@ -80,6 +82,7 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
         member={result.member}
         enrollments={enrollments}
         grades={grades}
+        examSubmissions={examSubmissions}
         courseOptions={courseOptions}
         readOnly={babyAdmin}
       />

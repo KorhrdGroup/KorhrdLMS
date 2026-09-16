@@ -23,6 +23,40 @@ function buildStatusLabel(progressRate: number, certificateIssued: boolean) {
   return `진행중 ${progressRate}%`;
 }
 
+type FinalExamSubmissionSummary = { score: number; isPassed: boolean | null };
+
+/**
+ * 수강신청별 수료시험(final_exam) 제출 요약. 기출·연습 시험은 제외합니다.
+ * 회원목록에서 "이 사람 시험 냈구나"를 바로 알아보기 위한 용도라 점수·합격만 봅니다.
+ */
+async function getFinalExamSubmissionsByEnrollmentIds(
+  enrollmentIds: string[],
+): Promise<Map<string, FinalExamSubmissionSummary>> {
+  const result = new Map<string, FinalExamSubmissionSummary>();
+  if (enrollmentIds.length === 0) return result;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("exam_submissions")
+    .select("enrollment_id, score, is_passed, exam:exams!inner ( exam_kind )")
+    .in("enrollment_id", enrollmentIds)
+    .eq("exam.exam_kind", "final_exam");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  for (const row of (data ?? []) as unknown as Array<{
+    enrollment_id: string;
+    score: number;
+    is_passed: boolean | null;
+  }>) {
+    result.set(row.enrollment_id, { score: row.score, isPassed: row.is_passed });
+  }
+
+  return result;
+}
+
 /**
  * 회원목록 "수강과정" 컬럼용으로, 여러 회원의 수강신청(확정) 이력을 한 번에
  * 조회해 회원별 과정 요약 목록(Map)으로 반환합니다.
@@ -65,19 +99,20 @@ export async function getMemberCourseSummaries(
     return new Map();
   }
 
-  const certificateMap = await getCertificateRecordsByEnrollmentIds(
-    rows.map((row) => row.id),
-  );
+  const enrollmentIds = rows.map((row) => row.id);
 
-  const progressRates = await Promise.all(
-    rows.map((row) => getClassroomCourseProgressRate(row.id, row.course_id)),
-  );
+  const [certificateMap, examMap, progressRates] = await Promise.all([
+    getCertificateRecordsByEnrollmentIds(enrollmentIds),
+    getFinalExamSubmissionsByEnrollmentIds(enrollmentIds),
+    Promise.all(rows.map((row) => getClassroomCourseProgressRate(row.id, row.course_id))),
+  ]);
 
   const summaryByMember = new Map<string, MemberCourseSummaryItem[]>();
 
   rows.forEach((row, index) => {
     const progressRate = progressRates[index];
     const certificateIssued = certificateMap.has(row.id);
+    const exam = examMap.get(row.id) ?? null;
 
     const item: MemberCourseSummaryItem = {
       enrollmentId: row.id,
@@ -86,6 +121,9 @@ export async function getMemberCourseSummaries(
       progressRate,
       certificateIssued,
       statusLabel: buildStatusLabel(progressRate, certificateIssued),
+      examSubmitted: exam !== null,
+      examScore: exam?.score ?? null,
+      examPassed: exam?.isPassed ?? null,
     };
 
     const existing = summaryByMember.get(row.member_id);

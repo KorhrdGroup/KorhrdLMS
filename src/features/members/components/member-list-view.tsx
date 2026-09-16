@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { AdminListPagination } from "@/components/admin/ui/admin-list-pagination";
@@ -35,8 +35,24 @@ export function MemberListView({ result, query, isBabyAdmin = false }: MemberLis
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   /* 이름 클릭 팝업 — 기본·수강·성적·결제·시험을 한 장에서 스크롤로 봅니다 */
-  const [overviewOpen, setOverviewOpen] = useState(false);
-  const [overviewMemberId, setOverviewMemberId] = useState<string | null>(null);
+  // 채점 화면 등에서 "회원 상세로" 돌아올 때 `?overview=<회원ID>` 로 들어오면 팝업을 바로 엽니다.
+  // (팝업은 화면 상태라 뒤로가기로는 복원되지 않아 URL로 받습니다)
+  const searchParams = useSearchParams();
+  const initialOverviewId = searchParams.get("overview");
+  const [overviewOpen, setOverviewOpen] = useState(() => Boolean(initialOverviewId));
+  const [overviewMemberId, setOverviewMemberId] = useState<string | null>(() => initialOverviewId);
+
+  function handleOverviewOpenChange(open: boolean) {
+    setOverviewOpen(open);
+    // 닫을 때 URL의 overview 를 지워 새로고침 시 팝업이 다시 뜨지 않게 합니다 (서버 재조회 없이)
+    if (!open && typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("overview")) {
+        url.searchParams.delete("overview");
+        window.history.replaceState(window.history.state, "", url.toString());
+      }
+    }
+  }
   const [alimtalkOpen, setAlimtalkOpen] = useState(false);
 
   const deletableSelectedIds = useMemo(
@@ -219,7 +235,7 @@ export function MemberListView({ result, query, isBabyAdmin = false }: MemberLis
       />
       <MemberOverviewModal
         open={overviewOpen}
-        onOpenChange={setOverviewOpen}
+        onOpenChange={handleOverviewOpenChange}
         memberId={overviewMemberId}
         readOnly={isBabyAdmin}
       />
