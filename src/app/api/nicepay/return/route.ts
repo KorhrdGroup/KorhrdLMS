@@ -44,7 +44,15 @@ export async function POST(request: Request) {
   const get = (key: string) => (params.get(key) ?? "").trim();
 
   const authResultCode = get("AuthResultCode");
-  const moid = get("Moid");
+  /* 주문번호는 본문 Moid 가 1순위, 없으면 결제 준비 때 ReturnURL 에 실어 둔 ?moid= 로 찾습니다.
+     나이스페이가 직접 POST 하는 흐름(앱카드·리다이렉트·모바일)에서 본문 Moid 가 비어 온 적이
+     있어(2026-08-31, 2026-09-17 비회원 결제 실패) 세션도 본문도 없이 주문을 찾을 길이 필요합니다. */
+  const moidFromBody = get("Moid");
+  const moidFromQuery = (new URL(request.url).searchParams.get("moid") ?? "").trim();
+  const moid = moidFromBody || moidFromQuery;
+  if (!moidFromBody && moidFromQuery) {
+    console.log("[나이스페이] 본문 Moid 공백 — ReturnURL 쿼리의 moid 로 주문 매칭:", moidFromQuery);
+  }
 
   // 결제 준비 때 기록해 둔 주문 — 금액의 기준이자 위조 검증 수단입니다
   const supabase = await createClient();
@@ -56,6 +64,16 @@ export async function POST(request: Request) {
       .eq("moid", moid)
       .maybeSingle();
     order = data;
+    // 본문 Moid 로 못 찾았는데 쿼리 moid 가 따로 있으면 그걸로 한 번 더 — 둘이 다른 경우 대비
+    if (!order && moidFromBody && moidFromQuery && moidFromQuery !== moidFromBody) {
+      const { data: byQuery } = await supabase
+        .from("voucher_payments")
+        .select("id, amount, status")
+        .eq("moid", moidFromQuery)
+        .maybeSingle();
+      order = byQuery;
+      if (order) console.log("[나이스페이] 본문 Moid 불일치 — 쿼리 moid 로 주문 매칭:", moidFromQuery);
+    }
   } else {
     // 구버전 화면 등으로 Moid가 비어 오면 — 같은 브라우저 제출(PC 흐름)은 세션이
     // 실려오므로, 그 회원의 가장 최근 시도중(ready) 주문으로 이어붙입니다.
