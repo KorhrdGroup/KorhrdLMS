@@ -88,7 +88,11 @@ export default function VoucherPayForm({ member }: VoucherPayFormProps) {
       set('GoodsName', prepared.goodsName);
       set('Amt', prepared.amt);
       set('BuyerName', prepared.buyerName);
-      set('ReturnURL', `${window.location.origin}/api/nicepay/return`);
+      /* 주문번호를 돌아올 주소의 쿼리에도 싣습니다. 콜백 본문의 Moid 는 나이스페이가 직접
+         POST 하는 흐름(앱카드·리다이렉트·모바일)에서 비거나 달라질 수 있어 — 실제로 비어 온
+         적이 있음 — 우리가 정한 URL 로 주문을 찾는 게 세션·본문에 기대지 않는 확실한 길입니다. */
+      const returnUrl = `${window.location.origin}/api/nicepay/return?moid=${encodeURIComponent(prepared.moid)}`;
+      set('ReturnURL', returnUrl);
 
       const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
       if (isMobile) {
@@ -100,7 +104,7 @@ export default function VoucherPayForm({ member }: VoucherPayFormProps) {
       }
 
       // PC: 레이어 팝업. 인증이 끝나면 나이스페이가 이 콜백을 부릅니다 → 서버로 제출해 승인 진행
-      form.action = '/api/nicepay/return';
+      form.action = returnUrl;
       window.nicepaySubmit = () => form.submit();
       window.nicepayClose = () => setError('결제가 취소되었습니다.');
       window.goPay(form);
