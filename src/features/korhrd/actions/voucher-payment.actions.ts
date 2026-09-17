@@ -18,7 +18,13 @@ export type VoucherPaymentPrepared = {
 
 export type VoucherPaymentPrepareResult =
   | VoucherPaymentPrepared
-  | { success: false; message: string };
+  | {
+      success: false;
+      message: string;
+      /** buyer_required — 로그인 세션이 없어 결제자 이름·휴대폰이 필요합니다.
+          화면이 회원으로 알고 입력칸을 숨겼더라도 이 코드를 받으면 칸을 펼쳐야 합니다. */
+      code?: "buyer_required";
+    };
 
 const MIN_AMOUNT = 1000;
 const MAX_AMOUNT = 5_000_000;
@@ -37,6 +43,9 @@ function formatPhone(raw: string): string | null {
  *
  * 로그인하지 않아도 결제할 수 있습니다. 회원이면 회원 정보를 그대로 쓰고,
  * 비회원이면 이름·휴대폰을 받아 결제자를 남깁니다(어드민 이용권결제에서 확인).
+ * 로그인 여부의 기준은 화면이 아니라 **이 액션**입니다 — 화면은 레이아웃이 넘긴 값으로
+ * 입력칸을 숨길 수 있지만(캐시·세션 만료로 어긋날 수 있음), 실제 판단은 여기서 하고
+ * 정보가 모자라면 `code: "buyer_required"` 로 알려 화면이 칸을 펼치게 합니다.
  */
 export async function prepareVoucherPaymentAction(input: {
   amount: number;
@@ -52,9 +61,24 @@ export async function prepareVoucherPaymentAction(input: {
     buyer = { memberId: member.id, name: member.name, tel: null };
   } else {
     const name = (input.buyerName ?? "").trim();
-    const tel = formatPhone(input.buyerTel ?? "");
-    if (!name) return { success: false, message: "결제자 이름을 입력해주세요." };
-    if (!tel) return { success: false, message: "휴대폰 번호를 정확히 입력해주세요. (예: 010-1234-5678)" };
+    const telRaw = (input.buyerTel ?? "").trim();
+    const tel = formatPhone(telRaw);
+    if (!name && !telRaw) {
+      // 화면은 회원인 줄 알고 칸을 숨겼는데 세션이 없는 경우 — 칸을 펼치라고 알립니다
+      return {
+        success: false,
+        code: "buyer_required",
+        message: "로그인 상태를 확인할 수 없어 결제자 정보가 필요합니다. 이름과 휴대폰 번호를 입력해주세요.",
+      };
+    }
+    if (!name) return { success: false, code: "buyer_required", message: "결제자 이름을 입력해주세요." };
+    if (!tel) {
+      return {
+        success: false,
+        code: "buyer_required",
+        message: "휴대폰 번호를 정확히 입력해주세요. (예: 010-1234-5678)",
+      };
+    }
     buyer = { memberId: null, name, tel };
   }
 

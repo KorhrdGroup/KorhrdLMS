@@ -26,10 +26,14 @@ export type VoucherPayFormProps = {
  * 모바일은 나이스페이가 ReturnURL(같은 주소)로 직접 POST 합니다.
  *
  * 로그인 없이도 결제할 수 있습니다 — 비회원은 이름·휴대폰을 받아 결제자를 남깁니다.
+ * `member` 는 처음 입력칸을 보일지 정하는 힌트일 뿐, 로그인 여부의 최종 판단은
+ * 서버 액션이 합니다. 액션이 `buyer_required` 를 돌려주면(레이아웃 캐시·세션 만료로
+ * 화면과 어긋난 경우) 그 자리에서 입력칸을 펼쳐 이어서 결제할 수 있게 합니다.
  */
 export default function VoucherPayForm({ member }: VoucherPayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [amount, setAmount] = useState('');
+  const [guestMode, setGuestMode] = useState(() => member === null);
   const [guestName, setGuestName] = useState('');
   const [guestTel, setGuestTel] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +47,7 @@ export default function VoucherPayForm({ member }: VoucherPayFormProps) {
       setError('결제 금액을 입력해주세요.');
       return;
     }
-    if (!member) {
+    if (guestMode) {
       if (!guestName.trim()) {
         setError('결제자 이름을 입력해주세요.');
         return;
@@ -58,10 +62,12 @@ export default function VoucherPayForm({ member }: VoucherPayFormProps) {
     startTransition(async () => {
       const prepared = await prepareVoucherPaymentAction({
         amount: parsed,
-        buyerName: member ? undefined : guestName,
-        buyerTel: member ? undefined : guestTel,
+        buyerName: guestMode ? guestName : undefined,
+        buyerTel: guestMode ? guestTel : undefined,
       });
       if (!prepared.success) {
+        // 서버가 보기엔 로그인이 아니었던 경우 — 숨겼던 이름·휴대폰 칸을 펼쳐 이어서 진행
+        if (prepared.code === 'buyer_required') setGuestMode(true);
         setError(prepared.message);
         return;
       }
@@ -116,10 +122,10 @@ export default function VoucherPayForm({ member }: VoucherPayFormProps) {
       <p style={{ fontSize: 14, color: '#4E5968', marginBottom: 16 }}>
         평생교육이용권으로 결제하실 금액을 입력한 뒤 결제하기를 눌러주세요.
         나이스페이 안전결제창이 열립니다.
-        {member ? null : ' 회원이 아니어도 결제할 수 있습니다.'}
+        {guestMode ? ' 회원이 아니어도 결제할 수 있습니다.' : null}
       </p>
 
-      {member ? null : (
+      {guestMode ? (
         <>
           <div className="field" style={{ marginBottom: 12 }}>
             <label htmlFor="voucher-guest-name">결제자 이름</label>
@@ -145,7 +151,7 @@ export default function VoucherPayForm({ member }: VoucherPayFormProps) {
             />
           </div>
         </>
-      )}
+      ) : null}
 
       <div className="field" style={{ marginBottom: 16 }}>
         <label htmlFor="voucher-amount">결제 금액 (원)</label>
