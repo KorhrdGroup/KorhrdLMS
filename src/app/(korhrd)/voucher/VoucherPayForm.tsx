@@ -13,16 +13,25 @@ declare global {
   }
 }
 
+export type VoucherPayFormProps = {
+  /** 로그인한 회원 — null 이면 비회원 결제(이름·휴대폰 입력을 받습니다) */
+  member: { name: string } | null;
+};
+
 /**
  * 나이스페이 결제창 호출 폼.
  *
  * 결제하기 → 서버 액션이 서명 파라미터를 만들어 주면 숨은 폼을 채워 goPay 호출.
  * PC는 인증 후 nicepaySubmit 콜백에서 폼이 /api/nicepay/return 으로 제출되고,
  * 모바일은 나이스페이가 ReturnURL(같은 주소)로 직접 POST 합니다.
+ *
+ * 로그인 없이도 결제할 수 있습니다 — 비회원은 이름·휴대폰을 받아 결제자를 남깁니다.
  */
-export default function VoucherPayForm() {
+export default function VoucherPayForm({ member }: VoucherPayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [amount, setAmount] = useState('');
+  const [guestName, setGuestName] = useState('');
+  const [guestTel, setGuestTel] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -34,9 +43,24 @@ export default function VoucherPayForm() {
       setError('결제 금액을 입력해주세요.');
       return;
     }
+    if (!member) {
+      if (!guestName.trim()) {
+        setError('결제자 이름을 입력해주세요.');
+        return;
+      }
+      const telDigits = guestTel.replace(/\D/g, '');
+      if (telDigits.length < 10 || telDigits.length > 11) {
+        setError('휴대폰 번호를 정확히 입력해주세요. (예: 010-1234-5678)');
+        return;
+      }
+    }
 
     startTransition(async () => {
-      const prepared = await prepareVoucherPaymentAction({ amount: parsed });
+      const prepared = await prepareVoucherPaymentAction({
+        amount: parsed,
+        buyerName: member ? undefined : guestName,
+        buyerTel: member ? undefined : guestTel,
+      });
       if (!prepared.success) {
         setError(prepared.message);
         return;
@@ -79,16 +103,49 @@ export default function VoucherPayForm() {
 
   return (
     <div className="card" style={{ maxWidth: 520, padding: 24 }}>
+      {/* onLoad 가 아니라 onReady — next/script 는 같은 스크립트를 한 번만 내려받아, 모달을
+          다시 열거나 로그인 뒤 폼이 다시 마운트되면 onLoad 는 두 번 다시 불리지 않는다.
+          그러면 SDK(goPay)는 이미 있는데 sdkReady 만 false 로 남아 결제하기가 영영 잠긴다.
+          onReady 는 처음 로드 때와 이후 매 마운트마다 불린다. */}
       <Script
         src="https://web.nicepay.co.kr/v3/webstd/js/nicepay-3.0.js"
         strategy="afterInteractive"
-        onLoad={() => setSdkReady(true)}
+        onReady={() => setSdkReady(true)}
       />
 
       <p style={{ fontSize: 14, color: '#4E5968', marginBottom: 16 }}>
         평생교육이용권으로 결제하실 금액을 입력한 뒤 결제하기를 눌러주세요.
         나이스페이 안전결제창이 열립니다.
+        {member ? null : ' 회원이 아니어도 결제할 수 있습니다.'}
       </p>
+
+      {member ? null : (
+        <>
+          <div className="field" style={{ marginBottom: 12 }}>
+            <label htmlFor="voucher-guest-name">결제자 이름</label>
+            <input
+              id="voucher-guest-name"
+              type="text"
+              autoComplete="name"
+              placeholder="예: 홍길동"
+              value={guestName}
+              onChange={(event) => setGuestName(event.target.value)}
+            />
+          </div>
+          <div className="field" style={{ marginBottom: 16 }}>
+            <label htmlFor="voucher-guest-tel">휴대폰 번호</label>
+            <input
+              id="voucher-guest-tel"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
+              placeholder="예: 010-1234-5678"
+              value={guestTel}
+              onChange={(event) => setGuestTel(event.target.value)}
+            />
+          </div>
+        </>
+      )}
 
       <div className="field" style={{ marginBottom: 16 }}>
         <label htmlFor="voucher-amount">결제 금액 (원)</label>

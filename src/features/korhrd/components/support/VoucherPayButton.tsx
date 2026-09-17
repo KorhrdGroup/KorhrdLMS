@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 
-import VoucherPayForm from '@/app/(korhrd)/voucher/VoucherPayForm';
+import VoucherPayForm, { type VoucherPayFormProps } from '@/app/(korhrd)/voucher/VoucherPayForm';
 
 /**
  * 고객센터 사이드바의 "평생교육이용권 결제" 버튼 — 팝업(모달)으로 결제 폼을 띄웁니다.
  * 폼은 /voucher 페이지와 같은 컴포넌트라 결제 흐름(나이스페이)은 동일합니다.
+ * 로그인 여부(member)는 서버 레이아웃이 넘겨줍니다 — 비회원이면 폼이 이름·휴대폰을 받습니다.
  */
-export default function VoucherPayButton() {
+export default function VoucherPayButton({ member }: VoucherPayFormProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -66,7 +67,7 @@ export default function VoucherPayButton() {
               </button>
             </div>
             <div style={{ padding: 4 }}>
-              <VoucherPayForm />
+              <VoucherPayForm member={member} />
             </div>
           </div>
         </div>

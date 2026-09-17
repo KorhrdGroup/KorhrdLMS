@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { getMockableStudentMember } from '@/lib/mock-auth-server';
+
 import SupportNav from './SupportNav';
 import VoucherPayButton from '@/features/korhrd/components/support/VoucherPayButton';
 
@@ -12,7 +14,10 @@ import VoucherPayButton from '@/features/korhrd/components/support/VoucherPayBut
  * 상담 3블록을 여기 둔 것은 어느 화면에서 헤매다 들어와도 전화·카카오로 바로
  * 갈 수 있어야 하기 때문입니다 — 전달본 support.html 도 맨 위에 두고 있습니다.
  */
-export default function SupportLayout({ children }: { children: React.ReactNode }) {
+export default async function SupportLayout({ children }: { children: React.ReactNode }) {
+  // 이용권 결제 팝업이 회원/비회원을 구분해 폼을 그리도록 로그인 여부만 넘깁니다 (비회원도 결제 가능)
+  const member = await getMockableStudentMember();
+
   return (
     <div className="container">
       <nav className="breadcrumb" aria-label="현재 위치">
@@ -63,8 +68,9 @@ export default function SupportLayout({ children }: { children: React.ReactNode 
               </span>
             </a>
 
-            {/* 평생교육이용권 결제 — 팝업으로 나이스페이 결제 폼을 띄웁니다 (2026-08-31) */}
-            <VoucherPayButton />
+            {/* 평생교육이용권 결제 — 팝업으로 나이스페이 결제 폼을 띄웁니다 (2026-08-31).
+                비회원도 결제할 수 있어 로그인 여부만 넘겨 폼이 입력칸을 맞춥니다. */}
+            <VoucherPayButton member={member ? { name: member.name } : null} />
           </div>
         </aside>
 
