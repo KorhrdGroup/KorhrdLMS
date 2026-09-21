@@ -9,6 +9,7 @@ import {
 import { todayInKst } from "@/lib/shared/kst-date";
 import { headers } from "next/headers";
 
+import { notifyOfficeCertSale } from "@/features/payments/office-cert-sales";
 import { createClient } from "@/lib/supabase/server";
 import type { Database, PaymentStatus } from "@/types/database.types";
 
@@ -338,50 +339,6 @@ export async function applyPayAppFeedback(feedback: PayAppFeedback): Promise<Fee
   }
 
   return { ok: true };
-}
-
-/**
- * 오피스(korhrd-group-db) 매출파일에 카드결제 건을 등록합니다.
- * 분류 "후납" · 결제수단 "카드결제" 로 들어가고, 민간자격증 발급비라
- * 오피스 쪽에서 비고에 면세(TG02)를 함께 남깁니다.
- * OFFICE_API_URL / CERT_SALES_WEBHOOK_SECRET 이 없으면 조용히 건너뜁니다.
- */
-async function notifyOfficeCertSale(input: {
-  studentName: string;
-  phone: string | null;
-  amount: number;
-  certificateNames: string[];
-  ref: string;
-}): Promise<void> {
-  const baseUrl = process.env.OFFICE_API_URL?.trim().replace(/\/+$/, "");
-  const secret = process.env.CERT_SALES_WEBHOOK_SECRET?.trim();
-  if (!baseUrl || !secret) return;
-
-  const paidDate = new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10); // KST
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
-  try {
-    const response = await fetch(`${baseUrl}/api/cert-sales/webhook`, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-webhook-secret": secret },
-      body: JSON.stringify({
-        studentName: input.studentName,
-        phone: input.phone,
-        amount: input.amount,
-        paidDate,
-        certificateNames: input.certificateNames,
-        count: input.certificateNames.length,
-        ref: input.ref,
-      }),
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      throw new Error(`오피스 응답 ${response.status}: ${await response.text()}`);
-    }
-  } finally {
-    clearTimeout(timeout);
-  }
 }
 
 /**

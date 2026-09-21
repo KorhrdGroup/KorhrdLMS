@@ -56,11 +56,12 @@ export async function POST(request: Request) {
 
   // 결제 준비 때 기록해 둔 주문 — 금액의 기준이자 위조 검증 수단입니다
   const supabase = await createClient();
-  let order: { id: string; amount: number; status: string } | null = null;
+  // buyer_name · buyer_tel 은 승인 뒤 오피스 매출파일에 결제자로 올릴 때 씁니다
+  let order: { id: string; amount: number; status: string; buyer_name: string; buyer_tel: string | null } | null = null;
   if (moid) {
     const { data } = await supabase
       .from("voucher_payments")
-      .select("id, amount, status")
+      .select("id, amount, status, buyer_name, buyer_tel")
       .eq("moid", moid)
       .maybeSingle();
     order = data;
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
     if (!order && moidFromBody && moidFromQuery && moidFromQuery !== moidFromBody) {
       const { data: byQuery } = await supabase
         .from("voucher_payments")
-        .select("id, amount, status")
+        .select("id, amount, status, buyer_name, buyer_tel")
         .eq("moid", moidFromQuery)
         .maybeSingle();
       order = byQuery;
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
       if (member) {
         const { data } = await supabase
           .from("voucher_payments")
-          .select("id, amount, status")
+          .select("id, amount, status, buyer_name, buyer_tel")
           .eq("member_id", member.id)
           .eq("status", "ready")
           .order("created_at", { ascending: false })
@@ -190,6 +191,23 @@ export async function POST(request: Request) {
   if (!isPaid) {
     console.error("[나이스페이] 승인 실패", resultCode, result.ResultMsg);
     fail("결제 승인에 실패했습니다. 카드사 승인 결과를 확인해주세요.");
+  }
+
+  /* 승인된 이용권 결제를 오피스 민간자격증 매출파일에 올립니다 — 특이사항 맨 앞에
+     "평생교육이용권 결제자임". 매출 등록이 실패해도 결제는 이미 끝났으므로 완료 화면은
+     그대로 보여주고 로그만 남깁니다(ref = nicepay:TID 로 오피스가 멱등 처리). */
+  try {
+    const { notifyOfficeCertSale } = await import("@/features/payments/office-cert-sales");
+    await notifyOfficeCertSale({
+      studentName: order.buyer_name,
+      phone: order.buyer_tel,
+      amount: order.amount,
+      certificateNames: ["평생교육이용권"],
+      ref: `nicepay:${result.TID ?? txTid}`,
+      remark: "평생교육이용권 결제자임",
+    });
+  } catch (error) {
+    console.error("[나이스페이] 오피스 매출파일 등록 실패:", error);
   }
 
   redirect(`${DONE}?result=ok&amt=${encodeURIComponent(amt)}&moid=${encodeURIComponent(moid)}`);
