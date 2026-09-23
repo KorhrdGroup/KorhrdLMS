@@ -1,3 +1,4 @@
+import { chunk } from "@/lib/shared/chunk";
 import { generateCertificateNumber } from "@/features/completion-certificates/lib/completion-certificate-number";
 import { createClient } from "@/lib/supabase/server";
 
@@ -57,19 +58,25 @@ export async function getCertificateRecordsByEnrollmentIds(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("completion_certificates")
-    .select("enrollment_id, certificate_number, issued_at, reissue_count")
-    .in("enrollment_id", enrollmentIds)
-    .is("canceled_at", null);
-
-  if (error) {
-    throw new Error(error.message);
-  }
+  // id 가 많으면 URL 이 길어져 400 Bad Request — 묶음으로 나눠 조회합니다 (lib/shared/chunk)
+  const pages = await Promise.all(
+    chunk(enrollmentIds).map((ids) =>
+      supabase
+        .from("completion_certificates")
+        .select("enrollment_id, certificate_number, issued_at, reissue_count")
+        .in("enrollment_id", ids)
+        .is("canceled_at", null),
+    ),
+  );
 
   const map = new Map<string, CertificateRecord>();
-  for (const row of data ?? []) {
-    map.set(row.enrollment_id, toRecord(row));
+  for (const { data, error } of pages) {
+    if (error) {
+      throw new Error(error.message);
+    }
+    for (const row of data ?? []) {
+      map.set(row.enrollment_id, toRecord(row));
+    }
   }
 
   return map;

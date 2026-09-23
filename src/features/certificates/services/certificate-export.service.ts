@@ -13,6 +13,7 @@ import type {
 } from "@/features/certificates/types/certificate.types";
 import { PAYMENT_METHOD_LABELS } from "@/features/payments/constants";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAllRows } from "@/lib/shared/fetch-all-rows";
 import type {
   CertificateDeliveryStatus,
   CertificateKind,
@@ -79,25 +80,23 @@ export async function getCertificateExportRows(
 ): Promise<CertificateExportRow[]> {
   const supabase = await createClient();
 
-  let builder = supabase
-    .from("certificate_applications")
-    .select(CERTIFICATE_EXPORT_SELECT)
-    .is("deleted_at", null)
-    .order("applied_at", { ascending: false })
-    .order("created_at", { ascending: false })
-    /* 목록 화면과 같은 순서 — 이관분은 created_at 이 같아 legacy_no 로 갈라야 합니다 */
-    .order("legacy_no", { ascending: false, nullsFirst: false })
-    .order("id", { ascending: false });
+  // Supabase 는 한 번에 1,000행까지만 준다 — 끝까지 이어 받습니다 (lib/shared/fetch-all-rows).
+  // 정렬이 id 로 끝나 페이지 사이에 행이 빠지거나 겹치지 않습니다.
+  const rows = await fetchAllRows((from, to) => {
+    const builder = supabase
+      .from("certificate_applications")
+      .select(CERTIFICATE_EXPORT_SELECT)
+      .is("deleted_at", null)
+      .order("applied_at", { ascending: false })
+      .order("created_at", { ascending: false })
+      /* 목록 화면과 같은 순서 — 이관분은 created_at 이 같아 legacy_no 로 갈라야 합니다 */
+      .order("legacy_no", { ascending: false, nullsFirst: false })
+      .order("id", { ascending: false });
 
-  builder = applyCertificateListFilters(builder, query);
+    return applyCertificateListFilters(builder, query).range(from, to);
+  });
 
-  const { data, error } = await builder;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return ((data ?? []) as CertificateExportDbRow[]).map(mapExportRow);
+  return (rows as CertificateExportDbRow[]).map(mapExportRow);
 }
 
 /** 자격증신청 목록을 실제 엑셀 파일(.xlsx)로 만들어 base64 로 돌려줍니다. */
