@@ -1,3 +1,4 @@
+import { chunk } from "@/lib/shared/chunk";
 import { getCertificateRecordsByEnrollmentIds } from "@/features/completion-certificates/repositories/completion-certificate.repository";
 import { getClassroomCourseProgressRate } from "@/features/classroom-lectures/services/classroom-lecture.service";
 import { ACTIVE_ENROLLMENT_STATUSES } from "@/features/enrollments/constants";
@@ -36,22 +37,28 @@ async function getFinalExamSubmissionsByEnrollmentIds(
   if (enrollmentIds.length === 0) return result;
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("exam_submissions")
-    .select("enrollment_id, score, is_passed, exam:exams!inner ( exam_kind )")
-    .in("enrollment_id", enrollmentIds)
-    .eq("exam.exam_kind", "final_exam");
+  // id 가 많으면 URL 이 길어져 400 Bad Request — 묶음으로 나눠 조회합니다 (lib/shared/chunk)
+  const pages = await Promise.all(
+    chunk(enrollmentIds).map((ids) =>
+      supabase
+        .from("exam_submissions")
+        .select("enrollment_id, score, is_passed, exam:exams!inner ( exam_kind )")
+        .in("enrollment_id", ids)
+        .eq("exam.exam_kind", "final_exam"),
+    ),
+  );
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  for (const row of (data ?? []) as unknown as Array<{
-    enrollment_id: string;
-    score: number;
-    is_passed: boolean | null;
-  }>) {
-    result.set(row.enrollment_id, { score: row.score, isPassed: row.is_passed });
+  for (const { data, error } of pages) {
+    if (error) {
+      throw new Error(error.message);
+    }
+    for (const row of (data ?? []) as unknown as Array<{
+      enrollment_id: string;
+      score: number;
+      is_passed: boolean | null;
+    }>) {
+      result.set(row.enrollment_id, { score: row.score, isPassed: row.is_passed });
+    }
   }
 
   return result;
@@ -74,26 +81,34 @@ export async function getMemberCourseSummaries(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("enrollments")
-    .select(
-      `
-        id,
-        member_id,
-        course_id,
-        course:courses!inner ( id, name )
-      `,
-    )
-    .in("member_id", uniqueMemberIds)
-    .in("status", ACTIVE_ENROLLMENT_STATUSES)
-    .is("deleted_at", null)
-    .order("start_date", { ascending: false });
+  // 엑셀처럼 회원 전체를 넘기면 URL 이 길어져 400 Bad Request — 묶음으로 나눠 조회합니다.
+  // 한 회원의 수강은 항상 같은 묶음에 있으므로 회원별 start_date 정렬은 그대로 유지됩니다.
+  const pages = await Promise.all(
+    chunk(uniqueMemberIds).map((ids) =>
+      supabase
+        .from("enrollments")
+        .select(
+          `
+            id,
+            member_id,
+            course_id,
+            course:courses!inner ( id, name )
+          `,
+        )
+        .in("member_id", ids)
+        .in("status", ACTIVE_ENROLLMENT_STATUSES)
+        .is("deleted_at", null)
+        .order("start_date", { ascending: false }),
+    ),
+  );
 
-  if (error) {
-    throw new Error(error.message);
+  const rows: EnrollmentCourseRow[] = [];
+  for (const { data, error } of pages) {
+    if (error) {
+      throw new Error(error.message);
+    }
+    rows.push(...((data ?? []) as unknown as EnrollmentCourseRow[]));
   }
-
-  const rows = (data ?? []) as unknown as EnrollmentCourseRow[];
 
   if (rows.length === 0) {
     return new Map();

@@ -4,6 +4,7 @@ import { MEMBER_STATUS_LABELS } from "@/features/members/constants";
 import type { MemberListQuery } from "@/features/members/services/member-list.service";
 import { getMemberCourseSummaries } from "@/features/members/services/member-course-summary.service";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAllRows } from "@/lib/shared/fetch-all-rows";
 import type { MemberListItem } from "@/types/database.types";
 
 /**
@@ -19,53 +20,57 @@ export async function buildMemberExportXlsx(query: MemberListQuery): Promise<str
     ? ("members_with_learning_status" as "members")
     : "members";
 
-  let builder = supabase
-    .from(table)
-    .select(
-      "id, login_id, name, email, phone, status, manager_name, joined_at, last_login_at, deleted_at, referral_source",
-    )
-    .order("joined_at", { ascending: false });
+  // Supabase 는 한 번에 1,000행까지만 준다 — 끝까지 이어 받습니다 (lib/shared/fetch-all-rows).
+  // 조건을 매번 새로 붙여야 하므로 쿼리를 만드는 함수로 감쌉니다.
+  const buildQuery = () => {
+    let builder = supabase
+      .from(table)
+      .select(
+        "id, login_id, name, email, phone, status, manager_name, joined_at, last_login_at, deleted_at, referral_source",
+      )
+      .order("joined_at", { ascending: false })
+      // 이관 회원은 가입일이 같을 수 있어 id 로 동률을 갈라야 페이지 사이로 행이 새지 않습니다
+      .order("id", { ascending: false });
 
-  if (query.learningStatus) {
-    builder = builder.eq(
-      "learning_status" as never,
-      query.learningStatus as never,
-    );
-  }
-
-  if (!query.showDeleted) {
-    builder = builder.is("deleted_at", null);
-  }
-  if (query.status) {
-    builder = builder.eq("status", query.status);
-  }
-  if (query.search) {
-    const keyword = `%${query.search}%`;
-    switch (query.field) {
-      case "name":
-        builder = builder.ilike("name", keyword);
-        break;
-      case "login_id":
-        builder = builder.ilike("login_id", keyword);
-        break;
-      case "email":
-        builder = builder.ilike("email", keyword);
-        break;
-      case "phone":
-        builder = builder.ilike("phone", keyword);
-        break;
-      default:
-        builder = builder.or(
-          `name.ilike.${keyword},login_id.ilike.${keyword},email.ilike.${keyword},phone.ilike.${keyword}`,
-        );
-        break;
+    if (query.learningStatus) {
+      builder = builder.eq(
+        "learning_status" as never,
+        query.learningStatus as never,
+      );
     }
-  }
 
-  const { data, error } = await builder;
-  if (error) {
-    throw new Error(error.message);
-  }
+    if (!query.showDeleted) {
+      builder = builder.is("deleted_at", null);
+    }
+    if (query.status) {
+      builder = builder.eq("status", query.status);
+    }
+    if (query.search) {
+      const keyword = `%${query.search}%`;
+      switch (query.field) {
+        case "name":
+          builder = builder.ilike("name", keyword);
+          break;
+        case "login_id":
+          builder = builder.ilike("login_id", keyword);
+          break;
+        case "email":
+          builder = builder.ilike("email", keyword);
+          break;
+        case "phone":
+          builder = builder.ilike("phone", keyword);
+          break;
+        default:
+          builder = builder.or(
+            `name.ilike.${keyword},login_id.ilike.${keyword},email.ilike.${keyword},phone.ilike.${keyword}`,
+          );
+          break;
+      }
+    }
+    return builder;
+  };
+
+  const data = await fetchAllRows((from, to) => buildQuery().range(from, to));
 
   const members = (data ?? []) as (Pick<
     MemberListItem,
