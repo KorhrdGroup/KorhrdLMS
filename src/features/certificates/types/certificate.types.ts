@@ -46,6 +46,10 @@ export type CertificateListItem = {
   createdAt: string;
   /** 관리자 상단 고정 시각. null 이면 고정 안 됨 */
   pinnedAt: string | null;
+  /** 회원 유입경로("네이버카페_여주맘") — 회원 미연결(옛 시스템 이관분)이거나 없으면 null */
+  referralSource: string | null;
+  /** 파트너스 코드(STAR 등) — 있으면 유입경로 대신 이걸 보여줍니다(회원목록과 같은 규칙) */
+  partnerCode: string | null;
 };
 
 export type CertificateDetail = {
