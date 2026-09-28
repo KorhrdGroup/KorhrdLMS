@@ -148,6 +148,7 @@ export function CertificateListTable({
             <th style={th}>자격증명</th>
             <th style={th}>신청자</th>
             <th style={{ ...th, width: 128 }}>연락처</th>
+            <th style={{ ...th, width: 140 }}>유입경로</th>
             <th style={{ ...th, minWidth: 220 }}>배송정보</th>
             <th style={{ ...th, textAlign: "center", width: 56 }}>사진</th>
             <th style={{ ...th, textAlign: "right", width: 112 }}>발급비용</th>
@@ -201,6 +202,21 @@ export function CertificateListTable({
                 <td style={{ ...td, color: M.ink, fontWeight: 600 }}>{item.certificateName}</td>
                 <td style={td}>{formatApplicantWithId(item.applicantName, item.memberLoginId)}</td>
                 <td style={{ ...td, color: M.mute }}>{formatOptionalText(item.phone)}</td>
+                {/* 유입경로 — 회원목록과 같은 규칙: 파트너스 코드가 있으면 코드, 아니면 경로, 없으면 - */}
+                <td
+                  style={{ ...td, color: M.mute, whiteSpace: "nowrap", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}
+                  title={item.partnerCode ?? item.referralSource ?? undefined}
+                >
+                  {item.partnerCode ? (
+                    <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 6, background: "#EBF3FE", color: "#3182F6", fontSize: 11.5, fontWeight: 700 }}>
+                      {item.partnerCode}
+                    </span>
+                  ) : item.referralSource ? (
+                    item.referralSource.replace("_", " › ")
+                  ) : (
+                    "-"
+                  )}
+                </td>
                 <td style={{ ...td, color: M.mute }}>
                   {formatFullAddress(item.postalCode, item.address, item.addressDetail)}
                 </td>

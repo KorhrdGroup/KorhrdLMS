@@ -39,6 +39,8 @@ type CertificateListRow = {
   applied_at: string;
   created_at: string;
   pinned_at: string | null;
+  /** 회원 조인 — 옛 시스템 이관분처럼 회원이 연결되지 않은 신청은 null */
+  member: { partner_code: string | null; referral_source: string | null } | null;
 };
 
 function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
@@ -63,6 +65,8 @@ function mapCertificateListItem(row: CertificateListRow): CertificateListItem {
     appliedAt: row.applied_at,
     createdAt: row.created_at,
     pinnedAt: row.pinned_at,
+    referralSource: row.member?.referral_source ?? null,
+    partnerCode: row.member?.partner_code ?? null,
   };
 }
 
@@ -131,11 +135,12 @@ export async function getCertificateList(
   const supabase = await createClient();
   const { from, to } = getPaginationRange(query.page, query.pageSize);
 
-  // 아기관리자는 파트너스 코드(STAR) 회원의 신청만 봅니다 — 회원 조인을 붙여 거릅니다
+  // 유입경로 열을 위해 회원을 조인합니다. 아기관리자는 파트너스 코드(STAR) 회원의 신청만
+  // 봐야 해서 inner 조인으로 거르고, 그 외엔 회원 미연결(이관분)도 보이도록 left 조인입니다.
   const babyScoped = await isBabyAdmin();
   const select = babyScoped
-    ? `${CERTIFICATE_LIST_SELECT}, member:members!inner ( partner_code )`
-    : CERTIFICATE_LIST_SELECT;
+    ? `${CERTIFICATE_LIST_SELECT}, member:members!inner ( partner_code, referral_source )`
+    : `${CERTIFICATE_LIST_SELECT}, member:members ( partner_code, referral_source )`;
 
   let builder = supabase
     .from("certificate_applications")
