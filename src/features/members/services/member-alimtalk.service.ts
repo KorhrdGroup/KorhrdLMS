@@ -1,3 +1,5 @@
+import { chunk } from "@/lib/shared/chunk";
+import { fetchAllRows } from "@/lib/shared/fetch-all-rows";
 import { createClient } from "@/lib/supabase/server";
 import { sendAlimtalk, type AlimtalkTemplateKey } from "@/lib/aligo/alimtalk";
 
@@ -10,6 +12,8 @@ import { sendAlimtalk, type AlimtalkTemplateKey } from "@/lib/aligo/alimtalk";
  *   progress_under— 확정 수강이 있고 모든 과정이 60% 미만인 회원 (수강 독려)
  *
  * 수강률 = 완료 차시 수 ÷ 게시 차시 수 (회원목록 "수강완료 100%" 와 같은 계산).
+ * 자격증 발급신청을 한 회원은 수강률 기준 발송(독려·시험 안내)에서 뺍니다 — 이미 수료하고
+ * 신청까지 끝낸 분께 독려가 또 가면 안 됩니다 (2026-09-29 지시).
  * 템플릿 변수는 #{고객명} 하나라 회원 이름으로 채워 한 명씩 보냅니다.
  */
 
@@ -54,31 +58,35 @@ async function resolveTargets(
   /* ---------- 수강률 기준 — 회원별 과정 진도 계산 ---------- */
   // 1) 확정 수강 (탈퇴·삭제 회원 제외)
   const todayKst = new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10);
-  let enrollmentQuery = supabase
-    .from("enrollments")
-    .select("id, member_id, course_id, member:members!inner ( id, name, phone, deleted_at, status, join_path )")
-    .eq("status", "confirmed")
-    .is("deleted_at", null)
-    // 수강기간이 끝난 과정은 제외 — 기간 지난 분에게 매주 독려가 가면 안 됩니다
-    .gte("end_date", todayKst)
-    .is("member.deleted_at", null)
-    .eq("member.status", "active");
-
   /* 오피스(학점연계 자동발급) 가입 회원에게는 알림톡을 보내지 않습니다
      (2026-08-20 지시) — 목록 필터와 무관하게 항상 제외합니다. */
   if (source === "office") {
     return [];
   }
-  enrollmentQuery = enrollmentQuery.or(
-    "join_path.is.null,join_path.neq.학점연계 자동발급",
-    { referencedTable: "member" },
-  );
-  if (source === "star") {
-    enrollmentQuery = enrollmentQuery.eq("member.partner_code", "STAR");
-  }
 
-  const { data: enrollmentRows, error: enrollmentError } = await enrollmentQuery;
-  if (enrollmentError) throw new Error(enrollmentError.message);
+  // Supabase 는 한 번에 1,000행까지만 준다 — 페이지마다 같은 조건으로 새로 만들어 끝까지 받습니다
+  const buildEnrollmentQuery = () => {
+    let enrollmentQuery = supabase
+      .from("enrollments")
+      .select("id, member_id, course_id, member:members!inner ( id, name, phone, deleted_at, status, join_path )")
+      .eq("status", "confirmed")
+      .is("deleted_at", null)
+      // 수강기간이 끝난 과정은 제외 — 기간 지난 분에게 매주 독려가 가면 안 됩니다
+      .gte("end_date", todayKst)
+      .is("member.deleted_at", null)
+      .eq("member.status", "active")
+      .order("id");
+    enrollmentQuery = enrollmentQuery.or(
+      "join_path.is.null,join_path.neq.학점연계 자동발급",
+      { referencedTable: "member" },
+    );
+    if (source === "star") {
+      enrollmentQuery = enrollmentQuery.eq("member.partner_code", "STAR");
+    }
+    return enrollmentQuery;
+  };
+
+  const enrollmentRows = await fetchAllRows((from, to) => buildEnrollmentQuery().range(from, to));
 
   type EnrollmentRow = {
     id: string;
@@ -91,14 +99,22 @@ async function resolveTargets(
 
   // 2) 과정별 게시 차시 수
   const courseIds = Array.from(new Set(enrollments.map((row) => row.course_id)));
-  const { data: lectureRows, error: lectureError } = await supabase
-    .from("course_lectures")
-    .select("course_id, sessions:lecture_sessions ( id )")
-    .in("course_id", courseIds)
-    .eq("is_published", true)
-    .is("deleted_at", null)
-    .is("sessions.deleted_at", null);
-  if (lectureError) throw new Error(lectureError.message);
+  const lecturePages = await Promise.all(
+    chunk(courseIds).map((ids) =>
+      supabase
+        .from("course_lectures")
+        .select("course_id, sessions:lecture_sessions ( id )")
+        .in("course_id", ids)
+        .eq("is_published", true)
+        .is("deleted_at", null)
+        .is("sessions.deleted_at", null),
+    ),
+  );
+  const lectureRows: unknown[] = [];
+  for (const { data, error } of lecturePages) {
+    if (error) throw new Error(error.message);
+    lectureRows.push(...(data ?? []));
+  }
 
   const sessionCountByCourse = new Map<string, number>();
   for (const lecture of (lectureRows ?? []) as unknown as {
@@ -112,12 +128,22 @@ async function resolveTargets(
   }
 
   // 3) 수강별 완료 차시 수
-  const { data: progressRows, error: progressError } = await supabase
-    .from("lecture_progress")
-    .select("enrollment_id")
-    .eq("attendance_status", "completed")
-    .in("enrollment_id", enrollments.map((row) => row.id));
-  if (progressError) throw new Error(progressError.message);
+  // 완료 차시 행은 수강 수 × 차시 수라 수천 행이 된다 — 1,000행에서 잘리면 다 들은 사람도
+  // "60% 미만"으로 계산돼 독려가 나갔다(2026-09-29, 4,430행 중 1,000행만 받던 문제).
+  const progressPages = await Promise.all(
+    chunk(enrollments.map((row) => row.id)).map((ids) =>
+      fetchAllRows<{ enrollment_id: string }>((from, to) =>
+        supabase
+          .from("lecture_progress")
+          .select("enrollment_id")
+          .eq("attendance_status", "completed")
+          .in("enrollment_id", ids)
+          .order("id")
+          .range(from, to),
+      ),
+    ),
+  );
+  const progressRows = progressPages.flat();
 
   const completedByEnrollment = new Map<string, number>();
   for (const row of (progressRows ?? []) as { enrollment_id: string }[]) {
@@ -138,8 +164,25 @@ async function resolveTargets(
     bestRateByMember.set(row.member_id, Math.max(bestRateByMember.get(row.member_id) ?? 0, rate));
   }
 
+  // 5) 자격증 발급신청을 한 회원은 제외 — 수료·신청까지 끝낸 분께 독려·안내를 또 보내지 않습니다
+  const appliedPages = await Promise.all(
+    chunk(Array.from(bestRateByMember.keys())).map((ids) =>
+      fetchAllRows<{ member_id: string | null }>((from, to) =>
+        supabase
+          .from("certificate_applications")
+          .select("member_id")
+          .in("member_id", ids)
+          .is("deleted_at", null)
+          .order("id")
+          .range(from, to),
+      ),
+    ),
+  );
+  const appliedMemberIds = new Set(appliedPages.flat().map((row) => row.member_id));
+
   const targets: TargetMember[] = [];
   for (const [memberId, best] of bestRateByMember) {
+    if (appliedMemberIds.has(memberId)) continue;
     // 이미 수료(100%)만 있는 회원에게 독려·시험 안내를 또 보내지 않습니다
     if (mode === "progress_over" && best >= 60 && best < 100) {
       targets.push(memberById.get(memberId)!);
