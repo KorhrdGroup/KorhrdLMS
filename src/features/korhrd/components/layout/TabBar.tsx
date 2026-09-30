@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 /** 하단 고정 탭바 — Figma tabbar 351:10964 */
 const ITEMS = [
-  { ico: 'phone', label: '전화상담', href: 'tel:0221359249' },
+  { ico: 'phone', label: '전화상담', href: 'tel:0221356514' },
   { ico: 'book', label: '수강신청', href: '/courses' },
   { ico: 'thumb', label: '합격후기', href: '/reviews' },
 ];
