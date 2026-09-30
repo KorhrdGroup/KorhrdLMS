@@ -89,7 +89,7 @@ export function FindAccountResultDialog({
             <p className="leading-relaxed">
               입력하신 정보와 일치하는 회원을 찾을 수 없습니다.
               <br />
-              정보를 다시 확인해주시거나 고객센터(02-2135-9249)로 문의해주세요.
+              정보를 다시 확인해주시거나 고객센터(02-2135-6514)로 문의해주세요.
             </p>
           )}
         </div>

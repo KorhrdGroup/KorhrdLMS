@@ -75,7 +75,7 @@ export default function Page() {
               <table className="info-table mt-4">
                 <tbody>
                   <tr><th scope="row">주소</th><td>서울시 도봉구 창동 마들로13길 61 씨드큐브 905호</td></tr>
-                  <tr><th scope="row">대표전화</th><td><a href="tel:0221359249">02-2135-9249</a></td></tr>
+                  <tr><th scope="row">대표전화</th><td><a href="tel:0221356514">02-2135-6514</a></td></tr>
                   <tr><th scope="row">운영시간</th><td>평일 10:00~18:00 (점심 12:00~14:00) · 금/토/일/공휴일 휴무</td></tr>
                 </tbody>
               </table>

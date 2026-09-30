@@ -43,7 +43,7 @@ export default async function SupportLayout({ children }: { children: React.Reac
           <div className="support-grid support-grid--side">
             <div className="tel-box">
               <p className="tel-box__t">전화 상담 문의</p>
-              <p className="tel-box__n"><a href="tel:0221359249">02-2135-9249</a></p>
+              <p className="tel-box__n"><a href="tel:0221356514">02-2135-6514</a></p>
               <p className="tel-box__h">
                 운영시간 평일 10:00~18:00<br />
                 점심시간 12:00~14:00 · 금/토/일/공휴일 휴무

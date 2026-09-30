@@ -27,7 +27,7 @@ export function PrivacyBody() {
       </section>
       <section className="policy-sec">
         <h2>6. 개인정보 보호책임자</h2>
-        <table className="info-table"><tbody><tr><th scope="row">책임자</th><td>양병웅</td></tr><tr><th scope="row">연락처</th><td>02-2135-9249 / korhrdpartners@gmail.com</td></tr></tbody></table>
+        <table className="info-table"><tbody><tr><th scope="row">책임자</th><td>양병웅</td></tr><tr><th scope="row">연락처</th><td>02-2135-6514 / korhrdpartners@gmail.com</td></tr></tbody></table>
       </section>
       <section className="policy-sec">
         <h2>부칙</h2>

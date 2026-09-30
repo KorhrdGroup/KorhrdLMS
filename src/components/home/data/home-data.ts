@@ -75,7 +75,7 @@ export const HOME_NAV_ITEMS: HomeNavItem[] = [
 
 export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   { id: "q1", label: "1:1 상담", icon: Headset, href: "/support/qna" },
-  { id: "q2", label: "전화상담", icon: Phone, href: "tel:0221359249" },
+  { id: "q2", label: "전화상담", icon: Phone, href: "tel:0221356514" },
   { id: "q3", label: "수강신청", icon: Monitor, href: "/enrollment" },
   { id: "q4", label: "자격증신청", icon: Award, href: "/certificate/apply" },
 ];
@@ -254,14 +254,14 @@ export const FOOTER_COMPANY = {
   representative: "양병웅",
   businessNumber: "227-88-03196",
   address: "서울시 도봉구 창동 마들로13길 61 씨드큐브 905호",
-  phone: "02-2135-9249",
+  phone: "02-2135-6514",
   email: "info@hanpyeong.kr",
   mailOrderReport: "제24-도봉-0983호",
   hours: "평일 09:00 ~ 18:00 (점심 12:00~14:00)",
 };
 
 export const CUSTOMER_CENTER = {
-  phone: "02.2135.9249",
+  phone: "02.2135.6514",
   hours: "10:00 ~ 18:00 (점심시간 12:00 ~ 14:00)",
   closedDays: "금요일, 토요일, 일요일, 공휴일",
   bankName: "신한은행",
