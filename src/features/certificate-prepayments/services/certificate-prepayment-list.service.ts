@@ -84,8 +84,11 @@ export async function getCertificatePrepaymentList(
 
   if (query.search) {
     const keyword = `%${query.search}%`;
+    // 조인한 회원 열로 OR 검색은 referencedTable 로 넘겨야 합니다(최상위 or 는 파싱 실패).
+    // member 가 !inner 조인이라 일치하는 회원이 없는 선납결제는 목록에서 빠집니다.
     builder = builder.or(
-      `member.name.ilike.${keyword},member.login_id.ilike.${keyword},member.phone.ilike.${keyword}`,
+      `name.ilike.${keyword},login_id.ilike.${keyword},phone.ilike.${keyword}`,
+      { referencedTable: "member" },
     );
   }
 
