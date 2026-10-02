@@ -7,6 +7,7 @@ import type {
   CompletionCertificateListQuery,
 } from "@/features/completion-certificates/types/completion-certificate.types";
 import type { EnrollmentStatus } from "@/types/database.types";
+import { buildMemberCourseSearchOr } from "@/lib/shared/member-course-search";
 import { getTotalPages, type PaginatedResult } from "@/lib/shared/list-query";
 import { createClient } from "@/lib/supabase/server";
 
@@ -78,9 +79,8 @@ async function fetchConfirmedEnrollments(
         builder = builder.ilike("course.name", keyword);
         break;
       default:
-        builder = builder.or(
-          `member.name.ilike.${keyword},member.login_id.ilike.${keyword},course.name.ilike.${keyword}`,
-        );
+        // 회원·과정을 먼저 찾아 id 로 거릅니다 — 조인 두 곳의 열을 최상위 or 에 섞으면 파싱 오류(lib/shared/member-course-search)
+        builder = builder.or(await buildMemberCourseSearchOr(supabase, search));
         break;
     }
   }

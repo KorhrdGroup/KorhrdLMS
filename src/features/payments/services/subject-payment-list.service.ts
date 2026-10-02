@@ -113,9 +113,12 @@ export async function getSubjectPaymentList(
 
   if (query.memberName) {
     const keyword = `%${query.memberName}%`;
-    builder = builder.or(
-      `member.name.ilike.${keyword},member.login_id.ilike.${keyword}`,
-    );
+    // 조인한 회원 열로 OR 검색은 referencedTable 로 넘겨야 합니다 — "member.name.ilike…" 를
+    // 최상위 or 에 쓰면 PostgREST 가 "failed to parse logic tree" 로 거절합니다.
+    // member 가 !inner 조인이라 일치하는 회원이 없는 결제는 목록에서 빠집니다.
+    builder = builder.or(`name.ilike.${keyword},login_id.ilike.${keyword}`, {
+      referencedTable: "member",
+    });
   }
 
   const { data, count, error } = await builder.range(from, to);
