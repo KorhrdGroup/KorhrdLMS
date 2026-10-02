@@ -192,6 +192,14 @@ async function fetchLecturePlan(
 }
 
 /**
+ * 이름을 바꾼 과정의 옛 이름 → 새 이름 (공백·급수 뺀 표기). 상세 주소는 과정 이름으로도
+ * 만들어지므로, 이름을 바꾸면 옛 주소가 404 가 됩니다 — 여기 남겨 계속 열리게 합니다.
+ */
+const RENAMED_COURSE_NAMES: Record<string, string> = {
+  AI프롬프트엔지니어: "프롬포트전문가", // 2026-10-02 → 프롬포트전문가1급
+};
+
+/**
  * 과정 코드(`courses.code`)로 상세페이지 데이터를 만듭니다.
  * 없는 과정이면 null을 돌려주고 호출부에서 notFound() 처리합니다.
  */
@@ -215,13 +223,19 @@ export async function getCourseDetail(code: string): Promise<CourseDetailData | 
   // 급수가 붙은 표기와 띄어쓰기 차이를 흡수합니다.
   const normalize = (value: string) =>
     value.replace(/\s+/g, "").replace(/\d급$/, "");
-  const wanted = normalize(decodeURIComponent(code));
+  const requested = normalize(decodeURIComponent(code));
+  // 과정명을 바꾼 뒤에도 이미 퍼진 옛 이름 링크(광고·카페 글)가 열리도록 옛 이름 → 새 이름.
+  // 요청한 이름 그대로도 함께 찾아, DB 이름 변경과 배포 순서가 어긋나도 항상 열립니다.
+  const wanted = new Set([requested, RENAMED_COURSE_NAMES[requested]].filter(Boolean));
+  for (const [oldName, newName] of Object.entries(RENAMED_COURSE_NAMES)) {
+    if (newName === requested) wanted.add(oldName);
+  }
 
   const { data: all } = await supabase
     .from("courses")
     .select("code, name")
     .is("deleted_at", null);
-  const matched = (all ?? []).find((row) => normalize(row.name) === wanted);
+  const matched = (all ?? []).find((row) => wanted.has(normalize(row.name)));
   if (!matched) return null;
 
   const { data: byName } = await supabase
