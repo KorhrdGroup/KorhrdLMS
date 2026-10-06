@@ -14,10 +14,12 @@ import type {
 import { PAYMENT_METHOD_LABELS } from "@/features/payments/constants";
 import { createClient } from "@/lib/supabase/server";
 import { fetchAllRows } from "@/lib/shared/fetch-all-rows";
+import { formatKrPhone } from "@/lib/shared/phone";
 import type {
   CertificateDeliveryStatus,
   CertificateKind,
   PaymentMethod,
+  PaymentStatus,
 } from "@/types/database.types";
 
 type CertificateExportDbRow = {
@@ -25,6 +27,7 @@ type CertificateExportDbRow = {
   certificate_name: string;
   member_login_id: string;
   applicant_name: string;
+  birth_date: string | null;
   phone: string | null;
   postal_code: string | null;
   address: string | null;
@@ -32,6 +35,7 @@ type CertificateExportDbRow = {
   issuance_cost: number;
   actual_payment_amount: number;
   payment_method: PaymentMethod | null;
+  payment_status: PaymentStatus;
   payment_info: string | null;
   delivery_status: CertificateDeliveryStatus;
   memo: string | null;
@@ -52,7 +56,10 @@ function mapExportRow(row: CertificateExportDbRow): CertificateExportRow {
     certificateName: row.certificate_name,
     memberLoginId: row.member_login_id,
     applicantName: row.applicant_name,
-    phone: row.phone,
+    birthDate: row.birth_date,
+    // 번호 표기가 섞여 있어(01012341234 / 010-1234-1234) 엑셀은 항상 하이픈 형식으로
+    phone: row.phone ? formatKrPhone(row.phone) : null,
+    paymentStatus: row.payment_status,
     fullAddress: formatFullAddress(row.postal_code, row.address, row.address_detail),
     issuanceCost: row.issuance_cost,
     actualPaymentAmount: row.actual_payment_amount,
@@ -113,11 +120,13 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
     { header: "자격증명", key: "name", width: 22 },
     { header: "아이디", key: "loginId", width: 16 },
     { header: "이름", key: "applicant", width: 10 },
+    { header: "생년월일", key: "birthDate", width: 16 },
     { header: "연락처", key: "phone", width: 15 },
     { header: "주소", key: "address", width: 46 },
     { header: "발급비용", key: "cost", width: 10 },
     { header: "실결제금액", key: "paid", width: 11 },
     { header: "결제방법", key: "method", width: 10 },
+    { header: "결제상태", key: "paymentStatus", width: 10 },
     { header: "결제정보", key: "paymentInfo", width: 14 },
     { header: "배송상태", key: "delivery", width: 10 },
   ];
@@ -125,20 +134,28 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
   sheet.getRow(1).font = { bold: true };
 
   for (const row of rows) {
-    sheet.addRow({
+    const unpaid = row.paymentStatus !== "paid";
+    const added = sheet.addRow({
       appliedAt: formatAppliedAtKorean(row.appliedAt),
       kind: getCertificateKindLabel(row.certificateKind),
       name: row.certificateName,
       loginId: row.memberLoginId,
       applicant: row.applicantName,
+      // 자격증에 인쇄되는 값 — 신청일과 같은 "1981년 5월 26일" 글자 셀(엑셀이 날짜로 바꾸지 못하게)
+      birthDate: row.birthDate ? formatAppliedAtKorean(row.birthDate) : "",
       phone: row.phone ?? "",
       address: row.fullAddress === "—" ? "" : row.fullAddress,
       cost: row.issuanceCost,
       paid: row.actualPaymentAmount,
       method: row.paymentMethodLabel === "—" ? "" : row.paymentMethodLabel,
+      paymentStatus: unpaid ? "미결제" : "결제완료",
       paymentInfo: row.paymentInfo ?? "",
       delivery: row.deliveryStatusLabel,
     });
+    // 미결제자는 줄 전체를 빨간 글씨로 — 제작 전에 걸러낼 수 있게 (2026-10-06 요청)
+    if (unpaid) {
+      added.font = { color: { argb: "FFE42939" } };
+    }
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
