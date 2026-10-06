@@ -4,6 +4,7 @@ import { CertificateListView } from "@/features/certificates/components/certific
 import { parseCertificateListQuery } from "@/features/certificates/lib/certificate-list-query";
 import {
   getCertificateList,
+  getCertificatePaymentCounts,
   listCertificateNames,
 } from "@/features/certificates/services/certificate-list.service";
 
@@ -23,12 +24,14 @@ export default async function CertificateApplicationsPage({
 
   let result: Awaited<ReturnType<typeof getCertificateList>> | null = null;
   let certNames: string[] = [];
+  let paymentCounts = { paid: 0, unpaid: 0 };
   let errorMessage: string | null = null;
 
   try {
-    [result, certNames] = await Promise.all([
+    [result, certNames, paymentCounts] = await Promise.all([
       getCertificateList(query),
       listCertificateNames(),
+      getCertificatePaymentCounts(query),
     ]);
   } catch (error) {
     errorMessage =
@@ -47,5 +50,12 @@ export default async function CertificateApplicationsPage({
     );
   }
 
-  return <CertificateListView result={result} query={query} certNames={certNames} />;
+  return (
+    <CertificateListView
+      result={result}
+      query={query}
+      certNames={certNames}
+      paymentCounts={paymentCounts}
+    />
+  );
 }

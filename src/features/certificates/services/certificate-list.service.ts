@@ -19,6 +19,11 @@ import type {
   PaymentStatus,
 } from "@/types/database.types";
 
+/** 결제자 칸 — 결제완료·선납 */
+export const PAID_STATUSES = ["paid", "prepaid"] as const;
+/** 미결제자 칸 — 그 밖의 모든 상태(payment_status enum 기준, 지금 데이터는 unpaid 뿐) */
+export const UNPAID_STATUSES = ["unpaid", "partial", "canceled", "refunded"] as const;
+
 type CertificateListRow = {
   id: string;
   certificate_kind: CertificateKind;
@@ -91,6 +96,7 @@ export function applyCertificateListFilters<
     gte: (column: string, value: string) => T;
     lte: (column: string, value: string) => T;
     or: (filters: string) => T;
+    in: (column: string, values: readonly string[]) => T;
   },
 >(builder: T, query: CertificateListQuery): T {
   const { startDate, endDate } = getEffectiveDateRange(query);
@@ -107,9 +113,11 @@ export function applyCertificateListFilters<
     builder = builder.eq("delivery_status", query.deliveryStatus);
   }
 
-  if (query.paymentFilter === "unpaid") {
-    builder = builder.eq("payment_status", "unpaid");
-  }
+  // 결제자/미결제자 두 칸 — 결제 체크하면 미결제자에서 빠져 결제자로 넘어갑니다
+  builder =
+    query.paymentFilter === "unpaid"
+      ? builder.in("payment_status", UNPAID_STATUSES)
+      : builder.in("payment_status", PAID_STATUSES);
 
   if (startDate) {
     builder = builder.gte("applied_at", startDate);
@@ -145,7 +153,14 @@ export async function getCertificateList(
   let builder = supabase
     .from("certificate_applications")
     .select(select, { count: "exact" })
-    .is("deleted_at", null)
+    .is("deleted_at", null);
+
+  // 결제자 칸은 결제된 순서 최신이 맨 위 — 방금 결제 체크한 사람이 1번으로 쌓입니다
+  if (query.paymentFilter !== "unpaid") {
+    builder = builder.order("paid_at", { ascending: false, nullsFirst: false });
+  }
+
+  builder = builder
     .order("applied_at", { ascending: false })
     .order("created_at", { ascending: false })
     /* 이관분 8,849건은 created_at 이 전부 이관 시각으로 같아, 여기까지만으로는
@@ -189,4 +204,33 @@ export async function listCertificateNames(): Promise<string[]> {
   if (error) throw new Error(error.message);
   const names = new Set((data ?? []).map((row) => row.certificate_name));
   return Array.from(names).sort((a, b) => a.localeCompare(b, "ko"));
+}
+
+/**
+ * 결제자 / 미결제자 칸 건수 — 지금 걸린 검색·기간·자격증 필터는 그대로, 결제 구분만 바꿔 셉니다.
+ * 아기관리자는 목록과 같이 STAR 회원 신청만 셉니다.
+ */
+export async function getCertificatePaymentCounts(
+  query: CertificateListQuery,
+): Promise<{ paid: number; unpaid: number }> {
+  const supabase = await createClient();
+  const babyScoped = await isBabyAdmin();
+  const select = babyScoped ? "id, member:members!inner ( partner_code )" : "id";
+
+  const count = async (paymentFilter: CertificateListQuery["paymentFilter"]) => {
+    let builder = supabase
+      .from("certificate_applications")
+      .select(select, { count: "exact", head: true })
+      .is("deleted_at", null);
+    if (babyScoped) {
+      builder = builder.eq("member.partner_code" as never, BABY_ADMIN_PARTNER_CODE as never);
+    }
+    builder = applyCertificateListFilters(builder, { ...query, paymentFilter });
+    const { count: n, error } = await builder;
+    if (error) throw new Error(error.message);
+    return n ?? 0;
+  };
+
+  const [paid, unpaid] = await Promise.all([count(""), count("unpaid")]);
+  return { paid, unpaid };
 }

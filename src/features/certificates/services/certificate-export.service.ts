@@ -60,7 +60,9 @@ function mapExportRow(row: CertificateExportDbRow): CertificateExportRow {
     // 번호 표기가 섞여 있어(01012341234 / 010-1234-1234) 엑셀은 항상 하이픈 형식으로
     phone: row.phone ? formatKrPhone(row.phone) : null,
     paymentStatus: row.payment_status,
-    fullAddress: formatFullAddress(row.postal_code, row.address, row.address_detail),
+    // 우편번호는 빼고 주소 + 상세주소만 (2026-10-06 요청)
+    // 주소 칸 맨 앞에 우편번호가 붙어 저장된 건("12345 서울…", "(12345) 서울…")도 떼어 냅니다
+    fullAddress: formatFullAddress(null, row.address?.replace(/^\(?\d{5}\)?\s*/, ""), row.address_detail),
     issuanceCost: row.issuance_cost,
     actualPaymentAmount: row.actual_payment_amount,
     paymentMethodLabel: getPaymentMethodLabel(row.payment_method),
@@ -89,18 +91,22 @@ export async function getCertificateExportRows(
 
   // Supabase 는 한 번에 1,000행까지만 준다 — 끝까지 이어 받습니다 (lib/shared/fetch-all-rows).
   // 정렬이 id 로 끝나 페이지 사이에 행이 빠지거나 겹치지 않습니다.
+  // 엑셀은 자격증 제작용이라 결제한 사람만 — 지금 보는 칸(미결제자)과 상관없이 결제자만 내려받습니다
+  const paidOnly: CertificateListQuery = { ...query, paymentFilter: "" };
   const rows = await fetchAllRows((from, to) => {
     const builder = supabase
       .from("certificate_applications")
       .select(CERTIFICATE_EXPORT_SELECT)
       .is("deleted_at", null)
+      // 결제자 칸과 같은 순서 — 결제된 최신이 위
+      .order("paid_at", { ascending: false, nullsFirst: false })
       .order("applied_at", { ascending: false })
       .order("created_at", { ascending: false })
       /* 목록 화면과 같은 순서 — 이관분은 created_at 이 같아 legacy_no 로 갈라야 합니다 */
       .order("legacy_no", { ascending: false, nullsFirst: false })
       .order("id", { ascending: false });
 
-    return applyCertificateListFilters(builder, query).range(from, to);
+    return applyCertificateListFilters(builder, paidOnly).range(from, to);
   });
 
   return (rows as CertificateExportDbRow[]).map(mapExportRow);
@@ -126,7 +132,6 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
     { header: "발급비용", key: "cost", width: 10 },
     { header: "실결제금액", key: "paid", width: 11 },
     { header: "결제방법", key: "method", width: 10 },
-    { header: "결제상태", key: "paymentStatus", width: 10 },
     { header: "결제정보", key: "paymentInfo", width: 14 },
     { header: "배송상태", key: "delivery", width: 10 },
   ];
@@ -134,8 +139,7 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
   sheet.getRow(1).font = { bold: true };
 
   for (const row of rows) {
-    const unpaid = row.paymentStatus !== "paid";
-    const added = sheet.addRow({
+    sheet.addRow({
       appliedAt: formatAppliedAtKorean(row.appliedAt),
       kind: getCertificateKindLabel(row.certificateKind),
       name: row.certificateName,
@@ -148,14 +152,9 @@ export async function buildCertificateExportXlsx(query: CertificateListQuery) {
       cost: row.issuanceCost,
       paid: row.actualPaymentAmount,
       method: row.paymentMethodLabel === "—" ? "" : row.paymentMethodLabel,
-      paymentStatus: unpaid ? "미결제" : "결제완료",
       paymentInfo: row.paymentInfo ?? "",
       delivery: row.deliveryStatusLabel,
     });
-    // 미결제자는 줄 전체를 빨간 글씨로 — 제작 전에 걸러낼 수 있게 (2026-10-06 요청)
-    if (unpaid) {
-      added.font = { color: { argb: "FFE42939" } };
-    }
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
