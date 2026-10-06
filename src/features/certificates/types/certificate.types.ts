@@ -92,7 +92,11 @@ export type CertificateExportRow = {
   certificateName: string;
   memberLoginId: string;
   applicantName: string;
+  /** YYYY-MM-DD — 자격증 제작에 필요(2026-10-06). 없으면 null */
+  birthDate: string | null;
   phone: string | null;
+  /** 미결제 행은 엑셀에서 빨간 글씨로 표시합니다 */
+  paymentStatus: PaymentStatus;
   fullAddress: string;
   issuanceCost: number;
   actualPaymentAmount: number;
