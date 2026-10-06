@@ -29,9 +29,11 @@ type CertificateListViewProps = {
   query: CertificateListQuery;
   /** 필터 드롭다운용 자격증명 목록 */
   certNames: string[];
+  /** 결제자 / 미결제자 칸 건수 (지금 필터 기준) */
+  paymentCounts: { paid: number; unpaid: number };
 };
 
-export function CertificateListView({ result, query, certNames }: CertificateListViewProps) {
+export function CertificateListView({ result, query, certNames, paymentCounts }: CertificateListViewProps) {
   const router = useRouter();
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailApplicationId, setDetailApplicationId] = useState<string | null>(null);
@@ -140,12 +142,12 @@ export function CertificateListView({ result, query, certNames }: CertificateLis
         </div>
       ) : null}
 
-      {/* 분류 — 본사가 신청일 2주 지난 건은 확인하지 않아, 결제대기 학생만 모아
-          끌어올리기(신청일 갱신)로 처리할 수 있게 나눠 봅니다 (2026-08-19) */}
+      {/* 분류 — 결제자 / 미결제자 두 칸 (2026-10-06). 미결제자에서 결제 체크하면 결제자로 넘어가
+          결제자 칸 맨 위(1번)에 쌓입니다. 미결제자는 끌어올리기(신청일 갱신)로도 처리합니다. */}
       <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
         {[
-          { value: "" as const, label: "전체 신청자" },
-          { value: "unpaid" as const, label: "결제대기 학생" },
+          { value: "" as const, label: `결제자 ${paymentCounts.paid.toLocaleString()}` },
+          { value: "unpaid" as const, label: `미결제자 ${paymentCounts.unpaid.toLocaleString()}` },
         ].map((tab) => {
           const active = (query.paymentFilter || "") === tab.value;
           return (

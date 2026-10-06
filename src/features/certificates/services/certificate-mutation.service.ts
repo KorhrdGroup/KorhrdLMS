@@ -108,6 +108,21 @@ export async function updateCertificateApplication(
 
   if (input.paymentStatus !== undefined) {
     payload.payment_status = input.paymentStatus;
+
+    // 결제 시각 — 결제자 칸이 이 순서(최신이 위)로 쌓입니다. 상세 저장처럼 상태가 그대로면
+    // 건드리지 않고, 미결제→결제일 때만 지금 시각, 결제→미결제면 지웁니다.
+    const { data: current } = await supabase
+      .from("certificate_applications")
+      .select("payment_status")
+      .eq("id", applicationId)
+      .maybeSingle();
+    const wasPaid = current?.payment_status === "paid" || current?.payment_status === "prepaid";
+    const nowPaid = input.paymentStatus === "paid" || input.paymentStatus === "prepaid";
+    if (nowPaid && !wasPaid) {
+      payload.paid_at = new Date().toISOString();
+    } else if (!nowPaid && wasPaid) {
+      payload.paid_at = null;
+    }
   }
 
   if (input.photoUrl !== undefined) {

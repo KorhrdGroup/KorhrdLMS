@@ -381,6 +381,8 @@ export async function submitCertificateApplication(
     actual_payment_amount: finalPaymentAmount,
     payment_method: input.paymentMethod,
     payment_status: initialPaymentStatus,
+    // 선납으로 바로 결제완료면 결제 시각도 남깁니다 — 어드민 결제자 칸이 이 순서(최신이 위)로 쌓입니다
+    ...(initialPaymentStatus === "prepaid" ? { paid_at: new Date().toISOString() } : {}),
     delivery_status: "pending",
     memo: emptyToNull(input.memo),
     applied_at: today,
