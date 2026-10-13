@@ -135,7 +135,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     icon: BarChart3,
     module: "statistics",
     children: [
-      { label: "회원통계", href: "/admin/statistics/members", implemented: false },
+      { label: "유입경로 통계", href: "/admin/statistics/members" },
       { label: "수강통계", href: "/admin/statistics/enrollments", implemented: false },
       { label: "시험통계", href: "/admin/statistics/exams", implemented: false },
       { label: "매출통계", href: "/admin/statistics/revenue", implemented: false },
