@@ -7,6 +7,7 @@ import {
   getCertificatePaymentCounts,
   listCertificateNames,
 } from "@/features/certificates/services/certificate-list.service";
+import { isBabyAdmin } from "@/lib/admin/current-admin";
 
 export const metadata: Metadata = {
   title: "발급신청",
@@ -25,13 +26,16 @@ export default async function CertificateApplicationsPage({
   let result: Awaited<ReturnType<typeof getCertificateList>> | null = null;
   let certNames: string[] = [];
   let paymentCounts = { paid: 0, unpaid: 0 };
+  // 발급신청 추가는 관리자만 — 아기관리자에겐 버튼이 안 보입니다
+  let babyAdmin = true;
   let errorMessage: string | null = null;
 
   try {
-    [result, certNames, paymentCounts] = await Promise.all([
+    [result, certNames, paymentCounts, babyAdmin] = await Promise.all([
       getCertificateList(query),
       listCertificateNames(),
       getCertificatePaymentCounts(query),
+      isBabyAdmin(),
     ]);
   } catch (error) {
     errorMessage =
@@ -56,6 +60,7 @@ export default async function CertificateApplicationsPage({
       query={query}
       certNames={certNames}
       paymentCounts={paymentCounts}
+      canAdd={!babyAdmin}
     />
   );
 }

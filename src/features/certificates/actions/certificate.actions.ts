@@ -1,5 +1,10 @@
 "use server";
 
+import {
+  createCertificateApplicationByAdmin,
+  type CreateCertificateApplicationInput,
+  type CreateCertificateApplicationResult,
+} from "@/features/certificates/services/certificate-create.service";
 import { buildCertificateExportXlsx } from "@/features/certificates/services/certificate-export.service";
 import { getCertificateDetail } from "@/features/certificates/services/certificate-detail.service";
 import {
@@ -65,4 +70,18 @@ export async function bumpCertificateApplicationAction(
   applicationId: string,
 ): Promise<CertificateMutationResult> {
   return bumpCertificateApplication(applicationId);
+}
+
+/** 발급신청 추가 — 관리자가 직접 신청 건을 만듭니다 (아기관리자 불가) */
+export async function createCertificateApplicationAction(
+  input: CreateCertificateApplicationInput,
+): Promise<CreateCertificateApplicationResult> {
+  try {
+    return await createCertificateApplicationByAdmin(input);
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "발급신청 추가에 실패했습니다.",
+    };
+  }
 }
