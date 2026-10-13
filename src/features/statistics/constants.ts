@@ -48,7 +48,7 @@ export const ADMIN_ACCESS_LOG_SELECT = `
 
 export const STATISTICS_NAV_ITEMS = [
   {
-    label: "회원통계",
+    label: "유입경로 통계",
     href: "/admin/statistics/members",
   },
   {
