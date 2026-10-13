@@ -9,6 +9,7 @@ import {
   updateCertificateApplicationAction,
 } from "@/features/certificates/actions/certificate.actions";
 import { M } from "@/features/courses/lib/course-design";
+import { CertificateAddModal } from "@/features/certificates/components/certificate-add-modal";
 import { CertificateDeleteConfirmModal } from "@/features/certificates/components/certificate-delete-confirm-modal";
 import { CertificateDetailModal } from "@/features/certificates/components/certificate-detail-modal";
 import { CertificateListTable } from "@/features/certificates/components/certificate-list-table";
@@ -31,12 +32,15 @@ type CertificateListViewProps = {
   certNames: string[];
   /** 결제자 / 미결제자 칸 건수 (지금 필터 기준) */
   paymentCounts: { paid: number; unpaid: number };
+  /** 발급신청 추가 버튼 — 아기관리자는 false 라 버튼이 안 보입니다 */
+  canAdd: boolean;
 };
 
-export function CertificateListView({ result, query, certNames, paymentCounts }: CertificateListViewProps) {
+export function CertificateListView({ result, query, certNames, paymentCounts, canAdd }: CertificateListViewProps) {
   const router = useRouter();
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailApplicationId, setDetailApplicationId] = useState<string | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<CertificateListItem | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -119,15 +123,41 @@ export function CertificateListView({ result, query, certNames, paymentCounts }:
         minHeight: "calc(100% + 48px)",
       }}
     >
-      <div style={{ marginBottom: 22 }}>
-        <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
-          자격증신청 <span style={{ margin: "0 4px" }}>/</span>
-          <span style={{ color: M.ink, fontWeight: 600 }}>발급신청</span>
+      <div style={{ marginBottom: 22, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
+        <div>
+          <div style={{ fontSize: 12, color: M.mute, marginBottom: 8 }}>
+            자격증신청 <span style={{ margin: "0 4px" }}>/</span>
+            <span style={{ color: M.ink, fontWeight: 600 }}>발급신청</span>
+          </div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>발급신청</div>
+          <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
+            {description} · 총 {result.total}개
+          </div>
         </div>
-        <div style={{ fontSize: 26, fontWeight: 700, color: M.ink }}>발급신청</div>
-        <div style={{ fontSize: 13, color: M.mute, marginTop: 4 }}>
-          {description} · 총 {result.total}개
-        </div>
+        {canAdd ? (
+          <button
+            type="button"
+            onClick={() => {
+              setSuccessMessage(null);
+              setErrorMessage(null);
+              setAddOpen(true);
+            }}
+            style={{
+              flexShrink: 0,
+              height: 38,
+              padding: "0 18px",
+              borderRadius: 8,
+              border: "none",
+              background: "#3182F6",
+              color: "#fff",
+              fontSize: 13.5,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            + 추가
+          </button>
+        ) : null}
       </div>
 
       {successMessage ? (
@@ -239,6 +269,15 @@ export function CertificateListView({ result, query, certNames, paymentCounts }:
         applicationId={detailApplicationId}
         onUpdated={handleActionSuccess}
       />
+
+      {canAdd ? (
+        <CertificateAddModal
+          open={addOpen}
+          onOpenChange={setAddOpen}
+          certNames={certNames}
+          onCreated={handleActionSuccess}
+        />
+      ) : null}
 
       <CertificateDeleteConfirmModal
         open={deleteOpen}

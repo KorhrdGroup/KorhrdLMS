@@ -11,6 +11,7 @@ import {
 } from "@/lib/shared/list-query";
 import { signProtectedMediaUrl } from "@/lib/r2/signed-url";
 import { BABY_ADMIN_PARTNER_CODE, isBabyAdmin } from "@/lib/admin/current-admin";
+import { fetchAllRows } from "@/lib/shared/fetch-all-rows";
 import { createClient } from "@/lib/supabase/server";
 import type {
   CertificateDeliveryStatus,
@@ -196,13 +197,16 @@ export async function getCertificateList(
 /** 필터 드롭다운용 — 신청 내역에 존재하는 자격증명 목록(가나다순) */
 export async function listCertificateNames(): Promise<string[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("certificate_applications")
-    .select("certificate_name")
-    .is("deleted_at", null);
-
-  if (error) throw new Error(error.message);
-  const names = new Set((data ?? []).map((row) => row.certificate_name));
+  // 9,000건이 넘어 한 번에 받으면 1,000행에서 잘려 자격증명이 빠집니다 — 끝까지 이어 받습니다
+  const data = await fetchAllRows((from, to) =>
+    supabase
+      .from("certificate_applications")
+      .select("certificate_name")
+      .is("deleted_at", null)
+      .order("id", { ascending: true })
+      .range(from, to),
+  );
+  const names = new Set(data.map((row) => row.certificate_name).filter(Boolean));
   return Array.from(names).sort((a, b) => a.localeCompare(b, "ko"));
 }
 
