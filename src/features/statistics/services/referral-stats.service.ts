@@ -64,7 +64,14 @@ export async function getReferralStats(query: ReferralStatsQuery): Promise<Refer
   if (!isModuleAllowed(await getCurrentAdminRole(), "statistics")) {
     throw new Error("유입경로 통계를 볼 권한이 없습니다.");
   }
+  return computeReferralStats(query);
+}
 
+/**
+ * 권한 확인 없이 집계만 — 어드민 화면(위 getReferralStats)과 오피스 파트너 API(/api/partner/referral-stats,
+ * x-partner-key 로 막음)가 같이 씁니다. 화면·API 쪽에서 반드시 권한을 먼저 확인하고 부르세요.
+ */
+export async function computeReferralStats(query: ReferralStatsQuery): Promise<ReferralStatsRow[]> {
   const supabase = await createClient();
 
   const members = await fetchAllRows<{
