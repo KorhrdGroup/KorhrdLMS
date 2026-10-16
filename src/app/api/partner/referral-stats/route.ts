@@ -12,6 +12,7 @@ import { computeReferralStats } from "@/features/statistics/services/referral-st
  * 비밀키(x-partner-key = PARTNER_AUTO_ISSUE_KEY)가 없으면 받지 않습니다. 브라우저에서 직접 부르는 API가 아닙니다.
  *
  *   GET /api/partner/referral-stats?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD  (둘 다 비우면 전체 기간, 가입일 기준)
+ *       &excludeCreditLink=1 이면 학점연계 학생(자동 발급 가입 · 자동 발급 신청 회원)을 뺀다
  */
 export const dynamic = "force-dynamic";
 
@@ -46,9 +47,11 @@ export async function GET(request: Request) {
   if (query.startDate && query.endDate && query.startDate > query.endDate) {
     query = { startDate: query.endDate, endDate: query.startDate };
   }
+  /* excludeCreditLink=1 — 학점연계 학생(오피스 등록학생) 빼고 센다 (2026-10-16 오피스 DB 자산 현황) */
+  const excludeCreditLink = params.get("excludeCreditLink") === "1";
 
   try {
-    const rows = await computeReferralStats(query);
+    const rows = await computeReferralStats({ ...query, excludeCreditLink });
     return NextResponse.json({ success: true, query, rows });
   } catch (error) {
     console.error("[partner/referral-stats] 실패:", error);

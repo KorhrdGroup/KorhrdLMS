@@ -13,7 +13,18 @@ import { createClient } from "@/lib/supabase/server";
  * 회원 연결이 없는 신청(옛 이관·관리자 비회원 추가)은 유입경로를 알 수 없어 빠집니다.
  */
 
-export type ReferralStatsQuery = { startDate: string; endDate: string };
+export type ReferralStatsQuery = {
+  startDate: string;
+  endDate: string;
+  /**
+   * 학점연계 학생 빼기 (2026-10-16 오피스 「DB 자산 현황」 — 이미 오피스 등록학생이라 민간자격증 DB 로 겹쳐 세지 않는다).
+   * 오피스 자동 발급으로 가입한 회원(join_path "학점연계 자동발급")과, 이미 있던 회원이라도 자동 발급 신청
+   * (메모 "학점연계 자동발급 (오피스)")이 있는 회원을 뺀다. 어드민 화면은 쓰지 않는다(기본 false).
+   */
+  excludeCreditLink?: boolean;
+};
+
+const CREDIT_LINK_JOIN_PATH = "학점연계 자동발급";
 
 export type ReferralStudent = {
   id: string;
@@ -82,10 +93,11 @@ export async function computeReferralStats(query: ReferralStatsQuery): Promise<R
     created_at: string;
     referral_source: string | null;
     partner_code: string | null;
+    join_path: string | null;
   }>((from, to) => {
     let builder = supabase
       .from("members")
-      .select("id, name, login_id, phone, created_at, referral_source, partner_code")
+      .select("id, name, login_id, phone, created_at, referral_source, partner_code, join_path")
       .is("deleted_at", null);
     if (query.startDate) builder = builder.gte("created_at", kstStart(query.startDate));
     if (query.endDate) builder = builder.lt("created_at", kstNextDay(query.endDate));
@@ -103,6 +115,7 @@ export async function computeReferralStats(query: ReferralStatsQuery): Promise<R
     certificate_name: string;
     payment_status: string;
     applied_at: string;
+    memo: string | null;
   };
 
   const loadEnrollments = (ids: string[] | null) =>
@@ -122,7 +135,7 @@ export async function computeReferralStats(query: ReferralStatsQuery): Promise<R
     fetchAllRows<ApplicationRow>((from, to) => {
       let builder = supabase
         .from("certificate_applications")
-        .select("id, member_id, certificate_name, payment_status, applied_at")
+        .select("id, member_id, certificate_name, payment_status, applied_at, memo")
         .is("deleted_at", null)
         .neq("delivery_status", "canceled");
       builder = ids ? builder.in("member_id", ids) : builder.not("member_id", "is", null);
@@ -163,8 +176,16 @@ export async function computeReferralStats(query: ReferralStatsQuery): Promise<R
     certsByMember.set(row.member_id, list);
   }
 
+  /* 학점연계 학생 — 자동 발급으로 가입했거나 자동 발급 신청이 있는 회원 */
+  const creditLinkMembers = new Set<string>();
+  if (query.excludeCreditLink) {
+    for (const member of members) if (member.join_path === CREDIT_LINK_JOIN_PATH) creditLinkMembers.add(member.id);
+    for (const row of applications) if (row.memo?.startsWith(CREDIT_LINK_JOIN_PATH)) creditLinkMembers.add(row.member_id);
+  }
+
   const rows = new Map<string, ReferralStatsRow>();
   for (const member of members) {
+    if (creditLinkMembers.has(member.id)) continue;
     const channel = channelOf(member);
     const row =
       rows.get(channel.key) ??
