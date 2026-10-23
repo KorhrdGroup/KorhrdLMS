@@ -276,9 +276,12 @@ export default async function HomePage() {
                   </div>
                 </div>
                 <p className={`review__text ${styles.clamp}`}>{r.body}</p>
+                {/* 자격증이 여럿이면 첫 과정만 칩으로 두고 나머지는 '외 N개' —
+                    과정 상세의 후기 마르퀴(ReviewMarquee)와 같은 규칙입니다.
+                    전부 펼치면 카드마다 태그 줄 높이가 달라 목록이 들쭉날쭉했습니다. */}
                 <p className="review__tags">
                   <span>{r.course}</span>
-                  {r.alsoCourses.map((c) => <span key={c}>{c}</span>)}
+                  {r.alsoCourses.length > 0 && <em>외 {r.alsoCourses.length}개</em>}
                 </p>
               </article>
             ))}
