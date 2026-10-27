@@ -562,7 +562,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
           </p>
           {/* 신청할 과정이 이 화면 하나로 정해져 있으므로 목록으로 보내지 않고
               여기서 바로 신청하고 완료 모달을 띄웁니다 (course.slug = 과정코드) */}
-          <EnrollNowButton className="btn btn--cta" code={course.slug}>{course.ctaLabel}</EnrollNowButton>
+          <EnrollNowButton className="btn btn--cta" code={course.slug} source="course_detail">{course.ctaLabel}</EnrollNowButton>
         </div>
         <div className="detail-cta__bottom">
           <p className="timer" data-countdown={ENROLL_EVENT_DEADLINE}>

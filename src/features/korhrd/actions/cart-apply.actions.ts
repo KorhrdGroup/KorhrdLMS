@@ -53,7 +53,7 @@ export async function applyCartAction(input: { courses: string[] }): Promise<Car
       failed.push({ name, message: "과정을 찾을 수 없습니다." });
       continue;
     }
-    const result = await applyForCourse({ memberId: member.id, courseId: course.id });
+    const result = await applyForCourse({ memberId: member.id, courseId: course.id, source: "cart" });
     if (result.success) {
       applied.push(name);
     } else if (result.code === "duplicate") {
