@@ -1177,6 +1177,7 @@ export type Database = {
           member_id: string
           memo: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
+          source: string | null
           start_date: string
           status: Database["public"]["Enums"]["enrollment_status"]
           updated_at: string
@@ -1199,6 +1200,7 @@ export type Database = {
           member_id: string
           memo?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          source?: string | null
           start_date: string
           status?: Database["public"]["Enums"]["enrollment_status"]
           updated_at?: string
@@ -1221,6 +1223,7 @@ export type Database = {
           member_id?: string
           memo?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          source?: string | null
           start_date?: string
           status?: Database["public"]["Enums"]["enrollment_status"]
           updated_at?: string

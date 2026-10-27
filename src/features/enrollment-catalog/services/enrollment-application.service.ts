@@ -105,6 +105,7 @@ export async function applyForCourse(
     payment_status: course.is_free_course ? "paid" : "unpaid",
     application_date: today,
     confirmed_at: new Date().toISOString(),
+    source: input.source ?? null,
   };
 
   const { data, error } = await supabase
