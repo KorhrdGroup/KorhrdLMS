@@ -399,9 +399,10 @@
 .kakao-box:not(.kakao-box--sm) .kakao-box__ico{ align-self:flex-end; width:52px; height:52px }
 
 /* 좁은 사이드바(210px)용 축소 변형 */
-.kakao-box--sm{ padding:16px; gap:var(--s-4)}
+/* 아이콘은 210px 안에서 글자가 한 줄로 남는 크기(40) — 그만큼 사이를 8 로 좁힙니다 */
+.kakao-box--sm{ padding:16px; gap:var(--s-3)}
 .kakao-box--sm .kakao-box__t{ font-size:var(--fs-md) }
-.kakao-box--sm .kakao-box__ico{ width:34px; height:34px }
+.kakao-box--sm .kakao-box__ico{ width:40px; height:40px }
 
 /* --------------------------------------------------------------------------
    18. 신뢰 밴드

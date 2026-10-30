@@ -20,7 +20,7 @@ export default function VoucherPayButton({ member }: VoucherPayFormProps) {
         onClick={() => setOpen(true)}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 12, width: '100%', padding: 16,
+          gap: 8, width: '100%', padding: 16,
           background: '#EBF3FE', color: '#191F28',
           border: 'none', borderRadius: 10, cursor: 'pointer',
           textAlign: 'left',
@@ -34,7 +34,7 @@ export default function VoucherPayButton({ member }: VoucherPayFormProps) {
           src="/voucher-banner-icon.webp"
           alt=""
           aria-hidden="true"
-          style={{ display: 'block', width: 34, height: 34, objectFit: 'contain', flexShrink: 0 }}
+          style={{ display: 'block', width: 40, height: 40, objectFit: 'contain', flexShrink: 0 }}
         />
       </button>
 
