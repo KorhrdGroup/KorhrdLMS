@@ -49,7 +49,7 @@
 /* 텍스트가 남는 공간을 채워, 이미지가 항상 오른쪽에 나란히 붙게 합니다 */
 .review-hero__top > div:first-child{ flex:1 1 auto; min-width:0 }
 /* 우측 장식 그래픽 (Figma freepik__background 150:4319, 원본 비율 2720:1360) */
-.review-hero__graphic{ flex:0 0 auto; width:230px; max-width:38%; height:auto; align-self:center }
+.review-hero__graphic{ flex:0 0 auto; width:320px;max-width:38%; height:auto; align-self:center }
 @media (max-width:980px){
   .review-hero__top{ flex-wrap:wrap }
   .review-hero__graphic{ display:none }

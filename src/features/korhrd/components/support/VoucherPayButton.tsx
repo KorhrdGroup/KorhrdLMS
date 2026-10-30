@@ -31,7 +31,7 @@ export default function VoucherPayButton({ member }: VoucherPayFormProps) {
         </span>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/voucher-banner-icon.png"
+          src="/voucher-banner-icon.webp"
           alt=""
           aria-hidden="true"
           style={{ display: 'block', width: 34, height: 34, objectFit: 'contain', flexShrink: 0 }}

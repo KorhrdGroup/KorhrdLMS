@@ -23,7 +23,7 @@ export default function FloatingBanner({ href = '/courses' }: {
   const body = (
     <>
       <Image
-        className={styles.image} src="/floating-trophy.png" alt=""
+        className={styles.image} src="/floating-trophy.webp" alt=""
         width={44} height={44}
       />
       <span className={styles.text}>

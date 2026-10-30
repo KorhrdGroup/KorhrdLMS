@@ -171,7 +171,7 @@ export default async function HomePage() {
                 <span className="kakao-box__q">통화가 어려우신가요?</span>
                 <span className="kakao-box__t">실시간 카카오톡 상담</span>
               </span>
-              <span className="kakao-box__ico" aria-hidden="true"><img src="/kakao-bubble.png" alt="" /></span>
+              <span className="kakao-box__ico" aria-hidden="true"><img src="/kakao-bubble.webp" alt="" /></span>
             </a>
           </div>
         </div>
