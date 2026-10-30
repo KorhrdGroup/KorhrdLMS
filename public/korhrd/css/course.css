@@ -454,7 +454,7 @@
 }
 .step .ph{ margin-bottom:11px }
 /* 단계 아이콘 — Figma Frame 316에서 내려받은 SVG (1~4단계 순서대로) */
-.step__ico{ display:block; width:40px; height:40px; margin-bottom:11px }
+.step__ico{ display:block; width:48px; height:48px; margin-bottom:11px }
 .step__head{ margin-bottom:4px }
 .step h3{ font-size:var(--fs-sm); font-weight:700; color:var(--ink) }
 .step p{ font-size:var(--fs-sm); color:var(--muted) }
