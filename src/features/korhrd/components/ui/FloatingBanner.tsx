@@ -23,8 +23,8 @@ export default function FloatingBanner({ href = '/courses' }: {
   const body = (
     <>
       <Image
-        className={styles.image} src="/floating-trophy.png" alt=""
-        width={44} height={44}
+        className={styles.image} src="/floating-trophy.webp" alt=""
+        width={56} height={56}
       />
       <span className={styles.text}>
         2026년<br />최신강의<br />업데이트 중!

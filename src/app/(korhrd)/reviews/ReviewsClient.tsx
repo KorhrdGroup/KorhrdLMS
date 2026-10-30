@@ -70,11 +70,11 @@ export default function ReviewsClient({ reviews: REVIEWS }: { reviews: CourseRev
               여러분의 노력은 반드시 결과로 이어집니다.
             </p>
           </div>
-          {/* 원본 1000×500. CSS 가 230px 로 고정합니다(좁은 화면에서는 숨김) */}
+          {/* 원본 1000×500. CSS 가 320px 로 고정합니다(좁은 화면에서는 숨김) */}
           <Image
-            className="review-hero__graphic" src="/review-hero-graphic.png"
+            className="review-hero__graphic" src="/review-hero-graphic.webp"
             alt="" aria-hidden="true"
-            width={1000} height={500} sizes="230px"
+            width={1000} height={500} sizes="320px"
           />
         </div>
 

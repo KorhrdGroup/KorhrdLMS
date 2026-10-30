@@ -64,7 +64,7 @@ export default async function SupportLayout({ children }: { children: React.Reac
               </span>
               <span className="kakao-box__ico" aria-hidden="true">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/kakao-bubble.png" alt="" />
+                <img src="/kakao-bubble.webp" alt="" />
               </span>
             </a>
 
