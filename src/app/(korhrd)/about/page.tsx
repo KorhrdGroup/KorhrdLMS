@@ -12,25 +12,25 @@ import Link from 'next/link';
 
 import NaverMap from './NaverMap';
 
-/** 약속 4가지 — 아이콘은 홈·취득 절차와 같은 파랑 2톤(#2469FF·#B2CAFF) SVG 입니다 */
+/** 약속 4가지 — 아이콘은 홈·취득 절차와 같은 소프트+글래스 3D 그림(webp, 투명 배경)입니다 */
 const PROMISES = [
   {
-    ico: '/promise/1-official.svg',
+    ico: '/promise/1-official.webp',
     title: '정식 등록 자격',
     desc: '전 과정이 주무부처에 등록된 민간자격입니다. 등록번호를 직접 조회하실 수 있습니다.',
   },
   {
-    ico: '/promise/2-free.svg',
+    ico: '/promise/2-free.webp',
     title: '수강료 0원',
     desc: '수강료와 응시료는 전액 무료입니다. 부담 없이 도전하실 수 있습니다.',
   },
   {
-    ico: '/promise/3-online.svg',
+    ico: '/promise/3-online.webp',
     title: '온라인 학습',
     desc: 'PC·모바일로 언제 어디서나 수강하고, 시험까지 온라인으로 완료합니다.',
   },
   {
-    ico: '/promise/4-support.svg',
+    ico: '/promise/4-support.webp',
     title: '발급까지 지원',
     desc: '수강부터 자격증 발급·배송까지 전 과정을 책임지고 안내합니다.',
   },
