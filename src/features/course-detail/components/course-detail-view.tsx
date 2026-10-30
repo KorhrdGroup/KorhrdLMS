@@ -32,17 +32,17 @@ const REVIEWS = [
 ];
 
 const STEPS = [
-  { icon: "step-apply.png", title: "무료 수강신청", desc: "원하는 과정을 선택해 수강신청을 해주세요." },
-  { icon: "step-learn.png", title: "온라인 강의 수강", desc: "열린 강의를 기간 내에 자유롭게 온라인으로 들어주시면 됩니다." },
-  { icon: "step-exam.png", title: "시험 응시", desc: "출석률 60% 이상이라면 언제든지 응시 가능합니다." },
-  { icon: "step-cert.png", title: "자격증 취득", desc: "시험 60점 이상 기준을 만족하면 자격증 발급 및 취득 가능!" },
+  { icon: "step-apply.webp", title: "무료 수강신청", desc: "원하는 과정을 선택해 수강신청을 해주세요." },
+  { icon: "step-learn.webp", title: "온라인 강의 수강", desc: "열린 강의를 기간 내에 자유롭게 온라인으로 들어주시면 됩니다." },
+  { icon: "step-exam.webp", title: "시험 응시", desc: "출석률 60% 이상이라면 언제든지 응시 가능합니다." },
+  { icon: "step-cert.webp", title: "자격증 취득", desc: "시험 60점 이상 기준을 만족하면 자격증 발급 및 취득 가능!" },
 ];
 
 const BENEFITS = [
-  { icon: "why-fast.png", line1: "수강신청 직후", line2: "빠르게 수강 가능" },
-  { icon: "why-device.png", line1: "모바일 · PC", line2: "언제 어디서든 수강가능" },
-  { icon: "why-free.png", line1: "장학지원 이벤트로", line2: "수강료 · 응시료 무료!", note: "자격증 발급비 별도*" },
-  { icon: "why-cert.png", line1: "이력서 기재 가능한", line2: "정식 등록 자격증" },
+  { icon: "why-fast.webp", line1: "수강신청 직후", line2: "빠르게 수강 가능" },
+  { icon: "why-device.webp", line1: "모바일 · PC", line2: "언제 어디서든 수강가능" },
+  { icon: "why-free.webp", line1: "장학지원 이벤트로", line2: "수강료 · 응시료 무료!", note: "자격증 발급비 별도*" },
+  { icon: "why-cert.webp", line1: "이력서 기재 가능한", line2: "정식 등록 자격증" },
 ];
 
 /** 금색 월계관 배지 위에 얹히는 "2026년 장학지원" 문구(원본 벡터). */
@@ -251,7 +251,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
         <section className="dsec dsec--tint" id="who" aria-labelledby="who-title">
           <div className="container">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="dstars" src={ASSET("stars-5.png")} alt="" aria-hidden="true" />
+            <img className="dstars" src={ASSET("stars-5.webp")} alt="" aria-hidden="true" />
             <h2 className="dsec__title" id="who-title">이런 분들에게 추천합니다</h2>
 
             {course.targets.length > 0 && (
@@ -274,7 +274,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
             <div className="card dintro">
               <p className="dintro__head">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="dintro__ico" src={ASSET("icon-goal.png")} alt="" aria-hidden="true" />
+                <img className="dintro__ico" src={ASSET("icon-goal.webp")} alt="" aria-hidden="true" />
                 강좌 목표
               </p>
               <p>{course.goal}</p>
@@ -284,7 +284,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
               <div className="dintro dintro--blue mt-3">
                 <p className="dintro__head">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="dintro__ico" src={ASSET("icon-career.png")} alt="" aria-hidden="true" />
+                  <img className="dintro__ico" src={ASSET("icon-career.webp")} alt="" aria-hidden="true" />
                   진로 및 전망
                   {/* 취업 길찾기에 연결된 직업이 있는 과정에만 버튼을 답니다.
                       없는 과정에서 누르면 관계없는 화면으로 가게 됩니다. */}
@@ -380,7 +380,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
           <div className="container">
             <h2 className="dsec__title dsec__title--on-navy" id="review-title">수강생들의 생생한 합격후기</h2>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="drev-trophy" src={ASSET("trophy.png")} alt="" aria-hidden="true" />
+            <img className="drev-trophy" src={ASSET("trophy.webp")} alt="" aria-hidden="true" />
           </div>
 
           {/* 카드를 두 벌 이어붙여 끊김 없이 반복시킵니다. */}
@@ -557,7 +557,7 @@ export function CourseDetailView({ course }: { course: CourseDetailData }) {
         <div className="detail-cta__top">
           <p className="detail-cta__label">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="detail-cta__alarm" src={ASSET("alarm-clock.png")} alt="" aria-hidden="true" />
+            <img className="detail-cta__alarm" src={ASSET("alarm-clock.webp")} alt="" aria-hidden="true" />
             무료수강 이벤트
           </p>
           {/* 신청할 과정이 이 화면 하나로 정해져 있으므로 목록으로 보내지 않고
