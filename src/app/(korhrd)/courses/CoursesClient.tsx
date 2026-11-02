@@ -288,7 +288,7 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
       <div className="page-head page-head--row">
         <h1>수강신청</h1>
         <p className="promo-chip">
-          <img src="/promo-policy.png" alt="" aria-hidden="true" width={34} height={34} />
+          <img src="/promo-policy.webp" alt="" aria-hidden="true" width={34} height={34} />
           <span><b>2026 취업 장려 정책!</b>전 과정 무료 수강 가능</span>
         </p>
       </div>

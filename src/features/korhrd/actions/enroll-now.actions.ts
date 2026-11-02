@@ -7,7 +7,12 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { getMockableStudentMember } from "@/lib/mock-auth-server";
 
+import type { EnrollmentSource } from "@/features/enrollment-catalog/types/enrollment-application.types";
+
 import type { CartApplyResult } from "./cart-apply.actions";
+
+/** 바로 신청 버튼이 보낼 수 있는 출처 (cart 는 장바구니 쪽 몫) */
+const NOW_SOURCES: EnrollmentSource[] = ["job", "job_course_detail", "course_detail"];
 
 /**
  * 한 과정만 바로 수강신청합니다.
@@ -21,8 +26,9 @@ import type { CartApplyResult } from "./cart-apply.actions";
  * 같은 CartApplyResult 라서 완료 모달을 그대로 씁니다.
  *
  * 회원은 세션에서 직접 조회하므로 클라이언트가 memberId를 조작할 수 없습니다.
+ * source 는 클라이언트가 보내는 값이라 정해진 값만 받고 나머지는 버립니다.
  */
-export async function enrollCourseAction(input: { code: string }): Promise<CartApplyResult> {
+export async function enrollCourseAction(input: { code: string; source?: string }): Promise<CartApplyResult> {
   const member = await getMockableStudentMember();
   if (!member) {
     return {
@@ -50,7 +56,8 @@ export async function enrollCourseAction(input: { code: string }): Promise<CartA
     };
   }
 
-  const result = await applyForCourse({ memberId: member.id, courseId: course.id });
+  const source = NOW_SOURCES.find((s) => s === input.source);
+  const result = await applyForCourse({ memberId: member.id, courseId: course.id, source });
   if (result.success) {
     await sendEnrollmentDoneAlimtalk(member.id);
     return { success: true, applied: [course.name], duplicated: [], failed: [] };

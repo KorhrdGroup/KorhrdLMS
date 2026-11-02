@@ -46,15 +46,12 @@
 .job-group[aria-pressed="true"]{ background:var(--navy) }
 .job-group[aria-pressed="true"] strong{ color:#fff }
 .job-group[aria-pressed="true"] span{ color:rgba(255,255,255,.7) }
-/* 직업군 아이콘 — 연블루 라운드 사각형 위 파란 글리프 (Figma 855:2069) */
+/* 직업군 아이콘 — 소프트+글래스 3D 그림, 바탕 칸 없이 그림만 둡니다 */
 .job-group .job-group__ico{
   display:flex; align-items:center; justify-content:center;
   width:52px; height:52px; margin:0 auto 10px;
-  border-radius:16px; background:var(--blue-soft); color:var(--blue);
-  transition:background-color .15s, color .15s;
 }
-.job-group .job-group__ico img{ display:block; width:28px; height:28px; object-fit:contain }
-/* 선택(남색) 카드에서도 아이콘 원본 색을 유지하기 위해 연블루 배경을 그대로 둡니다 */
+.job-group .job-group__ico img{ display:block; width:52px; height:52px; object-fit:contain }
 .job-group strong{ display:block; font-size:var(--fs-sm); font-weight:700; color:var(--ink); letter-spacing:-.01em }
 .job-group span{ display:block; font-size:var(--fs-xs); color:var(--faint); margin-top:3px }
 

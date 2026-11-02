@@ -28,10 +28,10 @@ import styles from './page.module.css';
  * 하단 고정 탭바는 이 화면에서만 뜹니다 — app/layout.tsx 의 TabBar 를 참고하세요.
  */
 const STEPS = [
-  { ico: '/step/1-apply.svg', title: '무료수강신청', dur: '약 3분', desc: '원하는 과정들을 선택해 0원으로 신청합니다.' },
-  { ico: '/step/2-learn.svg', title: '온라인 강의 수강', dur: '6주 이내', desc: 'PC·모바일로 약 20시간 강의를 수강합니다.' },
-  { ico: '/step/3-exam.svg', title: '온라인 시험 응시', dur: '60분', desc: '강의 수강 후 시험에 응시할 수 있습니다.' },
-  { ico: '/step/4-cert.svg', title: '자격증 발급 신청', dur: '배송 최대 14일', desc: '상장형·카드형 자격증으로 발급 가능합니다.' },
+  { ico: '/step/1-apply.webp', title: '무료수강신청', dur: '약 3분', desc: '원하는 과정들을 선택해 0원으로 신청합니다.' },
+  { ico: '/step/2-learn.webp', title: '온라인 강의 수강', dur: '6주 이내', desc: 'PC·모바일로 약 20시간 강의를 수강합니다.' },
+  { ico: '/step/3-exam.webp', title: '온라인 시험 응시', dur: '60분', desc: '강의 수강 후 시험에 응시할 수 있습니다.' },
+  { ico: '/step/4-cert.webp', title: '자격증 발급 신청', dur: '배송 최대 14일', desc: '상장형·카드형 자격증으로 발급 가능합니다.' },
 ];
 
 /** 메인 공지 목록에 보여줄 최대 줄 수 — 이보다 적으면 적은 대로 둡니다.
@@ -158,7 +158,7 @@ export default async function HomePage() {
             <div className="tel-box">
               <p className="tel-box__q">궁금한 점이 있으신가요?</p>
               <p className="tel-box__t">전화 상담 문의</p>
-              <p className="tel-box__n"><a href="tel:0221356514">02-2135-6514</a></p>
+              <p className="tel-box__n"><a href="tel:0221356221">02-2135-6221</a></p>
               <p className="tel-box__h">
                 운영시간 평일 10:00~18:00<br />
                 점심시간 12:00~14:00 · 금/토/일/공휴일 휴무
@@ -171,7 +171,7 @@ export default async function HomePage() {
                 <span className="kakao-box__q">통화가 어려우신가요?</span>
                 <span className="kakao-box__t">실시간 카카오톡 상담</span>
               </span>
-              <span className="kakao-box__ico" aria-hidden="true"><img src="/kakao-bubble.png" alt="" /></span>
+              <span className="kakao-box__ico" aria-hidden="true"><img src="/kakao-bubble.webp" alt="" /></span>
             </a>
           </div>
         </div>
@@ -276,9 +276,12 @@ export default async function HomePage() {
                   </div>
                 </div>
                 <p className={`review__text ${styles.clamp}`}>{r.body}</p>
+                {/* 자격증이 여럿이면 첫 과정만 칩으로 두고 나머지는 '외 N개' —
+                    과정 상세의 후기 마르퀴(ReviewMarquee)와 같은 규칙입니다.
+                    전부 펼치면 카드마다 태그 줄 높이가 달라 목록이 들쭉날쭉했습니다. */}
                 <p className="review__tags">
                   <span>{r.course}</span>
-                  {r.alsoCourses.map((c) => <span key={c}>{c}</span>)}
+                  {r.alsoCourses.length > 0 && <em>외 {r.alsoCourses.length}개</em>}
                 </p>
               </article>
             ))}

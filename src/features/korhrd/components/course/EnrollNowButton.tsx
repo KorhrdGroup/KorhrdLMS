@@ -15,10 +15,14 @@ import EnrollDoneModal, { type EnrollResult } from '@/features/korhrd/components
  *
  * 겉모습은 원래 자리에 있던 링크와 같아야 하므로 className 을 그대로 받습니다
  * (.btn--cta / .btn.btn--primary). 여기서 새로 꾸미지 않습니다.
+ *
+ * source 는 어느 버튼에서 신청했는지입니다(enrollments.source). 과정 상세에
+ * 취업 길찾기의 '과정 상세보기'(?from=job)로 들어왔으면 job_course_detail 로 남깁니다.
  */
-export default function EnrollNowButton({ code, className, children }: {
+export default function EnrollNowButton({ code, source, className, children }: {
   /** 과정코드 CRS-KH-xxxx */
   code: string;
+  source: 'job' | 'course_detail';
   className: string;
   children: React.ReactNode;
 }) {
@@ -39,7 +43,11 @@ export default function EnrollNowButton({ code, className, children }: {
 
   const enroll = () => {
     startTransition(async () => {
-      const result = await enrollCourseAction({ code });
+      const fromJob = new URLSearchParams(window.location.search).get('from') === 'job';
+      const result = await enrollCourseAction({
+        code,
+        source: source === 'course_detail' && fromJob ? 'job_course_detail' : source,
+      });
       if (!result.success) {
         router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
         return;

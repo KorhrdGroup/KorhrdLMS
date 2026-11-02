@@ -131,11 +131,11 @@ export default async function JobDetailPage({ params }: Params) {
             <div className={styles.actions}>
               {course?.code ? (
                 /* 과정이 하나로 정해져 있으므로 목록을 거치지 않고 바로 신청합니다 */
-                <EnrollNowButton className="btn btn--primary" code={course.code}>
+                <EnrollNowButton className="btn btn--primary" code={course.code} source="job">
                   바로 수강신청
                 </EnrollNowButton>
               ) : null}
-              <Link className="btn btn--ghost" href={`/courses/${encodeURIComponent(job.course)}`}>
+              <Link className="btn btn--ghost" href={`/courses/${encodeURIComponent(job.course)}?from=job`}>
                 과정 상세보기
               </Link>
             </div>

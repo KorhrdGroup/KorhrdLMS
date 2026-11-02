@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** 자격증 취득 4단계 — 없어진 취득 절차 화면(korhrd-site/process.html)에 있던 것입니다 */
 const STEPS = [
   {
-    ico: "/step/1-apply.svg",
+    ico: "/step/1-apply.webp",
     title: "무료수강신청",
     dur: "약 3분",
     desc: (
@@ -22,7 +22,7 @@ const STEPS = [
     ),
   },
   {
-    ico: "/step/2-learn.svg",
+    ico: "/step/2-learn.webp",
     title: "온라인 강의 수강",
     dur: "6주 이내",
     desc: (
@@ -34,7 +34,7 @@ const STEPS = [
     ),
   },
   {
-    ico: "/step/3-exam.svg",
+    ico: "/step/3-exam.webp",
     title: "온라인 시험 응시",
     dur: "60분",
     desc: (
@@ -46,7 +46,7 @@ const STEPS = [
     ),
   },
   {
-    ico: "/step/4-cert.svg",
+    ico: "/step/4-cert.webp",
     title: "자격증 발급 신청",
     dur: "배송 최대 14일",
     desc: (

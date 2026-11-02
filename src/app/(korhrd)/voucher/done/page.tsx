@@ -61,7 +61,7 @@ export default async function Page({
         {ok ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src="/voucher-complete-check.png"
+            src="/voucher-complete-check.webp"
             alt=""
             aria-hidden="true"
             style={{ display: 'block', width: 84, height: 84, objectFit: 'contain', margin: '0 auto 16px' }}

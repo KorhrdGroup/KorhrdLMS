@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 /** 패밀리 사이트 — 여기에 한 줄 추가하면 전 페이지 푸터에 반영됩니다 */
-const FAMILY_SITES = [{ name: '한평생원격교육원', url: 'https://www.hpsedu.co.kr/' }];
+const FAMILY_SITES = [{ name: '한평생원격교육원', url: 'https://www.hancyber.co.kr/main/main.asp' }];
 
 export default function Footer() {
   const [familyOpen, setFamilyOpen] = useState(false);

@@ -1,6 +1,10 @@
+/** 수강신청이 어느 버튼에서 왔는지 (enrollments.source) */
+export type EnrollmentSource = "job" | "job_course_detail" | "course_detail" | "cart";
+
 export type EnrollmentApplicationInput = {
   memberId: string;
   courseId: string;
+  source?: EnrollmentSource;
 };
 
 export type EnrollmentApplicationErrorCode =
