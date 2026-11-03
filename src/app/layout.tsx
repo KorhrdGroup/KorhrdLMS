@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import { Suspense } from "react";
 
+import { NaverAnalytics } from "@/components/naver-analytics";
 import { ReferralTracker } from "@/components/referral-tracker";
 
 import "./globals.css";
@@ -50,6 +51,8 @@ export default function RootLayout({
           <ReferralTracker />
         </Suspense>
         {children}
+        {/* 네이버 프리미엄 로그분석 — 모든 페이지(관리자 제외) 공통 스크립트 */}
+        <NaverAnalytics />
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { trackKarrotEvent } from '@/lib/karrot-pixel.client';
+import { trackNaverLead } from '@/lib/naver-analytics.client';
 import { createPortal } from 'react-dom';
 
 /**
@@ -51,10 +52,12 @@ export default function EnrollDoneModal({
   // 포털 대상(document.body)은 클라이언트에서만 있습니다.
   useEffect(() => setMounted(true), []);
 
-  /* 당근 전환 추적 — 실제로 새 수강신청이 이뤄졌을 때만 보냅니다 */
+  /* 당근·네이버 전환 추적 — 실제로 새 수강신청이 이뤄졌을 때만, 한 번 보냅니다 */
   const isNewApplied = (result?.applied.length ?? 0) > 0;
   useEffect(() => {
-    if (isNewApplied) trackKarrotEvent('SubmitApplication');
+    if (!isNewApplied) return;
+    trackKarrotEvent('SubmitApplication');
+    trackNaverLead();
   }, [isNewApplied]);
 
   useEffect(() => {
