@@ -75,7 +75,14 @@ const COURSE_ALIASES: Record<string, string> = {
   병원코디네이터: "병원코디네이터1급",
   독서논술지도사: "독서논술지도사1급",
   AI프롬프트엔지니어: "프롬포트전문가1급", // 2026-10-02 과정명 변경 — 옛 이름으로 와도 같은 과정
+  지역아동교육지도사: "(지역)아동교육지도사", // 2026-11-12 과정명 변경 — 오피스는 옛 이름으로 보냄
 };
+
+/**
+ * 이름을 바꾼 과정의 옛 이름(공백·급수 뺀 표기). 오피스가 옛 이름으로 보내와도
+ * 발급신청 자격증명은 새 과정명으로 만듭니다 — 발급처에 넘기는 엑셀에 새 이름이 나가야 해서.
+ */
+const RENAMED_OFFICE_NAMES = new Set(["AI프롬프트엔지니어", "지역아동교육지도사"]);
 
 /**
  * 오피스가 보내온 생년월일 문자열을 검증해서 ISO 날짜와 로그인용 6자리로 바꿉니다.
@@ -158,6 +165,9 @@ function matchCourse(certName: string, courses: CourseRow[]): CourseRow | null {
  * (예: 오피스 "노인심리상담사1급" → 그대로 / LMS 과정 "생활지원사" → "생활지원사1급")
  */
 function certificateDisplayName(officeCertName: string, courseName: string): string {
+  const officeKey = officeCertName.normalize("NFC").replace(/\s+/g, "").replace(/[0-9]+급$/, "");
+  // 이름을 바꾼 과정은 새 과정명 그대로 — "(지역)아동교육지도사"처럼 급수 없는 이름에 1급을 붙이지 않습니다
+  if (RENAMED_OFFICE_NAMES.has(officeKey)) return courseName.trim();
   const base = officeCertName.trim() || courseName.trim();
   if (/[0-9]\s*급/.test(base)) return base;
   if (/[0-9]\s*급/.test(courseName)) return courseName.trim();

@@ -101,10 +101,12 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
 
   /* 분야별로 묶어서 보여줍니다 */
   const groups = useMemo(() => {
-    const key = q.trim();
+    // 공백·괄호를 빼고 비교 — "지역아동"으로 찾아도 "(지역)아동교육지도사"가 나오게
+    const squash = (v: string) => v.replace(/[\s()]+/g, '');
+    const key = squash(q.trim());
     if (!key) return null;
     const map = new Map<string, string[]>();
-    catalog.filter((c) => c.n.includes(key)).forEach((c) => {
+    catalog.filter((c) => squash(c.n).includes(key)).forEach((c) => {
       const cat = c.c[0] ?? '기타';
       map.set(cat, [...(map.get(cat) ?? []), c.n]);
     });

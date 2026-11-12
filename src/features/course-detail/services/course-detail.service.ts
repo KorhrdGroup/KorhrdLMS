@@ -197,6 +197,7 @@ async function fetchLecturePlan(
  */
 const RENAMED_COURSE_NAMES: Record<string, string> = {
   AI프롬프트엔지니어: "프롬포트전문가", // 2026-10-02 → 프롬포트전문가1급
+  지역아동교육지도사: "(지역)아동교육지도사", // 2026-11-12 발급처 사정으로 "아동교육지도사"로 발급 → (지역)아동교육지도사
 };
 
 /**

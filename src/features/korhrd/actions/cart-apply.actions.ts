@@ -23,7 +23,8 @@ export type CartApplyResult =
       failed: { name: string; message: string }[];
     };
 
-const normalize = (value: string) => value.replace(/\s+/g, "").replace(/\d급$/, "");
+// 괄호도 뺍니다 — "(지역)아동교육지도사"(2026-11-12 이름 변경)가 DB 변경 전·후 어느 이름과도 맞게
+const normalize = (value: string) => value.replace(/[\s()]+/g, "").replace(/\d급$/, "");
 
 export async function applyCartAction(input: { courses: string[] }): Promise<CartApplyResult> {
   const member = await getMockableStudentMember();

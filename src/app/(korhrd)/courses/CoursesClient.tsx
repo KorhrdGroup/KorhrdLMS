@@ -76,7 +76,8 @@ export default function CoursesClient({ initial = {}, visibleCodes }: {
     setTerm('');
     if (query) router.push('/courses');
   };
-  const norm = (v: string) => v.replace(/\s+/g, '').toLowerCase();
+  // 공백·괄호를 빼고 비교 — "지역아동"으로 찾아도 "(지역)아동교육지도사"가 나오게
+  const norm = (v: string) => v.replace(/[\s()]+/g, '').toLowerCase();
   const needle = norm(query);
 
   /* 노출 대상만 남긴 카탈로그. 이 화면의 모든 계산(필터 개수·목록)이 이걸 씁니다. */
