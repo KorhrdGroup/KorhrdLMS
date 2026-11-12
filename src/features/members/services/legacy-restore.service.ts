@@ -33,10 +33,24 @@ type LegacyApplication = {
 
 type CourseRow = { id: string; name: string };
 
+/**
+ * 이름을 바꾼 과정 — 이관 신청은 옛 이름으로 저장돼 있어 새 과정명과 글자로는 안 맞습니다.
+ * 키는 옛 이름(공백·급수 뺀 표기), 값은 지금 DB 과정명.
+ */
+const RENAMED_COURSES: Record<string, string> = {
+  AI프롬프트엔지니어: "프롬포트전문가1급", // 2026-10-02
+  지역아동교육지도사: "(지역)아동교육지도사", // 2026-11-12
+};
+
 /** 과정명 매칭 — 정확 일치 우선, 급수 표기만 다른 경우까지만 허용 */
 function matchCourse(certName: string, courses: CourseRow[]): CourseRow | null {
   const key = norm(certName);
   if (!key) return null;
+  const renamedTo = RENAMED_COURSES[key.replace(/[0-9]+급$/, "")];
+  if (renamedTo) {
+    const hit = courses.find((course) => norm(course.name) === norm(renamedTo));
+    if (hit) return hit;
+  }
   const exact = courses.find((course) => norm(course.name) === key);
   if (exact) return exact;
   return (
