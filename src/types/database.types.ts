@@ -1702,6 +1702,8 @@ export type Database = {
           memo: string | null
           name: string
           naver_id: string | null
+          marketing_agreed: boolean
+          marketing_agreed_at: string | null
           partner_code: string | null
           occupation: string | null
           password_hash: string | null
@@ -1738,6 +1740,8 @@ export type Database = {
           memo?: string | null
           name: string
           naver_id?: string | null
+          marketing_agreed?: boolean
+          marketing_agreed_at?: string | null
           partner_code?: string | null
           occupation?: string | null
           password_hash?: string | null
@@ -1774,6 +1778,8 @@ export type Database = {
           memo?: string | null
           name?: string
           naver_id?: string | null
+          marketing_agreed?: boolean
+          marketing_agreed_at?: string | null
           partner_code?: string | null
           occupation?: string | null
           password_hash?: string | null

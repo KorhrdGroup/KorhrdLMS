@@ -25,6 +25,8 @@ export type MemberRegistrationInput = {
   referrerLoginId: string;
   /** 파트너스 코드 (선택 — 현재 STAR만 유효, 대소문자 무관) */
   partnerCode?: string;
+  /** [선택] 광고성 정보 수신 동의 — 회원가입 체크(2026-11-13). 없으면 동의 안 함 */
+  marketingAgreed?: boolean;
 };
 
 export type MemberRegistrationResult =
