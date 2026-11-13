@@ -24,6 +24,8 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
   const [postalCode, setPostalCode] = useState(profile.postalCode);
   const [address, setAddress] = useState(profile.address);
   const [addressDetail, setAddressDetail] = useState(profile.addressDetail);
+  // [선택] 광고성 정보 수신 동의 — 카카오 가입 등 가입 화면을 거치지 않은 회원도 여기서 동의 · 철회 (2026-11-13)
+  const [marketingAgreed, setMarketingAgreed] = useState(profile.marketingAgreed);
 
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -36,7 +38,7 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
 
     startTransition(async () => {
       const result = await updateMyProfileAction({
-        name, birthDate, phone, email, postalCode, address, addressDetail,
+        name, birthDate, phone, email, postalCode, address, addressDetail, marketingAgreed,
       });
 
       if (result.success) {
@@ -135,6 +137,20 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
             id="mp-addr2" type="text"
             value={addressDetail} onChange={(event) => setAddressDetail(event.target.value)}
           />
+        </div>
+
+        <div className="field">
+          <div className="agree" style={{ background: 'none', padding: '2px 4px' }}>
+            <input
+              id="mp-marketing" type="checkbox" checked={marketingAgreed}
+              onChange={(event) => setMarketingAgreed(event.target.checked)}
+            />
+            <label htmlFor="mp-marketing">[선택] 광고성 정보 수신 동의</label>
+          </div>
+          <p style={{ margin: '6px 4px 0', fontSize: 13, lineHeight: 1.6, color: '#6B7684' }}>
+            교육 과정 · 자격증 · 할인 · 이벤트 등 혜택을 문자 · 카카오톡 · 전화로 안내받습니다(동의 철회 시 또는 수집일로부터 5년 보관).
+            동의하지 않아도 서비스 이용에는 제한이 없고, 언제든 이 칸을 끄고 저장하면 철회됩니다.
+          </p>
         </div>
 
         {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
