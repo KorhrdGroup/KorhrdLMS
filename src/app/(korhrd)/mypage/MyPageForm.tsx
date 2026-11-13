@@ -148,8 +148,8 @@ export default function MyPageForm({ profile }: { profile: MemberProfile }) {
             <label htmlFor="mp-marketing">[선택] 광고성 정보 수신 동의</label>
           </div>
           <p style={{ margin: '6px 4px 0', fontSize: 13, lineHeight: 1.6, color: '#6B7684' }}>
-            교육 과정 · 자격증 · 할인 · 이벤트 등 혜택을 문자 · 카카오톡 · 전화로 안내받습니다(동의 철회 시 또는 수집일로부터 5년 보관).
-            동의하지 않아도 서비스 이용에는 제한이 없고, 언제든 이 칸을 끄고 저장하면 철회됩니다.
+            (주)한평생그룹은 이벤트 안내를 위해 휴대폰 번호로 광고성 정보를 발송해요. 발송 채널은 SMS, 알림톡이며, 보유 기간은 동의 철회 시까지예요.
+            동의하지 않아도 서비스 이용에는 불이익이 없고, 언제든 이 칸을 끄고 저장하면 철회돼요.
           </p>
         </div>
 
