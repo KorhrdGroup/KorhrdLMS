@@ -29,7 +29,7 @@ export function SignupForm() {
   const [partnerCode, setPartnerCode] = useState('');
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
-  // [선택] 광고성 정보 수신 동의 — 기본 꺼짐, 안 해도 가입됨 · 「전체 동의」(필수 두 개)에 묶지 않는다 (2026-11-13)
+  // [선택] 광고성 정보 수신 동의 — 기본 꺼짐, 안 해도 가입됨 · 가입 버튼 조건(requiredAgreed)에 넣지 않는다 (2026-11-13)
   const [marketingAgreed, setMarketingAgreed] = useState(false);
   /* 약관 팝업 — 'terms' | 'privacy' | null */
   const [policyOpen, setPolicyOpen] = useState<'terms' | 'privacy' | 'marketing' | null>(null);
@@ -39,7 +39,10 @@ export function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const allAgreed = agree1 && agree2;
+  /* 가입 버튼 조건 — 필수 두 개(이용약관 · 개인정보)만 본다 */
+  const requiredAgreed = agree1 && agree2;
+  /* 「모두 동의」 체크 상태 — 필수 두 개 + [선택] 광고성 정보 수신까지 모두 켜져 있을 때만 켜짐 */
+  const allConsentsAgreed = requiredAgreed && marketingAgreed;
 
   /* 휴대폰 번호 하이픈 자동 삽입 — 숫자만 남기고 010-1234-5678 형태로 */
   const formatPhone = (value: string) => {
@@ -212,14 +215,15 @@ export function SignupForm() {
 
             <div className="agree">
               <input
-                id="agree-all" type="checkbox" checked={allAgreed}
+                id="agree-all" type="checkbox" checked={allConsentsAgreed}
                 onChange={(event) => {
                   setAgree1(event.target.checked);
                   setAgree2(event.target.checked);
+                  setMarketingAgreed(event.target.checked);
                 }}
               />
               <label htmlFor="agree-all">
-                <b>전체 동의</b> — 이용약관, 개인정보 수집·이용에 모두 동의합니다.
+                <b>모두 동의합니다</b> (선택 항목 포함)
               </label>
             </div>
             <div className="agree" style={{ background: 'none', padding: '2px 4px' }}>
@@ -278,7 +282,7 @@ export function SignupForm() {
 
             <button
               className="btn btn--primary btn--lg btn--block" type="submit"
-              disabled={isPending || !allAgreed}
+              disabled={isPending || !requiredAgreed}
             >
               {isPending ? '가입 중…' : '가입하고 무료수강 시작하기'}
             </button>
