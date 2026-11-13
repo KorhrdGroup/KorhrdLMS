@@ -11,12 +11,12 @@ export function PrivacyBody() {
       </section>
       <section className="policy-sec">
         <h2>2. 개인정보의 수집 및 이용 목적</h2>
-        <ul className="policy-list"><li>회원 가입 및 관리, 본인 확인</li><li>수강 신청·진도 관리·시험 응시 등 서비스 제공</li><li>자격증 발급 및 배송</li><li>고객 문의 응대 및 공지 전달</li><li>(선택 동의 시) 교육 과정 · 자격증 · 할인 · 이벤트 등 혜택 안내(광고성 정보 전송)</li></ul>
+        <ul className="policy-list"><li>회원 가입 및 관리, 본인 확인</li><li>수강 신청·진도 관리·시험 응시 등 서비스 제공</li><li>자격증 발급 및 배송</li><li>고객 문의 응대 및 공지 전달</li><li>(선택 동의 시) 이벤트 안내(SMS · 알림톡 광고성 정보 발송)</li></ul>
       </section>
       <section className="policy-sec">
         <h2>3. 개인정보의 보유 및 이용 기간</h2>
         <p>회원 탈퇴 시 지체 없이 파기합니다. 다만 관계 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관합니다. (계약·청약철회 기록 5년, 대금결제 기록 5년, 소비자 불만·분쟁처리 기록 3년)</p>
-        <p>광고성 정보 수신 동의 정보: 동의 철회 시 또는 수집일로부터 5년</p>
+        <p>광고성 정보 수신 동의 정보(휴대폰 번호): 동의 철회 시까지</p>
       </section>
       <section className="policy-sec">
         <h2>4. 개인정보의 제3자 제공</h2>
