@@ -21,6 +21,8 @@ export type MemberProfile = {
   postalCode: string;
   address: string;
   addressDetail: string;
+  /** [선택] 광고성 정보 수신 동의 — 카카오 가입 등 가입 화면을 거치지 않은 회원도 여기서 동의 · 철회한다 (2026-11-13) */
+  marketingAgreed: boolean;
 };
 
 export type MemberProfileInput = Omit<MemberProfile, "loginId">;
@@ -37,7 +39,7 @@ export async function getMyProfile(memberId: string): Promise<MemberProfile | nu
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("members")
-    .select("login_id, name, birth_date, phone, email, postal_code, address, address_detail")
+    .select("login_id, name, birth_date, phone, email, postal_code, address, address_detail, marketing_agreed")
     .eq("id", memberId)
     .is("deleted_at", null)
     .maybeSingle();
@@ -59,6 +61,7 @@ export async function getMyProfile(memberId: string): Promise<MemberProfile | nu
     postal_code: string | null;
     address: string | null;
     address_detail: string | null;
+    marketing_agreed: boolean | null;
   };
 
   return {
@@ -70,6 +73,7 @@ export async function getMyProfile(memberId: string): Promise<MemberProfile | nu
     postalCode: row.postal_code ?? "",
     address: row.address ?? "",
     addressDetail: row.address_detail ?? "",
+    marketingAgreed: row.marketing_agreed === true,
   };
 }
 
@@ -146,6 +150,25 @@ export async function updateMyProfile(
 
   if (!data) {
     return { success: false, message: "회원 정보를 찾을 수 없습니다." };
+  }
+
+  // 광고성 정보 수신 동의 (2026-11-13) — 새로 동의할 때만 동의 시각을 남기고(이미 동의한 사람은 처음 시각 유지), 철회하면 지운다.
+  // 정보통신망법 제50조 사전 동의 근거 · 2년마다 동의 확인 안내의 기준일
+  const consent =
+    input.marketingAgreed === true
+      ? supabase
+          .from("members")
+          .update({ marketing_agreed: true, marketing_agreed_at: new Date().toISOString() })
+          .eq("id", memberId)
+          .eq("marketing_agreed", false)
+      : supabase
+          .from("members")
+          .update({ marketing_agreed: false, marketing_agreed_at: null })
+          .eq("id", memberId)
+          .eq("marketing_agreed", true);
+  const { error: consentError } = await consent;
+  if (consentError) {
+    throw new Error(consentError.message);
   }
 
   return { success: true };
