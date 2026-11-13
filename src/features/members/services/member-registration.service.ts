@@ -212,6 +212,9 @@ export async function createMember(
       : null,
     // 마케팅 링크 첫 방문 때 ReferralTracker 가 남긴 유입경로 (없으면 null)
     referral_source: await readReferralCookie(),
+    // [선택] 광고성 정보 수신 동의 — 참일 때만 동의 시각을 남긴다 (정보통신망법 제50조 사전 동의 근거, 2026-11-13)
+    marketing_agreed: input.marketingAgreed === true,
+    marketing_agreed_at: input.marketingAgreed === true ? new Date().toISOString() : null,
     status: "active",
   };
 

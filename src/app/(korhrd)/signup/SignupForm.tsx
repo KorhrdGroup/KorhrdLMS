@@ -29,8 +29,10 @@ export function SignupForm() {
   const [partnerCode, setPartnerCode] = useState('');
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
+  // [선택] 광고성 정보 수신 동의 — 기본 꺼짐, 안 해도 가입됨 · 「전체 동의」(필수 두 개)에 묶지 않는다 (2026-11-13)
+  const [marketingAgreed, setMarketingAgreed] = useState(false);
   /* 약관 팝업 — 'terms' | 'privacy' | null */
-  const [policyOpen, setPolicyOpen] = useState<'terms' | 'privacy' | null>(null);
+  const [policyOpen, setPolicyOpen] = useState<'terms' | 'privacy' | 'marketing' | null>(null);
 
   const [idCheck, setIdCheck] = useState<{ ok: boolean; text: string } | null>(null);
   const [verifiedId, setVerifiedId] = useState<string | null>(null);
@@ -93,6 +95,7 @@ export function SignupForm() {
           degreePurpose: '',
           referrerLoginId: '',
           partnerCode,
+          marketingAgreed,
         },
         true,
       );
@@ -253,6 +256,23 @@ export function SignupForm() {
                 동의
               </label>
             </div>
+            <div className="agree" style={{ background: 'none', padding: '2px 4px' }}>
+              <input
+                id="agree-marketing" type="checkbox" checked={marketingAgreed}
+                onChange={(event) => setMarketingAgreed(event.target.checked)}
+              />
+              <label htmlFor="agree-marketing">
+                [선택]{' '}
+                <button
+                  type="button"
+                  onClick={() => setPolicyOpen('marketing')}
+                  style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  광고성 정보 수신
+                </button>{' '}
+                동의
+              </label>
+            </div>
 
             {error ? <p className="my-card__status my-card__status--fail">{error}</p> : null}
 
@@ -290,7 +310,7 @@ export function SignupForm() {
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #E5E8EB' }}>
                   <strong style={{ fontSize: 16 }}>
-                    {policyOpen === 'terms' ? '이용약관' : '개인정보 수집·이용'}
+                    {policyOpen === 'terms' ? '이용약관' : policyOpen === 'privacy' ? '개인정보 수집·이용' : '[선택] 광고성 정보 수신 동의'}
                   </strong>
                   <button
                     type="button" aria-label="닫기" onClick={() => setPolicyOpen(null)}
@@ -300,7 +320,18 @@ export function SignupForm() {
                   </button>
                 </div>
                 <div style={{ overflowY: 'auto', padding: '4px 20px' }}>
-                  {policyOpen === 'terms' ? <TermsBody /> : <PrivacyBody />}
+                  {policyOpen === 'terms' ? (
+                    <TermsBody />
+                  ) : policyOpen === 'privacy' ? (
+                    <PrivacyBody />
+                  ) : (
+                    <div style={{ padding: '12px 0', lineHeight: 1.7, fontSize: 14 }}>
+                      <p><b>1. 목적</b><br />교육 과정 · 자격증 · 할인 · 이벤트 등 혜택 안내</p>
+                      <p><b>2. 방법</b><br />문자(SMS · LMS · MMS), 카카오톡, 전화</p>
+                      <p><b>3. 보유 · 이용 기간</b><br />동의 철회 시 또는 수집일로부터 5년</p>
+                      <p><b>4. 동의 거부 권리</b><br />동의하지 않아도 회원가입과 서비스 이용은 할 수 있으며, 동의 후에도 언제든 무료수신거부로 철회할 수 있습니다.</p>
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '12px 20px', borderTop: '1px solid #E5E8EB' }}>
                   <button
@@ -312,7 +343,8 @@ export function SignupForm() {
                     className="btn btn--primary" type="button"
                     onClick={() => {
                       if (policyOpen === 'terms') setAgree1(true);
-                      else setAgree2(true);
+                      else if (policyOpen === 'privacy') setAgree2(true);
+                      else setMarketingAgreed(true);
                       setPolicyOpen(null);
                     }}
                   >
