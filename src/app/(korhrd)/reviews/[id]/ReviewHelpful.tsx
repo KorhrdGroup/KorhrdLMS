@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 import { toggleReviewHelpfulAction } from '@/features/korhrd/actions/course-review.actions';
@@ -19,18 +20,20 @@ export default function ReviewHelpful({
 }) {
   const [state, setState] = useState({ count, active });
   const [, startTransition] = useTransition();
+  const router = useRouter();
 
   const toggle = () => {
     const next = { active: !state.active, count: state.count + (state.active ? -1 : 1) };
     setState(next);
     startTransition(async () => {
       const result = await toggleReviewHelpfulAction(reviewId);
-      // 저장이 거절되면(비로그인 등) 원래대로 되돌리고, 성공하면 서버 값으로 맞춥니다.
-      setState(
-        result.success
-          ? { count: result.helpful, active: result.helpfulByMe }
-          : { count, active },
-      );
+      // 저장이 거절되면(비로그인) 원래대로 되돌리고 로그인으로 보냅니다. 성공하면 서버 값으로 맞춥니다.
+      if (!result.success) {
+        setState({ count, active });
+        router.push(`/login?redirect=/reviews/${reviewId}`);
+        return;
+      }
+      setState({ count: result.helpful, active: result.helpfulByMe });
     });
   };
 
