@@ -60,8 +60,14 @@ const NATCERTS = [
     유입경로 "한직훈_국가자격증" 으로 기록하는 약속 값입니다. */
 const NATCERT_SITE = 'https://barosocial.vercel.app/?utm_source=hanjikhun';
 
+/** 메인에서만 빼는 후기 — 합격후기 목록(/reviews)에는 그대로 나옵니다.
+    a46e11f9…: "베이비시터 일주일만에합격했어요" (후기가 아니라 발급 문의 글) */
+const HOME_HIDDEN_REVIEW_IDS = new Set(['a46e11f9-5d54-4618-b7b4-aaf1992fc3c0']);
+
 export default async function HomePage() {
-  const homeReviews = (await listCourseReviews()).slice(0, 3);
+  const homeReviews = (await listCourseReviews())
+    .filter((r) => !HOME_HIDDEN_REVIEW_IDS.has(r.id))
+    .slice(0, 3);
   /* 어드민 배너관리에서 등록한 배너. 없으면 컴포넌트가 기본 배너로 폴백합니다 */
   const banners = await listPublishedHomeBanners().catch(() => []);
   // 실제 수강완료·발급완료 내역. 티커는 최소 몇 줄이 있어야 자연스러워
