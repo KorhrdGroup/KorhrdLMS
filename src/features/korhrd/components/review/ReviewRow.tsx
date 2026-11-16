@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { toggleReviewHelpfulAction } from '@/features/korhrd/actions/course-review.actions';
 import type { Review } from '@/features/korhrd/lib/types';
 import HelpfulButton from './HelpfulButton';
 
@@ -19,6 +21,27 @@ export const REVIEW_CERT = '/review-cert.png';
 export default function ReviewRow({ review }: { review: Review }) {
   const [helpful, setHelpful] = useState(review.helpful);
   const [mine, setMine] = useState(!!review.helpfulByMe);
+  const [, startTransition] = useTransition();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // 화면은 먼저 바꾸고 서버에 저장합니다. 비로그인이면 되돌리고 로그인으로 보냅니다.
+  const toggle = () => {
+    const prev = { helpful, mine };
+    setHelpful((n) => n + (mine ? -1 : 1));
+    setMine((v) => !v);
+    startTransition(async () => {
+      const result = await toggleReviewHelpfulAction(review.id);
+      if (!result.success) {
+        setHelpful(prev.helpful);
+        setMine(prev.mine);
+        router.push(`/login?redirect=${pathname}`);
+        return;
+      }
+      setHelpful(result.helpful);
+      setMine(result.helpfulByMe);
+    });
+  };
 
   return (
     <article className="review-row">
@@ -59,10 +82,7 @@ export default function ReviewRow({ review }: { review: Review }) {
         className="review-row__help"
         count={helpful}
         active={mine}
-        onToggle={() => {
-          setHelpful((n) => n + (mine ? -1 : 1));
-          setMine((v) => !v);
-        }}
+        onToggle={toggle}
       />
     </article>
   );
