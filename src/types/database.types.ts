@@ -1974,6 +1974,27 @@ export type Database = {
         }
         Relationships: []
       }
+      page_views: {
+        Row: {
+          created_at: string
+          id: number
+          path: string
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          path: string
+          visitor_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          path?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       phone_verifications: {
         Row: {
           attempts: number

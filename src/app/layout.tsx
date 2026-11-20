@@ -3,6 +3,7 @@ import { Noto_Sans_KR } from "next/font/google";
 import { Suspense } from "react";
 
 import { NaverAnalytics } from "@/components/naver-analytics";
+import { PageViewTracker } from "@/components/page-view-tracker";
 import { ReferralTracker } from "@/components/referral-tracker";
 
 import "./globals.css";
@@ -53,6 +54,8 @@ export default function RootLayout({
         {children}
         {/* 네이버 프리미엄 로그분석 — 모든 페이지(관리자 제외) 공통 스크립트 */}
         <NaverAnalytics />
+        {/* 페이지 방문을 우리 DB(page_views)에 남깁니다 — 취업 길찾기 방문 · 전환율 집계용 */}
+        <PageViewTracker />
       </body>
     </html>
   );
