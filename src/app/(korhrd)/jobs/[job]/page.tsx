@@ -135,7 +135,7 @@ export default async function JobDetailPage({ params }: Params) {
                   바로 수강신청
                 </EnrollNowButton>
               ) : null}
-              <Link className="btn btn--ghost" href={`/courses/${encodeURIComponent(job.course)}?from=job`}>
+              <Link className="btn btn--ghost" href={`/courses/${encodeURIComponent(job.course)}?via=job`}>
                 과정 상세보기
               </Link>
             </div>

@@ -17,7 +17,8 @@ import EnrollDoneModal, { type EnrollResult } from '@/features/korhrd/components
  * (.btn--cta / .btn.btn--primary). 여기서 새로 꾸미지 않습니다.
  *
  * source 는 어느 버튼에서 신청했는지입니다(enrollments.source). 과정 상세에
- * 취업 길찾기의 '과정 상세보기'(?from=job)로 들어왔으면 job_course_detail 로 남깁니다.
+ * 취업 길찾기의 '과정 상세보기'(?via=job)로 들어왔으면 job_course_detail 로 남깁니다.
+ * ?from= 은 마케팅 유입경로(referral-tracker)가 쓰는 이름이라 쓰지 않습니다 — 가입 유입경로를 덮어씁니다.
  */
 export default function EnrollNowButton({ code, source, className, children }: {
   /** 과정코드 CRS-KH-xxxx */
@@ -43,7 +44,7 @@ export default function EnrollNowButton({ code, source, className, children }: {
 
   const enroll = () => {
     startTransition(async () => {
-      const fromJob = new URLSearchParams(window.location.search).get('from') === 'job';
+      const fromJob = new URLSearchParams(window.location.search).get('via') === 'job';
       const result = await enrollCourseAction({
         code,
         source: source === 'course_detail' && fromJob ? 'job_course_detail' : source,
