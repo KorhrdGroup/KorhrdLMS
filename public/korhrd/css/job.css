@@ -99,9 +99,10 @@
   }
   .job-flow__track{ display:flex; width:max-content; gap:0 }
   .job-flow__track.is-rolling{ animation:job-flow-roll 18s linear infinite }
-  /* 사본 사이 간격도 항목 사이와 같아지도록 각 벌이 뒤쪽 여백을 안고 갑니다
-     — 그래야 -50% 이동이 정확히 한 벌만큼 맞아떨어집니다 */
-  .job-flow__seq{ display:flex; align-items:center; gap:var(--s-2); padding-right:var(--s-2) }
+  /* 각 벌이 뒤쪽 여백을 안고 가야 -50% 이동이 정확히 한 벌만큼 맞아떨어집니다.
+     여백을 항목 사이보다 넓게 둬서 끝(취업)과 다음 벌의 처음(직업 선택)이
+     한 쌍으로 붙어 보이지 않게 합니다 — 화살표를 넣으면 취업 → 직업 선택으로 읽힙니다 */
+  .job-flow__seq{ display:flex; align-items:center; gap:var(--s-2); padding-right:var(--s-10) }
   .job-flow__step{ flex:0 0 auto }
 
   /* 모션을 줄이는 설정에서는 손으로 넘겨 볼 수 있게 되돌립니다 */
