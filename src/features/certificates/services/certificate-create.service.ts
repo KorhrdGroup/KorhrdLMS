@@ -126,20 +126,34 @@ export async function createCertificateApplicationByAdmin(
   }
 
   const saved = `${applicantName} — 발급신청을 추가했습니다 (${paid ? "결제자" : "미결제자"} 칸).`;
-  // 담당자 알림 — 저장은 끝났으니 실패해도 추가는 성공으로 두고, 알림 결과만 덧붙입니다
+  // 오피스에 알리기 — 이름 · 번호가 같은 오피스 민간자격증 학생 「신청 자격증」에 붙이기 + (골랐으면) 담당자 알림 (2026-11-23 사용자).
+  //   저장은 끝났으니 실패해도 추가는 성공으로 두고, 결과만 덧붙입니다
   const managerName = (input.managerName ?? "").trim();
-  if (!managerName) return { success: true, message: saved };
-  const notified = await notifyOfficeApplicationAdded({
+  const office = await notifyOfficeApplicationAdded({
     managerName,
     applicantName,
+    phone: (input.phone ?? "").trim(),
     certificateName,
     paymentStatus: input.paymentStatus,
   });
-  return notified.ok
-    ? { success: true, message: `${saved} ${managerName}님께 오피스 알림을 보냈습니다.` }
-    : {
-        success: true,
-        message: saved,
-        notifyError: `${managerName}님께 오피스 알림은 보내지 못했습니다 — ${notified.error ?? "알 수 없는 오류"}. 담당자에게 직접 알려 주세요.`,
-      };
+  const certNote =
+    office.certSync === "added"
+      ? `오피스 민간자격증 학생 「신청 자격증」에 ${certificateName}을(를) 넣었습니다.`
+      : office.certSync === "exists"
+        ? `오피스 학생에 이미 ${certificateName}이(가) 있어 넣지 않았습니다.`
+        : office.certSync === "no_student"
+          ? "오피스에 이름 · 번호가 같은 민간자격증 학생이 없어 자격증은 넣지 않았습니다."
+          : office.certSync === "skipped"
+            ? "연락처가 없거나 휴대폰 번호 형식이 아니어서 오피스 자격증은 넣지 않았습니다."
+            : "";
+  const message = [saved, certNote, office.notified ? `${managerName}님께 오피스 알림을 보냈습니다.` : ""].filter(Boolean).join(" ");
+  const problems = [
+    managerName && !office.notified ? `${managerName}님께 오피스 알림은 보내지 못했습니다 — ${office.error ?? "알 수 없는 오류"}. 담당자에게 직접 알려 주세요.` : "",
+    office.certSync === "failed" || (office.certSync === null && office.error)
+      ? managerName && !office.notified && office.certSync === null
+        ? "오피스 학생 자격증도 넣지 못했습니다."
+        : `오피스 학생 자격증은 넣지 못했습니다 — ${office.error ?? "알 수 없는 오류"}.`
+      : "",
+  ].filter(Boolean);
+  return problems.length ? { success: true, message, notifyError: problems.join(" ") } : { success: true, message };
 }

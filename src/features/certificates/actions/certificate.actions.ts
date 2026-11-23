@@ -6,7 +6,11 @@ import {
   type CreateCertificateApplicationResult,
 } from "@/features/certificates/services/certificate-create.service";
 import { buildCertificateExportXlsx } from "@/features/certificates/services/certificate-export.service";
-import { getOfficeStaff } from "@/features/certificates/services/office-notify";
+import { getOfficeStaff, searchOfficeStudents, type OfficeStudent } from "@/features/certificates/services/office-notify";
+import {
+  lookupMemberForCertificate,
+  type CertificateMemberLookupResult,
+} from "@/features/certificates/services/certificate-member-lookup.service";
 import { getCurrentAdminLoginId, isBabyAdmin } from "@/lib/admin/current-admin";
 import { getCertificateDetail } from "@/features/certificates/services/certificate-detail.service";
 import {
@@ -72,6 +76,23 @@ export async function bumpCertificateApplicationAction(
   applicationId: string,
 ): Promise<CertificateMutationResult> {
   return bumpCertificateApplication(applicationId);
+}
+
+/** 발급신청 추가 창 자동 채우기 — 아이디로 회원 이름 · 생년월일 · 연락처 · 주소 (아기관리자 불가) */
+export async function lookupMemberForCertificateAction(loginId: string): Promise<CertificateMemberLookupResult> {
+  try {
+    return await lookupMemberForCertificate(loginId);
+  } catch {
+    return { found: false, message: "회원 정보를 읽지 못했습니다." };
+  }
+}
+
+/** 발급신청 추가 창 — 이름 · 전화번호로 오피스 「민간자격증」 탭 학생 찾기 (아기관리자 불가) */
+export async function searchOfficeStudentsAction(q: string): Promise<{ students: OfficeStudent[]; error: string | null }> {
+  if (!(await getCurrentAdminLoginId()) || (await isBabyAdmin())) {
+    return { students: [], error: "권한이 없습니다." };
+  }
+  return searchOfficeStudents(q);
 }
 
 /** 발급신청 추가 창의 담당자 고르기 — 오피스 재직 직원 이름 (아기관리자 불가) */

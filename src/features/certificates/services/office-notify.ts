@@ -14,11 +14,15 @@ function officeConfig() {
 }
 
 /** 응답 본문까지 8초 안에 — 오피스가 연결만 열고 멈춰도 저장 버튼이 오래 묶이지 않게 (Opus 5.5 리뷰) */
-async function officeFetch(path: string, init: RequestInit = {}): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
+async function officeFetch(
+  path: string,
+  init: RequestInit = {},
+  timeoutMs = 8000,
+): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
   const config = officeConfig();
   if (!config) throw new Error("오피스 연결 설정이 없습니다.");
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(`${config.baseUrl}${path}`, {
       ...init,
@@ -46,22 +50,66 @@ export async function getOfficeStaff(): Promise<{ staff: string[]; error: string
   }
 }
 
-/** 담당자에게 오피스 알림 — 실패해도 던지지 않고 이유를 돌려줍니다(발급신청 저장은 이미 끝났습니다) */
+/** 오피스 민간자격증 학생(워크스페이스 「민간자격증」 = 학점연계 신청) — 추가 창에서 이름 · 전화번호로 찾아 고르면
+ *  이름 · 연락처 · 생년월일 · 주소 · 자격증 · 담당자를 채웁니다 (2026-11-23) */
+export type OfficeStudent = {
+  id: string;
+  name: string;
+  phone: string;
+  course: string;
+  courses: string[];
+  birthDate: string;
+  address: string;
+  addressDetail: string;
+  manager: string;
+  createdAt: string;
+};
+
+export async function searchOfficeStudents(q: string): Promise<{ students: OfficeStudent[]; error: string | null }> {
+  const keyword = q.trim().slice(0, 30);
+  if (!keyword || !officeConfig()) return { students: [], error: null };
+  try {
+    const response = await officeFetch(`/api/hanjikhun/office-students?${new URLSearchParams({ q: keyword })}`);
+    if (!response.ok) return { students: [], error: `오피스에서 학생을 찾지 못했습니다 (${response.status}).` };
+    const list = Array.isArray(response.json.students) ? (response.json.students as OfficeStudent[]) : [];
+    return { students: list, error: null };
+  } catch {
+    return { students: [], error: "오피스에서 학생을 찾지 못했습니다." };
+  }
+}
+
+/** 오피스 민간자격증 학생 「신청 자격증」 붙이기 결과 */
+export type OfficeCertSync = "added" | "exists" | "no_student" | "skipped" | "failed";
+
+/**
+ * 발급신청 추가를 오피스에 알림 — ① 이름 · 번호가 똑같은 오피스 민간자격증 학생 「신청 자격증」에 그 자격증 붙이기(이미 있으면 그대로)
+ * ② 담당자를 골랐으면 그 직원에게 오피스 알림 + 팝업. 실패해도 던지지 않고 결과를 돌려줍니다(발급신청 저장은 이미 끝났습니다)
+ */
 export async function notifyOfficeApplicationAdded(input: {
   managerName: string;
   applicantName: string;
+  phone: string;
   certificateName: string;
   paymentStatus: "paid" | "unpaid";
-}): Promise<{ ok: boolean; error: string | null }> {
-  if (!officeConfig()) return { ok: false, error: "오피스 연결 설정이 없습니다." };
+}): Promise<{ ok: boolean; certSync: OfficeCertSync | null; notified: boolean; error: string | null }> {
+  if (!officeConfig()) return { ok: false, certSync: null, notified: false, error: "오피스 연결 설정이 없습니다." };
   try {
-    const response = await officeFetch("/api/hanjikhun/application-added", {
-      method: "POST",
-      body: JSON.stringify(input),
-    });
-    if (response.ok) return { ok: true, error: null };
-    return { ok: false, error: typeof response.json.error === "string" ? response.json.error : `오피스 응답 ${response.status}` };
+    // 저장 뒤 매번 부르니 오피스가 멈춰도 「저장 중」이 오래 묶이지 않게 4초 (Opus 5.5 리뷰)
+    const response = await officeFetch(
+      "/api/hanjikhun/application-added",
+      { method: "POST", body: JSON.stringify(input) },
+      4000,
+    );
+    const certSync = (typeof response.json.certSync === "string" ? response.json.certSync : null) as OfficeCertSync | null;
+    const notified = response.json.notified === true;
+    if (response.ok) return { ok: true, certSync, notified, error: null };
+    return {
+      ok: false,
+      certSync,
+      notified,
+      error: typeof response.json.error === "string" ? response.json.error : `오피스 응답 ${response.status}`,
+    };
   } catch {
-    return { ok: false, error: "오피스에 알리지 못했습니다." };
+    return { ok: false, certSync: null, notified: false, error: "오피스에 알리지 못했습니다." };
   }
 }
