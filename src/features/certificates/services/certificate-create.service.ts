@@ -1,4 +1,5 @@
 import { CERTIFICATE_ISSUANCE_COST, CERTIFICATE_PAYMENT_METHOD_OPTIONS } from "@/features/certificate-applications/constants";
+import { notifyOfficeApplicationAdded } from "@/features/certificates/services/office-notify";
 import { getCurrentAdminLoginId, isBabyAdmin } from "@/lib/admin/current-admin";
 import { todayInKst } from "@/lib/shared/kst-date";
 import { createClient } from "@/lib/supabase/server";
@@ -24,10 +25,13 @@ export type CreateCertificateApplicationInput = {
   paymentMethod: string;
   paymentStatus: Extract<PaymentStatus, "paid" | "unpaid">;
   memo: string;
+  /** 담당자(오피스 직원 이름) — 고르면 그 사람에게 오피스 알림 + 팝업 (2026-11-23). 비우면 알리지 않습니다 */
+  managerName: string;
 };
 
 export type CreateCertificateApplicationResult =
-  | { success: true; message: string }
+  /** notifyError — 저장은 됐는데 담당자 오피스 알림을 못 보냈을 때. 화면이 경고(빨간 줄)로 따로 띄웁니다 */
+  | { success: true; message: string; notifyError?: string }
   | { success: false; message: string };
 
 const emptyToNull = (value: string) => (value.trim() ? value.trim() : null);
@@ -121,8 +125,21 @@ export async function createCertificateApplicationByAdmin(
     throw new Error(error.message);
   }
 
-  return {
-    success: true,
-    message: `${applicantName} — 발급신청을 추가했습니다 (${paid ? "결제자" : "미결제자"} 칸).`,
-  };
+  const saved = `${applicantName} — 발급신청을 추가했습니다 (${paid ? "결제자" : "미결제자"} 칸).`;
+  // 담당자 알림 — 저장은 끝났으니 실패해도 추가는 성공으로 두고, 알림 결과만 덧붙입니다
+  const managerName = (input.managerName ?? "").trim();
+  if (!managerName) return { success: true, message: saved };
+  const notified = await notifyOfficeApplicationAdded({
+    managerName,
+    applicantName,
+    certificateName,
+    paymentStatus: input.paymentStatus,
+  });
+  return notified.ok
+    ? { success: true, message: `${saved} ${managerName}님께 오피스 알림을 보냈습니다.` }
+    : {
+        success: true,
+        message: saved,
+        notifyError: `${managerName}님께 오피스 알림은 보내지 못했습니다 — ${notified.error ?? "알 수 없는 오류"}. 담당자에게 직접 알려 주세요.`,
+      };
 }

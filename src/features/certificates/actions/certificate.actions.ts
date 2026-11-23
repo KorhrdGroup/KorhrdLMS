@@ -6,6 +6,8 @@ import {
   type CreateCertificateApplicationResult,
 } from "@/features/certificates/services/certificate-create.service";
 import { buildCertificateExportXlsx } from "@/features/certificates/services/certificate-export.service";
+import { getOfficeStaff } from "@/features/certificates/services/office-notify";
+import { getCurrentAdminLoginId, isBabyAdmin } from "@/lib/admin/current-admin";
 import { getCertificateDetail } from "@/features/certificates/services/certificate-detail.service";
 import {
   bumpCertificateApplication,
@@ -70,6 +72,14 @@ export async function bumpCertificateApplicationAction(
   applicationId: string,
 ): Promise<CertificateMutationResult> {
   return bumpCertificateApplication(applicationId);
+}
+
+/** 발급신청 추가 창의 담당자 고르기 — 오피스 재직 직원 이름 (아기관리자 불가) */
+export async function getOfficeStaffAction(): Promise<{ staff: string[]; error: string | null }> {
+  if (!(await getCurrentAdminLoginId()) || (await isBabyAdmin())) {
+    return { staff: [], error: "권한이 없습니다." };
+  }
+  return getOfficeStaff();
 }
 
 /** 발급신청 추가 — 관리자가 직접 신청 건을 만듭니다 (아기관리자 불가) */

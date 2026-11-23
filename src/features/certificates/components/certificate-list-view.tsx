@@ -275,7 +275,11 @@ export function CertificateListView({ result, query, certNames, paymentCounts, c
           open={addOpen}
           onOpenChange={setAddOpen}
           certNames={certNames}
-          onCreated={handleActionSuccess}
+          onCreated={(message, warning) => {
+            handleActionSuccess(message);
+            // 저장은 됐지만 담당자 오피스 알림을 못 보낸 경우 — 빨간 줄로 따로 (Opus 5.5 리뷰)
+            if (warning) setErrorMessage(warning);
+          }}
         />
       ) : null}
 

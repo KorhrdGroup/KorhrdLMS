@@ -1,12 +1,12 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { AdminButton } from "@/components/admin/ui/admin-button";
 import { AdminModal } from "@/components/admin/ui/admin-modal";
 import { CERTIFICATE_ISSUANCE_COST, CERTIFICATE_PAYMENT_METHOD_OPTIONS } from "@/features/certificate-applications/constants";
-import { createCertificateApplicationAction } from "@/features/certificates/actions/certificate.actions";
+import { createCertificateApplicationAction, getOfficeStaffAction } from "@/features/certificates/actions/certificate.actions";
 import type { CreateCertificateApplicationInput } from "@/features/certificates/services/certificate-create.service";
 import { M } from "@/features/courses/lib/course-design";
 
@@ -35,7 +35,8 @@ type CertificateAddModalProps = {
   onOpenChange: (open: boolean) => void;
   /** 자격증 검색 후보 — 지금까지 신청된 자격증명 */
   certNames: string[];
-  onCreated: (message: string) => void;
+  /** warning — 저장은 됐지만 담당자 오피스 알림을 못 보냈을 때 */
+  onCreated: (message: string, warning?: string) => void;
 };
 
 const emptyForm: CreateCertificateApplicationInput = {
@@ -51,6 +52,7 @@ const emptyForm: CreateCertificateApplicationInput = {
   paymentMethod: "bank_transfer",
   paymentStatus: "paid",
   memo: "",
+  managerName: "",
 };
 
 /**
@@ -62,12 +64,40 @@ export function CertificateAddModal({ open, onOpenChange, certNames, onCreated }
   const [certOpen, setCertOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, startSave] = useTransition();
+  // 담당자 고르기 — 오피스 재직 직원 이름. 창을 처음 열 때 한 번 받습니다 (2026-11-23)
+  const [staff, setStaff] = useState<string[]>([]);
+  const [staffError, setStaffError] = useState<string | null>(null);
+  const [staffDone, setStaffDone] = useState(false);
+  const staffAsked = useRef(false);
+  const staffLoading = open && !staffDone;
+
+  useEffect(() => {
+    if (!open || staffAsked.current) return;
+    staffAsked.current = true;
+    getOfficeStaffAction()
+      .then((result) => {
+        setStaff(result.staff);
+        setStaffError(result.error);
+        // 못 받았으면 다음에 창을 열 때 다시 묻는다 (Opus 5.5 리뷰)
+        if (result.error) staffAsked.current = false;
+      })
+      .catch(() => {
+        setStaffError("오피스 직원 목록을 받지 못했습니다.");
+        staffAsked.current = false;
+      })
+      .finally(() => setStaffDone(true));
+  }, [open]);
 
   function handleOpenChange(next: boolean) {
     if (!next) {
       setForm(emptyForm);
       setError(null);
       setCertOpen(false);
+      // 담당자 목록을 못 받았으면 다음에 열 때 「불러오는 중」부터 다시 보이게 (Opus 5.5 리뷰)
+      if (staffError) {
+        setStaffError(null);
+        setStaffDone(false);
+      }
     }
     onOpenChange(next);
   }
@@ -88,7 +118,7 @@ export function CertificateAddModal({ open, onOpenChange, certNames, onCreated }
         return;
       }
       handleOpenChange(false);
-      onCreated(result.message);
+      onCreated(result.message, result.notifyError);
     });
   }
 
@@ -240,6 +270,25 @@ export function CertificateAddModal({ open, onOpenChange, certNames, onCreated }
         <label>
           <span style={labelText}>메모</span>
           <input value={form.memo} onChange={(event) => set("memo", event.target.value)} placeholder="비우면 '관리자 직접 추가'" style={inputBox} />
+        </label>
+        <label style={{ gridColumn: "1 / -1" }}>
+          <span style={labelText}>담당자 (오피스 알림)</span>
+          <select
+            value={form.managerName}
+            onChange={(event) => set("managerName", event.target.value)}
+            disabled={staffLoading || staff.length === 0}
+            style={{ ...inputBox, cursor: "pointer" }}
+          >
+            <option value="">{staffLoading ? "직원 목록 불러오는 중..." : "알리지 않음"}</option>
+            {staff.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <span style={{ display: "block", marginTop: 5, fontSize: 12, color: staffError ? M.danger : M.body }}>
+            {staffError ?? "고르면 추가한 뒤 그 직원의 오피스에 「발급신청이 추가되었습니다」 알림 팝업이 뜹니다."}
+          </span>
         </label>
       </div>
     </AdminModal>
